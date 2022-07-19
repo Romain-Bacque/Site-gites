@@ -1,0 +1,42 @@
+.loader-container {
+  margin: 0 auto 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.5rem;
+  background-color: none;
+  width: max-content;
+}
+
+.loader-container .loader-container__dot {
+  background-color: gray;
+  border-color: gray;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  animation: bump 1s linear infinite;
+  transition: 0.2s linear;
+}
+
+.loader-container .loader-container__dot:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.loader-container .loader-container__dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loader-container .loader-container__dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes bump {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

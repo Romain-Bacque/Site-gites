@@ -1,0 +1,10 @@
+.react-calendar {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1;
+  max-width: 311px !important;
+  border: 2px solid rgb(163, 163, 163) !important;
+  border-radius: 10px;
+  overflow: hidden;
+}

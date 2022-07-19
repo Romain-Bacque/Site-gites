@@ -1,0 +1,12 @@
+.swiper {
+  width: 90%;
+  margin: 5rem;
+}
+
+.swiper__slide {
+  width: 50%;
+}
+
+.image {
+  width: 100%;
+}

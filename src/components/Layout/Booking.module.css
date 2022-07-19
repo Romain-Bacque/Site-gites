@@ -1,0 +1,88 @@
+/* -- modal content -- */
+.modal__icon {
+  align-self: center;
+}
+
+.modal__text {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.modal__button {
+  align-self: center;
+  border: none;
+  color: white;
+  background-color: rgb(76, 153, 76);
+  border-radius: 5px;
+  padding: 1rem;
+  width: 15rem;
+}
+
+.modal__button--success {
+  background-color: green;
+}
+
+.modal__button--error {
+  background-color: red;
+}
+
+/* -- form -- */
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  gap: 1rem;
+  max-width: 100rem;
+  transition: all 0.3s ease-out;
+}
+
+.form__input-container {
+  flex: 1;
+}
+
+.form__date-container {
+  position: relative;
+}
+
+.form__button {
+  font-weight: bold;
+  width: 15rem;
+  padding: 1rem;
+  border: 2px solid black;
+  border-radius: 20px;
+  background: none;
+}
+
+.form__button:hover {
+  font-weight: bold;
+  width: 15rem;
+  padding: 1rem;
+  background-color: black;
+  color: white;
+}
+
+.form__button:disabled {
+  cursor: not-allowed;
+  border-color: gray;
+  color: gray;
+  background-color: transparent;
+}
+
+.form__textarea {
+  outline: none;
+  box-sizing: border-box;
+  border: 2px solid gray;
+  border-radius: 5px;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.form__textarea--red {
+  border-color: rgb(153, 1, 1);
+}
+
+.form__textarea--red::placeholder {
+  color: rgb(153, 1, 1);
+}
