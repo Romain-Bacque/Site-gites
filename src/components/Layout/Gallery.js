@@ -60,7 +60,7 @@ const Gallery = () => {
 
   return (
     <>
-      <button>Ajouter une photo</button>
+      {isAuth && <button>Ajouter une photo</button>}
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, A11y]}
         spaceBetween={50}
@@ -70,7 +70,7 @@ const Gallery = () => {
         className={classes.swiper}
       >
         <SwiperSlide className={classes.swiper__slide}>
-          {showBubble && (
+          {isAuth && showBubble && (
             <div
               onClick={(event) => event.stopPropagation()}
               className={classes.bubble}
