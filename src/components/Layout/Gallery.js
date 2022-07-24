@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import classes from "./Gallery.module.css";
 import image from "../../img/gite1_large.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faPen } from "@fortawesome/free-solid-svg-icons";
 
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -17,6 +17,7 @@ import "swiper/css/scrollbar";
 let slidesPerView = 1;
 
 const Gallery = () => {
+  const [showBubble, setShowBubble] = useState(false);
   const isAuth = useSelector((state) => state.auth.isAuthentificated);
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
@@ -42,9 +43,24 @@ const Gallery = () => {
     slidesPerView = 2;
   } else slidesPerView = 3;
 
+  const handleHideBubble = useCallback(() => {
+    if (showBubble) {
+      setShowBubble(false);
+    }
+  }, [showBubble]);
+
+  useEffect(() => {
+    window.addEventListener("click", handleHideBubble);
+  }, [handleHideBubble]);
+
+  const handleBubbleShow = (event) => {
+    event.stopPropagation();
+    setShowBubble((prevShowBubble) => !prevShowBubble);
+  };
+
   return (
     <>
-      {isAuth && <FontAwesomeIcon icon={faPenToSquare} />}
+      <button>Ajouter une photo</button>
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, A11y]}
         spaceBetween={50}
@@ -54,6 +70,19 @@ const Gallery = () => {
         className={classes.swiper}
       >
         <SwiperSlide className={classes.swiper__slide}>
+          {showBubble && (
+            <div
+              onClick={(event) => event.stopPropagation()}
+              className={classes.bubble}
+            />
+          )}
+          {isAuth && (
+            <FontAwesomeIcon
+              onClick={handleBubbleShow}
+              className={classes.swiper__icon}
+              icon={faPen}
+            />
+          )}
           <img className={classes.image} alt="image" src={image} />
         </SwiperSlide>
         <SwiperSlide>
