@@ -10,6 +10,8 @@ const Input = (props) => {
     }
   };
 
+  console.log("input re-evaluated");
+
   return (
     <>
       <div>

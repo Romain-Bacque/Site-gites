@@ -51,7 +51,6 @@ const Gallery = () => {
         slidesPerView={slidesPerView}
         navigation
         pagination={{ clickable: true }}
-        scrollbar={{ draggable: true }}
         className={classes.swiper}
       >
         <SwiperSlide className={classes.swiper__slide}>

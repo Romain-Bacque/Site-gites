@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useInput from "../../hooks/use-input";
 
 import Loader from "./Loader";
@@ -75,7 +75,6 @@ const Booking = ({ shelter }) => {
     blurHandler: infosBlurHandler,
     resetHandler: resetInfosHandler,
   } = useInput();
-
   const isFormValid =
     nameIsValid &&
     personsIsValid &&
@@ -107,9 +106,15 @@ const Booking = ({ shelter }) => {
     sendHttpRequest(userData);
   };
 
-  window.addEventListener("click", () =>
-    setShowCalendar({ show: false, input: null })
-  );
+  const handleHideCalendar = useCallback(() => {
+    if (showCalendar.show) {
+      setShowCalendar({ show: false, input: null });
+    }
+  }, [showCalendar.show]);
+
+  useEffect(() => {
+    window.addEventListener("click", handleHideCalendar);
+  }, [handleHideCalendar]);
 
   const handleCalendarDisplay = (input) => {
     if (input === "from") {
@@ -119,15 +124,17 @@ const Booking = ({ shelter }) => {
     }
   };
 
-  const handleDateChoice = (input, value) => {
-    if (input === "from") {
-      fromValueHandler(value);
-    } else if (input === "to") {
-      toValueHandler(value);
-    }
-  };
+  const handleDateChoice = useCallback(
+    (input, value) => {
+      if (input === "from") {
+        fromValueHandler(value);
+      } else if (input === "to") {
+        toValueHandler(value);
+      }
+    },
+    [fromValueHandler, toValueHandler]
+  );
 
-  // Contenu du modal
   useEffect(() => {
     if (statut === "success") {
       modalContent = (
@@ -263,7 +270,12 @@ const Booking = ({ shelter }) => {
           />
         </div>
         <div className={classes["form__input-container"]}>
-          <div className={classes["form__date-container"]}>
+          <div
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+            className={classes["form__date-container"]}
+          >
             {showCalendar.show && showCalendar.input === "from" && (
               <Planning
                 className="react-calendar--booking"
@@ -284,7 +296,12 @@ const Booking = ({ shelter }) => {
               }}
             />
           </div>
-          <div className={classes["form__date-container"]}>
+          <div
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+            className={classes["form__date-container"]}
+          >
             {showCalendar.show && showCalendar.input === "to" && (
               <Planning
                 className="react-calendar--booking"

@@ -15,7 +15,6 @@ let planningContent;
 
 const Planning = ({ className, onDateChoice, doubleView }) => {
   const [currentDay] = useState(new Date());
-  const [chosenDate, setChosenDate] = useState(null);
 
   const {
     sendHttpRequest: disabledDatesHttpRequest,
@@ -27,11 +26,9 @@ const Planning = ({ className, onDateChoice, doubleView }) => {
     disabledDatesHttpRequest();
   }, [disabledDatesHttpRequest]);
 
-  useEffect(() => {
-    if (chosenDate) {
-      onDateChoice(chosenDate);
-    }
-  }, [onDateChoice, chosenDate]);
+  const handleDateChange = (date) => {
+    onDateChoice(date);
+  };
 
   if (disabledDateStatut === "send") {
     planningContent = <Loader />;
@@ -51,7 +48,9 @@ const Planning = ({ className, onDateChoice, doubleView }) => {
           )
         }
         onChange={(date) => {
-          setChosenDate(dayjs(date).format("YYYY-MM-DD"));
+          if (onDateChoice) {
+            handleDateChange(dayjs(date).format("YYYY-MM-DD"));
+          }
         }}
         value={currentDay}
       />

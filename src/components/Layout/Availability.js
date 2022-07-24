@@ -17,7 +17,7 @@ const Availability = () => {
       <Planning
         doubleView={showDoubleView}
         className="react-calendar--availability"
-      ></Planning>
+      />
     </div>
   );
 };
