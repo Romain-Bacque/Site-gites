@@ -9,11 +9,13 @@ router.get("/allBooking", checkLogged, catchAsync(adminController.allBooking));
 
 router.put(
   "/booking/accept/:bookingId",
+  checkLogged,
   catchAsync(adminController.acceptBooking)
 );
 
 router.delete(
   "/booking/refuse/:bookingId",
+  checkLogged,
   catchAsync(adminController.refuseBooking)
 );
 

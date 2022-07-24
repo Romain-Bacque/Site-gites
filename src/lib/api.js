@@ -92,7 +92,7 @@ export const ratesGetRequest = async () => {
   return response.data.ratesData;
 };
 
-// Post Rates
+// Edit Rates
 export const ratesPostRequest = async (data) => {
   const response = await axios.put("/rates", data);
 

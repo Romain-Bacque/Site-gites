@@ -9,6 +9,7 @@
 }
 
 .modal__button {
+  cursor: pointer;
   align-self: center;
   border: none;
   color: white;
@@ -46,6 +47,7 @@
 }
 
 .form__button {
+  cursor: pointer;
   font-weight: bold;
   width: 15rem;
   padding: 1rem;
