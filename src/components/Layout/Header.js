@@ -127,7 +127,7 @@ const Header = () => {
                   to="/authentification"
                   onClick={handleLoginLink}
                 >
-                  {!isAuth ? "Connexion | Inscription" : "Déconnexion"}
+                  {!isAuth ? "Connexion" : "Déconnexion"}
                 </Link>
               </li>
             )}

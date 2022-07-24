@@ -7,12 +7,12 @@ const router = express.Router();
 
 router.get("/allBooking", checkLogged, catchAsync(adminController.allBooking));
 
-router.get(
+router.put(
   "/booking/accept/:bookingId",
   catchAsync(adminController.acceptBooking)
 );
 
-router.get(
+router.delete(
   "/booking/refuse/:bookingId",
   catchAsync(adminController.refuseBooking)
 );

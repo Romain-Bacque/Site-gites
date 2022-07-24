@@ -4,8 +4,8 @@ import classes from "./GitesItems.module.css";
 import CSSTransition from "react-transition-group/CSSTransition";
 import Booking from "./Booking";
 import Rates from "./Rates";
-import Availability from "./Availability";
 import Slider from "../UI/slider/Slider";
+import Availability from "./Availability";
 
 let formContent;
 

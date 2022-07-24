@@ -1,0 +1,18 @@
+.react-calendar {
+  max-width: 311px !important;
+  border: 2px solid rgb(163, 163, 163) !important;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.react-calendar--booking {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1;
+}
+
+.react-calendar--availability {
+  border: none !important;
+  max-width: 100% !important;
+}

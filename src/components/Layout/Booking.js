@@ -9,7 +9,7 @@ import Input from "./Input";
 import useHttp from "../../hooks/use-http";
 import { bookingRequest } from "../../lib/api";
 import classes from "./Booking.module.css";
-import Availability from "./Availability";
+import Planning from "./Planning";
 
 let modalContent;
 
@@ -265,7 +265,8 @@ const Booking = ({ shelter }) => {
         <div className={classes["form__input-container"]}>
           <div className={classes["form__date-container"]}>
             {showCalendar.show && showCalendar.input === "from" && (
-              <Availability
+              <Planning
+                className="react-calendar--booking"
                 onDateChoice={handleDateChoice.bind(null, "from")}
               />
             )}
@@ -285,7 +286,10 @@ const Booking = ({ shelter }) => {
           </div>
           <div className={classes["form__date-container"]}>
             {showCalendar.show && showCalendar.input === "to" && (
-              <Availability onDateChoice={handleDateChoice.bind(null, "to")} />
+              <Planning
+                className="react-calendar--booking"
+                onDateChoice={handleDateChoice.bind(null, "to")}
+              />
             )}
             <Input
               onInputDateClick={handleCalendarDisplay.bind(null, "to")}
