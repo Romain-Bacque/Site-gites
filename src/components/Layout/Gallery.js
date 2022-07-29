@@ -31,10 +31,6 @@ const Gallery = () => {
     }
 
     window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
   }, []);
 
   if (dimensions.width < 600) {
