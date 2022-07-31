@@ -34,12 +34,10 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-// Capture favicon
 app.use("/favicon.ico", (_, res) => {
   res.sendStatus(200);
 });
 
-// Routers
 app.use("/", gitesRoutes);
 app.use("/authentification", authRoutes);
 app.use("/admin", adminRoutes);
