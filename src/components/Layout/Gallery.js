@@ -8,7 +8,7 @@ import {
   faTrashCan,
   faPenToSquare,
 } from "@fortawesome/free-solid-svg-icons";
-
+import Modal from "../UI/Modal";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -16,7 +16,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import CropModal from "./crop/CropModal";
+import CropContent from "./crop/CropContent";
 
 //variable qui stocke le nombre de slides par gite qui s'affiche à l'écran
 let slidesPerView = 1;
@@ -45,6 +45,7 @@ const Gallery = () => {
   const handleFileValueChange = (event) => {
     if (event.target.files[0]) {
       setUrlFile(URL.createObjectURL(event.target.files[0]));
+      event.target.value = null;
       setShowModal(true);
     }
   };
@@ -74,11 +75,14 @@ const Gallery = () => {
   return (
     <>
       {showModal && (
-        <CropModal
-          onGetCropPicture={handleCropPicture}
-          hideModal={() => setShowModal(false)}
-          url={urlFile}
-        />
+        <Modal
+          show={showModal}
+          onHide={() => {
+            setShowModal(false);
+          }}
+        >
+          {<CropContent onAddPicture={handleCropPicture} url={urlFile} />}
+        </Modal>
       )}
       {isAuth && (
         <div>

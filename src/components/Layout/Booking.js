@@ -131,6 +131,8 @@ const Booking = ({ shelter }) => {
       } else if (input === "to") {
         toValueHandler(value);
       }
+
+      setShowCalendar(false);
     },
     [fromValueHandler, toValueHandler]
   );

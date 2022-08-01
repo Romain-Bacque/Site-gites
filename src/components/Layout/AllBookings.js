@@ -50,7 +50,6 @@ const AllBookings = () => {
   }, [bookingsHttpRequest, acceptBookingStatut, refuseBookingStatut]);
 
   const handleAcceptBooking = (bookingId) => {
-    console.log(bookingId);
     acceptBookingHttpRequest(bookingId);
   };
 
