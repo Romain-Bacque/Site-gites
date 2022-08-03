@@ -63,7 +63,7 @@ const CropContent = ({ url, onAddPicture }) => {
           onClick={handleCropImage}
           className={classes["crop-container__button"]}
         >
-          Ajouter
+          Enregistrer
         </button>
       </form>
     </div>
