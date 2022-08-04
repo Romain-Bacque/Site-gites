@@ -98,3 +98,12 @@ export const ratesPostRequest = async (data) => {
 
   if (!response.data.ok) throw new Error();
 };
+
+// // Gallery
+
+// Add Picture
+export const postPictureRequest = async (data) => {
+  const response = await axios.post("/admin/gallery", data);
+
+  if (!response.data.ok) throw new Error();
+};

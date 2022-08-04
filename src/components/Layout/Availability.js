@@ -10,6 +10,12 @@ const Availability = () => {
     window.addEventListener("resize", () => {
       setShowDoubleView(window.innerWidth > 700 ? true : false);
     });
+
+    return () => {
+      window.removeEventListener("resize", () => {
+        setShowDoubleView(window.innerWidth > 700 ? true : false);
+      });
+    };
   }, []);
 
   return (

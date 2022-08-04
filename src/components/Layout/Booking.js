@@ -114,6 +114,10 @@ const Booking = ({ shelter }) => {
 
   useEffect(() => {
     window.addEventListener("click", handleHideCalendar);
+
+    return () => {
+      window.removeEventListener("click", handleHideCalendar);
+    };
   }, [handleHideCalendar]);
 
   const handleCalendarDisplay = (input) => {
