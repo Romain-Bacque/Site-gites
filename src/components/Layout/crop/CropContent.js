@@ -1,9 +1,18 @@
 import { useCallback, useState } from "react";
+import useHttp from "../../../hooks/use-http";
+
+import { postPictureRequest } from "../../../lib/api";
 import Cropper from "react-easy-crop";
+import Loader from "../Loader";
 import classes from "./CropContent.module.css";
 import getCroppedImg from "./lib/cropImage";
 
-const CropContent = ({ url, onAddPicture }) => {
+const CropContent = ({ shelterNumber, url, getImagesList }) => {
+  const {
+    sendHttpRequest: postPictureHttpRequest,
+    statut: postPictureStatut,
+    data: imagesData,
+  } = useHttp(postPictureRequest);
   const [cropDatas, setCropDatas] = useState([]);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -21,13 +30,20 @@ const CropContent = ({ url, onAddPicture }) => {
 
       try {
         const file = await getCroppedImg(...cropDatas);
-        onAddPicture(file);
+
+        const formData = new FormData();
+        formData.append("shelterNumber", shelterNumber);
+        formData.append("file", file);
+
+        postPictureHttpRequest(formData);
       } catch (err) {
         console.trace(err);
       }
     },
-    [cropDatas, onAddPicture]
+    [cropDatas, postPictureHttpRequest]
   );
+
+  console.log("test", imagesData);
 
   return (
     <div
@@ -47,6 +63,16 @@ const CropContent = ({ url, onAddPicture }) => {
       </div>
       <form className={classes["crop-container__form"]}>
         <div>
+          {postPictureStatut && (
+            <Loader
+              statut={postPictureStatut}
+              onSuccess={() => getImagesList(imagesData)}
+              message={{
+                success: "Enregistrement réussi.",
+                error: "Enregistrement impossible.",
+              }}
+            />
+          )}
           <span className={classes["crop-container__span"]}>-</span>
           <input
             className={classes["crop-container__input"]}

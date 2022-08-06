@@ -10,10 +10,6 @@ const shelterSchema = new Schema({
     type: Number,
     required: [true, "number cannot be blank"],
   },
-  images: {
-    type: String,
-    default: null,
-  },
 });
 
 module.exports = mongoose.model("Shelter", shelterSchema);

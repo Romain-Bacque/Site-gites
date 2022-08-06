@@ -13,10 +13,10 @@ const gitesController = {
       });
       await newBooking.save();
 
-      res.json({ ok: true, status: 200 });
+      res.json({ status: 200 });
     } catch (err) {
       console.log(err.message);
-      res.json({ ok: false, status: 404, message: err.message });
+      res.json({ status: 404, message: err.message });
     }
   },
   getRates: async function (_, res) {
@@ -24,10 +24,10 @@ const gitesController = {
       const allRates = await Rates.find({});
 
       if (allRates[0]) {
-        res.json({ ok: true, status: 200, ratesData: allRates[0] });
+        res.json({ status: 200, ratesData: allRates[0] });
       } else throw new Error();
     } catch (err) {
-      res.json({ ok: false, status: 404, message: err.message });
+      res.json({ status: 404, message: err.message });
     }
   },
   editRates: async function (req, res) {
@@ -45,9 +45,9 @@ const gitesController = {
         }
       );
 
-      res.json({ ok: true, status: 200, ratesData: allRates });
+      res.json({ status: 200, ratesData: allRates });
     } catch (err) {
-      res.json({ ok: true, status: 404, message: err.message });
+      res.json({ status: 404, message: err.message });
     }
   },
   getDisabledDates: async function (req, res) {
@@ -58,7 +58,6 @@ const gitesController = {
 
       if (allDisabledDates) {
         res.json({
-          ok: true,
           status: 200,
           disabledDatesData: allDisabledDates,
         });
@@ -66,7 +65,7 @@ const gitesController = {
         throw new Error();
       }
     } catch (err) {
-      res.json({ ok: true, status: 404, message: err.message });
+      res.json({ status: 404, message: err.message });
     }
   },
 };

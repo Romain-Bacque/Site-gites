@@ -83,38 +83,42 @@ const Auth = () => {
     setIsNotRegistered(!isNotRegistered);
   };
 
+  const handleLogin = () => {
+    dispatch(authActions.login());
+    history.replace("/");
+  };
+
   // login
   useEffect(() => {
-    if (loginStatut === "send") {
-      setStatutContent(<Loader />);
-    } else if (loginStatut === "success") {
-      setStatutContent(null);
-      dispatch(authActions.login());
-      history.replace("/");
-    } else if (loginStatut === "error") {
-      setStatutContent(
-        <span className="error message">
-          Mot de passe ou Pseudo incorrect(s).
-        </span>
-      );
+    {
+      loginStatut &&
+        setStatutContent(
+          <Loader
+            statut={loginStatut}
+            onSuccess={handleLogin}
+            message={{
+              success: null,
+              error: "Mot de passe ou Pseudo incorrect(s).",
+            }}
+          />
+        );
     }
-  }, [loginStatut, dispatch, history]);
+  }, [loginStatut]);
 
   // register
   useEffect(() => {
-    console.log("register", registerStatut);
-
-    if (registerStatut === "send") {
-      setStatutContent(<Loader />);
-    } else if (registerStatut === "success") {
-      setStatutContent(
-        <span className="success message">Enregistrement réussi.</span>
-      );
-      history.replace("/authentification");
-    } else if (registerStatut === "error") {
-      setStatutContent(
-        <span className="error message">Enregistrement impossible.</span>
-      );
+    {
+      registerStatut &&
+        setStatutContent(
+          <Loader
+            statut={registerStatut}
+            onSuccess={() => setIsNotRegistered(false)}
+            message={{
+              success: "Enregistrement réussi.",
+              error: "Enregistrement impossible.",
+            }}
+          />
+        );
     }
   }, [registerStatut, history]);
 

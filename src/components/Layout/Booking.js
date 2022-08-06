@@ -14,7 +14,8 @@ import Planning from "./Planning";
 let modalContent;
 
 const Booking = ({ shelter }) => {
-  const { sendHttpRequest, statut } = useHttp(bookingRequest);
+  const { sendHttpRequest: bookingHttpRequest, statut: bookingStatut } =
+    useHttp(bookingRequest);
   const [showModal, setShowModal] = useState(false);
   const [showCalendar, setShowCalendar] = useState({
     show: false,
@@ -84,8 +85,9 @@ const Booking = ({ shelter }) => {
     fromIsValid;
 
   useEffect(() => {
-    if (statut === "success" || statut === "error") setShowModal(true);
-  }, [statut]);
+    if (bookingStatut === "success" || bookingStatut === "error")
+      setShowModal(true);
+  }, [bookingStatut]);
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -103,7 +105,7 @@ const Booking = ({ shelter }) => {
       informations: infosValue,
     };
 
-    sendHttpRequest(userData);
+    bookingHttpRequest(userData);
   };
 
   useEffect(() => {
@@ -142,7 +144,7 @@ const Booking = ({ shelter }) => {
   );
 
   useEffect(() => {
-    if (statut === "success") {
+    if (bookingStatut === "success") {
       modalContent = (
         <>
           <img
@@ -175,7 +177,7 @@ const Booking = ({ shelter }) => {
       resetFromHandler();
       resetToHandler();
       resetInfosHandler();
-    } else if (statut === "error") {
+    } else if (bookingStatut === "error") {
       modalContent = (
         <>
           <img
@@ -202,7 +204,7 @@ const Booking = ({ shelter }) => {
       );
     }
   }, [
-    statut,
+    bookingStatut,
     resetNameHandler,
     resetPersonsHandler,
     resetEmailHandler,
@@ -215,7 +217,7 @@ const Booking = ({ shelter }) => {
   return (
     <>
       <Modal show={showModal}>{modalContent}</Modal>
-      {statut === "send" && <Loader />}
+      <Loader statut={bookingStatut} />
       <form className={classes.form} onSubmit={submitHandler}>
         <div className={classes["form__input-container"]}>
           <Input

@@ -17,24 +17,13 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import CropContent from "./crop/CropContent";
-import useHttp from "../../hooks/use-http";
-import { postPictureRequest, acceptBookingRequest } from "../../lib/api";
 
 //variable qui stocke le nombre de slides par gite qui s'affiche à l'écran
 let slidesPerView = 1;
 
 const Gallery = () => {
-  const {
-    sendHttpRequest: postPictureHttpRequest,
-    statut: postPictureStatut,
-    postPictureData,
-  } = useHttp(postPictureRequest);
-  // const {
-  //   sendHttpRequest: deletePictureHttpRequest,
-  //   statut: deletePictureStatut,
-  //   deletePictureData,
-  // } = useHttp(deletePictureRequest);
   const fileInputRef = useRef();
+  const [imagesList, setImagesList] = useState([]);
   const [urlFile, setUrlFile] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showBubble, setShowBubble] = useState(false);
@@ -60,14 +49,6 @@ const Gallery = () => {
       event.target.value = null;
       setShowModal(true);
     }
-  };
-  const [test, setTest] = useState("");
-  const handleAddPicture = (file) => {
-    setTest(URL.createObjectURL(file));
-    const formData = new FormData();
-    formData.append("file", file);
-
-    postPictureHttpRequest(formData);
   };
 
   useEffect(() => {
@@ -97,19 +78,23 @@ const Gallery = () => {
   } else if (dimensions.width > 600 && dimensions.width < 1250) {
     slidesPerView = 2;
   } else slidesPerView = 3;
-
+  console.log(imagesList);
   return (
     <>
-      {showModal && (
-        <Modal
-          show={showModal}
-          onHide={() => {
-            setShowModal(false);
-          }}
-        >
-          {<CropContent onAddPicture={handleAddPicture} url={urlFile} />}
-        </Modal>
-      )}
+      <Modal
+        show={showModal}
+        onHide={() => {
+          setShowModal(false);
+        }}
+      >
+        {
+          <CropContent
+            getImagesList={(data) => setImagesList(data)}
+            shelterNumber="0"
+            url={urlFile}
+          />
+        }
+      </Modal>
       {isAuth && (
         <div>
           <label htmlFor="files" className={classes["file-button"]}>
@@ -134,37 +119,40 @@ const Gallery = () => {
         pagination={{ clickable: true }}
         className={classes.swiper}
       >
-        <SwiperSlide className={classes.swiper__slide}>
-          {isAuth && showBubble && (
-            <div
-              onClick={(event) => event.stopPropagation()}
-              className={classes.bubble}
-            >
-              <button className={classes.bubble__button}>
+        {imagesList &&
+          imagesList.map((image) => {
+            <SwiperSlide ref={image._id} className={classes.swiper__slide}>
+              {isAuth && showBubble && (
+                <div
+                  onClick={(event) => event.stopPropagation()}
+                  className={classes.bubble}
+                >
+                  <button className={classes.bubble__button}>
+                    <FontAwesomeIcon
+                      className={classes.bubble__icon}
+                      icon={faTrashCan}
+                    />
+                    Supprimer la photo
+                  </button>
+                  <button className={classes.bubble__button}>
+                    <FontAwesomeIcon
+                      className={classes.bubble__icon}
+                      icon={faPenToSquare}
+                    />
+                    Modifier la photo
+                  </button>
+                </div>
+              )}
+              {isAuth && (
                 <FontAwesomeIcon
-                  className={classes.bubble__icon}
-                  icon={faTrashCan}
+                  onClick={handleBubbleShow}
+                  className={classes.swiper__icon}
+                  icon={faPen}
                 />
-                Supprimer la photo
-              </button>
-              <button className={classes.bubble__button}>
-                <FontAwesomeIcon
-                  className={classes.bubble__icon}
-                  icon={faPenToSquare}
-                />
-                Modifier la photo
-              </button>
-            </div>
-          )}
-          {isAuth && (
-            <FontAwesomeIcon
-              onClick={handleBubbleShow}
-              className={classes.swiper__icon}
-              icon={faPen}
-            />
-          )}
-          <img className={classes.image} alt="image" src={image} />
-        </SwiperSlide>
+              )}
+              <img className={classes.image} alt="image" src={image.url} />
+            </SwiperSlide>;
+          })}
         <SwiperSlide>
           <img className={classes.image} alt="image" src={image} />
         </SwiperSlide>

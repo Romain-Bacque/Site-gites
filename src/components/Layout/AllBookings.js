@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 
 import {
@@ -21,9 +21,8 @@ import Sort from "./Sort";
 
 dayjs().format();
 
-let allBookingsContent, modalContent;
-
 const AllBookings = () => {
+  const [allBookingsContent, setAllBookingsContent] = useState();
   const [showModal, setShowModal] = useState(false);
   const [bookingsList, setBookingsList] = useState([]);
 
@@ -49,129 +48,130 @@ const AllBookings = () => {
     bookingsHttpRequest();
   }, [bookingsHttpRequest, acceptBookingStatut, refuseBookingStatut]);
 
-  const handleAcceptBooking = (bookingId) => {
-    acceptBookingHttpRequest(bookingId);
-  };
+  const handleAcceptBooking = useCallback(
+    (bookingId) => {
+      acceptBookingHttpRequest(bookingId);
+    },
+    [acceptBookingHttpRequest]
+  );
 
-  const handleRefuseBooking = (bookingId) => {
-    refuseBookingHttpRequest(bookingId);
-  };
+  const handleRefuseBooking = useCallback(
+    (bookingId) => {
+      refuseBookingHttpRequest(bookingId);
+    },
+    [refuseBookingHttpRequest]
+  );
 
-  const handleSort = (sort) => {
-    if (sort) {
-      const arrayToSort = bookingsList;
+  const handleSort = useCallback(
+    (sort) => {
+      if (sort) {
+        const arrayToSort = bookingsList;
 
-      arrayToSort.sort((a, b) => {
-        if (sort === "dateIncreasing") {
-          return new Date(a.from) - new Date(b.from);
-        } else if (sort === "dateDecreasing") {
-          return new Date(b.from) - new Date(a.from);
-        } else if (sort === "awaiting") {
-          return a.booked - b.booked;
-        } else if (sort === "booked") {
-          return b.booked - a.booked;
-        }
-      });
-      setBookingsList(arrayToSort);
-    }
-    setShowModal(false);
-  };
+        arrayToSort.sort((a, b) => {
+          if (sort === "dateIncreasing") {
+            return new Date(a.from) - new Date(b.from);
+          } else if (sort === "dateDecreasing") {
+            return new Date(b.from) - new Date(a.from);
+          } else if (sort === "awaiting") {
+            return a.booked - b.booked;
+          } else if (sort === "booked") {
+            return b.booked - a.booked;
+          }
+        });
+        setBookingsList(arrayToSort);
+        handleAllBookings();
+      }
+      setShowModal(false);
+    },
+    [bookingsList]
+  );
 
-  if (showModal) {
-    modalContent = <Sort onSortValidation={handleSort} />;
-  }
-
-  if (bookingsRequestStatut === "send") {
-    allBookingsContent = <Loader />;
-  } else if (bookingsRequestStatut === "success") {
-    allBookingsContent = bookingsList?.length ? (
-      <ul className={classes["bookings__list"]}>
-        {bookingsList.map((booking) => (
-          <Card className={classes["booking"]} key={booking._id}>
-            <li>
-              <figure className={classes["booking__figure"]}>
-                <img
-                  className={classes["booking__img"]}
-                  src={booking.shelter.images && booking.shelter.images[0]}
-                  alt={`Image de ${booking.shelter.title}`}
-                />
-                <figcaption className={classes["booking__figcaption"]}>
-                  {booking.shelter.title}
-                </figcaption>
-              </figure>
-              <div className={classes["booking__container"]}>
-                <div className={classes["booking__user-datas"]}>
-                  <div className={classes["booking__name"]}>{booking.name}</div>
-                  <div className={classes["booking__contact"]}>
-                    <FontAwesomeIcon icon={faPhone} />
-                    <div>{booking.phone}</div>
-                  </div>
-                  <div className={classes["booking__contact"]}>
-                    <FontAwesomeIcon icon={faEnvelope} />
-                    <a href={`mailto:${booking.email}`}>{booking.email}</a>
-                  </div>
-                  <div className={classes["booking__date"]}>
-                    Du {dayjs(booking.from).format("DD/MM/YYYY")}
-                  </div>
-                  <div className={classes["booking__date"]}>
-                    Au {dayjs(booking.to).format("DD/MM/YYYY")}
-                  </div>
-                  <div className={classes["booking__statut"]}>
-                    <div>
-                      Statut:
-                      <span className={classes["booking__statut-content"]}>
-                        {booking.booked === true ? "Réservé" : "En attente"}
-                      </span>
+  const handleAllBookings = useCallback(() => {
+    setAllBookingsContent(
+      bookingsList?.length ? (
+        <ul className={classes["bookings__list"]}>
+          {bookingsList.map((booking) => (
+            <Card className={classes["booking"]} key={booking._id}>
+              <li>
+                <figure className={classes["booking__figure"]}>
+                  <img
+                    className={classes["booking__img"]}
+                    src={booking.shelter.images && booking.shelter.images[0]}
+                    alt={`Image de ${booking.shelter.title}`}
+                  />
+                  <figcaption className={classes["booking__figcaption"]}>
+                    {booking.shelter.title}
+                  </figcaption>
+                </figure>
+                <div className={classes["booking__container"]}>
+                  <div className={classes["booking__user-datas"]}>
+                    <div className={classes["booking__name"]}>
+                      {booking.name}
+                    </div>
+                    <div className={classes["booking__contact"]}>
+                      <FontAwesomeIcon icon={faPhone} />
+                      <div>{booking.phone}</div>
+                    </div>
+                    <div className={classes["booking__contact"]}>
+                      <FontAwesomeIcon icon={faEnvelope} />
+                      <a href={`mailto:${booking.email}`}>{booking.email}</a>
+                    </div>
+                    <div className={classes["booking__date"]}>
+                      Du {dayjs(booking.from).format("DD/MM/YYYY")}
+                    </div>
+                    <div className={classes["booking__date"]}>
+                      Au {dayjs(booking.to).format("DD/MM/YYYY")}
+                    </div>
+                    <div className={classes["booking__statut"]}>
+                      <div>
+                        Statut:
+                        <span className={classes["booking__statut-content"]}>
+                          {booking.booked === true ? "Réservé" : "En attente"}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className={classes["booking__informations"]}>
-                  <div className={classes["booking__informations-title"]}>
-                    Informations:
+                  <div className={classes["booking__informations"]}>
+                    <div className={classes["booking__informations-title"]}>
+                      Informations:
+                    </div>
+                    {booking.informations
+                      ? booking.informations
+                      : "Aucune information complémentaire."}
                   </div>
-                  {booking.informations
-                    ? booking.informations
-                    : "Aucune information complémentaire."}
                 </div>
-              </div>
 
-              {!booking.booked && (
-                <div className={classes["booking__actions"]}>
-                  <button
-                    className={`${classes["booking__button"]} ${classes["booking__button--accept"]}`}
-                    onClick={() => {
-                      handleAcceptBooking(booking._id);
-                    }}
-                  >
-                    Accepter
-                  </button>
-                  <button
-                    className={`${classes["booking__button"]} ${classes["booking__button--refuse"]}`}
-                    onClick={() => {
-                      handleRefuseBooking(booking._id);
-                    }}
-                  >
-                    Refuser
-                  </button>
-                </div>
-              )}
-            </li>
-          </Card>
-        ))}
-      </ul>
-    ) : (
-      <p className="information message">
-        Il n'y a actuellement aucune réservation.
-      </p>
+                {!booking.booked && (
+                  <div className={classes["booking__actions"]}>
+                    <button
+                      className={`${classes["booking__button"]} ${classes["booking__button--accept"]}`}
+                      onClick={() => {
+                        handleAcceptBooking(booking._id);
+                      }}
+                    >
+                      Accepter
+                    </button>
+                    <button
+                      className={`${classes["booking__button"]} ${classes["booking__button--refuse"]}`}
+                      onClick={() => {
+                        handleRefuseBooking(booking._id);
+                      }}
+                    >
+                      Refuser
+                    </button>
+                  </div>
+                )}
+              </li>
+            </Card>
+          ))}
+        </ul>
+      ) : (
+        <p className="information message">
+          Il n'y a actuellement aucune réservation.
+        </p>
+      )
     );
-  } else if (bookingsRequestStatut === "error") {
-    allBookingsContent = (
-      <p className="error message">
-        Une erreur est survenue! Impossible d'afficher la liste des reservations
-        en cours.
-      </p>
-    );
-  }
+  }, [bookingsList, handleAcceptBooking, handleRefuseBooking]);
 
   return (
     <>
@@ -181,7 +181,7 @@ const AllBookings = () => {
           setShowModal(false);
         }}
       >
-        {modalContent}
+        <Sort onSortValidation={handleSort} />
       </Modal>
       <section>
         <div className={classes["bookings__title-container"]}>
@@ -203,6 +203,15 @@ const AllBookings = () => {
             </button>
           ) : null}
         </div>
+        <Loader
+          statut={bookingsRequestStatut}
+          onSuccess={handleAllBookings}
+          message={{
+            success: null,
+            error:
+              "Une erreur est survenue! Impossible d'afficher la liste des reservations en cours.",
+          }}
+        />
         {allBookingsContent}
       </section>
     </>

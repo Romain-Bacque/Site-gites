@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 
 import { disabledDatesRequest } from "../../lib/api";
@@ -11,9 +11,8 @@ import dayjs from "dayjs";
 
 dayjs().format();
 
-let planningContent;
-
 const Planning = ({ className, onDateChoice, doubleView }) => {
+  const [planningContent, setPlanningContent] = useState(null);
   const [currentDay] = useState(new Date());
 
   const {
@@ -26,14 +25,15 @@ const Planning = ({ className, onDateChoice, doubleView }) => {
     disabledDatesHttpRequest();
   }, [disabledDatesHttpRequest]);
 
-  const handleDateChange = (date) => {
-    onDateChoice(date);
-  };
+  const handleDateChange = useCallback(
+    (date) => {
+      onDateChoice(date);
+    },
+    [onDateChoice]
+  );
 
-  if (disabledDateStatut === "send") {
-    planningContent = <Loader />;
-  } else if (disabledDateStatut === "success" && disabledDatesData) {
-    planningContent = (
+  const handleCalendarDisplay = useCallback(() => {
+    setPlanningContent(
       <Calendar
         showDoubleView={doubleView}
         className={`${classes["react-calendar"]} ${classes[className]}`}
@@ -55,11 +55,28 @@ const Planning = ({ className, onDateChoice, doubleView }) => {
         value={currentDay}
       />
     );
-  } else if (disabledDateStatut === "error") {
-    planningContent = <p>Le calendrier est malheureusement indisponible.</p>;
-  }
+  }, [
+    disabledDatesData,
+    handleDateChange,
+    onDateChoice,
+    className,
+    doubleView,
+    currentDay,
+  ]);
 
-  return planningContent;
+  return (
+    <>
+      <Loader
+        statut={disabledDateStatut}
+        onSuccess={handleCalendarDisplay}
+        message={{
+          success: null,
+          error: "Le calendrier est malheureusement indisponible.",
+        }}
+      />
+      {planningContent}
+    </>
+  );
 };
 
 export default Planning;

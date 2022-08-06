@@ -18,22 +18,18 @@ const authController = {
     const token = req.cookies.accessToken;
 
     if (!token) {
-      return res.json({
-        ok: false,
-        status: 401,
+      return res.status(401).json({
         message: "access unauthorized",
       });
     }
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err) => {
       if (err) {
-        return res.json({
-          ok: false,
-          status: 401,
+        return res.status(401).json({
           message: "access unauthorized",
         });
       }
-      res.json({ ok: true, statut: 200 });
+      res.send(200);
     });
   },
   login: async function (req, res) {
@@ -45,12 +41,11 @@ const authController = {
 
         const accessToken = generateAccessToken(user);
 
-        res
-          .cookie("accessToken", accessToken, cookieConfig)
-          .json({ ok: true, status: 200 });
+        res.cookie("accessToken", accessToken, cookieConfig).send(200);
       } else throw new Error();
     } catch (err) {
-      res.json({ ok: false, status: 401, message: err.message });
+      console.trace(err);
+      res.status(401).json({ message: err.message });
     }
   },
   register: async function (req, res) {
@@ -68,20 +63,15 @@ const authController = {
       await newUser.save();
 
       const accessToken = generateAccessToken({ username, email });
-      res
-        .cookie("accessToken", accessToken, cookieConfig)
-        .json({ ok: true, status: 200 });
+      res.cookie("accessToken", accessToken, cookieConfig).send(200);
     } catch (err) {
-      res.json({
-        ok: false,
-        status: 404,
-        message: err.message || "Une erreur est survenue.",
-      });
+      console.trace(err);
+      res.status(404).json({ message: err.message });
     }
   },
   logout: function (req, res) {
     if (req.cookies.accessToken) {
-      res.clearCookie("accessToken").json({ ok: true, status: 200 });
+      res.clearCookie("accessToken").send(200);
     }
   },
 };
