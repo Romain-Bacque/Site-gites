@@ -3,31 +3,31 @@ import Cropper from "react-easy-crop";
 import classes from "./CropContent.module.css";
 import getCroppedImg from "./lib/cropImage";
 
-const cropDatas = [];
-
 const CropContent = ({ url, onAddPicture }) => {
+  const [cropDatas, setCropDatas] = useState([]);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
 
-  const onCropComplete = useCallback(
+  const handleCropComplete = useCallback(
     (_, croppedAreaPixels) => {
-      cropDatas.push(url);
-      cropDatas.push(croppedAreaPixels);
+      setCropDatas([url, croppedAreaPixels]);
     },
     [url]
   );
 
-  const handleCropImage = useCallback(async (event) => {
-    event.preventDefault();
+  const handleCropImage = useCallback(
+    async (event) => {
+      event.preventDefault();
 
-    try {
-      const { file, url } = await getCroppedImg(...cropDatas);
-
-      onAddPicture(file, url);
-    } catch (err) {
-      console.trace(err);
-    }
-  });
+      try {
+        const file = await getCroppedImg(...cropDatas);
+        onAddPicture(file);
+      } catch (err) {
+        console.trace(err);
+      }
+    },
+    [cropDatas, onAddPicture]
+  );
 
   return (
     <div
@@ -41,7 +41,7 @@ const CropContent = ({ url, onAddPicture }) => {
           zoom={zoom}
           aspect={4 / 3}
           onCropChange={setCrop}
-          onCropComplete={onCropComplete}
+          onCropComplete={handleCropComplete}
           onZoomChange={setZoom}
         />
       </div>
@@ -60,6 +60,7 @@ const CropContent = ({ url, onAddPicture }) => {
           <span className={classes["crop-container__span"]}>+</span>
         </div>
         <button
+          type="button"
           onClick={handleCropImage}
           className={classes["crop-container__button"]}
         >

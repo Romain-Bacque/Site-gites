@@ -6,15 +6,16 @@ const Availability = () => {
   const [showDoubleView, setShowDoubleView] = useState(false);
 
   useEffect(() => {
-    setShowDoubleView(window.innerWidth > 700 ? true : false);
-    window.addEventListener("resize", () => {
+    const handleShowDoubleView = () => {
       setShowDoubleView(window.innerWidth > 700 ? true : false);
-    });
+    };
+
+    handleShowDoubleView();
+
+    window.addEventListener("resize", handleShowDoubleView);
 
     return () => {
-      window.removeEventListener("resize", () => {
-        setShowDoubleView(window.innerWidth > 700 ? true : false);
-      });
+      window.removeEventListener("resize", handleShowDoubleView);
     };
   }, []);
 

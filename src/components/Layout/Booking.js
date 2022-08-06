@@ -106,19 +106,19 @@ const Booking = ({ shelter }) => {
     sendHttpRequest(userData);
   };
 
-  const handleHideCalendar = useCallback(() => {
-    if (showCalendar.show) {
-      setShowCalendar({ show: false, input: null });
-    }
-  }, [showCalendar.show]);
-
   useEffect(() => {
+    const handleHideCalendar = () => {
+      if (showCalendar.show) {
+        setShowCalendar({ show: false, input: null });
+      }
+    };
+
     window.addEventListener("click", handleHideCalendar);
 
     return () => {
       window.removeEventListener("click", handleHideCalendar);
     };
-  }, [handleHideCalendar]);
+  }, [showCalendar.show]);
 
   const handleCalendarDisplay = (input) => {
     if (input === "from") {

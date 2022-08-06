@@ -61,10 +61,11 @@ const Gallery = () => {
       setShowModal(true);
     }
   };
-
-  const handleAddPicture = async (file, url) => {
+  const [test, setTest] = useState("");
+  const handleAddPicture = (file) => {
+    setTest(URL.createObjectURL(file));
     const formData = new FormData();
-    formData.append("file", fileInputRef.current.files[0]);
+    formData.append("file", file);
 
     postPictureHttpRequest(formData);
   };

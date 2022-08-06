@@ -6,36 +6,32 @@ export const createImage = (url) =>
     image.src = url;
   });
 
-export default async function getCroppedImg(imageSrc, pixelCrop) {
-  const image = await createImage(imageSrc);
-  //   const { width, height } = image.getBoundingClientRect();
+export default async function getCroppedImg(url, pixelCrop) {
+  const image = await createImage(url);
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
 
-  if (!ctx) {
-    return null;
-  }
+  if (!ctx) return null;
+
+  canvas.width = image.height;
+  canvas.height = image.height;
 
   ctx.drawImage(
     image,
     pixelCrop.x,
     pixelCrop.y,
-    pixelCrop.Largeur,
-    pixelCrop.Hauteur
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    image.width,
+    image.height
   );
 
-  // set canvas width to final desired crop size - this will clear existing context
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
-
-  // As Base64 string
-  // return canvas.toDataURL('image/jpeg');
-
-  // As a blob
   return new Promise((resolve, _) => {
     canvas.toBlob((file) => {
       file.name = "cropped.jpeg";
-      resolve({ file, url: URL.createObjectURL(file) });
+      resolve(file);
     }, "image/jpeg");
   });
 }
