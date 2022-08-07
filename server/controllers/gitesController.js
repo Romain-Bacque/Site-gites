@@ -15,7 +15,7 @@ const gitesController = {
 
       res.send(200);
     } catch (err) {
-      console.log(err.message);
+      console.trace(err);
       res.status(404).json({ message: err.message });
     }
   },
@@ -27,6 +27,7 @@ const gitesController = {
         res.status(200).json({ ratesData: allRates[0] });
       } else throw new Error();
     } catch (err) {
+      console.trace(err);
       res.status(404).json({ message: err.message });
     }
   },
@@ -47,6 +48,7 @@ const gitesController = {
 
       res.status(200).json({ ratesData: allRates });
     } catch (err) {
+      console.trace(err);
       res.status(404).json({ message: err.message });
     }
   },
@@ -64,6 +66,7 @@ const gitesController = {
         throw new Error();
       }
     } catch (err) {
+      console.trace(err);
       res.status(404).json({ message: err.message });
     }
   },

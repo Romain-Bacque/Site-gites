@@ -91,7 +91,7 @@ const adminController = {
 
       if (!shelter) throw new Error();
 
-      const image = await Image.create({
+      await Image.create({
         shelter: shelter._id,
         url: path,
         filename,
