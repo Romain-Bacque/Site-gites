@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import useHttp from "../../hooks/use-http";
+
+import { getPictureRequest } from "../../lib/api";
 import classes from "./Gallery.module.css";
 import image from "../../img/gite1_large.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,11 +20,17 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import CropContent from "./crop/CropContent";
+import Loader from "./Loader";
 
 //variable qui stocke le nombre de slides par gite qui s'affiche à l'écran
 let slidesPerView = 1;
 
 const Gallery = () => {
+  const {
+    sendHttpRequest: getPictureHttpRequest,
+    statut: getPictureStatut,
+    data: imagesData,
+  } = useHttp(getPictureRequest);
   const fileInputRef = useRef();
   const [imagesList, setImagesList] = useState([]);
   const [urlFile, setUrlFile] = useState(null);
@@ -73,6 +82,10 @@ const Gallery = () => {
     };
   }, [handleHideBubble]);
 
+  useEffect(() => {
+    getPictureHttpRequest();
+  }, [getPictureHttpRequest]);
+
   if (dimensions.width < 600) {
     slidesPerView = 1;
   } else if (dimensions.width > 600 && dimensions.width < 1250) {
@@ -89,7 +102,7 @@ const Gallery = () => {
       >
         {
           <CropContent
-            getImagesList={(data) => setImagesList(data)}
+            getImagesList={() => setImagesList(imagesData)}
             shelterNumber="0"
             url={urlFile}
           />
@@ -110,6 +123,16 @@ const Gallery = () => {
             accept="image/*"
           />
         </div>
+      )}
+      {getPictureStatut && (
+        <Loader
+          statut={getPictureStatut}
+          onSuccess={(data) => setImagesList(data)}
+          message={{
+            success: null,
+            error: "Affichage des images impossible.",
+          }}
+        />
       )}
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, A11y]}

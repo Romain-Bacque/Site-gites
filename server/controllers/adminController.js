@@ -51,6 +51,30 @@ const adminController = {
       res.status(404).json({ message: err.message });
     }
   },
+  allImages: async function (req, res) {
+    try {
+      const shelter = await Shelter.findOne(
+        { number: shelterNumber },
+        { _id: 1 }
+      );
+
+      if (!shelter) throw new Error();
+
+      const image = await Image.create({
+        shelter: shelter._id,
+        url: path,
+        filename,
+      });
+
+      const images = await Image.find({ shelter: shelter._id });
+      if (images) {
+        res.status(200).json({ imagesData: images });
+      } else throw new Error();
+    } catch (err) {
+      console.trace(err);
+      res.status(404).json({ message: err.message });
+    }
+  },
   addImage: async function (req, res) {
     const shelterNumber = parseInt(req.body.shelterNumber);
     const { path, filename } = req.file;

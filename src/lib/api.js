@@ -101,6 +101,15 @@ export const ratesPostRequest = async (data) => {
 
 // // Gallery
 
+// Get Picture
+export const getPictureRequest = async (data) => {
+  const response = await axios.get("/admin/gallery", data);
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.imagesData;
+};
+
 // Add Picture
 export const postPictureRequest = async (data) => {
   const response = await axios.post("/admin/gallery", data, {
