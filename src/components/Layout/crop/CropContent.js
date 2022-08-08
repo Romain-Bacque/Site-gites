@@ -40,10 +40,8 @@ const CropContent = ({ shelterNumber, url, getImagesList }) => {
         console.trace(err);
       }
     },
-    [cropDatas, postPictureHttpRequest]
+    [cropDatas, postPictureHttpRequest, shelterNumber]
   );
-
-  console.log("test", imagesData);
 
   return (
     <div

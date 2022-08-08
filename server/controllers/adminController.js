@@ -18,7 +18,7 @@ const adminController = {
     const bookingId = parseInt(req.params.bookingId);
 
     try {
-      assert.ok(!isNaN(shelterId), "bookingId must be a number.");
+      assert.ok(!isNaN(bookingId), "bookingId must be a number.");
 
       const booking = await Booking.findOneAndUpdate(
         { _id: bookingId },
@@ -39,7 +39,7 @@ const adminController = {
     const bookingId = parseInt(req.params.bookingId);
 
     try {
-      assert.ok(!isNaN(shelterId), "bookingId must be a number.");
+      assert.ok(!isNaN(bookingId), "bookingId must be a number.");
 
       const booking = await Booking.findOneAndDelete({ _id: bookingId });
 
@@ -53,20 +53,11 @@ const adminController = {
   },
   allImages: async function (req, res) {
     try {
-      const shelter = await Shelter.findOne(
-        { number: shelterNumber },
-        { _id: 1 }
+      const images = await Image.find({}, { filename: 0 }).populate(
+        "shelter",
+        "number"
       );
 
-      if (!shelter) throw new Error();
-
-      const image = await Image.create({
-        shelter: shelter._id,
-        url: path,
-        filename,
-      });
-
-      const images = await Image.find({ shelter: shelter._id });
       if (images) {
         res.status(200).json({ imagesData: images });
       } else throw new Error();

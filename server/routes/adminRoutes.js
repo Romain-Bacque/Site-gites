@@ -21,12 +21,12 @@ router.delete(
   catchAsync(adminController.refuseBooking)
 );
 
-router.get("/gallery", catchAsync(adminController.allImages));
-
-router.post(
-  "/gallery",
-  checkLogged,
-  upload.single("file"),
-  catchAsync(adminController.addImage)
-);
+router
+  .route("/gallery")
+  .get(catchAsync(adminController.allImages))
+  .post(
+    checkLogged,
+    upload.single("file"),
+    catchAsync(adminController.addImage)
+  );
 module.exports = router;
