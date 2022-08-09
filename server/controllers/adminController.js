@@ -1,5 +1,6 @@
 const { Booking, Shelter, Image } = require("../models");
 const assert = require("assert");
+const { cloudinary } = require("../cloudinary");
 
 const adminController = {
   allBooking: async function (_, res) {
@@ -15,10 +16,10 @@ const adminController = {
     }
   },
   acceptBooking: async function (req, res) {
-    const bookingId = parseInt(req.params.bookingId);
+    const bookingId = req.params.bookingId;
 
     try {
-      assert.ok(!isNaN(bookingId), "bookingId must be a number.");
+      assert.ok(bookingId, "bookingId doesn't not exists or is null.");
 
       const booking = await Booking.findOneAndUpdate(
         { _id: bookingId },
@@ -36,10 +37,10 @@ const adminController = {
     }
   },
   refuseBooking: async function (req, res) {
-    const bookingId = parseInt(req.params.bookingId);
+    const bookingId = req.params.bookingId;
 
     try {
-      assert.ok(!isNaN(bookingId), "bookingId must be a number.");
+      assert.ok(bookingId, "bookingId doesn't not exists or is null.");
 
       const booking = await Booking.findOneAndDelete({ _id: bookingId });
 
@@ -73,7 +74,7 @@ const adminController = {
     try {
       assert.ok(!isNaN(shelterNumber), "shelterNumber must be a number.");
       assert.ok(path, "path doesn't not exists or is null.");
-      assert.ok(filename, "path doesn't not exists or is null.");
+      assert.ok(filename, "filename doesn't not exists or is null.");
 
       const shelter = await Shelter.findOne(
         { number: shelterNumber },
@@ -88,7 +89,45 @@ const adminController = {
         filename,
       });
 
-      const images = await Image.find({ shelter: shelter._id });
+      const images = await Image.find(
+        { shelter: shelter._id },
+        { filename: 0 }
+      ).populate("shelter", "number");
+      if (images) {
+        res.status(200).json({ imagesData: images });
+      } else throw new Error();
+    } catch (err) {
+      console.trace(err);
+      res.status(404).json({ message: err.message });
+    }
+  },
+  deleteImage: async function (req, res) {
+    const imageId = req.params.imageId;
+
+    try {
+      assert.ok(imageId, "doesn't not exists or is null.");
+
+      const image = await Image.findById(imageId, { filename: 1 }).populate(
+        "shelter",
+        "number"
+      );
+
+      if (!image) throw new Error();
+
+      const shelterNumber = image.shelter.number;
+
+      await cloudinary.uploader.destroy(image.filename);
+
+      await image.deleteOne({ filename: image.filename });
+
+      const images = await Image.find()
+        .populate({
+          path: "shelter",
+          match: { number: shelterNumber },
+          select: "number",
+        })
+        .exec();
+
       if (images) {
         res.status(200).json({ imagesData: images });
       } else throw new Error();

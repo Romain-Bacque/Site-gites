@@ -5,7 +5,6 @@ import { getPictureRequest } from "../lib/api";
 import Gallery from "../components/Layout/Gallery";
 import Loader from "../components/Layout/Loader";
 
-let filteredImagesList1, filteredImagesList2;
 const GalleryPage = () => {
   const {
     sendHttpRequest: getPictureHttpRequest,
@@ -16,15 +15,6 @@ const GalleryPage = () => {
   useEffect(() => {
     getPictureHttpRequest();
   }, [getPictureHttpRequest]);
-
-  if (imagesData) {
-    filteredImagesList1 = imagesData.filter(
-      (image) => image.shelter.number === 0
-    );
-    filteredImagesList2 = imagesData.filter(
-      (image) => image.shelter.number === 1
-    );
-  }
 
   return (
     <>
@@ -39,8 +29,18 @@ const GalleryPage = () => {
       )}
       {imagesData && (
         <>
-          <Gallery imagesList={filteredImagesList1} shelterNumber={0} />
-          <Gallery imagesList={filteredImagesList2} shelterNumber={1} />
+          <Gallery
+            imagesData={imagesData.filter(
+              (image) => image.shelter.number === 0
+            )}
+            shelter={0}
+          />
+          <Gallery
+            imagesData={imagesData.filter(
+              (image) => image.shelter.number === 1
+            )}
+            shelter={1}
+          />
         </>
       )}
     </>

@@ -103,7 +103,7 @@ export const ratesPostRequest = async (data) => {
 
 // Get Picture
 export const getPictureRequest = async (data) => {
-  const response = await axios.get(`/admin/gallery?number=${data}`);
+  const response = await axios.get(`/admin/gallery`);
 
   if (response.status !== 200) throw new Error();
 
@@ -115,6 +115,24 @@ export const postPictureRequest = async (data) => {
   const response = await axios.post("/admin/gallery", data, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.imagesData;
+};
+
+// Edit Picture
+export const editPictureRequest = async (data) => {
+  const response = await axios.patch("/admin/gallery", data);
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.imagesData;
+};
+
+// Delete Picture
+export const deletePictureRequest = async (imageId) => {
+  const response = await axios.delete(`/admin/gallery/${imageId}`);
 
   if (response.status !== 200) throw new Error();
 

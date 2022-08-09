@@ -1,13 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
+import useHttp from "../../hooks/use-http";
 
+import { deletePictureRequest } from "../../lib/api";
 import classes from "./Gallery.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPen,
-  faTrashCan,
-  faPenToSquare,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../UI/Modal";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -19,38 +17,65 @@ import "swiper/css/scrollbar";
 import CropContent from "./crop/CropContent";
 import Loader from "./Loader";
 
-//variable qui stocke le nombre de slides par gite qui s'affiche à l'écran
+// Variable qui stocke le nombre de slides par gite qui s'affiche à l'écran
 let slidesPerView = 1;
-
-const Gallery = ({ imagesList, shelterNumber }) => {
-  const fileInputRef = useRef();
-  const [updatedImagesList, setUpdatedImagesList] = useState(...imagesList);
+const Gallery = ({ imagesData: shelterImages, shelter }) => {
+  const {
+    sendHttpRequest: deletePictureHttpRequest,
+    statut: deletePictureStatut,
+    data: imagesData,
+  } = useHttp(deletePictureRequest);
+  const [imagesList, setImagesList] = useState(shelterImages);
   const [urlFile, setUrlFile] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [showBubble, setShowBubble] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
   });
+  const imageRef = useRef();
   const isAuth = useSelector((state) => state.auth.isAuthentificated);
 
-  const handleHideBubble = useCallback(() => {
-    if (showBubble) {
-      setShowBubble(false);
-    }
-  }, [showBubble]);
+  const handleDeleteAlert = (value, event) => {
+    imageRef.current = event.target.dataset.imageId;
 
-  const handleBubbleShow = (event) => {
-    event.stopPropagation();
+    setShowModal({
+      show: value,
+      crop: false,
+      deleteAlert: true,
+    });
+  };
 
-    setShowBubble((prevShowBubble) => !prevShowBubble);
+  const handleDeleteImage = (value) => {
+    setShowModal({
+      show: value,
+      crop: false,
+      deleteAlert: true,
+    });
+    setShowLoader(true);
+
+    deletePictureHttpRequest(imageRef.current);
   };
 
   const handleFileValueChange = (event) => {
     if (event.target.files[0]) {
       setUrlFile(URL.createObjectURL(event.target.files[0]));
       event.target.value = null;
-      setShowModal(true);
+      setShowModal({
+        show: true,
+        crop: true,
+        deleteAlert: false,
+      });
     }
+  };
+
+  const handleLoader = () => {
+    setImagesList(imagesData);
+    setShowLoader(false);
+  };
+
+  const handleModal = (updatedList) => {
+    setImagesList(updatedList);
+    setShowModal((prevState) => ({ ...prevState, show: false }));
   };
 
   useEffect(() => {
@@ -59,21 +84,12 @@ const Gallery = ({ imagesList, shelterNumber }) => {
         width: window.innerWidth,
       });
     }
-
     window.addEventListener("resize", handleResize);
 
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  useEffect(() => {
-    window.addEventListener("click", handleHideBubble);
-
-    return () => {
-      window.removeEventListener("click", handleHideBubble);
-    };
-  }, [handleHideBubble]);
 
   if (dimensions.width < 600) {
     slidesPerView = 1;
@@ -84,30 +100,41 @@ const Gallery = ({ imagesList, shelterNumber }) => {
   return (
     <>
       <Modal
-        show={showModal}
+        show={showModal.show}
         onHide={() => {
-          setShowModal(false);
+          setShowModal((prevState) => ({ ...prevState, show: false }));
         }}
       >
-        {
+        {showModal.crop && (
           <CropContent
-            getImagesList={setUpdatedImagesList}
-            shelterNumber={shelterNumber}
+            getImagesList={handleModal}
+            shelterNumber={shelter}
             url={urlFile}
           />
-        }
+        )}
+        {showModal.deleteAlert && (
+          <div>
+            <p>Etes-vous sûr de vouloir supprimer cette image ?</p>
+            <div>
+              <button onClick={handleDeleteImage.bind(null, false)}>Oui</button>
+              <button onClick={handleDeleteAlert.bind(null, false)}>Non</button>
+            </div>
+          </div>
+        )}
       </Modal>
       {isAuth && (
         <div>
-          <label htmlFor="files" className={classes["file-button"]}>
-            Choisir une photo
+          <label
+            htmlFor={`files-shelter${shelter}`}
+            className={classes["file-button"]}
+          >
+            Ajouter une photo
           </label>
           <input
-            id="files"
+            id={`files-shelter${shelter}`}
             style={{ visibility: "hidden" }}
             type="file"
             name="file"
-            ref={fileInputRef}
             onChange={handleFileValueChange}
             accept="image/*"
           />
@@ -121,40 +148,38 @@ const Gallery = ({ imagesList, shelterNumber }) => {
         pagination={{ clickable: true }}
         className={classes.swiper}
       >
-        {imagesList &&
+        {showLoader && (
+          <Loader
+            statut={deletePictureStatut}
+            onSuccess={handleLoader}
+            message={{
+              success: "Suppression réussi.",
+              error: "Suppression impossible.",
+            }}
+          />
+        )}
+        {imagesList && imagesList.length ? (
           imagesList.map((image) => (
             <SwiperSlide key={image._id} className={classes.swiper__slide}>
-              {isAuth && showBubble && (
-                <div
-                  onClick={(event) => event.stopPropagation()}
-                  className={classes.bubble}
-                >
-                  <button className={classes.bubble__button}>
-                    <FontAwesomeIcon
-                      className={classes.bubble__icon}
-                      icon={faTrashCan}
-                    />
-                    Supprimer la photo
-                  </button>
-                  <button className={classes.bubble__button}>
-                    <FontAwesomeIcon
-                      className={classes.bubble__icon}
-                      icon={faPenToSquare}
-                    />
-                    Modifier la photo
-                  </button>
-                </div>
-              )}
               {isAuth && (
-                <FontAwesomeIcon
-                  onClick={handleBubbleShow}
+                <div
+                  data-image-id={image._id}
+                  onClick={handleDeleteAlert.bind(null, true)}
                   className={classes.swiper__icon}
-                  icon={faPen}
-                />
+                  title="Supprimer l'image"
+                >
+                  <FontAwesomeIcon
+                    style={{ pointerEvents: "none" }}
+                    icon={faTrash}
+                  />
+                </div>
               )}
               <img className={classes.image} alt="image" src={image.url} />
             </SwiperSlide>
-          ))}
+          ))
+        ) : (
+          <p>Il n'y a aucune image.</p>
+        )}
         <p className="space" />
       </Swiper>
     </>

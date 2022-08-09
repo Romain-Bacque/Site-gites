@@ -29,4 +29,11 @@ router
     upload.single("file"),
     catchAsync(adminController.addImage)
   );
+
+router.delete(
+  "/gallery/:imageId",
+  checkLogged,
+  catchAsync(adminController.deleteImage)
+);
+
 module.exports = router;

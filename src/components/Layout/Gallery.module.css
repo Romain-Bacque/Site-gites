@@ -28,57 +28,6 @@
   width: 100%;
 }
 
-.bubble {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1rem;
-  font-family: sans-serif;
-  font-size: 18px;
-  line-height: 24px;
-  top: 2rem;
-  left: 65px;
-  width: 150px;
-  background: #fff;
-  border-radius: 5px;
-  padding: 24px;
-  text-align: center;
-  color: #000;
-}
-
-.bubble:before {
-  content: "";
-  width: 0px;
-  height: 0px;
-  position: absolute;
-  border-left: 12px solid transparent;
-  border-right: 12px solid white;
-  border-top: 0 solid white;
-  border-bottom: 12px solid transparent;
-  left: -20px;
-  top: 10px;
-}
-
-.bubble__button {
-  cursor: pointer;
-  text-align: start;
-  font-weight: bolder;
-  color: rgb(69, 69, 69);
-  border: none;
-  padding: 0.5rem;
-  border-radius: 5px;
-  background: none;
-}
-
-.bubble__button:hover {
-  background: rgb(231, 231, 231);
-}
-
-.bubble__icon {
-  margin-right: 0.5rem;
-}
-
 .crop-backdrop {
   position: absolute;
   z-index: 2;

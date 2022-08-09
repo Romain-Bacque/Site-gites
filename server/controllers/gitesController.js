@@ -13,7 +13,7 @@ const gitesController = {
       });
       await newBooking.save();
 
-      res.send(200);
+      res.sendStatus(200);
     } catch (err) {
       console.trace(err);
       res.status(404).json({ message: err.message });

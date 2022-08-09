@@ -2,7 +2,7 @@ const { User } = require("../models");
 const jwt = require("jsonwebtoken");
 
 const cookieConfig = {
-  expire: 360000 + Date.now(),
+  expire: new Date(Date.now() + 900000),
   httpOnly: true,
   secure: false,
 };
@@ -29,7 +29,7 @@ const authController = {
           message: "access unauthorized",
         });
       }
-      res.send(200);
+      res.sendStatus(200);
     });
   },
   login: async function (req, res) {
@@ -41,7 +41,7 @@ const authController = {
 
         const accessToken = generateAccessToken(user);
 
-        res.cookie("accessToken", accessToken, cookieConfig).send(200);
+        res.cookie("accessToken", accessToken, cookieConfig).sendStatus(200);
       } else throw new Error();
     } catch (err) {
       console.trace(err);
@@ -63,7 +63,7 @@ const authController = {
       await newUser.save();
 
       const accessToken = generateAccessToken({ username, email });
-      res.cookie("accessToken", accessToken, cookieConfig).send(200);
+      res.cookie("accessToken", accessToken, cookieConfig).sendStatus(200);
     } catch (err) {
       console.trace(err);
       res.status(404).json({ message: err.message });
@@ -71,7 +71,7 @@ const authController = {
   },
   logout: function (req, res) {
     if (req.cookies.accessToken) {
-      res.clearCookie("accessToken").send(200);
+      res.clearCookie("accessToken").sendStatus(200);
     }
   },
 };

@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 
 import classes from "./Loader.module.css";
 
-const Loader = (props) => {
+const Loader = ({ onSuccess, statut, message }) => {
   const [statutContent, setStatutContent] = useState();
-
-  const { onSuccess, statut, message } = props;
 
   useEffect(() => {
     if (statut === "send") {
