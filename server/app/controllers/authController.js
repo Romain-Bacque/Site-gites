@@ -1,8 +1,9 @@
 const { User } = require("../models");
 const jwt = require("jsonwebtoken");
+const ExpressError = require("../utilities/ExpressError");
 
 const cookieConfig = {
-  expire: new Date(Date.now() + 900000),
+  expires: new Date(Date.now() + 900000),
   httpOnly: true,
   secure: false,
 };
@@ -18,16 +19,12 @@ const authController = {
     const token = req.cookies.accessToken;
 
     if (!token) {
-      return res.status(401).json({
-        message: "access unauthorized",
-      });
+      throw new ExpressError("access unauthorized", 401);
     }
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err) => {
       if (err) {
-        return res.status(401).json({
-          message: "access unauthorized",
-        });
+        throw new ExpressError("access unauthorized", 401);
       }
       res.sendStatus(200);
     });
@@ -42,10 +39,10 @@ const authController = {
         const accessToken = generateAccessToken(user);
 
         res.cookie("accessToken", accessToken, cookieConfig).sendStatus(200);
-      } else throw new Error();
+      } else throw new ExpressError("access unauthorized", 401);
     } catch (err) {
       console.trace(err);
-      res.status(401).json({ message: err.message });
+      next(err);
     }
   },
   register: async function (req, res) {
@@ -57,7 +54,8 @@ const authController = {
         email,
       });
 
-      if (userExist.length) throw new Error("This user already exists.");
+      if (userExist.length)
+        throw new ExpressError("This user already exists", 409);
 
       const newUser = new User({ username, password, email });
       await newUser.save();
@@ -66,7 +64,7 @@ const authController = {
       res.cookie("accessToken", accessToken, cookieConfig).sendStatus(200);
     } catch (err) {
       console.trace(err);
-      res.status(404).json({ message: err.message });
+      next(err);
     }
   },
   logout: function (req, res) {

@@ -1,4 +1,5 @@
 const { Rates, Booking, Shelter } = require("../models");
+const ExpressError = require("../utilities/ExpressError");
 
 const gitesController = {
   postBooking: async function (req, res) {
@@ -16,7 +17,7 @@ const gitesController = {
       res.sendStatus(200);
     } catch (err) {
       console.trace(err);
-      res.status(404).json({ message: err.message });
+      next(err);
     }
   },
   getRates: async function (_, res) {
@@ -25,10 +26,10 @@ const gitesController = {
 
       if (allRates[0]) {
         res.status(200).json({ ratesData: allRates[0] });
-      } else throw new Error();
+      } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
       console.trace(err);
-      res.status(404).json({ message: err.message });
+      next(err);
     }
   },
   editRates: async function (req, res) {
@@ -40,34 +41,30 @@ const gitesController = {
         { username: "famille-bacque", price1, price2, price3 },
         { upsert: true },
         (err) => {
-          if (err) {
-            throw err;
-          }
+          if (err) throw new ExpressError("Internal Server Error", 500);
         }
       );
 
       res.status(200).json({ ratesData: allRates });
     } catch (err) {
       console.trace(err);
-      res.status(404).json({ message: err.message });
+      next(err);
     }
   },
   getDisabledDates: async function (req, res) {
     try {
       const allDisabledDates = await Booking.find({})
         .where("booked")
-        .equals("true");
+        .equals(true);
 
       if (allDisabledDates) {
         res.status(200).json({
           disabledDatesData: allDisabledDates,
         });
-      } else {
-        throw new Error();
-      }
+      } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
       console.trace(err);
-      res.status(404).json({ message: err.message });
+      next(err);
     }
   },
 };

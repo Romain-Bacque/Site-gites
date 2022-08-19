@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useSelector } from "react-redux";
 import useHttp from "../../hooks/use-http";
 
@@ -16,6 +16,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import CropContent from "./crop/CropContent";
 import Loader from "./Loader";
+import { Transition } from "react-transition-group";
 
 // Variable qui stocke le nombre de slides par gite qui s'affiche à l'écran
 let slidesPerView = 1;
@@ -29,6 +30,7 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
   const [urlFile, setUrlFile] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+  const [showDeleteMessage, setShowDeleteMessage] = useState(false);
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
   });
@@ -45,11 +47,11 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
     });
   };
 
-  const handleDeleteImage = (value) => {
+  const handleDeleteImage = () => {
     setShowModal({
-      show: value,
+      show: false,
       crop: false,
-      deleteAlert: true,
+      deleteAlert: false,
     });
     setShowLoader(true);
 
@@ -68,10 +70,15 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
     }
   };
 
-  const handleLoader = () => {
-    setImagesList(imagesData);
+  const handleLoader = useCallback(() => {
+    const filteredImagesData = imagesData.filter(
+      (image) => parseInt(shelter) === parseInt(image.shelter?.number)
+    );
+
+    setShowDeleteMessage(true);
     setShowLoader(false);
-  };
+    setImagesList(filteredImagesData);
+  }, [imagesData]);
 
   const handleModal = (updatedList) => {
     setImagesList(updatedList);
@@ -97,6 +104,20 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
     slidesPerView = 2;
   } else slidesPerView = 3;
 
+  useEffect(() => {
+    let timer;
+
+    if (showDeleteMessage) {
+      timer = setTimeout(() => {
+        setShowDeleteMessage(false);
+      }, 4000);
+    }
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [showDeleteMessage]);
+
   return (
     <>
       <Modal
@@ -116,29 +137,50 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
           <div>
             <p>Etes-vous sûr de vouloir supprimer cette image ?</p>
             <div>
-              <button onClick={handleDeleteImage.bind(null, false)}>Oui</button>
+              <button onClick={handleDeleteImage}>Oui</button>
               <button onClick={handleDeleteAlert.bind(null, false)}>Non</button>
             </div>
           </div>
         )}
       </Modal>
       {isAuth && (
-        <div>
-          <label
-            htmlFor={`files-shelter${shelter}`}
-            className={classes["file-button"]}
+        <>
+          <Transition
+            mountOnEnter
+            unmountOnExit
+            in={showDeleteMessage}
+            timeout={4000}
           >
-            Ajouter une photo
-          </label>
-          <input
-            id={`files-shelter${shelter}`}
-            style={{ visibility: "hidden" }}
-            type="file"
-            name="file"
-            onChange={handleFileValueChange}
-            accept="image/*"
-          />
-        </div>
+            {(state) => {
+              const cssClasses =
+                state === "exiting" ? "delete-message--hide" : null;
+
+              return (
+                <span
+                  className={`${classes["delete-message"]} ${classes[cssClasses]}`}
+                >
+                  Image supprimé
+                </span>
+              );
+            }}
+          </Transition>
+          <div>
+            <label
+              htmlFor={`files-shelter${shelter}`}
+              className={classes["file-button"]}
+            >
+              Ajouter une photo
+            </label>
+            <input
+              id={`files-shelter${shelter}`}
+              style={{ visibility: "hidden" }}
+              type="file"
+              name="file"
+              onChange={handleFileValueChange}
+              accept="image/*"
+            />
+          </div>
+        </>
       )}
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, A11y]}
@@ -148,16 +190,15 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
         pagination={{ clickable: true }}
         className={classes.swiper}
       >
-        {showLoader && (
-          <Loader
-            statut={deletePictureStatut}
-            onSuccess={handleLoader}
-            message={{
-              success: "Suppression réussi.",
-              error: "Suppression impossible.",
-            }}
-          />
-        )}
+        <Loader
+          show={showLoader}
+          statut={deletePictureStatut}
+          onSuccess={handleLoader}
+          message={{
+            success: "Suppression réussi.",
+            error: "Suppression impossible.",
+          }}
+        />
         {imagesList && imagesList.length ? (
           imagesList.map((image) => (
             <SwiperSlide key={image._id} className={classes.swiper__slide}>

@@ -93,16 +93,9 @@ const AllBookings = () => {
           {bookingsList.map((booking) => (
             <Card className={classes["booking"]} key={booking._id}>
               <li>
-                <figure className={classes["booking__figure"]}>
-                  <img
-                    className={classes["booking__img"]}
-                    src={booking.shelter.images && booking.shelter.images[0]}
-                    alt={`Image de ${booking.shelter.title}`}
-                  />
-                  <figcaption className={classes["booking__figcaption"]}>
-                    {booking.shelter.title}
-                  </figcaption>
-                </figure>
+                <h3 className={classes["booking__title"]}>
+                  {booking.shelter.title}
+                </h3>
                 <div className={classes["booking__container"]}>
                   <div className={classes["booking__user-datas"]}>
                     <div className={classes["booking__name"]}>

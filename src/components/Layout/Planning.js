@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 dayjs().format();
 
 const Planning = ({ className, onDateChoice, doubleView }) => {
+  const [showLoader, setShowLoader] = useState(false);
   const [planningContent, setPlanningContent] = useState(null);
   const [currentDay] = useState(new Date());
 
@@ -22,6 +23,7 @@ const Planning = ({ className, onDateChoice, doubleView }) => {
   } = useHttp(disabledDatesRequest);
 
   useEffect(() => {
+    setShowLoader(true);
     disabledDatesHttpRequest();
   }, [disabledDatesHttpRequest]);
 
@@ -33,6 +35,7 @@ const Planning = ({ className, onDateChoice, doubleView }) => {
   );
 
   const handleCalendarDisplay = useCallback(() => {
+    setShowLoader(false);
     setPlanningContent(
       <Calendar
         showDoubleView={doubleView}
@@ -67,11 +70,12 @@ const Planning = ({ className, onDateChoice, doubleView }) => {
   return (
     <>
       <Loader
+        show={showLoader}
         statut={disabledDateStatut}
         onSuccess={handleCalendarDisplay}
         message={{
           success: null,
-          error: "Le calendrier est malheureusement indisponible.",
+          error: "Le calendrier est indisponible.",
         }}
       />
       {planningContent}

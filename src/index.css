@@ -30,23 +30,6 @@ body::before {
   z-index: -1;
 }
 
-.message {
-  text-align: center;
-  font-weight: bold;
-  padding: 1rem 0;
-  margin: 0 0 1.5rem;
-}
-
-.message.information {
-  color: rgb(0, 76, 143);
-  border-bottom: 2px solid rgb(0, 76, 143);
-}
-
-.message.success {
-  color: rgb(7, 70, 19);
-  border-bottom: 2px solid rgb(7, 70, 19);
-}
-
 /* main */
 main {
   display: flex;

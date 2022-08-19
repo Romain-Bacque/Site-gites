@@ -114,3 +114,21 @@
   background: none;
   padding: 0.5rem;
 }
+
+.delete-message {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  z-index: 2;
+  font-weight: 500;
+  color: white;
+  background-color: rgb(105, 105, 105);
+  border-radius: 5px;
+  padding: 1rem 2rem;
+  opacity: 0.7;
+}
+
+.delete-message--hide {
+  opacity: 0;
+}

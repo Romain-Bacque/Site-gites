@@ -17,7 +17,7 @@ const Modal = (props) => {
 
   const animationTiming = {
     enter: 600,
-    exit: 1000,
+    exit: 0,
   };
 
   return (
@@ -27,26 +27,16 @@ const Modal = (props) => {
       in={props.show}
       timeout={animationTiming}
     >
-      {(state) => {
-        const modalClasses =
-          state === "entering"
-            ? "modalOpen"
-            : state === "exiting"
-            ? "modalClosed"
-            : null;
-        return (
-          <>
-            {ReactDOM.createPortal(
-              <Backdrop onClick={props.onHide} />,
-              document.getElementById("backdrop-root")
-            )}
-            {ReactDOM.createPortal(
-              <Overlay className={modalClasses}>{props.children}</Overlay>,
-              document.getElementById("overlay-root")
-            )}
-          </>
-        );
-      }}
+      <>
+        {ReactDOM.createPortal(
+          <Backdrop onClick={props.onHide} />,
+          document.getElementById("backdrop-root")
+        )}
+        {ReactDOM.createPortal(
+          <Overlay className={"modalOpen"}>{props.children}</Overlay>,
+          document.getElementById("overlay-root")
+        )}
+      </>
     </Transition>
   );
 };

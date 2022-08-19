@@ -1,6 +1,7 @@
 const { Booking, Shelter, Image } = require("../models");
 const assert = require("assert");
 const { cloudinary } = require("../cloudinary");
+const ExpressError = require("../utilities/ExpressError");
 
 const adminController = {
   allBooking: async function (_, res) {
@@ -8,11 +9,11 @@ const adminController = {
       const allBookings = await Booking.find().populate("shelter");
 
       if (allBookings) {
-        res.status(200).json({ data: allBookings });
+        res.status(200).json({ bookingsData: allBookings });
       } else throw new Error();
     } catch (err) {
       console.trace(err);
-      res.status(404).json({ message: err.message });
+      next(err);
     }
   },
   acceptBooking: async function (req, res) {
@@ -29,11 +30,11 @@ const adminController = {
       );
 
       if (booking) {
-        res.status(200).json({ data: bookingsData });
+        res.sendStatus(200);
       } else throw new Error();
     } catch (err) {
       console.trace(err);
-      res.status(404).json({ message: err.message });
+      next(err);
     }
   },
   refuseBooking: async function (req, res) {
@@ -42,14 +43,16 @@ const adminController = {
     try {
       assert.ok(bookingId, "bookingId doesn't not exists or is null.");
 
-      const booking = await Booking.findOneAndDelete({ _id: bookingId });
+      const booking = await Booking.findOneAndDelete({
+        _id: bookingId,
+      });
 
       if (booking) {
-        res.status(200).json({ bookingsData: booking });
+        res.sendStatus(200);
       } else throw new Error();
     } catch (err) {
       console.trace(err);
-      res.status(404).json({ message: err.message });
+      next(err);
     }
   },
   allImages: async function (req, res) {
@@ -64,7 +67,7 @@ const adminController = {
       } else throw new Error();
     } catch (err) {
       console.trace(err);
-      res.status(404).json({ message: err.message });
+      next(err);
     }
   },
   addImage: async function (req, res) {
@@ -98,7 +101,7 @@ const adminController = {
       } else throw new Error();
     } catch (err) {
       console.trace(err);
-      res.status(404).json({ message: err.message });
+      next(err);
     }
   },
   deleteImage: async function (req, res) {
@@ -114,26 +117,23 @@ const adminController = {
 
       if (!image) throw new Error();
 
-      const shelterNumber = image.shelter.number;
+      const shelterId = image.shelter.id;
 
       await cloudinary.uploader.destroy(image.filename);
 
       await image.deleteOne({ filename: image.filename });
 
-      const images = await Image.find()
-        .populate({
-          path: "shelter",
-          match: { number: shelterNumber },
-          select: "number",
-        })
-        .exec();
+      const images = await Image.find({ shelter: shelterId }).populate(
+        "shelter",
+        "number"
+      );
 
       if (images) {
         res.status(200).json({ imagesData: images });
       } else throw new Error();
     } catch (err) {
       console.trace(err);
-      res.status(404).json({ message: err.message });
+      next(err);
     }
   },
 };
