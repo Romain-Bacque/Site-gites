@@ -149,6 +149,16 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
 
   return (
     <>
+      {showLoader && (
+        <Loader
+          statut={deletePictureStatut}
+          onRequestEnd={handleRequestEnd}
+          message={{
+            success: "Suppression réussi.",
+            error: "Suppression impossible.",
+          }}
+        />
+      )}
       <Modal
         show={showModal.show}
         onHide={() => {
@@ -206,16 +216,6 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
         pagination={{ clickable: true }}
         className={classes.swiper}
       >
-        {showLoader && (
-          <Loader
-            statut={deletePictureStatut}
-            onRequestEnd={handleRequestEnd}
-            message={{
-              success: "Suppression réussi.",
-              error: "Suppression impossible.",
-            }}
-          />
-        )}
         {imagesList && imagesList.length ? (
           imagesList.map((image) => (
             <SwiperSlide key={image._id} className={classes.swiper__slide}>

@@ -17,7 +17,7 @@ const GalleryPage = () => {
   }, [getPictureHttpRequest]);
 
   return (
-    <>
+    <section>
       {!imagesData && (
         <Loader
           statut={getPictureStatut}
@@ -43,7 +43,7 @@ const GalleryPage = () => {
           />
         </>
       )}
-    </>
+    </section>
   );
 };
 

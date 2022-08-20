@@ -87,13 +87,13 @@ const adminController = {
       if (!shelter) throw new ExpressError("Internal Server Error", 500);
 
       await Image.create({
-        shelter: shelter._id,
+        shelter_id: shelter._id,
         url: path,
         filename,
       });
 
       const images = await Image.find(
-        { shelter: shelter._id },
+        { shelter_id: shelter._id },
         { filename: 0 }
       ).populate("shelter_id", "number");
       if (images) {
@@ -117,13 +117,13 @@ const adminController = {
 
       if (!image) throw new ExpressError("Internal Server Error", 500);
 
-      const shelterId = image.shelter.id;
+      const shelterId = image.shelter_id._id;
 
       await cloudinary.uploader.destroy(image.filename);
 
       await image.deleteOne({ filename: image.filename });
 
-      const images = await Image.find({ shelter: shelterId }).populate(
+      const images = await Image.find({ shelter_id: shelterId }).populate(
         "shelter_id",
         "number"
       );

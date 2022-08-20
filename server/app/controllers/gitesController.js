@@ -1,4 +1,5 @@
 const { Rates, Booking, Shelter } = require("../models");
+const { findById } = require("../models/shelter");
 const ExpressError = require("../utilities/ExpressError");
 
 const gitesController = {
@@ -10,7 +11,7 @@ const gitesController = {
       const shelter = await Shelter.findOne({ number });
       const newBooking = await new Booking({
         ...newPayload,
-        shelter: shelter._id,
+        shelter_id: shelter._id,
       });
       await newBooking.save();
 
@@ -33,21 +34,27 @@ const gitesController = {
     }
   },
   editRates: async function (req, res, next) {
-    const { price1, price2, price3 } = req.body;
-
-    console.log(req.body);
+    const { price1, price2, price3, shelter } = req.body;
 
     try {
-      const allRates = await Rates.findOneAndUpdate(
-        { price1, price2, price3 },
-        { price1, price2, price3 },
-        { upsert: true },
-        (err) => {
-          if (err) throw new ExpressError("Internal Server Error", 500);
-        }
+      const { _id: shelterId } = await Shelter.findOne(
+        { number: shelter },
+        { _id: 1 }
       );
 
-      res.status(200).json({ ratesData: allRates });
+      if (shelterId) {
+        await Rates.findOneAndUpdate(
+          { shelter_id: shelterId },
+          { price1, price2, price3 },
+          { upsert: true }
+        )
+          .then(({ data: allRates }) => {
+            res.status(200).json({ ratesData: allRates });
+          })
+          .catch(() => {
+            throw new ExpressError("Internal Server Error", 500);
+          });
+      } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
       console.trace(err);
       next(err);

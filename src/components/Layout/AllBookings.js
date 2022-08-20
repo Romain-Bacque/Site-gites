@@ -62,85 +62,96 @@ const AllBookings = () => {
     [refuseBookingHttpRequest]
   );
 
-  const handleAllBookings = useCallback(() => {
-    setAllBookingsContent(
-      bookingsList?.length ? (
-        <ul className={classes["bookings__list"]}>
-          {bookingsList.map((booking) => (
-            <Card className={classes["booking"]} key={booking._id}>
-              <li>
-                <h3 className={classes["booking__title"]}>
-                  {booking.shelter.title}
-                </h3>
-                <div className={classes["booking__container"]}>
-                  <div className={classes["booking__user-datas"]}>
-                    <div className={classes["booking__name"]}>
-                      {booking.name}
-                    </div>
-                    <div className={classes["booking__contact"]}>
-                      <FontAwesomeIcon icon={faPhone} />
-                      <div>{booking.phone}</div>
-                    </div>
-                    <div className={classes["booking__contact"]}>
-                      <FontAwesomeIcon icon={faEnvelope} />
-                      <a href={`mailto:${booking.email}`}>{booking.email}</a>
-                    </div>
-                    <div className={classes["booking__date"]}>
-                      Du {dayjs(booking.from).format("DD/MM/YYYY")}
-                    </div>
-                    <div className={classes["booking__date"]}>
-                      Au {dayjs(booking.to).format("DD/MM/YYYY")}
-                    </div>
-                    <div className={classes["booking__statut"]}>
-                      <div>
-                        Statut:
-                        <span className={classes["booking__statut-content"]}>
-                          {booking.booked === true ? "Réservé" : "En attente"}
-                        </span>
+  const handleAllBookings = useCallback(
+    (statut) => {
+      if (statut === "success") {
+        setAllBookingsContent(
+          bookingsList?.length ? (
+            <ul className={classes["bookings__list"]}>
+              {bookingsList.map((booking) => (
+                <Card className={classes["booking"]} key={booking._id}>
+                  <li>
+                    <h3 className={classes["booking__title"]}>
+                      {booking.shelter.title}
+                    </h3>
+                    <div className={classes["booking__container"]}>
+                      <div className={classes["booking__user-datas"]}>
+                        <div className={classes["booking__name"]}>
+                          {booking.name}
+                        </div>
+                        <div className={classes["booking__contact"]}>
+                          <FontAwesomeIcon icon={faPhone} />
+                          <div>{booking.phone}</div>
+                        </div>
+                        <div className={classes["booking__contact"]}>
+                          <FontAwesomeIcon icon={faEnvelope} />
+                          <a href={`mailto:${booking.email}`}>
+                            {booking.email}
+                          </a>
+                        </div>
+                        <div className={classes["booking__date"]}>
+                          Du {dayjs(booking.from).format("DD/MM/YYYY")}
+                        </div>
+                        <div className={classes["booking__date"]}>
+                          Au {dayjs(booking.to).format("DD/MM/YYYY")}
+                        </div>
+                        <div className={classes["booking__statut"]}>
+                          <div>
+                            Statut:
+                            <span
+                              className={classes["booking__statut-content"]}
+                            >
+                              {booking.booked === true
+                                ? "Réservé"
+                                : "En attente"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className={classes["booking__informations"]}>
+                        <div className={classes["booking__informations-title"]}>
+                          Informations:
+                        </div>
+                        {booking.informations
+                          ? booking.informations
+                          : "Aucune information complémentaire."}
                       </div>
                     </div>
-                  </div>
-                  <div className={classes["booking__informations"]}>
-                    <div className={classes["booking__informations-title"]}>
-                      Informations:
-                    </div>
-                    {booking.informations
-                      ? booking.informations
-                      : "Aucune information complémentaire."}
-                  </div>
-                </div>
 
-                {!booking.booked && (
-                  <div className={classes["booking__actions"]}>
-                    <button
-                      className={`${classes["booking__button"]} ${classes["booking__button--accept"]}`}
-                      onClick={() => {
-                        handleAcceptBooking(booking._id);
-                      }}
-                    >
-                      Accepter
-                    </button>
-                    <button
-                      className={`${classes["booking__button"]} ${classes["booking__button--refuse"]}`}
-                      onClick={() => {
-                        handleRefuseBooking(booking._id);
-                      }}
-                    >
-                      Refuser
-                    </button>
-                  </div>
-                )}
-              </li>
-            </Card>
-          ))}
-        </ul>
-      ) : (
-        <p className="information message">
-          Il n'y a actuellement aucune réservation.
-        </p>
-      )
-    );
-  }, [bookingsList, handleAcceptBooking, handleRefuseBooking]);
+                    {!booking.booked && (
+                      <div className={classes["booking__actions"]}>
+                        <button
+                          className={`${classes["booking__button"]} ${classes["booking__button--accept"]}`}
+                          onClick={() => {
+                            handleAcceptBooking(booking._id);
+                          }}
+                        >
+                          Accepter
+                        </button>
+                        <button
+                          className={`${classes["booking__button"]} ${classes["booking__button--refuse"]}`}
+                          onClick={() => {
+                            handleRefuseBooking(booking._id);
+                          }}
+                        >
+                          Refuser
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                </Card>
+              ))}
+            </ul>
+          ) : (
+            <p className="information message">
+              Il n'y a actuellement aucune réservation.
+            </p>
+          )
+        );
+      }
+    },
+    [bookingsList, handleAcceptBooking, handleRefuseBooking]
+  );
 
   const handleSort = useCallback(
     (sort) => {

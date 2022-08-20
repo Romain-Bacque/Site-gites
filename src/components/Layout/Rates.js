@@ -6,9 +6,7 @@ import { ratesGetRequest, ratesPostRequest } from "../../lib/api";
 import Loader from "./Loader";
 import Alert from "../UI/Alert";
 
-let firstUse = true;
-
-const Rates = () => {
+const Rates = ({ shelter }) => {
   const [statutMessage, setStatutMessage] = useState({
     message: null,
     alert: null,
@@ -31,17 +29,16 @@ const Rates = () => {
     !isNaN(priceValues.price2) &&
     !isNaN(priceValues.price3);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
     if (!formIsValid) return;
-
-    firstUse = false;
 
     const data = {
       price1: priceValues.price1,
       price2: priceValues.price2,
       price3: priceValues.price3,
+      shelter,
     };
 
     postRatesHttpRequest(data);
