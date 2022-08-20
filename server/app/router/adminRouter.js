@@ -2,7 +2,7 @@ const adminController = require("../controllers/adminController");
 const { checkLogged } = require("../middlewares");
 const express = require("express");
 const multer = require("multer");
-const { storage } = require("../cloudinary");
+const { storage } = require("../utilities/cloudinary");
 const upload = multer({ storage });
 
 const router = express.Router();

@@ -5,10 +5,47 @@ import gite1_large from "../../img/gite1_large.jpg";
 import gite2_small from "../../img/gite2_small.jpg";
 import gite2_large from "../../img/gite2_large.jpg";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import Alert from "../UI/Alert";
+
+const initialState = {
+  message: null,
+  alert: null,
+  show: false,
+};
 
 const Home = () => {
+  const [statutMessage, setStatutMessage] = useState(initialState);
+  const isAuth = useSelector((state) => state.auth.isAuthentificated);
+
+  useEffect(() => {
+    let timer;
+
+    if (isAuth) {
+      setStatutMessage({
+        message: "Bienvenue !",
+        alert: "success",
+        show: true,
+      });
+
+      timer = setTimeout(() => {
+        setStatutMessage((prevState) => ({ ...prevState, show: false }));
+      }, 4000);
+    }
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isAuth]);
+
   return (
     <>
+      <Alert
+        message={statutMessage.message}
+        alert={statutMessage.alert}
+        show={statutMessage.show}
+      />
       <section>
         <Card className={classes.banner}>
           <button className={`${classes.button} ${classes["button--alpha"]}`}>

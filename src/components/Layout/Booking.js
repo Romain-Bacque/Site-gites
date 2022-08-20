@@ -14,6 +14,7 @@ import Planning from "./Planning";
 let modalContent;
 
 const Booking = ({ shelter }) => {
+  const [showLoader, setShowLoader] = useState(false);
   const { sendHttpRequest: bookingHttpRequest, statut: bookingStatut } =
     useHttp(bookingRequest);
   const [showModal, setShowModal] = useState(false);
@@ -106,6 +107,7 @@ const Booking = ({ shelter }) => {
     };
 
     bookingHttpRequest(userData);
+    setShowLoader(true);
   };
 
   useEffect(() => {
@@ -217,7 +219,12 @@ const Booking = ({ shelter }) => {
   return (
     <>
       <Modal show={showModal}>{modalContent}</Modal>
-      <Loader statut={bookingStatut} />
+      {showLoader && (
+        <Loader
+          statut={bookingStatut}
+          onRequestEnd={() => setShowLoader(false)}
+        />
+      )}
       <form className={classes.form} onSubmit={submitHandler}>
         <div className={classes["form__input-container"]}>
           <Input

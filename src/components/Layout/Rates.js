@@ -1,25 +1,28 @@
 import classes from "./Rates.module.css";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import { ratesGetRequest, ratesPostRequest } from "../../lib/api";
 import Loader from "./Loader";
+import Alert from "../UI/Alert";
 
 let firstUse = true;
-let ratesContent;
 
 const Rates = () => {
+  const [statutMessage, setStatutMessage] = useState({
+    message: null,
+    alert: null,
+    show: false,
+  });
+  const [showLoader, setShowLoader] = useState(false);
   const [priceValues, sePriceValues] = useState({
     price1: 1,
     price2: 1,
     price3: 1,
   });
   const isAuth = useSelector((state) => state.auth.isAuthentificated);
-  const {
-    sendHttpRequest: getRatesHttpRequest,
-    statut: getRatesStatut,
-    data: ratesData,
-  } = useHttp(ratesGetRequest);
+  const { sendHttpRequest: getRatesHttpRequest, data: ratesData } =
+    useHttp(ratesGetRequest);
   const { sendHttpRequest: postRatesHttpRequest, statut: postRatesStatut } =
     useHttp(ratesPostRequest);
 
@@ -42,6 +45,7 @@ const Rates = () => {
     };
 
     postRatesHttpRequest(data);
+    setShowLoader(true);
   };
 
   const handleValueChange = (event) => {
@@ -49,6 +53,22 @@ const Rates = () => {
       return { ...prevState, [event.target.id]: event.target.value };
     });
   };
+
+  const handleRequestEnd = useCallback((statut) => {
+    if (statut === "success") {
+      setStatutMessage({
+        message: "Prix enregistrés avec succés.",
+        alert: "information",
+        show: true,
+      });
+    } else
+      setStatutMessage({
+        message: "Enregistrement des prix impossible.",
+        alert: "error",
+        show: true,
+      });
+    setShowLoader(false);
+  }, []);
 
   useEffect(() => {
     if (ratesData) {
@@ -64,71 +84,91 @@ const Rates = () => {
     getRatesHttpRequest();
   }, [getRatesHttpRequest]);
 
-  if (!firstUse) {
-    if (getRatesStatut === "send" || postRatesStatut === "send") {
-      ratesContent = <Loader />;
-    } else if (postRatesStatut === "success") {
-      ratesContent = <span>Prix enregistrés avec succés !</span>;
-    } else if (postRatesStatut === "error") {
-      ratesContent = <span>Enregistrement des prix impossible.</span>;
+  useEffect(() => {
+    let timer;
+
+    if (statutMessage.show) {
+      timer = setTimeout(() => {
+        setStatutMessage((prevState) => ({ ...prevState, show: false }));
+      }, 4000);
     }
-  }
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [statutMessage.show]);
 
   return (
-    <form onSubmit={handleSubmit}>
-      {ratesContent}
-      <div className={classes["gites__grid-container"]}>
-        <p className={classes["gites__grid-items"]}>header1</p>
-        <p className={classes["gites__grid-items"]}>header2</p>
-        <p className={classes["gites__grid-items"]}>header3</p>
-        <div className={classes["gites__grid-items"]}>
-          <input
-            className={classes["gites__input"]}
-            value={priceValues.price1}
-            id="price1"
-            min="1"
-            max="9999"
-            onChange={handleValueChange}
-            type="number"
-            name="country"
-            disabled={isAuth ? false : true}
-            required
-          />
-          <span>€</span>
+    <>
+      <Alert
+        message={statutMessage.message}
+        alert={statutMessage.alert}
+        show={statutMessage.show}
+      />
+      {showLoader && (
+        <Loader
+          statut={postRatesStatut}
+          onRequestEnd={handleRequestEnd}
+          message={{
+            success: null,
+            error: null,
+          }}
+        />
+      )}
+      <form onSubmit={handleSubmit}>
+        <div className={classes["gites__grid-container"]}>
+          <p className={classes["gites__grid-items"]}>header1</p>
+          <p className={classes["gites__grid-items"]}>header2</p>
+          <p className={classes["gites__grid-items"]}>header3</p>
+          <div className={classes["gites__grid-items"]}>
+            <input
+              className={classes["gites__input"]}
+              value={priceValues.price1 || "non défini"}
+              id="price1"
+              min="1"
+              max="9999"
+              onChange={handleValueChange}
+              type="number"
+              name="country"
+              disabled={isAuth ? false : true}
+              required
+            />
+            <span>{priceValues.price1 && "€"}</span>
+          </div>
+          <div className={classes["gites__grid-items"]}>
+            <input
+              className={classes["gites__input"]}
+              value={priceValues.price2 || "non défini"}
+              id="price2"
+              min="1"
+              max="9999"
+              onChange={handleValueChange}
+              type="number"
+              name="country"
+              disabled={isAuth ? false : true}
+              required
+            />
+            <span>{priceValues.price2 && "€"}</span>
+          </div>
+          <div className={classes["gites__grid-items"]}>
+            <input
+              className={classes["gites__input"]}
+              value={priceValues.price3 || "non défini"}
+              id="price3"
+              min="1"
+              max="9999"
+              onChange={handleValueChange}
+              type="number"
+              name="country"
+              disabled={isAuth ? false : true}
+              required
+            />
+            <span>{priceValues.price3 && "€"}</span>
+          </div>
         </div>
-        <div className={classes["gites__grid-items"]}>
-          <input
-            className={classes["gites__input"]}
-            value={priceValues.price2}
-            id="price2"
-            min="1"
-            max="9999"
-            onChange={handleValueChange}
-            type="number"
-            name="country"
-            disabled={isAuth ? false : true}
-            required
-          />
-          <span>€</span>
-        </div>
-        <div className={classes["gites__grid-items"]}>
-          <input
-            className={classes["gites__input"]}
-            value={priceValues.price3}
-            id="price3"
-            min="1"
-            max="9999"
-            onChange={handleValueChange}
-            type="number"
-            name="country"
-            disabled={isAuth ? false : true}
-            required
-          />
-          <span>€</span>
-        </div>
-      </div>
-      {isAuth && <button>Modifier</button>}
-    </form>
+        {isAuth && <button>Modifier</button>}
+      </form>
+    </>
   );
 };
 

@@ -1,12 +1,12 @@
 const { Booking, Shelter, Image } = require("../models");
 const assert = require("assert");
-const { cloudinary } = require("../cloudinary");
+const { cloudinary } = require("../utilities/cloudinary");
 const ExpressError = require("../utilities/ExpressError");
 
 const adminController = {
-  allBooking: async function (_, res) {
+  allBooking: async function (_, res, next) {
     try {
-      const allBookings = await Booking.find().populate("shelter");
+      const allBookings = await Booking.find().populate("shelter_id");
 
       if (allBookings) {
         res.status(200).json({ bookingsData: allBookings });
@@ -16,7 +16,7 @@ const adminController = {
       next(err);
     }
   },
-  acceptBooking: async function (req, res) {
+  acceptBooking: async function (req, res, next) {
     const bookingId = req.params.bookingId;
 
     try {
@@ -31,13 +31,13 @@ const adminController = {
 
       if (booking) {
         res.sendStatus(200);
-      } else throw new Error();
+      } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
       console.trace(err);
       next(err);
     }
   },
-  refuseBooking: async function (req, res) {
+  refuseBooking: async function (req, res, next) {
     const bookingId = req.params.bookingId;
 
     try {
@@ -49,16 +49,16 @@ const adminController = {
 
       if (booking) {
         res.sendStatus(200);
-      } else throw new Error();
+      } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
       console.trace(err);
       next(err);
     }
   },
-  allImages: async function (req, res) {
+  allImages: async function (_, res, next) {
     try {
       const images = await Image.find({}, { filename: 0 }).populate(
-        "shelter",
+        "shelter_id",
         "number"
       );
 
@@ -70,7 +70,7 @@ const adminController = {
       next(err);
     }
   },
-  addImage: async function (req, res) {
+  addImage: async function (req, res, next) {
     const shelterNumber = parseInt(req.body.shelterNumber);
     const { path, filename } = req.file;
 
@@ -84,7 +84,7 @@ const adminController = {
         { _id: 1 }
       );
 
-      if (!shelter) throw new Error();
+      if (!shelter) throw new ExpressError("Internal Server Error", 500);
 
       await Image.create({
         shelter: shelter._id,
@@ -95,7 +95,7 @@ const adminController = {
       const images = await Image.find(
         { shelter: shelter._id },
         { filename: 0 }
-      ).populate("shelter", "number");
+      ).populate("shelter_id", "number");
       if (images) {
         res.status(200).json({ imagesData: images });
       } else throw new Error();
@@ -104,18 +104,18 @@ const adminController = {
       next(err);
     }
   },
-  deleteImage: async function (req, res) {
+  deleteImage: async function (req, res, next) {
     const imageId = req.params.imageId;
 
     try {
       assert.ok(imageId, "doesn't not exists or is null.");
 
       const image = await Image.findById(imageId, { filename: 1 }).populate(
-        "shelter",
+        "shelter_id",
         "number"
       );
 
-      if (!image) throw new Error();
+      if (!image) throw new ExpressError("Internal Server Error", 500);
 
       const shelterId = image.shelter.id;
 
@@ -124,13 +124,13 @@ const adminController = {
       await image.deleteOne({ filename: image.filename });
 
       const images = await Image.find({ shelter: shelterId }).populate(
-        "shelter",
+        "shelter_id",
         "number"
       );
 
       if (images) {
         res.status(200).json({ imagesData: images });
-      } else throw new Error();
+      } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
       console.trace(err);
       next(err);

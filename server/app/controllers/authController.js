@@ -15,7 +15,7 @@ const generateAccessToken = (user) => {
 };
 
 const authController = {
-  authentificationToken: function (req, res) {
+  authentificationToken: function (req, res, next) {
     const token = req.cookies.accessToken;
 
     if (!token) {
@@ -29,7 +29,7 @@ const authController = {
       res.sendStatus(200);
     });
   },
-  login: async function (req, res) {
+  login: async function (req, res, next) {
     try {
       const { password, username } = req.body;
       const foundUser = await User.findAndValidate(password, username);
@@ -45,7 +45,7 @@ const authController = {
       next(err);
     }
   },
-  register: async function (req, res) {
+  register: async function (req, res, next) {
     try {
       const { password, username, email } = req.body;
 

@@ -34,50 +34,57 @@ const Planning = ({ className, onDateChoice, doubleView }) => {
     [onDateChoice]
   );
 
-  const handleCalendarDisplay = useCallback(() => {
-    setShowLoader(false);
-    setPlanningContent(
-      <Calendar
-        showDoubleView={doubleView}
-        className={`${classes["react-calendar"]} ${classes[className]}`}
-        minDate={new Date()}
-        tileDisabled={({ date, view }) =>
-          view === "month" &&
-          disabledDatesData.some(
-            (disabledDate) =>
-              date >=
-                new Date(dayjs(disabledDate.from).format("YYYY, MM, DD")) &&
-              date <= new Date(dayjs(disabledDate.to).format("YYYY, MM, DD"))
-          )
-        }
-        onChange={(date) => {
-          if (onDateChoice) {
-            handleDateChange(dayjs(date).format("YYYY-MM-DD"));
-          }
-        }}
-        value={currentDay}
-      />
-    );
-  }, [
-    disabledDatesData,
-    handleDateChange,
-    onDateChoice,
-    className,
-    doubleView,
-    currentDay,
-  ]);
+  const handleCalendarDisplay = useCallback(
+    (statut) => {
+      if (statut === "success") {
+        setShowLoader(false);
+        setPlanningContent(
+          <Calendar
+            showDoubleView={doubleView}
+            className={`${classes["react-calendar"]} ${classes[className]}`}
+            minDate={new Date()}
+            tileDisabled={({ date, view }) =>
+              view === "month" &&
+              disabledDatesData.some(
+                (disabledDate) =>
+                  date >=
+                    new Date(dayjs(disabledDate.from).format("YYYY, MM, DD")) &&
+                  date <=
+                    new Date(dayjs(disabledDate.to).format("YYYY, MM, DD"))
+              )
+            }
+            onChange={(date) => {
+              if (onDateChoice) {
+                handleDateChange(dayjs(date).format("YYYY-MM-DD"));
+              }
+            }}
+            value={currentDay}
+          />
+        );
+      }
+    },
+    [
+      disabledDatesData,
+      handleDateChange,
+      onDateChoice,
+      className,
+      doubleView,
+      currentDay,
+    ]
+  );
 
   return (
     <>
-      <Loader
-        show={showLoader}
-        statut={disabledDateStatut}
-        onSuccess={handleCalendarDisplay}
-        message={{
-          success: null,
-          error: "Le calendrier est indisponible.",
-        }}
-      />
+      {showLoader && (
+        <Loader
+          statut={disabledDateStatut}
+          onRequestEnd={handleCalendarDisplay}
+          message={{
+            success: null,
+            error: "Le calendrier est indisponible.",
+          }}
+        />
+      )}
       {planningContent}
     </>
   );

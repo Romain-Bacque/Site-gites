@@ -16,10 +16,10 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import CropContent from "./crop/CropContent";
 import Loader from "./Loader";
-import { Transition } from "react-transition-group";
+import Alert from "../UI/Alert";
 
-// Variable qui stocke le nombre de slides par gite qui s'affiche à l'écran
 let slidesPerView = 1;
+
 const Gallery = ({ imagesData: shelterImages, shelter }) => {
   const {
     sendHttpRequest: deletePictureHttpRequest,
@@ -30,7 +30,11 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
   const [urlFile, setUrlFile] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
-  const [showDeleteMessage, setShowDeleteMessage] = useState(false);
+  const [statutMessage, setStatutMessage] = useState({
+    message: null,
+    alert: null,
+    show: false,
+  });
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
   });
@@ -70,17 +74,42 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
     }
   };
 
-  const handleLoader = useCallback(() => {
-    const filteredImagesData = imagesData.filter(
-      (image) => parseInt(shelter) === parseInt(image.shelter?.number)
-    );
+  const handleAddError = () => {
+    setStatutMessage({
+      message: "Echec enregistrement",
+      alert: "error",
+      show: true,
+    });
 
-    setShowDeleteMessage(true);
-    setShowLoader(false);
-    setImagesList(filteredImagesData);
-  }, [imagesData]);
+    setShowModal((prevState) => ({ ...prevState, show: false }));
+  };
 
-  const handleModal = (updatedList) => {
+  const handleRequestEnd = useCallback(
+    (statut) => {
+      if (statut === "success") {
+        const filteredImagesData = imagesData.filter(
+          (image) => parseInt(shelter) === parseInt(image.shelter?.number)
+        );
+
+        setStatutMessage({
+          message: "Image supprimé",
+          alert: "information",
+          show: true,
+        });
+        setImagesList(filteredImagesData);
+      } else if (statut === "error") {
+        setStatutMessage({
+          message: "Echec suppression",
+          alert: "error",
+          show: true,
+        });
+      }
+      setShowLoader(false);
+    },
+    [imagesData, shelter]
+  );
+
+  const handleImagesList = (updatedList) => {
     setImagesList(updatedList);
     setShowModal((prevState) => ({ ...prevState, show: false }));
   };
@@ -107,16 +136,16 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
   useEffect(() => {
     let timer;
 
-    if (showDeleteMessage) {
+    if (statutMessage.show) {
       timer = setTimeout(() => {
-        setShowDeleteMessage(false);
+        setStatutMessage((prevState) => ({ ...prevState, show: false }));
       }, 4000);
     }
 
     return () => {
       clearTimeout(timer);
     };
-  }, [showDeleteMessage]);
+  }, [statutMessage.show]);
 
   return (
     <>
@@ -128,7 +157,8 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
       >
         {showModal.crop && (
           <CropContent
-            getImagesList={handleModal}
+            onError={handleAddError}
+            getImagesList={handleImagesList}
             shelterNumber={shelter}
             url={urlFile}
           />
@@ -145,25 +175,11 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
       </Modal>
       {isAuth && (
         <>
-          <Transition
-            mountOnEnter
-            unmountOnExit
-            in={showDeleteMessage}
-            timeout={4000}
-          >
-            {(state) => {
-              const cssClasses =
-                state === "exiting" ? "delete-message--hide" : null;
-
-              return (
-                <span
-                  className={`${classes["delete-message"]} ${classes[cssClasses]}`}
-                >
-                  Image supprimé
-                </span>
-              );
-            }}
-          </Transition>
+          <Alert
+            message={statutMessage.message}
+            alert={statutMessage.alert}
+            show={statutMessage.show}
+          />
           <div>
             <label
               htmlFor={`files-shelter${shelter}`}
@@ -190,15 +206,16 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
         pagination={{ clickable: true }}
         className={classes.swiper}
       >
-        <Loader
-          show={showLoader}
-          statut={deletePictureStatut}
-          onSuccess={handleLoader}
-          message={{
-            success: "Suppression réussi.",
-            error: "Suppression impossible.",
-          }}
-        />
+        {showLoader && (
+          <Loader
+            statut={deletePictureStatut}
+            onRequestEnd={handleRequestEnd}
+            message={{
+              success: "Suppression réussi.",
+              error: "Suppression impossible.",
+            }}
+          />
+        )}
         {imagesList && imagesList.length ? (
           imagesList.map((image) => (
             <SwiperSlide key={image._id} className={classes.swiper__slide}>
@@ -215,7 +232,11 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
                   />
                 </div>
               )}
-              <img className={classes.image} alt="image" src={image.url} />
+              <img
+                className={classes.image}
+                alt={image.filename}
+                src={image.url}
+              />
             </SwiperSlide>
           ))
         ) : (

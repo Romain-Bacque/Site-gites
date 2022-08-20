@@ -29,7 +29,7 @@ const bookingSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  shelter: {
+  shelter_id: {
     type: Schema.Types.ObjectId,
     ref: "Shelter",
   },

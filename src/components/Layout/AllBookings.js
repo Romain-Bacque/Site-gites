@@ -62,30 +62,6 @@ const AllBookings = () => {
     [refuseBookingHttpRequest]
   );
 
-  const handleSort = useCallback(
-    (sort) => {
-      if (sort) {
-        const arrayToSort = bookingsList;
-
-        arrayToSort.sort((a, b) => {
-          if (sort === "dateIncreasing") {
-            return new Date(a.from) - new Date(b.from);
-          } else if (sort === "dateDecreasing") {
-            return new Date(b.from) - new Date(a.from);
-          } else if (sort === "awaiting") {
-            return a.booked - b.booked;
-          } else if (sort === "booked") {
-            return b.booked - a.booked;
-          }
-        });
-        setBookingsList(arrayToSort);
-        handleAllBookings();
-      }
-      setShowModal(false);
-    },
-    [bookingsList]
-  );
-
   const handleAllBookings = useCallback(() => {
     setAllBookingsContent(
       bookingsList?.length ? (
@@ -166,6 +142,30 @@ const AllBookings = () => {
     );
   }, [bookingsList, handleAcceptBooking, handleRefuseBooking]);
 
+  const handleSort = useCallback(
+    (sort) => {
+      if (sort) {
+        const arrayToSort = bookingsList;
+
+        arrayToSort.sort((a, b) => {
+          if (sort === "dateIncreasing") {
+            return new Date(a.from) - new Date(b.from);
+          } else if (sort === "dateDecreasing") {
+            return new Date(b.from) - new Date(a.from);
+          } else if (sort === "awaiting") {
+            return a.booked - b.booked;
+          } else if (sort === "booked") {
+            return b.booked - a.booked;
+          }
+        });
+        setBookingsList(arrayToSort);
+        handleAllBookings();
+      }
+      setShowModal(false);
+    },
+    [bookingsList, handleAllBookings]
+  );
+
   return (
     <>
       <Modal
@@ -198,7 +198,7 @@ const AllBookings = () => {
         </div>
         <Loader
           statut={bookingsRequestStatut}
-          onSuccess={handleAllBookings}
+          onRequestEnd={handleAllBookings}
           message={{
             success: null,
             error:

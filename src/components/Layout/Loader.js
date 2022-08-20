@@ -3,49 +3,40 @@ import { useEffect, useState } from "react";
 import classes from "./Loader.module.css";
 
 const Loader = (props) => {
-  const [messageContent, setMessageContent] = useState();
-  const { statut, onSuccess } = props;
+  const [loaderContent, setLoaderContent] = useState();
+  const { statut, onRequestEnd, message } = props;
 
   useEffect(() => {
-    if (props.statut === "send") {
-      setMessageContent(
+    if (statut === "send") {
+      setLoaderContent(
         <div className={classes["loader-container"]}>
           <span className={classes["loader-container__dot"]}></span>
           <span className={classes["loader-container__dot"]}></span>
           <span className={classes["loader-container__dot"]}></span>
         </div>
       );
-    } else if (props.statut === "success") {
-      if (!props.message?.success) return setMessageContent(null);
-      setMessageContent(
-        <span
-          className={`${
-            props.className ? classes[props.classeName] : classes.message
-          } ${classes.success}`}
-        >
-          {props.message.success}
+    } else if (statut === "success") {
+      if (!message?.success) return setLoaderContent(null);
+      setLoaderContent(
+        <span className={`${classes.message} ${classes.success}`}>
+          {message.success}
         </span>
       );
-    } else if (props.statut === "error") {
-      if (!props.message?.error) return setMessageContent(null);
-      setMessageContent(
-        <span
-          className={`${
-            props.className ? classes[props.classeName] : classes.message
-          } ${classes.error}`}
-        >
-          {props.message.error}
+    } else if (statut === "error") {
+      if (!message?.error) return setLoaderContent(null);
+      setLoaderContent(
+        <span className={`${classes.message} ${classes.error}`}>
+          {message.error}
         </span>
       );
     }
-  }, [props.statut, props.message, props.onSuccess]);
+  }, [statut, message, onRequestEnd]);
 
   useEffect(() => {
-    console.log(props.statut);
-    if (props.statut === "success" && props.onSuccess) props.onSuccess();
-  }, [statut, onSuccess]);
+    if (statut !== "send" && onRequestEnd) onRequestEnd(statut);
+  }, [statut, onRequestEnd]);
 
-  return props.show && <>{messageContent}</>;
+  return loaderContent;
 };
 
 export default Loader;

@@ -2,7 +2,7 @@ const { Rates, Booking, Shelter } = require("../models");
 const ExpressError = require("../utilities/ExpressError");
 
 const gitesController = {
-  postBooking: async function (req, res) {
+  postBooking: async function (req, res, next) {
     const { shelter: number } = req.body;
     const { shelter, ...newPayload } = req.body;
 
@@ -20,7 +20,7 @@ const gitesController = {
       next(err);
     }
   },
-  getRates: async function (_, res) {
+  getRates: async function (_, res, next) {
     try {
       const allRates = await Rates.find({});
 
@@ -32,13 +32,15 @@ const gitesController = {
       next(err);
     }
   },
-  editRates: async function (req, res) {
+  editRates: async function (req, res, next) {
     const { price1, price2, price3 } = req.body;
+
+    console.log(req.body);
 
     try {
       const allRates = await Rates.findOneAndUpdate(
-        { username: "famille-bacque" },
-        { username: "famille-bacque", price1, price2, price3 },
+        { price1, price2, price3 },
+        { price1, price2, price3 },
         { upsert: true },
         (err) => {
           if (err) throw new ExpressError("Internal Server Error", 500);
@@ -51,7 +53,7 @@ const gitesController = {
       next(err);
     }
   },
-  getDisabledDates: async function (req, res) {
+  getDisabledDates: async function (_, res, next) {
     try {
       const allDisabledDates = await Booking.find({})
         .where("booked")

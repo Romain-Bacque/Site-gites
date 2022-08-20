@@ -2,7 +2,7 @@ import useInput from "../../hooks/use-input";
 import Input from "./Input";
 import Card from "../UI/Card";
 import classes from "./Auth.module.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import { registerRequest, loginRequest } from "../../lib/api";
 import Loader from "./Loader";
@@ -21,7 +21,6 @@ const Auth = () => {
     isTouched: usernameIsTouched,
     changeHandler: usernameChangeHandler,
     blurHandler: usernameBlurHandler,
-    resetHandler: resetUsernameHandler,
   } = useInput();
   const {
     value: userEmailValue,
@@ -29,7 +28,6 @@ const Auth = () => {
     isTouched: userEmailIsTouched,
     changeHandler: userEmailChangeHandler,
     blurHandler: userEmailBlurHandler,
-    resetHandler: resetUserEmailHandler,
   } = useInput();
   const {
     value: userPasswordValue,
@@ -47,16 +45,14 @@ const Auth = () => {
 
   let isFormValid;
 
-  // Si l'user veut s'enregistrer
   if (isNotRegistered) {
     isFormValid = usernameIsValid && userEmailIsValid && userPasswordIsValid;
-    // Sinon, si il veut se connecter
   } else {
     isFormValid = usernameIsValid && userPasswordIsValid;
   }
 
-  const submitHandler = (e) => {
-    e.preventDefault();
+  const submitHandler = (event) => {
+    event.preventDefault();
 
     if (!isFormValid) return;
 
@@ -65,11 +61,9 @@ const Auth = () => {
       password: userPasswordValue,
     };
 
-    // Si l'utilisateur veut s'enregistrer, on ajoute son pseudo dans userData
     if (isNotRegistered) {
       userData.email = userEmailValue;
       registerHttpRequest(userData);
-      // Sinon, si il veut se connecter
     } else {
       loginHttpRequest(userData);
     }
@@ -77,49 +71,49 @@ const Auth = () => {
     resetUserPasswordHandler();
   };
 
-  // Toggle between sign in/sign up
   const handleClick = () => {
     resetUserPasswordHandler();
     setIsNotRegistered(!isNotRegistered);
   };
 
-  const handleLogin = () => {
-    dispatch(authActions.login());
-    history.replace("/");
-  };
+  const handleLogin = useCallback(
+    (statut) => {
+      if (statut === "success") {
+        dispatch(authActions.login());
+        history.replace("/");
+      }
+    },
+    [dispatch, history]
+  );
 
   // login
   useEffect(() => {
-    {
-      loginStatut &&
-        setStatutContent(
-          <Loader
-            statut={loginStatut}
-            onSuccess={handleLogin}
-            message={{
-              success: null,
-              error: "Mot de passe ou Pseudo incorrect(s).",
-            }}
-          />
-        );
-    }
-  }, [loginStatut]);
+    loginStatut &&
+      setStatutContent(
+        <Loader
+          statut={loginStatut}
+          onRequestEnd={handleLogin}
+          message={{
+            success: null,
+            error: "Mot de passe ou Pseudo incorrect(s).",
+          }}
+        />
+      );
+  }, [loginStatut, handleLogin]);
 
   // register
   useEffect(() => {
-    {
-      registerStatut &&
-        setStatutContent(
-          <Loader
-            statut={registerStatut}
-            onSuccess={() => setIsNotRegistered(false)}
-            message={{
-              success: "Enregistrement réussi.",
-              error: "Enregistrement impossible.",
-            }}
-          />
-        );
-    }
+    registerStatut &&
+      setStatutContent(
+        <Loader
+          statut={registerStatut}
+          onRequestEnd={() => setIsNotRegistered(false)}
+          message={{
+            success: "Enregistrement réussi.",
+            error: "Enregistrement impossible.",
+          }}
+        />
+      );
   }, [registerStatut, history]);
 
   return (

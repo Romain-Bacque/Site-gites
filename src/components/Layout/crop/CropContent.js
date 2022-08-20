@@ -7,7 +7,8 @@ import Loader from "../Loader";
 import classes from "./CropContent.module.css";
 import getCroppedImg from "./lib/cropImage";
 
-const CropContent = ({ shelterNumber, url, getImagesList }) => {
+const CropContent = ({ shelterNumber, url, getImagesList, onError }) => {
+  const [showLoader, setShowLoader] = useState(false);
   const {
     sendHttpRequest: postPictureHttpRequest,
     statut: postPictureStatut,
@@ -24,9 +25,18 @@ const CropContent = ({ shelterNumber, url, getImagesList }) => {
     [url]
   );
 
+  const handleAddPicture = (statut) => {
+    if (statut === "success") {
+      getImagesList(imagesData);
+    } else onError();
+    setShowLoader(false);
+  };
+
   const handleCropImage = useCallback(
     async (event) => {
       event.preventDefault();
+
+      setShowLoader(true);
 
       try {
         const file = await getCroppedImg(...cropDatas);
@@ -63,11 +73,12 @@ const CropContent = ({ shelterNumber, url, getImagesList }) => {
         <div>
           {postPictureStatut && (
             <Loader
+              show={showLoader}
               statut={postPictureStatut}
-              onSuccess={() => getImagesList(imagesData)}
+              onRequestEnd={handleAddPicture}
               message={{
-                success: "Enregistrement réussi.",
-                error: "Enregistrement impossible.",
+                success: null,
+                error: null,
               }}
             />
           )}

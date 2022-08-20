@@ -10,7 +10,7 @@ const shelterSchema = new Schema({
     type: String,
     default: null,
   },
-  shelter: {
+  shelter_id: {
     type: Schema.Types.ObjectId,
     ref: "Shelter",
   },
