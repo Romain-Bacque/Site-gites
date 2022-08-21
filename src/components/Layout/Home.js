@@ -15,6 +15,8 @@ const initialState = {
   show: false,
 };
 
+let authStatut = null;
+
 const Home = () => {
   const [statutMessage, setStatutMessage] = useState(initialState);
   const isAuth = useSelector((state) => state.auth.isAuthentificated);
@@ -22,7 +24,9 @@ const Home = () => {
   useEffect(() => {
     let timer;
 
-    if (isAuth) {
+    if (isAuth && isAuth !== authStatut) {
+      authStatut = isAuth;
+
       setStatutMessage({
         message: "Bienvenue !",
         alert: "success",
@@ -32,7 +36,7 @@ const Home = () => {
       timer = setTimeout(() => {
         setStatutMessage((prevState) => ({ ...prevState, show: false }));
       }, 4000);
-    }
+    } else if (!isAuth) authStatut = null;
 
     return () => {
       clearTimeout(timer);

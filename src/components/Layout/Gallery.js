@@ -19,6 +19,11 @@ import Loader from "./Loader";
 import Alert from "../UI/Alert";
 
 let slidesPerView = 1;
+const initialState = {
+  show: false,
+  crop: false,
+  deleteAlert: false,
+};
 
 const Gallery = ({ imagesData: shelterImages, shelter }) => {
   const {
@@ -28,7 +33,7 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
   } = useHttp(deletePictureRequest);
   const [imagesList, setImagesList] = useState(shelterImages);
   const [urlFile, setUrlFile] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(initialState);
   const [showLoader, setShowLoader] = useState(false);
   const [statutMessage, setStatutMessage] = useState({
     message: null,
@@ -52,11 +57,7 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
   };
 
   const handleDeleteImage = () => {
-    setShowModal({
-      show: false,
-      crop: false,
-      deleteAlert: false,
-    });
+    setShowModal(initialState);
     setShowLoader(true);
 
     deletePictureHttpRequest(imageRef.current);
@@ -74,14 +75,21 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
     }
   };
 
-  const handleAddError = () => {
-    setStatutMessage({
-      message: "Echec enregistrement",
-      alert: "error",
-      show: true,
-    });
+  const handleCropRequestEnd = (statut) => {
+    if (statut === "success") {
+      setStatutMessage({
+        message: "Photo ajouté",
+        alert: "information",
+        show: true,
+      });
+    } else
+      setStatutMessage({
+        message: "Echec ajout",
+        alert: "error",
+        show: true,
+      });
 
-    setShowModal((prevState) => ({ ...prevState, show: false }));
+    setShowModal(initialState);
   };
 
   const handleRequestEnd = useCallback(
@@ -111,7 +119,7 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
 
   const handleImagesList = (updatedList) => {
     setImagesList(updatedList);
-    setShowModal((prevState) => ({ ...prevState, show: false }));
+    setShowModal(initialState);
   };
 
   useEffect(() => {
@@ -162,12 +170,12 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
       <Modal
         show={showModal.show}
         onHide={() => {
-          setShowModal((prevState) => ({ ...prevState, show: false }));
+          setShowModal(initialState);
         }}
       >
         {showModal.crop && (
           <CropContent
-            onError={handleAddError}
+            onRequestEnd={handleCropRequestEnd}
             getImagesList={handleImagesList}
             shelterNumber={shelter}
             url={urlFile}

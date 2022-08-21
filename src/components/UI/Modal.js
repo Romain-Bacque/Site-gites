@@ -16,7 +16,7 @@ const Modal = (props) => {
   };
 
   const animationTiming = {
-    enter: 600,
+    enter: 500,
     exit: 0,
   };
 

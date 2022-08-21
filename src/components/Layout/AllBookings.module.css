@@ -37,18 +37,18 @@
 }
 
 .bookings__list {
-  height: 50vh;
-  overflow: auto;
+  overflow: hidden;
+  width: 100% !important;
+  padding: 5rem 0;
   border-top: 1px solid rgb(200, 200, 200);
-  border-bottom: 1px solid rgb(200, 200, 200);
-  padding: 0.5rem 1rem;
 }
 
 .booking {
+  background-color: white;
   border: 1px solid rgb(200, 200, 200);
   box-shadow: 0 3px 10px 3px rgba(176, 176, 176, 0.4);
-  min-height: 20vh;
-  padding: 0;
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 .booking__img {
@@ -69,6 +69,8 @@
 .booking__container {
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  padding: 1rem;
 }
 
 .booking__user-datas {
@@ -93,11 +95,9 @@
 
 .booking__informations {
   font-size: 1.3rem;
-  margin-top: 1rem;
-  padding: 0 1rem;
   color: rgb(173, 173, 173);
-  border-left: 1px solid rgb(188, 188, 188);
   flex: 1;
+  height: 100px;
   overflow: auto;
   word-wrap: break-word;
 }
@@ -118,7 +118,7 @@
 }
 
 .booking__statut {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   border: 1px solid rgb(67, 67, 67);
   border-radius: 5px;
   padding: 0.2rem;

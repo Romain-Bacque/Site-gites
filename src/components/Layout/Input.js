@@ -18,8 +18,8 @@ const Input = (props) => {
             {props.label}
           </label>
         )}
-        {props.forgotPassword && props.forgotPassword}
       </div>
+      {props.forgotPassword && props.forgotPassword}
       <input
         onClick={handleInputClick}
         className={`${classes.form__input} ${classes[props.className]}`}

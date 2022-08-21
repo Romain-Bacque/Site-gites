@@ -1,5 +1,4 @@
 const { Rates, Booking, Shelter } = require("../models");
-const { findById } = require("../models/shelter");
 const ExpressError = require("../utilities/ExpressError");
 
 const gitesController = {
