@@ -19,11 +19,16 @@ import Loader from "./Loader";
 import Alert from "../UI/Alert";
 
 let slidesPerView = 1;
-const initialState = {
-  show: false,
-  crop: false,
-  deleteAlert: false,
-};
+const initialModalState = {
+    show: false,
+    crop: false,
+    deleteAlert: false,
+  },
+  initialMessageState = {
+    message: null,
+    alert: null,
+    show: false,
+  };
 
 const Gallery = ({ imagesData: shelterImages, shelter }) => {
   const {
@@ -33,13 +38,9 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
   } = useHttp(deletePictureRequest);
   const [imagesList, setImagesList] = useState(shelterImages);
   const [urlFile, setUrlFile] = useState(null);
-  const [showModal, setShowModal] = useState(initialState);
+  const [showModal, setShowModal] = useState(initialModalState);
   const [showLoader, setShowLoader] = useState(false);
-  const [statutMessage, setStatutMessage] = useState({
-    message: null,
-    alert: null,
-    show: false,
-  });
+  const [statutMessage, setStatutMessage] = useState(initialMessageState);
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
   });
@@ -57,7 +58,7 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
   };
 
   const handleDeleteImage = () => {
-    setShowModal(initialState);
+    setShowModal(initialModalState);
     setShowLoader(true);
 
     deletePictureHttpRequest(imageRef.current);
@@ -89,7 +90,7 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
         show: true,
       });
 
-    setShowModal(initialState);
+    setShowModal(initialModalState);
   };
 
   const handleRequestEnd = useCallback(
@@ -119,7 +120,7 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
 
   const handleImagesList = (updatedList) => {
     setImagesList(updatedList);
-    setShowModal(initialState);
+    setShowModal(initialModalState);
   };
 
   useEffect(() => {
@@ -170,7 +171,7 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
       <Modal
         show={showModal.show}
         onHide={() => {
-          setShowModal(initialState);
+          setShowModal(initialModalState);
         }}
       >
         {showModal.crop && (
@@ -219,6 +220,7 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, A11y]}
         spaceBetween={50}
+        centeredSlides="true"
         slidesPerView={slidesPerView}
         navigation
         pagination={{ clickable: true }}

@@ -6,11 +6,13 @@ const ExpressError = require("../utilities/ExpressError");
 const adminController = {
   allBooking: async function (_, res, next) {
     try {
-      const allBookings = await Booking.find().populate("shelter_id");
+      const allBookings = await Booking.find({
+        to: { $gte: new Date() },
+      }).populate("shelter_id");
 
       if (allBookings) {
         res.status(200).json({ bookingsData: allBookings });
-      } else throw new Error();
+      } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
       console.trace(err);
       next(err);

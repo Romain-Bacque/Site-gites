@@ -5,17 +5,17 @@ const ExpressError = require("../utilities/ExpressError");
 const cookieConfig = {
   expires: new Date(Date.now() + 900000),
   httpOnly: true,
-  secure: false,
+  secure: true,
 };
 
 const generateAccessToken = (user) => {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "3600s",
+    expiresIn: "1y",
   });
 };
 
 const authController = {
-  authentificationToken: function (req, res, next) {
+  authentificationToken: function (req, res) {
     const token = req.cookies.accessToken;
 
     if (!token) {

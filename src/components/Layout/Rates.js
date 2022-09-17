@@ -1,17 +1,19 @@
-import classes from "./Rates.module.css";
 import { useSelector } from "react-redux";
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import { ratesGetRequest, ratesPostRequest } from "../../lib/api";
 import Loader from "./Loader";
 import Alert from "../UI/Alert";
+import classes from "./Rates.module.css";
+
+const initialState = {
+  message: null,
+  alert: null,
+  show: false,
+};
 
 const Rates = ({ shelter }) => {
-  const [statutMessage, setStatutMessage] = useState({
-    message: null,
-    alert: null,
-    show: false,
-  });
+  const [statutMessage, setStatutMessage] = useState(initialState);
   const [showLoader, setShowLoader] = useState(false);
   const [priceValues, sePriceValues] = useState({
     price1: 1,

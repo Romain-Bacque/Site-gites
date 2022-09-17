@@ -41,7 +41,7 @@ const Auth = () => {
   const [isNotRegistered, setIsNotRegistered] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
-  const [statutContent, setStatutContent] = useState();
+  const [statutContent, setStatutContent] = useState(null);
 
   let isFormValid;
 
@@ -72,6 +72,7 @@ const Auth = () => {
   };
 
   const handleClick = () => {
+    setStatutContent(null);
     resetUserPasswordHandler();
     setIsNotRegistered(!isNotRegistered);
   };
@@ -95,7 +96,7 @@ const Auth = () => {
           onRequestEnd={handleLogin}
           message={{
             success: null,
-            error: "Mot de passe ou Pseudo incorrect(s).",
+            error: "Pseudo ou Mot de passe incorrect.",
           }}
         />
       );

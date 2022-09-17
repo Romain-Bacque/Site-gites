@@ -33,7 +33,9 @@ const Loader = (props) => {
   }, [statut, message, onRequestEnd]);
 
   useEffect(() => {
-    if (statut !== "send" && onRequestEnd) onRequestEnd(statut);
+    if (statut !== "send" && onRequestEnd) {
+      onRequestEnd(statut);
+    }
   }, [statut, onRequestEnd]);
 
   return loaderContent;

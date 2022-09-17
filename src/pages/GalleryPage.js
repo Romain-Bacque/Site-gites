@@ -31,13 +31,13 @@ const GalleryPage = () => {
         <>
           <Gallery
             imagesData={imagesData.filter(
-              (image) => image.shelter.number === 0
+              (image) => image.shelter?.number === 0
             )}
             shelter={0}
           />
           <Gallery
             imagesData={imagesData.filter(
-              (image) => image.shelter.number === 1
+              (image) => image.shelter?.number === 1
             )}
             shelter={1}
           />

@@ -36,7 +36,10 @@ const Home = () => {
       timer = setTimeout(() => {
         setStatutMessage((prevState) => ({ ...prevState, show: false }));
       }, 4000);
-    } else if (!isAuth) authStatut = null;
+    } else if (!isAuth) {
+      authStatut = null;
+      setStatutMessage((prevState) => ({ ...prevState, show: false }));
+    }
 
     return () => {
       clearTimeout(timer);

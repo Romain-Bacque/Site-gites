@@ -47,7 +47,6 @@ export const bookingsGetRequest = async () => {
   const response = await axios.get("/admin/allBooking");
 
   if (response.status !== 200) throw new Error();
-  console.log(response.data.bookingsData);
 
   return response.data.bookingsData;
 };

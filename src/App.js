@@ -32,7 +32,6 @@ const App = () => {
     }
   }, [pathname, history, dispatch]);
 
-  // // User authorizations
   if (userAccessDatas?.data.ok) {
     dispatch(authActions.login());
   }

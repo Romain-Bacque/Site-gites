@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import classes from "./Header.module.css";
 import { useSelector, useDispatch } from "react-redux";
 import { authActions } from "../../store/auth";
+import { menuActions } from "../../store/menu";
 import { logoutRequest } from "../../lib/api";
 import useHttp from "../../hooks/use-http";
 
 const Header = () => {
-  const [toggleMenu, setToggleMenu] = useState(false);
   const [scrollActive, setScrollActive] = useState(false);
   const { sendHttpRequest, statut: logoutStatut } = useHttp(logoutRequest);
   const isAdmin = useSelector((state) => state.auth.isAdmin);
   const isAuth = useSelector((state) => state.auth.isAuthentificated);
+  const isOpen = useSelector((state) => state.menu.isOpen);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,11 +35,11 @@ const Header = () => {
   const handleToggleButton = (event) => {
     event.stopPropagation();
 
-    setToggleMenu((prevToggleMenu) => !prevToggleMenu);
+    dispatch(menuActions.toggleMenu());
   };
 
-  const handleLoginLink = (event) => {
-    setToggleMenu((prevToggleMenu) => !prevToggleMenu);
+  const handleAuthLink = (event) => {
+    dispatch(menuActions.toggleMenu());
 
     if (isAuth) {
       event.preventDefault();
@@ -50,14 +52,15 @@ const Header = () => {
   useEffect(() => {
     if (logoutStatut === "success") {
       dispatch(authActions.logout());
+      history.replace("/");
     }
   }, [logoutStatut, dispatch]);
 
   return (
     <header
-      className={`${
-        (scrollActive || toggleMenu) && classes["background-active"]
-      } ${classes.header}`}
+      className={`${(scrollActive || isOpen) && classes["background-active"]} ${
+        classes.header
+      }`}
     >
       <div className={classes.header__wrapper}>
         <div className={classes["header__title-container"]}>
@@ -69,7 +72,7 @@ const Header = () => {
         <div
           onClick={handleToggleButton}
           className={`${classes["menu-button"]} ${
-            toggleMenu ? classes["active-menu"] : ""
+            isOpen ? classes["active-menu"] : ""
           }`}
         >
           <div className={classes["menu-button__line"]}></div>
@@ -77,8 +80,9 @@ const Header = () => {
           <div className={classes["menu-button__line"]}></div>
         </div>
         <nav
+          onClick={(event) => event.stopPropagation()}
           className={`${classes.header__nav} ${
-            toggleMenu ? classes["active-nav"] : ""
+            isOpen ? classes["active-nav"] : ""
           }`}
         >
           <ul className={classes["header__unorganized-list"]}>
@@ -129,7 +133,7 @@ const Header = () => {
                 <Link
                   className={`${classes.header__link} ${classes.header__auth}`}
                   to="/authentification"
-                  onClick={handleLoginLink}
+                  onClick={handleAuthLink}
                 >
                   {!isAuth ? "Connexion" : "Déconnexion"}
                 </Link>

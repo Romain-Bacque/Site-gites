@@ -35,25 +35,27 @@ import Alert from "../UI/Alert";
 
 dayjs().format();
 
-const initialState = {
+const initialModalState = {
   show: false,
-  acceptBooking: false,
-  refuseBooking: false,
+  booking: false,
   sort: false,
+};
+
+const initialMessageState = {
+  message: "",
+  alert: "",
+  show: false,
 };
 
 const AllBookings = () => {
   const [allBookingsContent, setAllBookingsContent] = useState();
-  const [showModal, setShowModal] = useState(initialState);
+  const [showModal, setShowModal] = useState(initialModalState);
   const [bookingsList, setBookingsList] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
-  const [statutMessage, setStatutMessage] = useState({
-    message: null,
-    alert: null,
-    show: false,
-  });
+  const [textareaValue, setTextareaValue] = useState("");
+  const [statutMessage, setStatutMessage] = useState(initialMessageState);
 
-  const bookingRef = useRef();
+  const bookingRef = useRef({ value: null, bookingChoice: null });
 
   const {
     sendHttpRequest: bookingsHttpRequest,
@@ -77,64 +79,64 @@ const AllBookings = () => {
     });
   };
 
-  const handleAcceptBooking = useCallback(
+  const handleBooking = useCallback(
     async (event) => {
       event.preventDefault();
 
       setShowLoader(true);
+      setShowModal(initialModalState);
+
+      const statutMessage =
+        bookingRef.current.bookingChoice === "accept"
+          ? "acceptée"
+          : "malheureusement refusée";
+
+      const template = {
+        statutMessage,
+        ...bookingRef.current.value,
+        message: textareaValue,
+      };
+
+      delete template.bookingId;
+
       try {
-        const response = await emailHandler.sendEmail();
+        const response = await emailHandler.sendEmail(template);
 
         if (response.status !== 200) throw new Error();
       } catch (err) {
-        console.log(err);
-        setShowModal(initialState);
         setShowLoader(false);
         displayError();
       }
 
-      acceptBookingHttpRequest(bookingRef.current);
+      if (bookingRef.current.bookingChoice === "accept") {
+        acceptBookingHttpRequest(bookingRef.current.value.bookingId);
+      } else refuseBookingHttpRequest(bookingRef.current.value.bookingId);
     },
-    [acceptBookingHttpRequest]
+    [acceptBookingHttpRequest, refuseBookingHttpRequest, textareaValue]
   );
 
-  const handleRefuseBooking = () => {
-    refuseBookingHttpRequest(bookingRef.current);
+  const handleCancel = () => {
+    setTextareaValue("");
+    setShowModal(initialModalState);
   };
 
-  const handleEmailFormDisplay = useCallback((bookingId) => {
-    bookingRef.current = bookingId;
+  const handleEmailFormDisplay = useCallback((bookingChoice, data) => {
+    bookingRef.current.value = data;
+    bookingRef.current.bookingChoice = bookingChoice;
 
     setShowModal({
       sort: false,
-      acceptBooking: true,
-      refuseBooking: false,
+      booking: true,
       show: true,
     });
   }, []);
 
-  const handleRefuseAlertDisplay = useCallback(
-    (bookingId) => {
-      bookingRef.current = bookingId;
-
-      setShowModal({
-        sort: false,
-        acceptBooking: false,
-        refuseBooking: true,
-        show: true,
-      });
-    },
-    [refuseBookingHttpRequest]
-  );
-
-  const handleRequestEnd = (statut) => {
+  const handleRequestEnd = useCallback((statut) => {
     if (statut === "error") {
       displayError();
     }
-
-    setShowModal(initialState);
     setShowLoader(false);
-  };
+  }, []);
 
   const handleAllBookings = useCallback(
     (statut) => {
@@ -213,7 +215,13 @@ const AllBookings = () => {
                         <button
                           className={`${classes["booking__button"]} ${classes["booking__button--accept"]}`}
                           onClick={() => {
-                            handleEmailFormDisplay(booking._id);
+                            handleEmailFormDisplay("accept", {
+                              bookingId: booking._id,
+                              shelter: booking.shelter_id.title,
+                              name: booking.name,
+                              from: dayjs(booking.from).format("DD/MM/YYYY"),
+                              to: dayjs(booking.to).format("DD/MM/YYYY"),
+                            });
                           }}
                         >
                           Accepter
@@ -221,7 +229,13 @@ const AllBookings = () => {
                         <button
                           className={`${classes["booking__button"]} ${classes["booking__button--refuse"]}`}
                           onClick={() => {
-                            handleRefuseAlertDisplay(booking._id);
+                            handleEmailFormDisplay("refuse", {
+                              bookingId: booking._id,
+                              shelter: booking.shelter_id.title,
+                              name: booking.name,
+                              from: dayjs(booking.from).format("DD/MM/YYYY"),
+                              to: dayjs(booking.to).format("DD/MM/YYYY"),
+                            });
                           }}
                         >
                           Refuser
@@ -229,12 +243,6 @@ const AllBookings = () => {
                       </div>
                     )}
                   </div>
-                  {showLoader && (
-                    <Loader
-                      statut={acceptBookingStatut}
-                      onRequestEnd={handleRequestEnd}
-                    />
-                  )}
                 </SwiperSlide>
               ))}
             </Swiper>
@@ -246,7 +254,7 @@ const AllBookings = () => {
         );
       }
     },
-    [bookingsList, handleAcceptBooking, handleRefuseAlertDisplay]
+    [bookingsList, handleEmailFormDisplay]
   );
 
   const handleSort = useCallback(
@@ -265,10 +273,11 @@ const AllBookings = () => {
             return b.booked - a.booked;
           }
         });
+
         setBookingsList(arrayToSort);
         handleAllBookings();
       }
-      setShowModal(initialState);
+      setShowModal(initialModalState);
     },
     [bookingsList, handleAllBookings]
   );
@@ -320,31 +329,26 @@ const AllBookings = () => {
       <Modal
         show={showModal.show}
         onHide={() => {
-          setShowModal(initialState);
+          setShowModal(initialModalState);
         }}
       >
-        {showModal.acceptBooking && (
-          <form onSubmit={handleAcceptBooking}>
+        {showModal.booking && (
+          <form onSubmit={handleBooking}>
             <h3>Message à envoyer</h3>
             <textarea rows="10" cols="25"></textarea>
             <div>
               <button>Envoyer</button>
-              <button onClick={() => setShowModal(initialState)}>
+              <button type="button" onClick={handleCancel}>
                 Annuler
               </button>
             </div>
+            {showLoader && (
+              <Loader
+                statut={acceptBookingStatut}
+                onRequestEnd={handleRequestEnd}
+              />
+            )}
           </form>
-        )}
-        {showModal.refuseBooking && (
-          <div>
-            <p>Etes-vous sûr de vouloir refuser cette réservation ?</p>
-            <div>
-              <button onClick={handleRefuseBooking}>Oui</button>
-              <button onClick={() => setShowModal(initialState)}>
-                Annuler
-              </button>
-            </div>
-          </div>
         )}
         {showModal.sort && <Sort onSortValidation={handleSort} />}
       </Modal>
@@ -355,12 +359,13 @@ const AllBookings = () => {
       />
       <section>
         <Loader
+          show={true}
           statut={bookingsRequestStatut}
           onRequestEnd={handleAllBookings}
           message={{
             success: null,
             error:
-              "Une erreur est survenue! Impossible d'afficher la liste des reservations en cours.",
+              "Une erreur est survenue! Impossible d'afficher la liste des demandes.",
           }}
         />
         <div className={classes["bookings__title-container"]}>
@@ -372,8 +377,7 @@ const AllBookings = () => {
               onClick={() => {
                 setShowModal({
                   sort: true,
-                  acceptBooking: false,
-                  refuseBooking: false,
+                  booking: false,
                   show: true,
                 });
               }}

@@ -4,7 +4,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 3;
+  z-index: 4;
   background-color: rgba(0, 0, 0, 0.6);
 }
 
@@ -19,7 +19,7 @@
   align-items: flex-start;
   gap: 3rem;
   box-sizing: border-box;
-  z-index: 4;
+  z-index: 5;
   width: 32rem;
   height: 30rem;
   background-color: white;
