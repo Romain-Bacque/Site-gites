@@ -12,14 +12,15 @@ import { authActions } from "./store/auth";
 import AllBookingsPage from "./pages/AllBookingsPage";
 
 const App = () => {
-  const { sendHttpRequest, data: userAccessDatas } = useHttp(loadUserInfos);
+  const { sendHttpRequest: sendUserHttpRequest, data: userAccessDatas } =
+    useHttp(loadUserInfos);
   const isAuth = useSelector((state) => state.auth.isAuthentificated);
   const dispatch = useDispatch();
   const history = useHistory();
   const pathname = history.location.pathname;
 
   useEffect(() => {
-    sendHttpRequest();
+    sendUserHttpRequest();
   }, [sendHttpRequest, isAuth]);
 
   useEffect(() => {

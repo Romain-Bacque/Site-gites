@@ -18,7 +18,7 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    required: [true, "role cannot be blank"],
+    required: [true, "Role cannot be blank"],
     default: "customer",
   },
 });

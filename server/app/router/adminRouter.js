@@ -19,6 +19,8 @@ router
   .get(adminController.allImages)
   .post(checkLogged, upload.single("file"), adminController.addImage);
 
+router.route("/disabledDates", checkLogged, adminController.postDisabledDate);
+
 router.delete("/gallery/:imageId", checkLogged, adminController.deleteImage);
 
 module.exports = router;

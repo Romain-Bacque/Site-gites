@@ -95,7 +95,7 @@ const Booking = ({ shelter }) => {
 
     if (!isFormValid) return;
 
-    let userData = {
+    const userData = {
       shelter,
       name: nameValue,
       phone: phoneValue,

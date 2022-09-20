@@ -1,5 +1,6 @@
 const express = require("express");
 const adminRouter = require("./adminRouter");
+const placesRouter = require("./placesRouter");
 const authRouter = require("./authRouter");
 const gitesRouter = require("./gitesRouter");
 const errorHandler = require("../utilities/errorHandler");
@@ -10,6 +11,7 @@ router.use("/favicon.ico", (_, res) => res.sendStatus(200));
 router.use("/", gitesRouter);
 router.use("/authentification", authRouter);
 router.use("/admin", adminRouter);
+router.use("/places", placesRouter);
 
 /**
  * gestion de la 404

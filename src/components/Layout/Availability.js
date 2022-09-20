@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import classes from "./Availability.module.css";
 import Planning from "./Planning";
 
-const Availability = () => {
+const Availability = ({ shelter }) => {
   const [showDoubleView, setShowDoubleView] = useState(false);
 
   useEffect(() => {
@@ -22,6 +22,7 @@ const Availability = () => {
   return (
     <div className={classes.availability}>
       <Planning
+        shelter={shelter}
         doubleView={showDoubleView}
         className="react-calendar--availability"
       />

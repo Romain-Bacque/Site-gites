@@ -57,6 +57,22 @@ const adminController = {
       next(err);
     }
   },
+  postDisabledDate: async function (req, res, next) {
+    try {
+      const ShelterId = await Shelter.findOne({ _id: 1 });
+
+      console.log(ShelterId);
+
+      if (allDisabledDates) {
+        res.status(200).json({
+          disabledDatesData: allDisabledDates,
+        });
+      } else throw new ExpressError("Internal Server Error", 500);
+    } catch (err) {
+      console.trace(err);
+      next(err);
+    }
+  },
   allImages: async function (_, res, next) {
     try {
       const images = await Image.find({}, { filename: 0 }).populate(

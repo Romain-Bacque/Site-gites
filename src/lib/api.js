@@ -73,8 +73,26 @@ export const refuseBookingRequest = async (data) => {
 };
 
 // get booked dates
-export const disabledDatesRequest = async () => {
+export const getDatesRequest = async () => {
   const response = await axios.get("/disabledDates");
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.disabledDatesData;
+};
+
+// post booked date
+export const postDateRequest = async (data) => {
+  const response = await axios.post("/disabledDates", data);
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.disabledDatesData;
+};
+
+// delete booked date
+export const editDateRequest = async (data) => {
+  const response = await axios.delete("/disabledDates", data);
 
   if (response.status !== 200) throw new Error();
 
@@ -137,4 +155,13 @@ export const deletePictureRequest = async (imageId) => {
   if (response.status !== 200) throw new Error();
 
   return response.data.imagesData;
+};
+
+// Sightseeing
+export const gePlaces = async () => {
+  const response = await axios.delete(`/places`);
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.placesData;
 };

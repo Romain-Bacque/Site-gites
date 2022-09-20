@@ -1,16 +1,24 @@
+import { useEffect } from "react";
+import useHttp from "../../hooks/use-http";
+import { getShelter } from "../../lib/api";
 import Card from "../UI/Card";
 
 import classes from "./Gites.module.css";
 import GitesItems from "./GitesItems";
 
-let today = new Date();
-let dd = String(today.getDate()).padStart(2, "0");
-let mm = String(today.getMonth() + 1).padStart(2, "0");
-let yyyy = today.getFullYear();
-
-today = mm + "/" + dd + "/" + yyyy;
+const dd = String(today.getDate()).padStart(2, "0"),
+  mm = String(today.getMonth() + 1).padStart(2, "0"),
+  yyyy = today.getFullYear(),
+  today = new Date(mm + "/" + dd + "/" + yyyy);
 
 const Gites = () => {
+  const { sendHttpRequest: sendShelterHttpRequest, data: shelterAccessDatas } =
+    useHttp(getShelter);
+
+  useEffect(() => {
+    sendShelterHttpRequest();
+  }, [sendHttpRequest, isAuth]);
+
   return (
     <>
       <section>
