@@ -25,6 +25,7 @@ const Header = () => {
         setScrollActive(false);
       }
     };
+
     window.addEventListener("scroll", handleScroll);
 
     return () => {
@@ -34,7 +35,6 @@ const Header = () => {
 
   const handleToggleButton = (event) => {
     event.stopPropagation();
-
     dispatch(menuActions.toggleMenu());
   };
 

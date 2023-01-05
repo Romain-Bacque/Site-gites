@@ -96,7 +96,7 @@ const Booking = ({ shelter }) => {
     if (!isFormValid) return;
 
     const userData = {
-      shelter,
+      shelterId: shelter,
       name: nameValue,
       phone: phoneValue,
       numberOfPerson: personsValue,
@@ -139,7 +139,6 @@ const Booking = ({ shelter }) => {
       } else if (input === "to") {
         toValueHandler(value);
       }
-
       setShowCalendar(false);
     },
     [fromValueHandler, toValueHandler]

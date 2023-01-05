@@ -16,21 +16,11 @@ import { useSelector } from "react-redux";
 
 dayjs().format();
 
-const Planning = ({ shelter, className, onDateChoice, doubleView }) => {
+const Planning = ({ className, onDateChoice, onDateClick, doubleView }) => {
   const isAuth = useSelector((state) => state.auth.isAuthentificated);
   const [showLoader, setShowLoader] = useState(false);
   const [planningContent, setPlanningContent] = useState(null);
   const [currentDay] = useState(new Date());
-  const {
-    sendHttpRequest: deleteDisabledDateHttpRequest,
-    statut: updatedDisabledDatesStatut,
-    data: updatedDisabledDatesData,
-  } = useHttp(deleteDateRequest);
-  const {
-    sendHttpRequest: postDisabledDateHttpRequest,
-    statut: updatedPostDisabledDatesStatut,
-    data: updatedPostDisabledDatesData,
-  } = useHttp(postDateRequest);
   const {
     sendHttpRequest: disabledDatesHttpRequest,
     statut: disabledDatesStatut,
@@ -51,35 +41,15 @@ const Planning = ({ shelter, className, onDateChoice, doubleView }) => {
 
   const formatDate = (date) => dayjs(date).format("YYYY, MM, DD");
 
-  const handleDateClick = useCallback(
-    (date) => {
-      const isDateDisabled = disabledDatesData?.some((disabledDate) => {
-        return (
-          formatDate(date) === formatDate(disabledDate.from) ||
-          formatDate(date) === formatDate(disabledDate.to)
-        );
-      });
-
-      const data = {
-        shelter,
-        date,
-      };
-
-      if (!isDateDisabled) {
-        postDisabledDateHttpRequest(data);
-      } else deleteDisabledDateHttpRequest(data);
-    },
-    [shelter, disabledDatesData, postDisabledDateHttpRequest]
-  );
-
   const handleDisabledDateStyle = useCallback(
     (date) => {
-      const isDisabled = disabledDatesData?.some((disabledDate) => {
-        return (
-          formatDate(date) === formatDate(disabledDate.from) ||
-          formatDate(date) === formatDate(disabledDate.to)
-        );
-      });
+      const isDisabled =
+        disabledDatesData?.some((disabledDate) => {
+          return (
+            formatDate(date) === formatDate(disabledDate.from) ||
+            formatDate(date) === formatDate(disabledDate.to)
+          );
+        }) || date <= new Date();
       return isDisabled ? classes["disabled-date"] : null;
     },
     [disabledDatesData]
@@ -96,7 +66,18 @@ const Planning = ({ shelter, className, onDateChoice, doubleView }) => {
               className={`${classes["react-calendar"]} ${classes[className]}`}
               minDate={new Date()}
               tileClassName={({ date }) => handleDisabledDateStyle(date)}
-              onClickDay={(date) => isAuth && handleDateClick(date)}
+              tileDisabled={({ date, view }) =>
+                view === "month" &&
+                disabledDatesData.some(
+                  (disabledDate) =>
+                    disabledDate.email &&
+                    formatDate(date) >= formatDate(disabledDate.from) &&
+                    formatDate(date) <= formatDate(disabledDate.to)
+                )
+              }
+              onClickDay={(date) =>
+                isAuth && onDateClick && onDateClick(date, disabledDatesData)
+              }
               onChange={(date) => onDateChoice && handleDateChange(date)}
               value={currentDay}
             />
@@ -111,7 +92,7 @@ const Planning = ({ shelter, className, onDateChoice, doubleView }) => {
     [
       handleDisabledDateStyle,
       handleDateChange,
-      handleDateClick,
+      onDateClick,
       onDateChoice,
       className,
       doubleView,

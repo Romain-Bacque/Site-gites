@@ -1,5 +1,4 @@
 require("dotenv").config();
-
 require("./app/utilities/mongooseConnect");
 const port = process.env.PORT || 3000;
 const routerIndex = require("./app/router");

@@ -19,7 +19,10 @@ router
   .get(adminController.allImages)
   .post(checkLogged, upload.single("file"), adminController.addImage);
 
-router.route("/disabledDates", checkLogged, adminController.postDisabledDate);
+router
+  .route("/disabledDates")
+  .post(checkLogged, adminController.postDisabledDate)
+  .delete(checkLogged, adminController.deleteDisabledDate);
 
 router.delete("/gallery/:imageId", checkLogged, adminController.deleteImage);
 

@@ -3,6 +3,7 @@ const express = require("express");
 
 const router = express.Router();
 
+router.get("/shelters", gitesController.getShelters);
 router.post("/booking", gitesController.postBooking);
 router
   .route("/rates")

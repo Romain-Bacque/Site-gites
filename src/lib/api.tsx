@@ -40,6 +40,21 @@ export const loadUserInfos = async () => {
   return response;
 };
 
+// // SHELTER
+
+// Get Shelters
+interface sheltersData {
+  sheltersData: { title: string; number: number }[];
+}
+
+export const getShelters = async () => {
+  const response = await axios.get<sheltersData>("/shelters");
+
+  if (response.status !== 200) throw new Error(response.statusText);
+
+  return response.data.sheltersData;
+};
+
 // // BOOKING
 
 // Get Bookings
@@ -83,11 +98,19 @@ export const getDatesRequest = async () => {
 
 // post booked date
 export const postDateRequest = async (data) => {
-  const response = await axios.post("/disabledDates", data);
-
+  const response = await axios.post("/admin/disabledDates", data);
   if (response.status !== 200) throw new Error();
 
   return response.data.disabledDatesData;
+};
+
+// delete booked data
+export const deleteDateRequest = async (shelterId) => {
+  const response = await axios.delete(`/disabledDates/${shelterId}`);
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.sheltersData;
 };
 
 // delete booked date
@@ -149,8 +172,8 @@ export const editPictureRequest = async (data) => {
 };
 
 // Delete Picture
-export const deletePictureRequest = async (imageId) => {
-  const response = await axios.delete(`/admin/gallery/${imageId}`);
+export const deletePictureRequest = async (id) => {
+  const response = await axios.delete(`/admin/gallery/${id}`);
 
   if (response.status !== 200) throw new Error();
 

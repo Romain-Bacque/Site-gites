@@ -359,7 +359,6 @@ const AllBookings = () => {
       />
       <section>
         <Loader
-          show={true}
           statut={bookingsRequestStatut}
           onRequestEnd={handleAllBookings}
           message={{

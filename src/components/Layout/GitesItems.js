@@ -9,28 +9,34 @@ import Availability from "./Availability";
 
 let formContent;
 
-const GitesItems = ({ shelter }) => {
-  const [giteStatut, setGiteStatut] = useState({
-    0: { tab: null },
-    1: { tab: null },
-  });
+const GitesItems = ({ shelterId: shelter, title, number }) => {
+  const [shelterStatut, setShelterStatut] = useState([
+    { tab: null },
+    { tab: null },
+  ]);
 
   //Select content
-  if (giteStatut[shelter].tab === 0) {
+  if (shelterStatut[number].tab === 0) {
     formContent = <Booking shelter={shelter} />;
-  } else if (giteStatut[shelter].tab === 1) {
+  } else if (shelterStatut[number].tab === 1) {
     formContent = <Rates shelter={shelter} />;
-  } else if (giteStatut[shelter].tab === 2) {
+  } else if (shelterStatut[number].tab === 2) {
     formContent = <Availability shelter={shelter} />;
   }
+
+  const handleShelterTab = (value) => {
+    setShelterStatut((prevState) => {
+      return prevState.map((item, index) =>
+        index === number ? (item = { tab: value }) : item
+      );
+    });
+  };
 
   return (
     <>
       <div className={classes["gite__picture-container"]}>
-        <h2 className={classes.gite__title}>
-          {shelter === 0 ? "Gite Jo" : "Gite Flo"}
-        </h2>
-        <Slider shelter={shelter} />
+        <h2 className={classes.gite__title}>{title}</h2>
+        <Slider shelter={number} />
       </div>
       <div className={classes["gites__details"]}>
         <h3 className={classes["gites__capacité-titre"]}>Capacité</h3>
@@ -42,51 +48,39 @@ const GitesItems = ({ shelter }) => {
       </div>
       <div className={classes["gite__buttons-container"]}>
         <button
-          className={`${giteStatut[shelter].tab === 0 ? classes.active : ""} ${
-            classes["gite__button-tab"]
-          }`}
-          onClick={() => {
-            setGiteStatut((prevState) => {
-              return { ...prevState, [shelter]: { tab: 0 } };
-            });
-          }}
+          className={`${
+            shelterStatut[number].tab === 0 ? classes.active : ""
+          } ${classes["gite__button-tab"]}`}
+          onClick={() => handleShelterTab(0)}
         >
           Réserver
         </button>
         <button
-          className={`${giteStatut[shelter].tab === 1 ? classes.active : ""} ${
-            classes["gite__button-tab"]
-          }`}
-          onClick={() => {
-            setGiteStatut((prevState) => {
-              return { ...prevState, [shelter]: { tab: 1 } };
-            });
-          }}
+          className={`${
+            shelterStatut[number].tab === 1 ? classes.active : ""
+          } ${classes["gite__button-tab"]}`}
+          onClick={() => handleShelterTab(1)}
         >
           Tarifs
         </button>
         <button
-          className={`${giteStatut[shelter].tab === 2 ? classes.active : ""} ${
-            classes["gite__button-tab"]
-          }`}
-          onClick={() => {
-            setGiteStatut((prevState) => {
-              return { ...prevState, [shelter]: { tab: 2 } };
-            });
-          }}
+          className={`${
+            shelterStatut[number].tab === 2 ? classes.active : ""
+          } ${classes["gite__button-tab"]}`}
+          onClick={() => handleShelterTab(2)}
         >
           Disponibilités
         </button>
       </div>
       <div className={classes["gite__content"]}>
-        {giteStatut[shelter].tab === 0 && <div></div>}
-        {giteStatut[shelter].tab === 1 && <div></div>}
-        {giteStatut[shelter].tab === 2 && <div></div>}
+        {shelterStatut[number].tab === 0 && <div></div>}
+        {shelterStatut[number].tab === 1 && <div></div>}
+        {shelterStatut[number].tab === 2 && <div></div>}
       </div>
       <CSSTransition
         mountOnEnter
         unmountOnExit
-        in={giteStatut[shelter].tab !== null}
+        in={shelterStatut[number].tab !== null}
         timeout={300}
         classNames={classes["fade-content"]}
       >
