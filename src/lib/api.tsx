@@ -7,21 +7,28 @@ axios.defaults.withCredentials = true;
 // // AUTHENTIFICATION
 
 // Login
-export const loginRequest = async (data) => {
+interface LoginRequestData {
+  password: string;
+  username: string;
+}
+
+export const loginRequest = async (data: LoginRequestData) => {
   const response = await axios.post("/authentification/login", data);
 
   if (response.status !== 200) throw new Error();
-
-  return response;
 };
 
 // Register
-export const registerRequest = async (data) => {
+interface RegisterRequestData {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export const registerRequest = async (data: RegisterRequestData) => {
   const response = await axios.post("/authentification/register", data);
 
   if (response.status !== 200) throw new Error();
-
-  return response;
 };
 
 // Logout
@@ -36,19 +43,17 @@ export const loadUserInfos = async () => {
   const response = await axios.get("/authentification/userVerification");
 
   if (response.status !== 200) throw new Error();
-
-  return response;
 };
 
 // // SHELTER
 
 // Get Shelters
-interface sheltersData {
-  sheltersData: { title: string; number: number }[];
-}
+type getSheltersReturnData = {
+  sheltersData: { _id: number; title: string; number: number }[];
+};
 
 export const getShelters = async () => {
-  const response = await axios.get<sheltersData>("/shelters");
+  const response = await axios.get<getSheltersReturnData>("/shelters");
 
   if (response.status !== 200) throw new Error(response.statusText);
 
@@ -58,8 +63,24 @@ export const getShelters = async () => {
 // // BOOKING
 
 // Get Bookings
+type bookingsGetRequestReturnData = {
+  bookingsData: {
+    name: string;
+    phone: number;
+    email: string;
+    numberOfPerson: number;
+    from: Date;
+    to: Date;
+    informations: string;
+    booked: boolean;
+    shelter_id: string;
+  }[];
+};
+
 export const bookingsGetRequest = async () => {
-  const response = await axios.get("/admin/allBooking");
+  const response = await axios.get<bookingsGetRequestReturnData>(
+    "/admin/allBooking"
+  );
 
   if (response.status !== 200) throw new Error();
 

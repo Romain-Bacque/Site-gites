@@ -1,5 +1,4 @@
 import { useReducer, useCallback } from "react";
-import { getShelters } from "../lib/api";
 
 enum HTTPStateKind {
   SEND,
@@ -7,19 +6,21 @@ enum HTTPStateKind {
   ERROR,
 }
 
-type httpRequestType = (arg?: object | number) => Promise<void | object[]>;
+type StatutAndErrorType = null | string;
+type ValueAndDataType = null | string | number | object[];
 
-type Unpromisify<T> = T extends Promise<infer ReturnType> ? ReturnType : T;
+type httpRequestType = (
+  arg?: object | number
+) => Promise<void | object[] | number>;
 
 interface HTTPState {
-  statut: null | string;
-  data: null | object[];
-  error: null | string;
+  statut: StatutAndErrorType;
+  data: ValueAndDataType;
+  error: StatutAndErrorType;
 }
-
 interface HTTPAction {
   type: HTTPStateKind;
-  value?: null | string | object[];
+  value?: ValueAndDataType;
 }
 
 const initialState = {
@@ -63,9 +64,7 @@ function useHttp<T extends httpRequestType>(httpRequest: T) {
       try {
         dispatch({ type: HTTPStateKind.SEND });
 
-        const responseData = (await httpRequest(requestData)) as Awaited<
-          ReturnType<typeof httpRequest>
-        >;
+        const responseData = await httpRequest(requestData);
 
         dispatch({ type: HTTPStateKind.SUCCESS, value: responseData ?? null });
       } catch (err) {

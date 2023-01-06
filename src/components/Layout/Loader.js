@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import classes from "./Loader.module.css";
 
 const Loader = (props) => {
-  const [loaderContent, setLoaderContent] = useState();
+  const [loaderContent, setLoaderContent] = useState(null);
   const { statut, onRequestEnd, message } = props;
 
   useEffect(() => {
