@@ -63,7 +63,7 @@ export const getShelters = async () => {
 // // BOOKING
 
 // Get Bookings
-type bookingsGetRequestReturnData = {
+interface BookingsGetRequestReturnData {
   bookingsData: {
     name: string;
     phone: number;
@@ -75,10 +75,10 @@ type bookingsGetRequestReturnData = {
     booked: boolean;
     shelter_id: string;
   }[];
-};
+}
 
 export const bookingsGetRequest = async () => {
-  const response = await axios.get<bookingsGetRequestReturnData>(
+  const response = await axios.get<BookingsGetRequestReturnData>(
     "/admin/allBooking"
   );
 
@@ -88,45 +88,78 @@ export const bookingsGetRequest = async () => {
 };
 
 // Post Booking
-export const bookingRequest = async (data) => {
+export interface bookingRequestData {
+  shelterId: string;
+  name: string;
+  phone: number;
+  numberOfPerson: number;
+  email: string;
+  from: Date;
+  to: Date;
+  informations: string;
+}
+
+export const bookingRequest = async (data: bookingRequestData) => {
   const response = await axios.post("/booking", data);
 
   if (response.status !== 200) throw new Error();
 };
 
 // Accept booking
-export const acceptBookingRequest = async (id) => {
+export const acceptBookingRequest = async (id: string) => {
   const response = await axios.put("/admin/booking/" + id);
 
   if (response.status !== 200) throw new Error();
 };
 
 // Refuse booking
-export const refuseBookingRequest = async (data) => {
-  const response = await axios.delete("/admin/booking/" + data);
+export const refuseBookingRequest = async (id: string) => {
+  const response = await axios.delete("/admin/booking/" + id);
 
   if (response.status !== 200) throw new Error();
 };
 
 // get booked dates
+interface DisabledDatesReturnData {
+  disabledDates: {
+    name: string;
+    phone: number;
+    email: string;
+    numberOfPerson: number;
+    from: Date;
+    to: Date;
+    informations: string;
+    booked: boolean;
+    shelter_id: string;
+  }[];
+}
+
 export const getDatesRequest = async () => {
-  const response = await axios.get("/disabledDates");
+  const response = await axios.get<DisabledDatesReturnData>("/disabledDates");
 
   if (response.status !== 200) throw new Error();
 
-  return response.data.disabledDatesData;
+  return response.data.disabledDates;
 };
 
 // post booked date
-export const postDateRequest = async (data) => {
-  const response = await axios.post("/admin/disabledDates", data);
+interface PostDateRequestData {
+  shelter: string;
+  date: Date;
+}
+
+export const postDateRequest = async (data: PostDateRequestData) => {
+  const response = await axios.post<DisabledDatesReturnData>(
+    "/admin/disabledDates",
+    data
+  );
   if (response.status !== 200) throw new Error();
 
-  return response.data.disabledDatesData;
+  return response.data.disabledDates;
 };
 
 // delete booked data
-export const deleteDateRequest = async (shelterId) => {
+export const deleteDateRequest = async (shelterId: string) => {
   const response = await axios.delete(`/disabledDates/${shelterId}`);
 
   if (response.status !== 200) throw new Error();
@@ -135,19 +168,28 @@ export const deleteDateRequest = async (shelterId) => {
 };
 
 // delete booked date
-export const editDateRequest = async (data) => {
-  const response = await axios.delete("/disabledDates", data);
+// export const editDateRequest = async (data) => {
+//   const response = await axios.delete("/disabledDates", data);
 
-  if (response.status !== 200) throw new Error();
+//   if (response.status !== 200) throw new Error();
 
-  return response.data.disabledDatesData;
-};
+//   return response.data.disabledDatesData;
+// };
 
 // // RATES
 
 // Get Rates
+interface RatesPostRequestReturnData {
+  ratesData: {
+    price1: number;
+    price2: number;
+    price3: number;
+    shelter: string;
+  }[];
+}
+
 export const ratesGetRequest = async () => {
-  const response = await axios.get("/rates");
+  const response = await axios.get<RatesPostRequestReturnData>("/rates");
 
   if (response.status !== 200) throw new Error();
 
@@ -155,8 +197,15 @@ export const ratesGetRequest = async () => {
 };
 
 // Edit Rates
-export const ratesPostRequest = async (data) => {
-  const response = await axios.put("/rates", data);
+interface RatesPostRequestData {
+  price1: number;
+  price2: number;
+  price3: number;
+  shelter: string;
+}
+
+export const ratesPostRequest = async (data: RatesPostRequestData) => {
+  const response = await axios.put<RatesPostRequestReturnData>("/rates", data);
 
   if (response.status !== 200) throw new Error();
 };
@@ -164,8 +213,16 @@ export const ratesPostRequest = async (data) => {
 // // Gallery
 
 // Get Picture
-export const getPictureRequest = async (data) => {
-  const response = await axios.get(`/admin/gallery`);
+interface PictureRequestReturnData {
+  imagesData: {
+    url: string;
+    filename: string;
+    number: number;
+  };
+}
+
+export const getPictureRequest = async () => {
+  const response = await axios.get<PictureRequestReturnData>(`/admin/gallery`);
 
   if (response.status !== 200) throw new Error();
 
@@ -173,7 +230,7 @@ export const getPictureRequest = async (data) => {
 };
 
 // Add Picture
-export const postPictureRequest = async (data) => {
+export const postPictureRequest = async (data: FormData) => {
   const response = await axios.post("/admin/gallery", data, {
     headers: { "Content-Type": "multipart/form-data" },
   });
@@ -183,18 +240,12 @@ export const postPictureRequest = async (data) => {
   return response.data.imagesData;
 };
 
-// Edit Picture
-export const editPictureRequest = async (data) => {
-  const response = await axios.patch("/admin/gallery", data);
-
-  if (response.status !== 200) throw new Error();
-
-  return response.data.imagesData;
-};
-
 // Delete Picture
-export const deletePictureRequest = async (id) => {
-  const response = await axios.delete(`/admin/gallery/${id}`);
+
+export const deletePictureRequest = async (id: string) => {
+  const response = await axios.delete<PictureRequestReturnData>(
+    `/admin/gallery/${id}`
+  );
 
   if (response.status !== 200) throw new Error();
 
@@ -202,7 +253,7 @@ export const deletePictureRequest = async (id) => {
 };
 
 // Sightseeing
-export const gePlaces = async () => {
+export const getPlaces = async () => {
   const response = await axios.delete(`/places`);
 
   if (response.status !== 200) throw new Error();

@@ -14,9 +14,21 @@ import Loader from "./Loader";
 import dayjs from "dayjs";
 import { useSelector } from "react-redux";
 
+interface PlanningProps {
+  className: string;
+  onDateChoice: (date: Date) => void;
+  onDateClick?: (date: Date, disabledDatesData: object[]) => void;
+  isDoubleView?: boolean;
+}
+
 dayjs().format();
 
-const Planning = ({ className, onDateChoice, onDateClick, doubleView }) => {
+const Planning: React.FC<PlanningProps> = ({
+  className,
+  onDateChoice,
+  onDateClick,
+  isDoubleView,
+}) => {
   const isAuth = useSelector((state) => state.auth.isAuthentificated);
   const [showLoader, setShowLoader] = useState(false);
   const [planningContent, setPlanningContent] = useState(null);
@@ -62,7 +74,7 @@ const Planning = ({ className, onDateChoice, onDateClick, doubleView }) => {
         setPlanningContent(
           <div className={classes["calendar-container"]}>
             <Calendar
-              showDoubleView={doubleView}
+              showDoubleView={isDoubleView}
               className={`${classes["react-calendar"]} ${classes[className]}`}
               minDate={new Date()}
               tileClassName={({ date }) => handleDisabledDateStyle(date)}
@@ -95,7 +107,7 @@ const Planning = ({ className, onDateChoice, onDateClick, doubleView }) => {
       onDateClick,
       onDateChoice,
       className,
-      doubleView,
+      isDoubleView,
       currentDay,
     ]
   );

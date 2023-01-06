@@ -8,6 +8,7 @@ import GitesItems from "./GitesItems";
 import Loader from "./Loader";
 import { getShelters } from "../../lib/api";
 
+// types aliases
 type Shelter = {
   _id: string;
   title: string;

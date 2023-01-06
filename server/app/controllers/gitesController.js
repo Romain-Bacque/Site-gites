@@ -79,7 +79,7 @@ const gitesController = {
 
       if (allDisabledDates) {
         res.status(200).json({
-          disabledDatesData: allDisabledDates,
+          disabledDates: allDisabledDates,
         });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {

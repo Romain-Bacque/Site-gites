@@ -7,21 +7,37 @@ import icon_success from "../../img/icon_success.ico";
 import icon_error from "../../img/icon_error.png";
 import Input from "./Input";
 import useHttp from "../../hooks/use-http";
-import { bookingRequest } from "../../lib/api";
+import { bookingRequest, bookingRequestData } from "../../lib/api";
 import classes from "./Booking.module.css";
 import Planning from "./Planning";
 
-let modalContent;
+// aliases
+type HandleCalendarDisplay = (input: string) => void;
 
-const Booking = ({ shelter }) => {
+// interfaces
+interface BookingProps {
+  shelter: string;
+}
+interface CalendarStatus {
+  show: boolean;
+  input: null | string;
+}
+
+// ---
+
+let modalContent: JSX.Element;
+const initialState = {
+  show: false,
+  input: null,
+};
+
+const Booking: React.FC<BookingProps> = ({ shelter }) => {
   const [showLoader, setShowLoader] = useState(false);
   const { sendHttpRequest: bookingHttpRequest, statut: bookingStatut } =
     useHttp(bookingRequest);
   const [showModal, setShowModal] = useState(false);
-  const [showCalendar, setShowCalendar] = useState({
-    show: false,
-    input: null,
-  });
+  const [calendarStatus, setCalendarStatus] =
+    useState<CalendarStatus>(initialState);
 
   const {
     value: nameValue,
@@ -90,12 +106,12 @@ const Booking = ({ shelter }) => {
       setShowModal(true);
   }, [bookingStatut]);
 
-  const submitHandler = (event) => {
+  const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!isFormValid) return;
 
-    const userData = {
+    const userData: bookingRequestData = {
       shelterId: shelter,
       name: nameValue,
       phone: phoneValue,
@@ -106,14 +122,14 @@ const Booking = ({ shelter }) => {
       informations: infosValue,
     };
 
-    bookingHttpRequest(userData);
+    bookingHttpRequest<bookingRequestData>(userData);
     setShowLoader(true);
   };
 
   useEffect(() => {
     const handleHideCalendar = () => {
-      if (showCalendar.show) {
-        setShowCalendar({ show: false, input: null });
+      if (calendarStatus.show) {
+        setCalendarStatus({ show: false, input: null });
       }
     };
 
@@ -122,24 +138,26 @@ const Booking = ({ shelter }) => {
     return () => {
       window.removeEventListener("click", handleHideCalendar);
     };
-  }, [showCalendar.show]);
+  }, [calendarStatus.show]);
 
-  const handleCalendarDisplay = (input) => {
+  const handleCalendarDisplay: HandleCalendarDisplay = (input) => {
     if (input === "from") {
-      setShowCalendar({ show: true, input: "from" });
+      setCalendarStatus({ show: true, input: "from" });
     } else if (input === "to") {
-      setShowCalendar({ show: true, input: "to" });
+      setCalendarStatus({ show: true, input: "to" });
     }
   };
 
-  const handleDateChoice = useCallback(
+  type HandleDateChoiceType = (input: any, value: any) => void;
+
+  const handleDateChoice: HandleDateChoiceType = useCallback(
     (input, value) => {
       if (input === "from") {
         fromValueHandler(value);
       } else if (input === "to") {
         toValueHandler(value);
       }
-      setShowCalendar(false);
+      setCalendarStatus(initialState);
     },
     [fromValueHandler, toValueHandler]
   );
@@ -290,7 +308,7 @@ const Booking = ({ shelter }) => {
             }}
             className={classes["form__date-container"]}
           >
-            {showCalendar.show && showCalendar.input === "from" && (
+            {calendarStatus.show && calendarStatus.input === "from" && (
               <Planning
                 className="react-calendar--booking"
                 onDateChoice={handleDateChoice.bind(null, "from")}
@@ -316,7 +334,7 @@ const Booking = ({ shelter }) => {
             }}
             className={classes["form__date-container"]}
           >
-            {showCalendar.show && showCalendar.input === "to" && (
+            {calendarStatus.show && calendarStatus.input === "to" && (
               <Planning
                 className="react-calendar--booking"
                 onDateChoice={handleDateChoice.bind(null, "to")}
@@ -342,11 +360,11 @@ const Booking = ({ shelter }) => {
             onChange={infosChangeHandler}
             onBlur={infosBlurHandler}
             value={infosValue}
-            rows="7"
-            cols="19"
-            maxLength="150"
+            rows={7}
+            cols={19}
+            maxLength={150}
             placeholder="Information(s) complémentaire"
-          ></textarea>
+          />
         </div>
         <button
           disabled={!isFormValid}
