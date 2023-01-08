@@ -1,14 +1,22 @@
 import { useState } from "react";
 import classes from "./Sort.module.css";
 
-const Sort = ({ onSortValidation }) => {
-  const [sort, setSort] = useState(null);
+// interfaces
+interface SortProps {
+  onSortValidation: (arg: string | null) => void;
+}
 
-  const handleSortChoice = (event) => {
+// component
+const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
+  const [sort, setSort] = useState<string | null>(null);
+
+  const handleSortChoice = (event: React.MouseEvent) => {
     event.stopPropagation();
-    setSort(event.target.id);
+    if ("id" in event.target) {
+      setSort(event.target.id as string);
+    }
   };
-  const handleSortValidation = (event) => {
+  const handleSortValidation = (event: React.MouseEvent) => {
     event.stopPropagation();
     onSortValidation(sort);
   };

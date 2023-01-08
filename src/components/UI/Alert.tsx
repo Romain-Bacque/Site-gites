@@ -1,7 +1,7 @@
 import { Transition } from "react-transition-group";
 import classes from "./Alert.module.css";
 
-// enum
+// enums
 export enum AlertKind {
   INFO,
   SUCCESS,
@@ -15,10 +15,10 @@ interface AlertProps {
   show: boolean;
 }
 
-// ---
-
+// variable & constante
 let backgroundColorClass: string;
 
+// component
 const Alert: React.FC<AlertProps> = ({ message, alert, show }) => {
   switch (alert) {
     case AlertKind.INFO:

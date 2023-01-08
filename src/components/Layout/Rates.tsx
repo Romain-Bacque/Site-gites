@@ -21,14 +21,14 @@ interface PriceValues {
   price3: number;
 }
 
-// ---
-
+// variable & constante
 const initialState = {
   message: null,
   alert: null,
   show: false,
 };
 
+// component
 const Rates: React.FC<RatesProps> = ({ shelter }) => {
   const [statutMessage, setStatutMessage] =
     useState<StatutMessage>(initialState);

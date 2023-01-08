@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { authActions } from "../../store/auth";
 import { useHistory } from "react-router-dom";
 
+// component
 const Auth = () => {
   const { sendHttpRequest: loginHttpRequest, statut: loginStatut } =
     useHttp(loginRequest);

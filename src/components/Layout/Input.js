@@ -1,5 +1,6 @@
 import classes from "./Input.module.css";
 
+// component
 const Input = (props) => {
   const handleInputClick = (event) => {
     if (event.target.type === "date") {

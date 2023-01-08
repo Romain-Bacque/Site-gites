@@ -6,13 +6,14 @@ import classes from "./Loader.module.css";
 // interfaces
 interface LoaderProps {
   statut: StatutType;
-  onRequestEnd: (statut: HTTPStateKind) => void;
+  onRequestEnd?: (statut: HTTPStateKind) => void;
   message: {
     success: null | string;
     error: null | string;
   };
 }
 
+// component
 const Loader: React.FC<LoaderProps> = (props) => {
   // null is nothing, react.fragment will be an object of type fragment which will have to be created by react.
   // so, its better to use null in useState generic union type below instead of a fragment, because using fragment is per definition slower

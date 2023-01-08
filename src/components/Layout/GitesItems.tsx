@@ -17,10 +17,10 @@ interface Tab {
   tab: null | number;
 }
 
-// ---
-
+// variable & contante
 let formContent: JSX.Element;
 
+// component
 const GitesItems: React.FC<GitesItemsProps> = ({
   shelterId: shelter,
   title,

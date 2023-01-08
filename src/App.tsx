@@ -11,6 +11,7 @@ import { loadUserInfos } from "./lib/api";
 import { authActions } from "./store/auth";
 import AllBookingsPage from "./pages/AllBookingsPage";
 
+// component
 const App: React.FC = () => {
   const { sendHttpRequest: sendUserHttpRequest, statut: authStatut } =
     useHttp(loadUserInfos);

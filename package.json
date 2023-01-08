@@ -77,6 +77,8 @@
     ]
   },
   "devDependencies": {
+    "@types/react-calendar": "^3.9.0",
+    "@types/uuid": "^9.0.0",
     "stylelint": "^14.8.2",
     "stylelint-config-prettier": "^9.0.3",
     "stylelint-config-standard": "^25.0.0"

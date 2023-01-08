@@ -21,8 +21,7 @@ interface InputAction {
   value?: HTMLInputElement | string;
 }
 
-// ---
-
+// variable & contante
 const initialState = {
   enteredValue: "",
   isValid: false,
@@ -30,6 +29,7 @@ const initialState = {
   passwordState: [],
 };
 
+// reducer
 const inputReducer = (state: InputState, action: InputAction): InputState => {
   if (
     action.type === InputStateKind.VALUE &&
@@ -105,6 +105,7 @@ const inputReducer = (state: InputState, action: InputAction): InputState => {
   return state;
 };
 
+// component
 const useInput = () => {
   const [inputState, dispatch] = useReducer(inputReducer, initialState);
 

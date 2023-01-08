@@ -17,6 +17,7 @@ const initialState = {
 
 let authStatut = null;
 
+// component
 const Home = () => {
   const [statutMessage, setStatutMessage] = useState(initialState);
   const isAuth = useSelector((state) => state.auth.isAuthentificated);

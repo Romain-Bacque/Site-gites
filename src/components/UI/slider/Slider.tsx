@@ -5,32 +5,38 @@ import dataSlider from "./dataSlider";
 import BtnSlider from "./BtnSlider";
 import { Link } from "react-router-dom";
 
-const Slider = ({ shelter }) => {
+// interfaces
+interface SliderProps {
+  shelter: number;
+}
+
+const Slider: React.FC<SliderProps> = ({ shelter }) => {
   const [slideIndex, setSlideIndex] = useState(1);
 
-  // Naviguer vers la prochaine image du slider
+  // Navigate to the next image of the slider
   const handleNextSlide = () => {
     if (slideIndex !== dataSlider[shelter].length) {
       setSlideIndex(slideIndex + 1);
-      // Si dernière image du slider est affiché, alors on bascule sur la 1ere
+      // If the last image of the slider is displayed, then we switch to the 1st
     } else if (slideIndex === dataSlider[shelter].length) {
       setSlideIndex(1);
     }
   };
 
-  // Naviguer vers la précédente image du slider
+  // Navigate to the prev image of the slider
   const handlePrevSlide = () => {
     if (slideIndex !== 1) {
       setSlideIndex(slideIndex - 1);
-      // Si la 1ere image du slider est affiché, alors on bascule sur la dernière
+      // If the 1st image of the slider is displayed, then we switch to the last
     } else if (slideIndex === 1) {
       setSlideIndex(dataSlider[shelter].length);
     }
   };
 
-  //Animation du slider
+  // Slider animation
   useEffect(() => {
     let sliderAnimation = setInterval(handleNextSlide, 4000);
+
     return () => {
       clearInterval(sliderAnimation);
     };

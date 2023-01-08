@@ -6,6 +6,7 @@ import { deleteDateRequest, postDateRequest } from "../../lib/api";
 import classes from "./Availability.module.css";
 import Planning from "./Planning";
 
+// component
 const Availability = ({ shelter }) => {
   const [showDoubleView, setShowDoubleView] = useState(false);
   const {

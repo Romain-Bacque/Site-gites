@@ -217,8 +217,10 @@ interface PictureRequestReturnData {
   imagesData: {
     url: string;
     filename: string;
-    number: number;
-  };
+    shelter: {
+      number: number;
+    };
+  }[];
 }
 
 export const getPictureRequest = async () => {

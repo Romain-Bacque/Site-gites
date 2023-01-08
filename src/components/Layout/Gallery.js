@@ -18,6 +18,7 @@ import CropContent from "./crop/CropContent";
 import Loader from "./Loader";
 import Alert from "../UI/Alert";
 
+// variable & constante
 let slidesPerView = 1;
 const initialModalState = {
     show: false,
@@ -30,6 +31,7 @@ const initialModalState = {
     show: false,
   };
 
+// component
 const Gallery = ({ imagesData: shelterImages, shelter }) => {
   const {
     sendHttpRequest: deletePictureHttpRequest,

@@ -5,6 +5,7 @@ import { getPictureRequest } from "../lib/api";
 import Gallery from "../components/Layout/Gallery";
 import Loader from "../components/Layout/Loader";
 
+// component
 const GalleryPage: React.FC = () => {
   const {
     sendHttpRequest: getPictureHttpRequest,
@@ -30,15 +31,17 @@ const GalleryPage: React.FC = () => {
       {imagesData && (
         <>
           <Gallery
-            imagesData={imagesData.filter(
-              (image) => image.shelter?.number === 0
-            )}
+            imagesData={
+              typeof imagesData === "object" &&
+              imagesData.filter((image) => image.shelter?.number === 0)
+            }
             shelter={0}
           />
           <Gallery
-            imagesData={imagesData.filter(
-              (image) => image.shelter?.number === 1
-            )}
+            imagesData={
+              typeof imagesData === "object" &&
+              imagesData.filter((image) => image.shelter?.number === 1)
+            }
             shelter={1}
           />
         </>

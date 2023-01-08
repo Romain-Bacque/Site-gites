@@ -2,4 +2,5 @@
 // this is the reason why all modules with other extensions couldn't be found.
 declare module "*.jpg";
 declare module "*.png";
+declare module "*.svg";
 declare module "*.ico";

@@ -2,12 +2,25 @@ import ReactDOM from "react-dom";
 import classes from "./Modal.module.css";
 import Transition from "react-transition-group/Transition";
 
-const Modal = (props) => {
-  const Backdrop = () => {
+// interfaces
+interface ModalProps {
+  className?: string;
+  onHide?: () => void;
+  children: JSX.Element;
+  show: boolean;
+}
+interface OverlayProps {
+  className: string;
+  children: JSX.Element;
+}
+
+// component
+const Modal: React.FC<ModalProps> = (props) => {
+  const Backdrop: React.FC = () => {
     return <div className={classes.backdrop} onClick={props.onHide}></div>;
   };
 
-  const Overlay = (props) => {
+  const Overlay: React.FC<OverlayProps> = (props) => {
     return (
       <div className={`${classes.modal} ${classes[props.className]}`}>
         {props.children}
@@ -29,12 +42,12 @@ const Modal = (props) => {
     >
       <>
         {ReactDOM.createPortal(
-          <Backdrop onClick={props.onHide} />,
-          document.getElementById("backdrop-root")
+          <Backdrop />,
+          document.getElementById("backdrop-root") as HTMLDivElement
         )}
         {ReactDOM.createPortal(
           <Overlay className={"modalOpen"}>{props.children}</Overlay>,
-          document.getElementById("overlay-root")
+          document.getElementById("overlay-root") as HTMLDivElement
         )}
       </>
     </Transition>

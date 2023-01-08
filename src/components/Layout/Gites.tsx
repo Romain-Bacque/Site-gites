@@ -15,6 +15,7 @@ enum HTTPStateKind {
   ERROR,
 }
 
+// component
 const Gites: React.FC = () => {
   const [shelterList, setShelterList] = useState<JSX.Element[]>([]);
   const [showLoader, setShowLoader] = useState(false);

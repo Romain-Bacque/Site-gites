@@ -1,5 +1,6 @@
 import classes from "./Footer.module.css";
 
+// component
 const Footer: React.FC = () => {
   return (
     <footer className={classes.footer}>

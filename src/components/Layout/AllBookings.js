@@ -35,18 +35,19 @@ import Alert from "../UI/Alert";
 
 dayjs().format();
 
+// variable & constante
 const initialModalState = {
   show: false,
   booking: false,
   sort: false,
 };
-
 const initialMessageState = {
   message: "",
   alert: "",
   show: false,
 };
 
+// component
 const AllBookings = () => {
   const [allBookingsContent, setAllBookingsContent] = useState();
   const [showModal, setShowModal] = useState(initialModalState);

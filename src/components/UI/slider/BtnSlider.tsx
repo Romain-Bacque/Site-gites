@@ -1,9 +1,15 @@
 import React from "react";
+import classes from "./Slider.module.css";
 import rightArrow from "./icons/right-arrow.svg";
 import leftArrow from "./icons/left-arrow.svg";
-import classes from "./Slider.module.css";
 
-const BtnSlider = ({ direction, moveSlide }) => {
+// interfaces
+interface BtnSliderProps {
+  direction: "next" | "prev";
+  moveSlide: () => void;
+}
+
+const BtnSlider: React.FC<BtnSliderProps> = ({ direction, moveSlide }) => {
   return (
     <button
       onClick={moveSlide}

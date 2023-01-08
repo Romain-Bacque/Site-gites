@@ -25,14 +25,14 @@ interface HTTPAction<T> {
   value?: ValueType<T>;
 }
 
-// ---
-
+// variable & constante
 const initialState = {
   statut: null,
   data: null,
   error: null,
 };
 
+// component
 function httpReducer<T>(
   state: HTTPState<T>,
   action: HTTPAction<T>

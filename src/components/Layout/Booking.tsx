@@ -7,7 +7,7 @@ import icon_success from "../../img/icon_success.ico";
 import icon_error from "../../img/icon_error.png";
 import Input from "./Input";
 import useHttp, { HTTPStateKind } from "../../hooks/use-http";
-import { bookingRequest } from "../../lib/api";
+import { bookingRequest, bookingRequestData } from "../../lib/api";
 import classes from "./Booking.module.css";
 import Planning from "./Planning";
 
@@ -23,26 +23,14 @@ interface CalendarStatus {
   input: null | string;
 }
 
-// ---
-
+// variable & contante
 let modalContent: JSX.Element;
 const initialState = {
   show: false,
   input: null,
 };
 
-// Post Booking
-export interface bookingRequestData {
-  shelterId: string;
-  name: string;
-  phone: string;
-  numberOfPerson: string;
-  email: string;
-  from: string;
-  to: string;
-  informations: string;
-}
-
+// component
 const Booking: React.FC<BookingProps> = ({ shelter }) => {
   const [showLoader, setShowLoader] = useState(false);
   const { sendHttpRequest: bookingHttpRequest, statut: bookingStatut } =

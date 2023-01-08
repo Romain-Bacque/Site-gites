@@ -7,6 +7,7 @@ import Loader from "../Loader";
 import classes from "./CropContent.module.css";
 import getCroppedImg from "./lib/cropImage";
 
+// component
 const CropContent = ({ shelterNumber, url, getImagesList, onRequestEnd }) => {
   const [showLoader, setShowLoader] = useState(false);
   const {

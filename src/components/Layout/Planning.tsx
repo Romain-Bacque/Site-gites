@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../hooks/use-http";
+import useHttp, { HTTPStateKind } from "../../hooks/use-http";
 
 import {
   getDatesRequest,
@@ -12,8 +12,11 @@ import classes from "./Planning.module.css";
 import "react-calendar/dist/Calendar.css";
 import Loader from "./Loader";
 import dayjs from "dayjs";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../hooks/use-store";
 
+dayjs().format();
+
+// interfaces
 interface PlanningProps {
   className: string;
   onDateChoice: (date: Date) => void;
@@ -21,17 +24,18 @@ interface PlanningProps {
   isDoubleView?: boolean;
 }
 
-dayjs().format();
-
+// component
 const Planning: React.FC<PlanningProps> = ({
   className,
   onDateChoice,
   onDateClick,
   isDoubleView,
 }) => {
-  const isAuth = useSelector((state) => state.auth.isAuthentificated);
+  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const [showLoader, setShowLoader] = useState(false);
-  const [planningContent, setPlanningContent] = useState(null);
+  const [planningContent, setPlanningContent] = useState<JSX.Element | null>(
+    null
+  );
   const [currentDay] = useState(new Date());
   const {
     sendHttpRequest: disabledDatesHttpRequest,
@@ -45,31 +49,34 @@ const Planning: React.FC<PlanningProps> = ({
   }, [disabledDatesHttpRequest]);
 
   const handleDateChange = useCallback(
-    (date) => {
+    (date: Date) => {
       onDateChoice(date);
     },
     [onDateChoice]
   );
 
-  const formatDate = (date) => dayjs(date).format("YYYY, MM, DD");
+  const formatDate = (date: Date) => dayjs(date).format("YYYY, MM, DD");
 
   const handleDisabledDateStyle = useCallback(
-    (date) => {
-      const isDisabled =
+    (date: Date) => {
+      let isDisabled = false;
+
+      if (typeof disabledDatesData === "object") {
         disabledDatesData?.some((disabledDate) => {
           return (
             formatDate(date) === formatDate(disabledDate.from) ||
             formatDate(date) === formatDate(disabledDate.to)
           );
         }) || date <= new Date();
+      }
       return isDisabled ? classes["disabled-date"] : null;
     },
     [disabledDatesData]
   );
 
   const handleCalendarDisplay = useCallback(
-    (statut) => {
-      if (statut === "success") {
+    (statut: HTTPStateKind) => {
+      if (statut === HTTPStateKind.SUCCESS) {
         setShowLoader(false);
         setPlanningContent(
           <div className={classes["calendar-container"]}>
@@ -90,7 +97,7 @@ const Planning: React.FC<PlanningProps> = ({
               onClickDay={(date) =>
                 isAuth && onDateClick && onDateClick(date, disabledDatesData)
               }
-              onChange={(date) => onDateChoice && handleDateChange(date)}
+              onChange={(date: Date) => onDateChoice && handleDateChange(date)}
               value={currentDay}
             />
             <div className={classes["legend"]}>

@@ -8,6 +8,7 @@ import { logoutRequest } from "../../lib/api";
 import useHttp from "../../hooks/use-http";
 import { useAppDispatch, useAppSelector } from "../../hooks/use-store";
 
+// component
 const Header: React.FC = () => {
   const [scrollActive, setScrollActive] = useState(false);
   const { sendHttpRequest, statut: logoutStatut } = useHttp(logoutRequest);
