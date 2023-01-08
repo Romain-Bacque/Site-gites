@@ -1,6 +1,6 @@
 import Gites from "../components/Layout/Gites";
 
-const GitesPage = () => {
+const GitesPage: React.FC = () => {
   return <Gites />;
 };
 

@@ -1,10 +1,27 @@
-import { useSelector } from "react-redux";
 import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../hooks/use-http";
+import useHttp, { HTTPStateKind } from "../../hooks/use-http";
 import { ratesGetRequest, ratesPostRequest } from "../../lib/api";
 import Loader from "./Loader";
 import Alert from "../UI/Alert";
 import classes from "./Rates.module.css";
+import { useAppSelector } from "../../hooks/use-store";
+
+// interfaces
+interface StatutMessage {
+  message: null | string;
+  alert: null | string;
+  show: boolean;
+}
+interface RatesProps {
+  shelter: string;
+}
+interface PriceValues {
+  price1: number;
+  price2: number;
+  price3: number;
+}
+
+// ---
 
 const initialState = {
   message: null,
@@ -12,15 +29,16 @@ const initialState = {
   show: false,
 };
 
-const Rates = ({ shelter }) => {
-  const [statutMessage, setStatutMessage] = useState(initialState);
+const Rates: React.FC<RatesProps> = ({ shelter }) => {
+  const [statutMessage, setStatutMessage] =
+    useState<StatutMessage>(initialState);
   const [showLoader, setShowLoader] = useState(false);
-  const [priceValues, sePriceValues] = useState({
+  const [priceValues, sePriceValues] = useState<PriceValues>({
     price1: 1,
     price2: 1,
     price3: 1,
   });
-  const isAuth = useSelector((state) => state.auth.isAuthentificated);
+  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const { sendHttpRequest: getRatesHttpRequest, data: ratesData } =
     useHttp(ratesGetRequest);
   const { sendHttpRequest: postRatesHttpRequest, statut: postRatesStatut } =
@@ -31,7 +49,7 @@ const Rates = ({ shelter }) => {
     !isNaN(priceValues.price2) &&
     !isNaN(priceValues.price3);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!formIsValid) return;
@@ -47,14 +65,17 @@ const Rates = ({ shelter }) => {
     setShowLoader(true);
   };
 
-  const handleValueChange = (event) => {
+  const handleValueChange = (event: React.ChangeEvent) => {
     sePriceValues((prevState) => {
-      return { ...prevState, [event.target.id]: event.target.value };
+      return {
+        ...prevState,
+        [event.target.id]: (event.target as HTMLInputElement).value,
+      };
     });
   };
 
-  const handleRequestEnd = useCallback((statut) => {
-    if (statut === "success") {
+  const handleRequestEnd = useCallback((statut: HTTPStateKind) => {
+    if (statut === HTTPStateKind.SUCCESS) {
       setStatutMessage({
         message: "Prix enregistrés avec succés.",
         alert: "information",

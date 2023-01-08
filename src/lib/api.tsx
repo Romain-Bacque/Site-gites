@@ -91,11 +91,11 @@ export const bookingsGetRequest = async () => {
 export interface bookingRequestData {
   shelterId: string;
   name: string;
-  phone: number;
-  numberOfPerson: number;
+  phone: string;
+  numberOfPerson: string;
   email: string;
-  from: Date;
-  to: Date;
+  from: string;
+  to: string;
   informations: string;
 }
 

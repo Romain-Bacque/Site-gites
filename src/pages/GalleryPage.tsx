@@ -5,7 +5,7 @@ import { getPictureRequest } from "../lib/api";
 import Gallery from "../components/Layout/Gallery";
 import Loader from "../components/Layout/Loader";
 
-const GalleryPage = () => {
+const GalleryPage: React.FC = () => {
   const {
     sendHttpRequest: getPictureHttpRequest,
     statut: getPictureStatut,

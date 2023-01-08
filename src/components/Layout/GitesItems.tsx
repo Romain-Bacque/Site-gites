@@ -7,10 +7,26 @@ import Rates from "./Rates";
 import Slider from "../UI/slider/Slider";
 import Availability from "./Availability";
 
-let formContent;
+// interfaces
+interface GitesItemsProps {
+  shelterId: string;
+  title: string;
+  number: number;
+}
+interface Tab {
+  tab: null | number;
+}
 
-const GitesItems = ({ shelterId: shelter, title, number }) => {
-  const [shelterStatut, setShelterStatut] = useState([
+// ---
+
+let formContent: JSX.Element;
+
+const GitesItems: React.FC<GitesItemsProps> = ({
+  shelterId: shelter,
+  title,
+  number,
+}) => {
+  const [shelterStatut, setShelterStatut] = useState<Tab[]>([
     { tab: null },
     { tab: null },
   ]);
@@ -24,7 +40,7 @@ const GitesItems = ({ shelterId: shelter, title, number }) => {
     formContent = <Availability shelter={shelter} />;
   }
 
-  const handleShelterTab = (value) => {
+  const handleShelterTab = (value: number) => {
     setShelterStatut((prevState) => {
       return prevState.map((item, index) =>
         index === number ? (item = { tab: value }) : item

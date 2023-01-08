@@ -1,6 +1,11 @@
 import classes from "./Card.module.css";
 
-const Card = (props) => {
+interface CardProps {
+  className: string;
+  children: JSX.Element;
+}
+
+const Card: React.FC<CardProps> = (props) => {
   const cardClasses = `${classes.card} ${props.className}`;
 
   return <article className={cardClasses}>{props.children}</article>;

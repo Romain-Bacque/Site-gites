@@ -1,6 +1,6 @@
 import Auth from "../components/Layout/Auth";
 
-const AuthPage = () => {
+const AuthPage: React.FC = () => {
   return <Auth />;
 };
 

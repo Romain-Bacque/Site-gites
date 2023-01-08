@@ -1,6 +1,6 @@
 import Home from "../components/Layout/Home";
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
   return <Home />;
 };
 

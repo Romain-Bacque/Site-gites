@@ -1,6 +1,6 @@
 import AllBookings from "../components/Layout/AllBookings";
 
-const AllBookingsPage = () => {
+const AllBookingsPage: React.FC = () => {
   return <AllBookings />;
 };
 

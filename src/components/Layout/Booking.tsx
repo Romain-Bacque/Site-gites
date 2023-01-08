@@ -6,8 +6,8 @@ import Modal from "../UI/Modal";
 import icon_success from "../../img/icon_success.ico";
 import icon_error from "../../img/icon_error.png";
 import Input from "./Input";
-import useHttp from "../../hooks/use-http";
-import { bookingRequest, bookingRequestData } from "../../lib/api";
+import useHttp, { HTTPStateKind } from "../../hooks/use-http";
+import { bookingRequest } from "../../lib/api";
 import classes from "./Booking.module.css";
 import Planning from "./Planning";
 
@@ -30,6 +30,18 @@ const initialState = {
   show: false,
   input: null,
 };
+
+// Post Booking
+export interface bookingRequestData {
+  shelterId: string;
+  name: string;
+  phone: string;
+  numberOfPerson: string;
+  email: string;
+  from: string;
+  to: string;
+  informations: string;
+}
 
 const Booking: React.FC<BookingProps> = ({ shelter }) => {
   const [showLoader, setShowLoader] = useState(false);
@@ -102,7 +114,10 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
     fromIsValid;
 
   useEffect(() => {
-    if (bookingStatut === "success" || bookingStatut === "error")
+    if (
+      bookingStatut === HTTPStateKind.SUCCESS ||
+      bookingStatut === HTTPStateKind.ERROR
+    )
       setShowModal(true);
   }, [bookingStatut]);
 
@@ -163,7 +178,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
   );
 
   useEffect(() => {
-    if (bookingStatut === "success") {
+    if (bookingStatut === HTTPStateKind.SUCCESS) {
       modalContent = (
         <>
           <img
@@ -196,7 +211,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
       resetFromHandler();
       resetToHandler();
       resetInfosHandler();
-    } else if (bookingStatut === "error") {
+    } else if (bookingStatut === HTTPStateKind.ERROR) {
       modalContent = (
         <>
           <img

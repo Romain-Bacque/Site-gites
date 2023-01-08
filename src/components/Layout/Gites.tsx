@@ -8,6 +8,13 @@ import GitesItems from "./GitesItems";
 import Loader from "./Loader";
 import { getShelters } from "../../lib/api";
 
+// enum
+enum HTTPStateKind {
+  SEND,
+  SUCCESS,
+  ERROR,
+}
+
 // types aliases
 type Shelter = {
   _id: string;
@@ -15,7 +22,7 @@ type Shelter = {
   number: number;
 };
 
-const Gites = () => {
+const Gites: React.FC = () => {
   const [shelterList, setShelterList] = useState<JSX.Element[]>([]);
   const [showLoader, setShowLoader] = useState(false);
   const {
@@ -30,7 +37,7 @@ const Gites = () => {
   }, []);
 
   const handleSheltersList = () => {
-    if (sheltersRequestStatut === "success" && sheltersData) {
+    if (sheltersRequestStatut === HTTPStateKind.SUCCESS && sheltersData) {
       let shelters: JSX.Element[] = [];
 
       setShowLoader(false);

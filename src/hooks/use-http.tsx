@@ -1,27 +1,29 @@
 import { useReducer, useCallback } from "react";
 
-enum HTTPStateKind {
+// enums
+export enum HTTPStateKind {
   SEND,
   SUCCESS,
   ERROR,
 }
 
-type StatutAndErrorType = null | string;
+// type aliases
+type StatutType = null | HTTPStateKind;
+type ErrorType = null | string;
 type ValueAndDataType = null | string | number | object[];
 
-type httpRequestType = (
-  arg?: object | number
-) => Promise<void | object[] | number>;
-
+// interfaces
 interface HTTPState {
-  statut: StatutAndErrorType;
+  statut: StatutType;
   data: ValueAndDataType;
-  error: StatutAndErrorType;
+  error: ErrorType;
 }
 interface HTTPAction {
   type: HTTPStateKind;
   value?: ValueAndDataType;
 }
+
+// ---
 
 const initialState = {
   statut: null,
@@ -35,19 +37,19 @@ function httpReducer(state: HTTPState, action: HTTPAction): HTTPState {
   switch (type) {
     case HTTPStateKind.SEND:
       return {
-        statut: "send",
+        statut: HTTPStateKind.SEND,
         data: null,
         error: null,
       };
     case HTTPStateKind.SUCCESS:
       return {
-        statut: "success",
+        statut: HTTPStateKind.SUCCESS,
         data: (value as object[]) || null,
         error: null,
       };
     case HTTPStateKind.ERROR:
       return {
-        statut: "error",
+        statut: HTTPStateKind.ERROR,
         data: null,
         error: value!.toString(),
       };
@@ -56,7 +58,7 @@ function httpReducer(state: HTTPState, action: HTTPAction): HTTPState {
   }
 }
 
-function useHttp<T extends httpRequestType>(httpRequest: T) {
+function useHttp<T extends Function>(httpRequest: T) {
   const [httpState, dispatch] = useReducer(httpReducer, initialState);
 
   const sendHttpRequest = useCallback(

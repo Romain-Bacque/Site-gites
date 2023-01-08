@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import classes from "./Header.module.css";
-import { useSelector, useDispatch } from "react-redux";
 import { authActions } from "../../store/auth";
 import { menuActions } from "../../store/menu";
 import { logoutRequest } from "../../lib/api";
 import useHttp from "../../hooks/use-http";
+import { useAppDispatch, useAppSelector } from "../../hooks/use-store";
 
-const Header = () => {
+const Header: React.FC = () => {
   const [scrollActive, setScrollActive] = useState(false);
   const { sendHttpRequest, statut: logoutStatut } = useHttp(logoutRequest);
-  const isAdmin = useSelector((state) => state.auth.isAdmin);
-  const isAuth = useSelector((state) => state.auth.isAuthentificated);
-  const isOpen = useSelector((state) => state.menu.isOpen);
-  const dispatch = useDispatch();
+  const isAdmin = useAppSelector((state) => state.auth.isAdmin);
+  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
+  const isOpen = useAppSelector((state) => state.menu.isOpen);
+  const dispatch = useAppDispatch();
   const history = useHistory();
 
   useEffect(() => {
@@ -33,12 +33,12 @@ const Header = () => {
     };
   }, []);
 
-  const handleToggleButton = (event) => {
+  const handleToggleButton = (event: React.MouseEvent) => {
     event.stopPropagation();
     dispatch(menuActions.toggleMenu());
   };
 
-  const handleAuthLink = (event) => {
+  const handleAuthLink = (event: React.MouseEvent) => {
     dispatch(menuActions.toggleMenu());
 
     if (isAuth) {
