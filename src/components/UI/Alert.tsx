@@ -1,22 +1,35 @@
 import { Transition } from "react-transition-group";
 import classes from "./Alert.module.css";
 
-let backgroundColorClass;
+// enum
+export enum AlertKind {
+  INFO,
+  SUCCESS,
+  ERROR,
+}
 
-const Alert = ({ message, alert, show }) => {
+// interfaces
+interface AlertProps {
+  message: string | null;
+  alert: AlertKind | null;
+  show: boolean;
+}
+
+// ---
+
+let backgroundColorClass: string;
+
+const Alert: React.FC<AlertProps> = ({ message, alert, show }) => {
   switch (alert) {
-    case "information":
+    case AlertKind.INFO:
       backgroundColorClass = "alert--gray";
       break;
-
-    case "success":
+    case AlertKind.SUCCESS:
       backgroundColorClass = "alert--green";
       break;
-
-    case "error":
+    case AlertKind.ERROR:
       backgroundColorClass = "alert--red";
       break;
-
     default:
       backgroundColorClass = "alert--gray";
   }
@@ -24,7 +37,7 @@ const Alert = ({ message, alert, show }) => {
   return (
     <Transition mountOnEnter unmountOnExit in={show} timeout={4000}>
       {(state) => {
-        const displayClass = state === "exiting" ? "alert--hide" : null;
+        const displayClass = state === "exiting" ? "alert--hide" : "";
 
         return (
           <span

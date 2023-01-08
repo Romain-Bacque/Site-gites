@@ -15,13 +15,6 @@ enum HTTPStateKind {
   ERROR,
 }
 
-// types aliases
-type Shelter = {
-  _id: string;
-  title: string;
-  number: number;
-};
-
 const Gites: React.FC = () => {
   const [shelterList, setShelterList] = useState<JSX.Element[]>([]);
   const [showLoader, setShowLoader] = useState(false);
@@ -30,7 +23,6 @@ const Gites: React.FC = () => {
     statut: sheltersRequestStatut,
     data: sheltersData,
   } = useHttp(getShelters);
-
   useEffect(() => {
     sendShelterHttpRequest();
     setShowLoader(true);
@@ -41,13 +33,8 @@ const Gites: React.FC = () => {
       let shelters: JSX.Element[] = [];
 
       setShowLoader(false);
-      if (
-        typeof sheltersData === "object" &&
-        "_id" in sheltersData &&
-        "number" in sheltersData &&
-        "title" in sheltersData
-      ) {
-        shelters = (sheltersData as Shelter[])
+      if (typeof sheltersData === "object") {
+        shelters = sheltersData
           .sort((a, b) => a.number - b.number)
           .map((shelter) => {
             return (

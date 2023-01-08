@@ -49,7 +49,7 @@ export const loadUserInfos = async () => {
 
 // Get Shelters
 type getSheltersReturnData = {
-  sheltersData: { _id: number; title: string; number: number }[];
+  sheltersData: { _id: string; title: string; number: number }[];
 };
 
 export const getShelters = async () => {
@@ -185,7 +185,7 @@ interface RatesPostRequestReturnData {
     price2: number;
     price3: number;
     shelter: string;
-  }[];
+  };
 }
 
 export const ratesGetRequest = async () => {

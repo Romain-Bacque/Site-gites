@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useReducer, useCallback } from "react";
 
 // enums
@@ -8,19 +9,20 @@ export enum HTTPStateKind {
 }
 
 // type aliases
-type StatutType = null | HTTPStateKind;
+export type StatutType = null | HTTPStateKind;
+type HTTPRequestType = (arg: any) => Promise<any>;
 type ErrorType = null | string;
-type ValueAndDataType = null | string | number | object[];
+type ValueType<T> = T | null | string;
 
 // interfaces
-interface HTTPState {
+interface HTTPState<T> {
   statut: StatutType;
-  data: ValueAndDataType;
+  data: ValueType<T>;
   error: ErrorType;
 }
-interface HTTPAction {
+interface HTTPAction<T> {
   type: HTTPStateKind;
-  value?: ValueAndDataType;
+  value?: ValueType<T>;
 }
 
 // ---
@@ -31,7 +33,10 @@ const initialState = {
   error: null,
 };
 
-function httpReducer(state: HTTPState, action: HTTPAction): HTTPState {
+function httpReducer<T>(
+  state: HTTPState<T>,
+  action: HTTPAction<T>
+): HTTPState<T> {
   const { type, value } = action;
 
   switch (type) {
@@ -44,7 +49,7 @@ function httpReducer(state: HTTPState, action: HTTPAction): HTTPState {
     case HTTPStateKind.SUCCESS:
       return {
         statut: HTTPStateKind.SUCCESS,
-        data: (value as object[]) || null,
+        data: value || null,
         error: null,
       };
     case HTTPStateKind.ERROR:
@@ -58,21 +63,29 @@ function httpReducer(state: HTTPState, action: HTTPAction): HTTPState {
   }
 }
 
-function useHttp<T extends Function>(httpRequest: T) {
-  const [httpState, dispatch] = useReducer(httpReducer, initialState);
+// 'T' generic represents the type of the HTTP request passed to 'useHttp' function
+function useHttp<T extends HTTPRequestType>(httpRequest: T) {
+  const [httpState, dispatch] = useReducer<
+    React.Reducer<
+      HTTPState<Awaited<ReturnType<T>>>,
+      HTTPAction<Awaited<ReturnType<T>>>
+    >
+  >(httpReducer, initialState);
 
   const sendHttpRequest = useCallback(
     async <D extends object | number>(requestData?: D) => {
       try {
         dispatch({ type: HTTPStateKind.SEND });
 
-        const responseData = await httpRequest(requestData);
+        const responseData: Awaited<ReturnType<T>> = await httpRequest(
+          requestData
+        );
 
         dispatch({ type: HTTPStateKind.SUCCESS, value: responseData ?? null });
-      } catch (err) {
+      } catch (err: any) {
         dispatch({
           type: HTTPStateKind.ERROR,
-          value: (err as string) || "Une erreur s'est produit !",
+          value: err.message || "Une erreur s'est produit !",
         });
       }
     },

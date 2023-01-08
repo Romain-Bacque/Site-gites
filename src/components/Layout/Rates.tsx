@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import useHttp, { HTTPStateKind } from "../../hooks/use-http";
 import { ratesGetRequest, ratesPostRequest } from "../../lib/api";
 import Loader from "./Loader";
-import Alert from "../UI/Alert";
+import Alert, { AlertKind } from "../UI/Alert";
 import classes from "./Rates.module.css";
 import { useAppSelector } from "../../hooks/use-store";
 
 // interfaces
 interface StatutMessage {
   message: null | string;
-  alert: null | string;
+  alert: null | AlertKind;
   show: boolean;
 }
 interface RatesProps {
@@ -78,20 +78,20 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
     if (statut === HTTPStateKind.SUCCESS) {
       setStatutMessage({
         message: "Prix enregistrés avec succés.",
-        alert: "information",
+        alert: AlertKind.INFO,
         show: true,
       });
     } else
       setStatutMessage({
         message: "Enregistrement des prix impossible.",
-        alert: "error",
+        alert: AlertKind.ERROR,
         show: true,
       });
     setShowLoader(false);
   }, []);
 
   useEffect(() => {
-    if (ratesData) {
+    if (ratesData && typeof ratesData === "object") {
       sePriceValues({
         price1: ratesData.price1,
         price2: ratesData.price2,
@@ -105,7 +105,7 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
   }, [getRatesHttpRequest]);
 
   useEffect(() => {
-    let timer;
+    let timer: NodeJS.Timeout;
 
     if (statutMessage.show) {
       timer = setTimeout(() => {
