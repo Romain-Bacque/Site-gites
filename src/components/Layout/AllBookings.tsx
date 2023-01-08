@@ -47,7 +47,9 @@ interface ModalState {
   booking: boolean;
   sort: boolean;
 }
-interface BookingsData {
+
+// type aliases
+type BookingsData = {
   name: string;
   phone: number;
   email: string;
@@ -57,8 +59,7 @@ interface BookingsData {
   informations: string;
   booked: boolean;
   shelter_id: string;
-}
-[];
+}[];
 
 // variable & constante
 const initialModalState = {
@@ -108,7 +109,7 @@ const AllBookings: React.FC = () => {
   };
 
   const handleBookingSubmit = useCallback(
-    async (event: React.FocusEvent) => {
+    async (event: React.FormEvent) => {
       event.preventDefault();
 
       setShowLoader(true);
@@ -322,7 +323,7 @@ const AllBookings: React.FC = () => {
     if (acceptBookingStatut === HTTPStateKind.SUCCESS) {
       setStatutMessage({
         message: "Demande accepté, verifiez votre mail de confirmation",
-        alert: "success",
+        alert: AlertKind.SUCCESS,
         show: true,
       });
     }
@@ -360,25 +361,27 @@ const AllBookings: React.FC = () => {
           setShowModal(initialModalState);
         }}
       >
-        {showModal.booking ? (
-          <form onSubmit={handleBookingSubmit}>
-            <h3>Message à envoyer</h3>
-            <textarea rows="10" cols="25"></textarea>
-            <div>
-              <button>Envoyer</button>
-              <button type="button" onClick={handleCancel}>
-                Annuler
-              </button>
-            </div>
-            {showLoader && (
-              <Loader
-                statut={acceptBookingStatut}
-                onRequestEnd={handleRequestEnd}
-              />
-            )}
-          </form>
-        ) : null}
-        {showModal.sort && <Sort onSortValidation={handleSort} />}
+        <>
+          {showModal.booking ? (
+            <form onSubmit={handleBookingSubmit}>
+              <h3>Message à envoyer</h3>
+              <textarea rows={10} cols={25}></textarea>
+              <div>
+                <button>Envoyer</button>
+                <button type="button" onClick={handleCancel}>
+                  Annuler
+                </button>
+              </div>
+              {showLoader && (
+                <Loader
+                  statut={acceptBookingStatut}
+                  onRequestEnd={handleRequestEnd}
+                />
+              )}
+            </form>
+          ) : null}
+          {showModal.sort ? <Sort onSortValidation={handleSort} /> : null}
+        </>
       </Modal>
       <Alert
         message={statutMessage.message}
