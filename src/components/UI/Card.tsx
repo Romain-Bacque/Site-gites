@@ -3,7 +3,7 @@ import classes from "./Card.module.css";
 // interfaces
 interface CardProps {
   className: string;
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
 }
 
 // component

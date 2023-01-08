@@ -120,19 +120,21 @@ export const refuseBookingRequest = async (id: string) => {
 };
 
 // get booked dates
-interface DisabledDatesReturnData {
-  disabledDates: {
-    name: string;
-    phone: number;
-    email: string;
-    numberOfPerson: number;
-    from: Date;
-    to: Date;
-    informations: string;
-    booked: boolean;
-    shelter_id: string;
-  }[];
-}
+export type DisabledDatesReturnData = {
+  disabledDates:
+    | {
+        name: string;
+        phone: number;
+        email: string;
+        numberOfPerson: number;
+        from: Date;
+        to: Date;
+        informations: string;
+        booked: boolean;
+        shelter_id: string;
+      }[]
+    | [];
+};
 
 export const getDatesRequest = async () => {
   const response = await axios.get<DisabledDatesReturnData>("/disabledDates");

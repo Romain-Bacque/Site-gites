@@ -21,7 +21,7 @@ interface InputAction {
   value?: HTMLInputElement | string;
 }
 
-// variable & contante
+// variable & constante
 const initialState = {
   enteredValue: "",
   isValid: false,

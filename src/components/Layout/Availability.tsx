@@ -1,13 +1,34 @@
 import dayjs from "dayjs";
-import { useCallback } from "react";
 import { useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
-import { deleteDateRequest, postDateRequest } from "../../lib/api";
+import {
+  deleteDateRequest,
+  DisabledDatesReturnData,
+  postDateRequest,
+} from "../../lib/api";
 import classes from "./Availability.module.css";
 import Planning from "./Planning";
 
+//type
+type DisabledDatesData = {
+  name: string;
+  phone: number;
+  email: string;
+  numberOfPerson: number;
+  from: Date;
+  to: Date;
+  informations: string;
+  booked: boolean;
+  shelter_id: string;
+}[];
+
+// interfaces
+interface AvailabilityProps {
+  shelter: number;
+}
+
 // component
-const Availability = ({ shelter }) => {
+const Availability: React.FC<AvailabilityProps> = ({ shelter }) => {
   const [showDoubleView, setShowDoubleView] = useState(false);
   const {
     sendHttpRequest: deleteDisabledDateHttpRequest,
@@ -20,22 +41,32 @@ const Availability = ({ shelter }) => {
     data: postDisabledDatesData,
   } = useHttp(postDateRequest);
 
-  const formatDate = (date) => dayjs(date).format("YYYY, MM, DD");
+  const formatDate = (date: Date) => dayjs(date).format("YYYY, MM, DD");
 
-  const handleDateClick = (date, disabledDates) => {
-    const BookedDates = disabledDates?.filter((disabledDate) => {
-      return (
-        formatDate(date) === formatDate(disabledDate.from) ||
-        formatDate(date) === formatDate(disabledDate.to)
-      );
-    });
+  const handleDateClick = (
+    date: Date,
+    disabledDates: DisabledDatesData | null
+  ) => {
+    const BookedDates =
+      disabledDates &&
+      disabledDates.length > 0 &&
+      disabledDates.filter((disabledDate) => {
+        return (
+          formatDate(date) === formatDate(disabledDate.from) ||
+          formatDate(date) === formatDate(disabledDate.to)
+        );
+      });
 
-    const isClientReservation = BookedDates?.some((disabledDate) => {
-      return (
-        formatDate(date) === formatDate(disabledDate.from) ||
-        (formatDate(date) === formatDate(disabledDate.to) && disabledDate.email)
-      );
-    });
+    const isClientReservation =
+      BookedDates &&
+      BookedDates.length > 0 &&
+      BookedDates.some((disabledDate) => {
+        return (
+          formatDate(date) === formatDate(disabledDate.from) ||
+          (formatDate(date) === formatDate(disabledDate.to) &&
+            disabledDate.email)
+        );
+      });
 
     if (!isClientReservation) {
       const data = {
@@ -43,7 +74,7 @@ const Availability = ({ shelter }) => {
         date,
       };
 
-      if (!BookedDates.length) {
+      if (!BookedDates || !BookedDates.length) {
         postDisabledDateHttpRequest(data);
       } else {
         deleteDisabledDateHttpRequest(data.shelter);
@@ -68,10 +99,7 @@ const Availability = ({ shelter }) => {
   return (
     <div className={classes.availability}>
       <Planning
-        deleteDisabledDatesStatut={deleteDisabledDatesStatut}
-        postDisabledDatesStatut={postDisabledDatesStatut}
-        shelter={shelter}
-        doubleView={showDoubleView}
+        isDoubleView={showDoubleView}
         onDateClick={handleDateClick}
         className="react-calendar--availability"
       />

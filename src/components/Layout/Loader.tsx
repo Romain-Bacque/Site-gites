@@ -7,7 +7,7 @@ import classes from "./Loader.module.css";
 interface LoaderProps {
   statut: StatutType;
   onRequestEnd?: (statut: HTTPStateKind) => void;
-  message: {
+  message?: {
     success: null | string;
     error: null | string;
   };

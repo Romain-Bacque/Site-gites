@@ -5,6 +5,7 @@ import {
   getDatesRequest,
   postDateRequest,
   deleteDateRequest,
+  DisabledDatesReturnData,
 } from "../../lib/api";
 import Calendar from "react-calendar";
 
@@ -16,11 +17,24 @@ import { useAppSelector } from "../../hooks/use-store";
 
 dayjs().format();
 
+// type
+type DisabledDatesData = {
+  name: string;
+  phone: number;
+  email: string;
+  numberOfPerson: number;
+  from: Date;
+  to: Date;
+  informations: string;
+  booked: boolean;
+  shelter_id: string;
+}[];
+
 // interfaces
 interface PlanningProps {
   className: string;
-  onDateChoice: (date: Date) => void;
-  onDateClick?: (date: Date, disabledDatesData: object[]) => void;
+  onDateChoice?: (date: Date) => void;
+  onDateClick?: (date: Date, disabledDates: DisabledDatesData | null) => void;
   isDoubleView?: boolean;
 }
 
@@ -50,7 +64,7 @@ const Planning: React.FC<PlanningProps> = ({
 
   const handleDateChange = useCallback(
     (date: Date) => {
-      onDateChoice(date);
+      onDateChoice && onDateChoice(date);
     },
     [onDateChoice]
   );
@@ -74,6 +88,18 @@ const Planning: React.FC<PlanningProps> = ({
     [disabledDatesData]
   );
 
+  const hasDisabledDates = (date: Date) => {
+    if (disabledDatesData && typeof disabledDatesData === "object") {
+      return disabledDatesData.some(
+        (disabledDate) =>
+          disabledDate.email &&
+          formatDate(date) >= formatDate(disabledDate.from) &&
+          formatDate(date) <= formatDate(disabledDate.to)
+      );
+    }
+    return false;
+  };
+
   const handleCalendarDisplay = useCallback(
     (statut: HTTPStateKind) => {
       if (statut === HTTPStateKind.SUCCESS) {
@@ -86,13 +112,7 @@ const Planning: React.FC<PlanningProps> = ({
               minDate={new Date()}
               tileClassName={({ date }) => handleDisabledDateStyle(date)}
               tileDisabled={({ date, view }) =>
-                view === "month" &&
-                disabledDatesData.some(
-                  (disabledDate) =>
-                    disabledDate.email &&
-                    formatDate(date) >= formatDate(disabledDate.from) &&
-                    formatDate(date) <= formatDate(disabledDate.to)
-                )
+                view === "month" && hasDisabledDates(date)
               }
               onClickDay={(date) =>
                 isAuth && onDateClick && onDateClick(date, disabledDatesData)

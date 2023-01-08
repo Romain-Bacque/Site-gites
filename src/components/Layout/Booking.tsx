@@ -249,59 +249,55 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
         <div className={classes["form__input-container"]}>
           <Input
             label="Prénom et Nom"
-            visible="true"
-            className={!nameIsValid && nameIsTouched && "form__input--red"}
-            input={{
-              id: `name-shelter${shelter}`,
-              onChange: nameChangeHandler,
-              onBlur: nameBlurHandler,
-              type: "text",
-              value: nameValue,
-              placeholder: "Prénom et Nom",
-            }}
+            isVisible={true}
+            className={!nameIsValid && nameIsTouched ? "form__input--red" : ""}
+            id={`name-shelter${shelter}`}
+            onChange={nameChangeHandler}
+            onBlur={nameBlurHandler}
+            type="text"
+            value={nameValue}
+            placeholder="Prénom et Nom"
           />
           <Input
             label="Email"
-            visible="true"
-            className={!emailIsValid && emailIsTouched && "form__input--red"}
-            input={{
-              id: `email-shelter${shelter}`,
-              onChange: emailChangeHandler,
-              onBlur: emailBlurHandler,
-              type: "email",
-              value: emailValue,
-              placeholder: "Adresse mail",
-            }}
+            isVisible={true}
+            className={
+              !emailIsValid && emailIsTouched ? "form__input--red" : ""
+            }
+            id={`email-shelter${shelter}`}
+            onChange={emailChangeHandler}
+            onBlur={emailBlurHandler}
+            type="email"
+            value={emailValue}
+            placeholder="Adresse mail"
           />
           <Input
             label="Téléphone"
-            visible="true"
-            className={!phoneIsValid && phoneIsTouched && "form__input--red"}
-            input={{
-              id: `phone-shelter${shelter}`,
-              onChange: phoneChangeHandler,
-              onBlur: phoneBlurHandler,
-              type: "tel",
-              value: phoneValue,
-              placeholder: "Numéro de téléphone",
-            }}
+            isVisible={true}
+            className={
+              !phoneIsValid && phoneIsTouched ? "form__input--red" : ""
+            }
+            id={`phone-shelter${shelter}`}
+            onChange={phoneChangeHandler}
+            onBlur={phoneBlurHandler}
+            type="tel"
+            value={phoneValue}
+            placeholder="Numéro de téléphone"
           />
           <Input
             label="Nombre de personnes"
-            visible="true"
+            isVisible={true}
             className={
-              !personsIsValid && personsIsTouched && "form__input--red"
+              !personsIsValid && personsIsTouched ? "form__input--red" : ""
             }
-            input={{
-              id: `persons-shelter${shelter}`,
-              onChange: personsChangeHandler,
-              onBlur: personsBlurHandler,
-              min: "1",
-              max: "4",
-              type: "number",
-              value: personsValue,
-              placeholder: "4 personnes max",
-            }}
+            id={`persons-shelter${shelter}`}
+            onChange={personsChangeHandler}
+            onBlur={personsBlurHandler}
+            min="1"
+            max="4"
+            type="number"
+            value={personsValue}
+            placeholder="4 personnes max"
           />
         </div>
         <div className={classes["form__input-container"]}>
@@ -320,15 +316,15 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
             <Input
               onInputDateClick={handleCalendarDisplay.bind(null, "from")}
               label="Arrivée"
-              visible="true"
-              className={!fromIsValid && fromIsTouched && "form__input--red"}
-              input={{
-                readOnly: true,
-                id: `from-shelter${shelter}`,
-                onBlur: fromBlurHandler,
-                type: "date",
-                value: fromValue,
-              }}
+              isVisible={true}
+              className={
+                !fromIsValid && fromIsTouched ? "form__input--red" : ""
+              }
+              readOnly={true}
+              id={`from-shelter${shelter}`}
+              onBlur={fromBlurHandler}
+              type="date"
+              value={fromValue}
             />
           </div>
           <div
@@ -346,15 +342,13 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
             <Input
               onInputDateClick={handleCalendarDisplay.bind(null, "to")}
               label="Départ"
-              visible="true"
-              className={!toIsValid && toIsTouched && "form__input--red"}
-              input={{
-                readOnly: true,
-                id: `to-shelter${shelter}`,
-                onBlur: toBlurHandler,
-                type: "date",
-                value: toValue,
-              }}
+              isVisible={true}
+              className={!toIsValid && toIsTouched ? "form__input--red" : ""}
+              readOnly={true}
+              id={`to-shelter${shelter}`}
+              onBlur={toBlurHandler}
+              type="date"
+              value={toValue}
             />
           </div>
           <textarea

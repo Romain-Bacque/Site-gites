@@ -12,17 +12,18 @@ export enum HTTPStateKind {
 export type StatutType = null | HTTPStateKind;
 type HTTPRequestType = (arg: any) => Promise<any>;
 type ErrorType = null | string;
-type ValueType<T> = T | null | string;
+type DataType<T> = T | null;
 
 // interfaces
 interface HTTPState<T> {
   statut: StatutType;
-  data: ValueType<T>;
+  data: DataType<T>;
   error: ErrorType;
 }
 interface HTTPAction<T> {
   type: HTTPStateKind;
-  value?: ValueType<T>;
+  value?: DataType<T>;
+  errorMessage?: string;
 }
 
 // variable & constante
@@ -85,7 +86,7 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T) {
       } catch (err: any) {
         dispatch({
           type: HTTPStateKind.ERROR,
-          value: err.message || "Une erreur s'est produit !",
+          errorMessage: err.message || "Une erreur s'est produit !",
         });
       }
     },

@@ -5,32 +5,40 @@ import gite1_large from "../../img/gite1_large.jpg";
 import gite2_small from "../../img/gite2_small.jpg";
 import gite2_large from "../../img/gite2_large.jpg";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import Alert from "../UI/Alert";
+import Alert, { AlertKind } from "../UI/Alert";
+import { useAppSelector } from "../../hooks/use-store";
 
+// interfaces
+interface StatutMessage {
+  message: null | string;
+  alert: null | AlertKind;
+  show: boolean;
+}
+
+// variable & constantes
 const initialState = {
   message: null,
   alert: null,
   show: false,
 };
-
-let authStatut = null;
+let isAuthStatut = false;
 
 // component
-const Home = () => {
-  const [statutMessage, setStatutMessage] = useState(initialState);
-  const isAuth = useSelector((state) => state.auth.isAuthentificated);
+const Home: React.FC = () => {
+  const [statutMessage, setStatutMessage] =
+    useState<StatutMessage>(initialState);
+  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
 
   useEffect(() => {
-    let timer;
+    let timer: NodeJS.Timeout;
 
-    if (isAuth && isAuth !== authStatut) {
-      authStatut = isAuth;
+    if (isAuth && isAuth !== isAuthStatut) {
+      isAuthStatut = isAuth;
 
       setStatutMessage({
         message: "Bienvenue !",
-        alert: "success",
+        alert: AlertKind.SUCCESS,
         show: true,
       });
 
@@ -38,7 +46,7 @@ const Home = () => {
         setStatutMessage((prevState) => ({ ...prevState, show: false }));
       }, 4000);
     } else if (!isAuth) {
-      authStatut = null;
+      isAuthStatut = false;
       setStatutMessage((prevState) => ({ ...prevState, show: false }));
     }
 

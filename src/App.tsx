@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "./hooks/use-store";
 import React, { useEffect } from "react";
-import useHttp from "./hooks/use-http";
+import useHttp, { HTTPStateKind } from "./hooks/use-http";
 import { Route, Redirect, Switch, useHistory } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import HomePage from "./pages/HomePage";
@@ -34,7 +34,7 @@ const App: React.FC = () => {
     }
   }, [pathname, history, dispatch]);
 
-  if (authStatut === "success") {
+  if (authStatut === HTTPStateKind.SUCCESS) {
     dispatch(authActions.login());
   }
 

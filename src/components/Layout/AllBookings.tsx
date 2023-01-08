@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import useHttp from "../../hooks/use-http";
+import useHttp, { HTTPStateKind } from "../../hooks/use-http";
 
 import {
   bookingsGetRequest,
   acceptBookingRequest,
   refuseBookingRequest,
+  bookingRequestData,
 } from "../../lib/api";
 import Loader from "./Loader";
 import classes from "./AllBookings.module.css";
@@ -31,9 +32,33 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import Alert from "../UI/Alert";
+import Alert, { AlertKind } from "../UI/Alert";
 
 dayjs().format();
+
+// interfaces
+interface StatutMessage {
+  message: string;
+  alert: null | AlertKind;
+  show: boolean;
+}
+interface ModalState {
+  show: boolean;
+  booking: boolean;
+  sort: boolean;
+}
+interface BookingsData {
+  name: string;
+  phone: number;
+  email: string;
+  numberOfPerson: number;
+  from: Date;
+  to: Date;
+  informations: string;
+  booked: boolean;
+  shelter_id: string;
+}
+[];
 
 // variable & constante
 const initialModalState = {
@@ -43,25 +68,27 @@ const initialModalState = {
 };
 const initialMessageState = {
   message: "",
-  alert: "",
+  alert: null,
   show: false,
 };
 
 // component
-const AllBookings = () => {
-  const [allBookingsContent, setAllBookingsContent] = useState();
-  const [showModal, setShowModal] = useState(initialModalState);
-  const [bookingsList, setBookingsList] = useState([]);
+const AllBookings: React.FC = () => {
+  const [allBookingsContent, setAllBookingsContent] =
+    useState<JSX.Element | null>(null);
+  const [showModal, setShowModal] = useState<ModalState>(initialModalState);
+  const [statutMessage, setStatutMessage] =
+    useState<StatutMessage>(initialMessageState);
+  const [bookingsList, setBookingsList] = useState<BookingsData>([]);
   const [showLoader, setShowLoader] = useState(false);
   const [textareaValue, setTextareaValue] = useState("");
-  const [statutMessage, setStatutMessage] = useState(initialMessageState);
 
   const bookingRef = useRef({ value: null, bookingChoice: null });
 
   const {
     sendHttpRequest: bookingsHttpRequest,
     statut: bookingsRequestStatut,
-    data,
+    data: bookingsData,
   } = useHttp(bookingsGetRequest);
   const {
     sendHttpRequest: acceptBookingHttpRequest,
@@ -75,13 +102,13 @@ const AllBookings = () => {
   const displayError = () => {
     setStatutMessage({
       message: "Une erreur est survenue",
-      alert: "error",
+      alert: AlertKind.ERROR,
       show: true,
     });
   };
 
-  const handleBooking = useCallback(
-    async (event) => {
+  const handleBookingSubmit = useCallback(
+    async (event: React.FocusEvent) => {
       event.preventDefault();
 
       setShowLoader(true);
@@ -132,16 +159,16 @@ const AllBookings = () => {
     });
   }, []);
 
-  const handleRequestEnd = useCallback((statut) => {
-    if (statut === "error") {
+  const handleRequestEnd = useCallback((statut: HTTPStateKind) => {
+    if (statut === HTTPStateKind.ERROR) {
       displayError();
     }
     setShowLoader(false);
   }, []);
 
   const handleAllBookings = useCallback(
-    (statut) => {
-      if (statut === "success") {
+    (statut: HTTPStateKind) => {
+      if (statut === HTTPStateKind.SUCCESS) {
         setAllBookingsContent(
           bookingsList?.length ? (
             <Swiper
@@ -152,10 +179,10 @@ const AllBookings = () => {
                 A11y,
                 EffectCoverflow,
               ]}
-              loop="true"
+              loop={true}
               effect="coverflow"
-              grabCursor="true"
-              centeredSlides="true"
+              grabCursor={true}
+              centeredSlides={true}
               spaceBetween={10}
               coverflowEffect={{
                 rotate: 40,
@@ -284,15 +311,15 @@ const AllBookings = () => {
   );
 
   useEffect(() => {
-    setBookingsList(data);
-  }, [data]);
+    bookingsData && setBookingsList(bookingsData);
+  }, [bookingsData]);
 
   useEffect(() => {
     bookingsHttpRequest();
   }, [bookingsHttpRequest, acceptBookingStatut, refuseBookingStatut]);
 
   useEffect(() => {
-    if (acceptBookingStatut === "success") {
+    if (acceptBookingStatut === HTTPStateKind.SUCCESS) {
       setStatutMessage({
         message: "Demande accepté, verifiez votre mail de confirmation",
         alert: "success",
@@ -302,17 +329,17 @@ const AllBookings = () => {
   }, [acceptBookingStatut]);
 
   useEffect(() => {
-    if (refuseBookingStatut === "success") {
+    if (refuseBookingStatut === HTTPStateKind.SUCCESS) {
       setStatutMessage({
         message: "Demande refusé",
-        alert: "information",
+        alert: AlertKind.INFO,
         show: true,
       });
     }
   }, [refuseBookingStatut]);
 
   useEffect(() => {
-    let timer;
+    let timer: NodeJS.Timeout;
 
     if (statutMessage.show) {
       timer = setTimeout(() => {
@@ -333,8 +360,8 @@ const AllBookings = () => {
           setShowModal(initialModalState);
         }}
       >
-        {showModal.booking && (
-          <form onSubmit={handleBooking}>
+        {showModal.booking ? (
+          <form onSubmit={handleBookingSubmit}>
             <h3>Message à envoyer</h3>
             <textarea rows="10" cols="25"></textarea>
             <div>
@@ -350,7 +377,7 @@ const AllBookings = () => {
               />
             )}
           </form>
-        )}
+        ) : null}
         {showModal.sort && <Sort onSortValidation={handleSort} />}
       </Modal>
       <Alert

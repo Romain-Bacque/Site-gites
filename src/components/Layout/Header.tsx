@@ -5,7 +5,7 @@ import classes from "./Header.module.css";
 import { authActions } from "../../store/auth";
 import { menuActions } from "../../store/menu";
 import { logoutRequest } from "../../lib/api";
-import useHttp from "../../hooks/use-http";
+import useHttp, { HTTPStateKind } from "../../hooks/use-http";
 import { useAppDispatch, useAppSelector } from "../../hooks/use-store";
 
 // component
@@ -41,17 +41,15 @@ const Header: React.FC = () => {
 
   const handleAuthLink = (event: React.MouseEvent) => {
     dispatch(menuActions.toggleMenu());
-
     if (isAuth) {
       event.preventDefault();
-
       sendHttpRequest();
     }
   };
 
   // logout
   useEffect(() => {
-    if (logoutStatut === "success") {
+    if (logoutStatut === HTTPStateKind.SUCCESS) {
       dispatch(authActions.logout());
       history.replace("/");
     }

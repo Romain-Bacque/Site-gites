@@ -4,14 +4,13 @@ import Transition from "react-transition-group/Transition";
 
 // interfaces
 interface ModalProps {
-  className?: string;
   onHide?: () => void;
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
   show: boolean;
 }
 interface OverlayProps {
   className: string;
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
 }
 
 // component
