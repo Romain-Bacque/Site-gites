@@ -65,15 +65,19 @@ export const getShelters = async () => {
 // Get Bookings
 interface BookingsGetRequestReturnData {
   bookingsData: {
+    _id: string;
     name: string;
-    phone: number;
+    phone: string;
     email: string;
     numberOfPerson: number;
     from: Date;
     to: Date;
     informations: string;
     booked: boolean;
-    shelter_id: string;
+    shelter_id: {
+      title: string;
+      number: number;
+    };
   }[];
 }
 
@@ -121,19 +125,17 @@ export const refuseBookingRequest = async (id: string) => {
 
 // get booked dates
 export type DisabledDatesReturnData = {
-  disabledDates:
-    | {
-        name: string;
-        phone: number;
-        email: string;
-        numberOfPerson: number;
-        from: Date;
-        to: Date;
-        informations: string;
-        booked: boolean;
-        shelter_id: string;
-      }[]
-    | [];
+  disabledDates: {
+    name: string;
+    phone: number;
+    email: string;
+    numberOfPerson: number;
+    from: Date;
+    to: Date;
+    informations: string;
+    booked: boolean;
+    shelter_id: string;
+  }[];
 };
 
 export const getDatesRequest = async () => {
@@ -219,7 +221,7 @@ interface PictureRequestReturnData {
   imagesData: {
     url: string;
     filename: string;
-    shelter: {
+    shelter_id: {
       number: number;
     };
   }[];

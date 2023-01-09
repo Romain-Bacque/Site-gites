@@ -4,7 +4,7 @@ const { cloudinary } = require("../utilities/cloudinary");
 const ExpressError = require("../utilities/ExpressError");
 
 const adminController = {
-  allBooking: async function (_, res, next) {
+  getAllBooking: async function (_, res, next) {
     try {
       const allBookings = await Booking.find({
         to: { $gte: new Date() },
@@ -101,7 +101,7 @@ const adminController = {
       next(err);
     }
   },
-  allImages: async function (_, res, next) {
+  getAllImages: async function (_, res, next) {
     try {
       const images = await Image.find({}, { filename: 0 }).populate(
         "shelter_id",

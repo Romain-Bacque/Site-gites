@@ -31,18 +31,16 @@ const GalleryPage: React.FC = () => {
       {imagesData && (
         <>
           <Gallery
-            imagesData={
-              typeof imagesData === "object" &&
-              imagesData.filter((image) => image.shelter?.number === 0)
-            }
-            shelter={0}
+            imagesData={imagesData.filter(
+              (image) => image.shelter_id?.number === 0
+            )}
+            shelterNumber={0}
           />
           <Gallery
-            imagesData={
-              typeof imagesData === "object" &&
-              imagesData.filter((image) => image.shelter?.number === 1)
-            }
-            shelter={1}
+            imagesData={imagesData.filter(
+              (image) => image.shelter_id?.number === 1
+            )}
+            shelterNumber={1}
           />
         </>
       )}

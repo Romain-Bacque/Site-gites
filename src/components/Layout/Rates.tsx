@@ -145,8 +145,8 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
               className={classes["gites__input"]}
               value={priceValues.price1 || "non défini"}
               id="price1"
-              min="1"
-              max="9999"
+              min={1}
+              max={9999}
               onChange={handleValueChange}
               type="number"
               name="country"
@@ -160,8 +160,8 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
               className={classes["gites__input"]}
               value={priceValues.price2 || "non défini"}
               id="price2"
-              min="1"
-              max="9999"
+              min={1}
+              max={9999}
               onChange={handleValueChange}
               type="number"
               name="country"
@@ -175,8 +175,8 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
               className={classes["gites__input"]}
               value={priceValues.price3 || "non défini"}
               id="price3"
-              min="1"
-              max="9999"
+              min={1}
+              max={9999}
               onChange={handleValueChange}
               type="number"
               name="country"

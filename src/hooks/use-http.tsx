@@ -74,7 +74,7 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T) {
   >(httpReducer, initialState);
 
   const sendHttpRequest = useCallback(
-    async <D extends object | number>(requestData?: D) => {
+    async <D extends object | number | string>(requestData?: D) => {
       try {
         dispatch({ type: HTTPStateKind.SEND });
 

@@ -1,20 +1,32 @@
 import { useState } from "react";
 import classes from "./Sort.module.css";
 
+// enum
+export enum SortKind {
+  DATE_DECREASING = 1,
+  DATE_INCREASING,
+  BOOKED,
+  AWAITING,
+}
+
 // interfaces
 interface SortProps {
-  onSortValidation: (arg: string | null) => void;
+  onSortValidation: (arg: SortKind | null) => void;
 }
 
 // component
 const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
-  const [sort, setSort] = useState<string | null>(null);
+  const [sort, setSort] = useState<SortKind | null>(null);
 
   const handleSortChoice = (event: React.MouseEvent) => {
     event.stopPropagation();
-    if ("id" in event.target) {
-      setSort(event.target.id as string);
-    }
+
+    const chosenFilter =
+      "id" in event.target && typeof event.target.id === "string"
+        ? Number(event.target.id)
+        : null;
+
+    setSort(chosenFilter);
   };
   const handleSortValidation = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -33,22 +45,22 @@ const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
         <div>
           <button
             className={`${classes["sort__choice-button"]} ${
-              sort === "dateIncreasing" &&
+              sort === SortKind.DATE_INCREASING &&
               classes["sort__choice-button--active"]
             }`}
             type="button"
-            id="dateIncreasing"
+            id={SortKind.DATE_INCREASING.toString()}
             onClick={handleSortChoice}
           >
             Croissant
           </button>
           <button
             className={`${classes["sort__choice-button"]} ${
-              sort === "dateDecreasing" &&
+              sort === SortKind.DATE_DECREASING &&
               classes["sort__choice-button--active"]
             }`}
             type="button"
-            id="dateDecreasing"
+            id={SortKind.DATE_DECREASING.toString()}
             onClick={handleSortChoice}
           >
             Décroissant
@@ -58,20 +70,21 @@ const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
         <div>
           <button
             className={`${classes["sort__choice-button"]} ${
-              sort === "booked" && classes["sort__choice-button--active"]
+              sort === SortKind.BOOKED && classes["sort__choice-button--active"]
             }`}
             type="button"
-            id="booked"
+            id={SortKind.BOOKED.toString()}
             onClick={handleSortChoice}
           >
             Réservé
           </button>
           <button
             className={`${classes["sort__choice-button"]} ${
-              sort === "awaiting" && classes["sort__choice-button--active"]
+              sort === SortKind.AWAITING &&
+              classes["sort__choice-button--active"]
             }`}
             type="button"
-            id="awaiting"
+            id={SortKind.AWAITING.toString()}
             onClick={handleSortChoice}
           >
             En attente

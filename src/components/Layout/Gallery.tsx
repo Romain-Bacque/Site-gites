@@ -1,5 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import useHttp from "../../hooks/use-http";
 
 import { deletePictureRequest } from "../../lib/api";
@@ -16,7 +15,35 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import CropContent from "./crop/CropContent";
 import Loader from "./Loader";
-import Alert from "../UI/Alert";
+import Alert, { AlertKind } from "../UI/Alert";
+import { useAppSelector } from "../../hooks/use-store";
+
+// interfaces
+interface StatutMessage {
+  message: null | string;
+  alert: null | AlertKind;
+  show: boolean;
+}
+
+// type aliases
+type GalleryProps = {
+  imagesData: {
+    url: string;
+    filename: string;
+    shelter_id: {
+      number: number;
+    };
+  }[];
+  shelterNumber: number;
+};
+
+type Tt = {
+  url: string;
+  filename: string;
+  shelter_id: {
+    number: number;
+  };
+}[];
 
 // variable & constante
 let slidesPerView = 1;
@@ -32,7 +59,10 @@ const initialModalState = {
   };
 
 // component
-const Gallery = ({ imagesData: shelterImages, shelter }) => {
+const Gallery: React.FC<GalleryProps> = ({
+  imagesData: shelterImages,
+  shelterNumber,
+}) => {
   const {
     sendHttpRequest: deletePictureHttpRequest,
     statut: deletePictureStatut,
@@ -42,15 +72,20 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
   const [urlFile, setUrlFile] = useState(null);
   const [showModal, setShowModal] = useState(initialModalState);
   const [showLoader, setShowLoader] = useState(false);
-  const [statutMessage, setStatutMessage] = useState(initialMessageState);
+  const [statutMessage, setStatutMessage] =
+    useState<StatutMessage>(initialMessageState);
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
   });
-  const imageRef = useRef();
-  const isAuth = useSelector((state) => state.auth.isAuthentificated);
+  const imageRef = useRef<{ imageId: string } | null>(null);
+  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
 
-  const handleDeleteAlert = (value, event) => {
-    imageRef.current = event.target.dataset.imageId;
+  const handleDeleteAlert = (
+    value: boolean,
+    // With React.SyntheticEvent<HTMLInputElement> we can access to all HTMLInputElement, no need to type guard
+    event: React.SyntheticEvent<HTMLInputElement>
+  ) => {
+    imageRef.current = event.currentTarget.dataset.imageId;
 
     setShowModal({
       show: value,
@@ -78,46 +113,48 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
     }
   };
 
-  const handleCropRequestEnd = (statut) => {
-    if (statut === "success") {
+  const handleCropRequestEnd = (statut: AlertKind) => {
+    if (statut === AlertKind.SUCCESS) {
       setStatutMessage({
         message: "Photo ajouté",
-        alert: "information",
+        alert: AlertKind.INFO,
         show: true,
       });
-    } else
+    } else {
       setStatutMessage({
         message: "Echec ajout",
-        alert: "error",
+        alert: AlertKind.ERROR,
         show: true,
       });
+    }
 
     setShowModal(initialModalState);
   };
 
   const handleRequestEnd = useCallback(
-    (statut) => {
-      if (statut === "success") {
+    (statut: AlertKind) => {
+      if (statut === AlertKind.SUCCESS) {
         const filteredImagesData = imagesData.filter(
-          (image) => parseInt(shelter) === parseInt(image.shelter?.number)
+          (image) =>
+            parseInt(shelterNumber) === parseInt(image.shelter_id?.number)
         );
 
         setStatutMessage({
           message: "Image supprimé",
-          alert: "information",
+          alert: AlertKind.INFO,
           show: true,
         });
         setImagesList(filteredImagesData);
-      } else if (statut === "error") {
+      } else if (statut === AlertKind.ERROR) {
         setStatutMessage({
           message: "Echec suppression",
-          alert: "error",
+          alert: AlertKind.ERROR,
           show: true,
         });
       }
       setShowLoader(false);
     },
-    [imagesData, shelter]
+    [imagesData, shelterNumber]
   );
 
   const handleImagesList = (updatedList) => {
@@ -145,7 +182,7 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
   } else slidesPerView = 3;
 
   useEffect(() => {
-    let timer;
+    let timer: NodeJS.Timeout;
 
     if (statutMessage.show) {
       timer = setTimeout(() => {
@@ -176,23 +213,27 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
           setShowModal(initialModalState);
         }}
       >
-        {showModal.crop && (
-          <CropContent
-            onRequestEnd={handleCropRequestEnd}
-            getImagesList={handleImagesList}
-            shelterNumber={shelter}
-            url={urlFile}
-          />
-        )}
-        {showModal.deleteAlert && (
-          <div>
-            <p>Etes-vous sûr de vouloir supprimer cette image ?</p>
+        <>
+          {showModal.crop ? (
+            <CropContent
+              onRequestEnd={handleCropRequestEnd}
+              getImagesList={handleImagesList}
+              shelterNumber={shelter}
+              url={urlFile}
+            />
+          ) : null}
+          {showModal.deleteAlert ? (
             <div>
-              <button onClick={handleDeleteImage}>Oui</button>
-              <button onClick={handleDeleteAlert.bind(null, false)}>Non</button>
+              <p>Etes-vous sûr de vouloir supprimer cette image ?</p>
+              <div>
+                <button onClick={handleDeleteImage}>Oui</button>
+                <button onClick={handleDeleteAlert.bind(null, false)}>
+                  Non
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          ) : null}
+        </>
       </Modal>
       {isAuth && (
         <>
@@ -203,13 +244,13 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
           />
           <div>
             <label
-              htmlFor={`files-shelter${shelter}`}
+              htmlFor={`files-shelter${shelterNumber}`}
               className={classes["file-button"]}
             >
               Ajouter une photo
             </label>
             <input
-              id={`files-shelter${shelter}`}
+              id={`files-shelter${shelterNumber}`}
               style={{ visibility: "hidden" }}
               type="file"
               name="file"
@@ -222,7 +263,7 @@ const Gallery = ({ imagesData: shelterImages, shelter }) => {
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, A11y]}
         spaceBetween={50}
-        centeredSlides="true"
+        centeredSlides={true}
         slidesPerView={slidesPerView}
         navigation
         pagination={{ clickable: true }}
