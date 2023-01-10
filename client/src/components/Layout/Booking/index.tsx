@@ -28,7 +28,6 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
   const [showModal, setShowModal] = useState(false);
   const [calendarStatus, setCalendarStatus] =
     useState<CalendarStatus>(initialState);
-
   const {
     value: nameValue,
     isValid: nameIsValid,
@@ -83,6 +82,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
     blurHandler: infosBlurHandler,
     resetHandler: resetInfosHandler,
   } = useInput();
+
   const isFormValid =
     nameIsValid &&
     personsIsValid &&
