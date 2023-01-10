@@ -1,18 +1,7 @@
 import { useState } from "react";
-import classes from "./Sort.module.css";
-
-// enum
-export enum SortKind {
-  DATE_DECREASING = 1,
-  DATE_INCREASING,
-  BOOKED,
-  AWAITING,
-}
-
-// interfaces
-interface SortProps {
-  onSortValidation: (arg: SortKind | null) => void;
-}
+import classes from "./style.module.css";
+// types import
+import { SortKind, SortProps } from "./types";
 
 // component
 const Sort: React.FC<SortProps> = ({ onSortValidation }) => {

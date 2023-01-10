@@ -1,22 +1,17 @@
-import useInput from "../../hooks/use-input";
+import useInput from "../../../hooks/use-input";
 import { useHistory } from "react-router-dom";
 import React, { useCallback, useEffect, useState } from "react";
-import useHttp, { HTTPStateKind } from "../../hooks/use-http";
+import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import { useAppDispatch } from "../../../hooks/use-store";
 
-import Input from "./Input";
-import Card from "../UI/Card";
-import classes from "./Auth.module.css";
-import { registerRequest, loginRequest } from "../../lib/api";
-import Loader from "./Loader";
-import { authActions } from "../../store/auth";
-import { useAppDispatch } from "../../hooks/use-store";
-
-// interfaces
-interface UserData {
-  username: string;
-  password: string;
-  email?: string;
-}
+import Input from "../Input";
+import Card from "../../UI/Card";
+import classes from "./style.module.css";
+import { registerRequest, loginRequest } from "../../../lib/api";
+import Loader from "../Loader";
+import { authActions } from "../../../store/auth";
+// types import
+import { UserData } from "./types";
 
 // component
 const Auth: React.FC = () => {

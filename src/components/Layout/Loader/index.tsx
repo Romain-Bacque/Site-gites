@@ -1,17 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { HTTPStateKind, StatutType } from "../../hooks/use-http";
-import classes from "./Loader.module.css";
-
-// interfaces
-interface LoaderProps {
-  statut: StatutType;
-  onRequestEnd?: (statut: HTTPStateKind) => void;
-  message?: {
-    success: null | string;
-    error: null | string;
-  };
-}
+import { HTTPStateKind } from "../../../hooks/use-http";
+import classes from "./style.module.css";
+// types import
+import { LoaderProps } from "./types";
 
 // component
 const Loader: React.FC<LoaderProps> = (props) => {

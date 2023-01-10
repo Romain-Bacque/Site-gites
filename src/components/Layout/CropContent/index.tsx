@@ -1,32 +1,16 @@
-import React, { MouseEventHandler, useCallback, useState } from "react";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import React, { MouseEventHandler, useCallback, useState } from "react";
 
 import { postPictureRequest } from "../../../lib/api";
 import Cropper, { Area } from "react-easy-crop";
 import Loader from "../Loader";
-import classes from "./CropContent.module.css";
+import classes from "./style.module.css";
 import getCroppedImg from "./lib/cropImage";
-
-// type aliases
-type ImagesData = {
-  _id: string;
-  url: string;
-  filename: string;
-  shelter_id: {
-    number: number;
-  };
-}[];
-
-// interfaces
-interface CropContent {
-  shelterNumber: number;
-  url: string;
-  getImagesList: (arg: ImagesData) => void;
-  onRequestEnd: (arg: HTTPStateKind) => void;
-}
+// types import
+import { CropContentProps } from "./types";
 
 // component
-const CropContent: React.FC<CropContent> = ({
+const CropContent: React.FC<CropContentProps> = ({
   shelterNumber,
   url,
   getImagesList,

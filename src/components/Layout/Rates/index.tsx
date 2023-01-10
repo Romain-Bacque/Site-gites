@@ -1,25 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import useHttp, { HTTPStateKind } from "../../hooks/use-http";
-import { ratesGetRequest, ratesPostRequest } from "../../lib/api";
-import Loader from "./Loader";
-import Alert, { AlertKind } from "../UI/Alert";
-import classes from "./Rates.module.css";
-import { useAppSelector } from "../../hooks/use-store";
+import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 
-// interfaces
-interface StatutMessage {
-  message: null | string;
-  alert: null | AlertKind;
-  show: boolean;
-}
-interface RatesProps {
-  shelter: string;
-}
-interface PriceValues {
-  price1: number;
-  price2: number;
-  price3: number;
-}
+import { ratesGetRequest, ratesPostRequest } from "../../../lib/api";
+import Loader from "../Loader";
+import Alert, { AlertKind } from "../../UI/Alert";
+import classes from "./style.module.css";
+import { useAppSelector } from "../../../hooks/use-store";
+// types import
+import { PriceValues, RatesProps, StatutMessage } from "./types";
 
 // variable & constante
 const initialState = {

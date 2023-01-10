@@ -1,42 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
-import useHttp, { HTTPStateKind } from "../../hooks/use-http";
+import { useAppSelector } from "../../../hooks/use-store";
+import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 
 import {
   getDatesRequest,
   postDateRequest,
   deleteDateRequest,
   DisabledDatesReturnData,
-} from "../../lib/api";
+} from "../../../lib/api";
 import Calendar from "react-calendar";
-
-import classes from "./Planning.module.css";
+import classes from "./style.module.css";
 import "react-calendar/dist/Calendar.css";
-import Loader from "./Loader";
+import Loader from "../Loader";
 import dayjs from "dayjs";
-import { useAppSelector } from "../../hooks/use-store";
+// types import
+import { PlanningProps } from "./types";
 
 dayjs().format();
-
-// type
-type DisabledDatesData = {
-  name: string;
-  phone: number;
-  email: string;
-  numberOfPerson: number;
-  from: Date;
-  to: Date;
-  informations: string;
-  booked: boolean;
-  shelter_id: string;
-}[];
-
-// interfaces
-interface PlanningProps {
-  className: string;
-  onDateChoice?: (date: Date) => void;
-  onDateClick?: (date: Date, disabledDates: DisabledDatesData | null) => void;
-  isDoubleView?: boolean;
-}
 
 // component
 const Planning: React.FC<PlanningProps> = ({
@@ -76,12 +56,13 @@ const Planning: React.FC<PlanningProps> = ({
       let isDisabled = false;
 
       if (typeof disabledDatesData === "object") {
-        disabledDatesData?.some((disabledDate) => {
-          return (
-            formatDate(date) === formatDate(disabledDate.from) ||
-            formatDate(date) === formatDate(disabledDate.to)
-          );
-        }) || date <= new Date();
+        isDisabled =
+          disabledDatesData?.some((disabledDate) => {
+            return (
+              formatDate(date) === formatDate(disabledDate.from) ||
+              formatDate(date) === formatDate(disabledDate.to)
+            );
+          }) || date <= new Date();
       }
       return isDisabled ? classes["disabled-date"] : null;
     },
@@ -90,12 +71,15 @@ const Planning: React.FC<PlanningProps> = ({
 
   const hasDisabledDates = (date: Date) => {
     if (disabledDatesData && typeof disabledDatesData === "object") {
-      return disabledDatesData.some(
-        (disabledDate) =>
-          disabledDate.email &&
-          formatDate(date) >= formatDate(disabledDate.from) &&
-          formatDate(date) <= formatDate(disabledDate.to)
-      );
+      return disabledDatesData.some((disabledDate) => {
+        if (disabledDate.email) {
+          return (
+            formatDate(date) >= formatDate(disabledDate.from) &&
+            formatDate(date) <= formatDate(disabledDate.to)
+          );
+        }
+        return false;
+      });
     }
     return false;
   };

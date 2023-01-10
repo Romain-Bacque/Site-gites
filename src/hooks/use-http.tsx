@@ -11,7 +11,7 @@ export enum HTTPStateKind {
 // type aliases
 export type StatutType = null | HTTPStateKind;
 type HTTPRequestType = (arg: any) => Promise<any>;
-type ErrorType = null | string;
+type ErrorType = string | null | undefined;
 type DataType<T> = T | null;
 
 // interfaces
@@ -23,7 +23,7 @@ interface HTTPState<T> {
 interface HTTPAction<T> {
   type: HTTPStateKind;
   value?: DataType<T>;
-  errorMessage?: string;
+  errorMessage?: ErrorType;
 }
 
 // variable & constante
@@ -38,7 +38,7 @@ function httpReducer<T>(
   state: HTTPState<T>,
   action: HTTPAction<T>
 ): HTTPState<T> {
-  const { type, value } = action;
+  const { type, value, errorMessage } = action;
 
   switch (type) {
     case HTTPStateKind.SEND:
@@ -57,7 +57,7 @@ function httpReducer<T>(
       return {
         statut: HTTPStateKind.ERROR,
         data: null,
-        error: value!.toString(),
+        error: errorMessage,
       };
     default:
       return state;

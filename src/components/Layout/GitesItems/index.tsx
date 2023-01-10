@@ -1,21 +1,13 @@
 import { useState } from "react";
 
-import classes from "./GitesItems.module.css";
+import classes from "./style.module.css";
 import CSSTransition from "react-transition-group/CSSTransition";
-import Booking from "./Booking";
-import Rates from "./Rates";
-import Slider from "../UI/slider/Slider";
-import Availability from "./Availability";
-
-// interfaces
-interface GitesItemsProps {
-  shelterId: string;
-  title: string;
-  number: number;
-}
-interface Tab {
-  tab: null | number;
-}
+import Booking from "../Booking";
+import Rates from "../Rates";
+import Slider from "../../UI/slider/Slider";
+import Availability from "../Availability";
+// types import
+import { GitesItemsProps, Tab } from "./types";
 
 // variable & contante
 let formContent: JSX.Element;

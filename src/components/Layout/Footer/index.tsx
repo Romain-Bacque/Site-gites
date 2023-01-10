@@ -1,4 +1,4 @@
-import classes from "./Footer.module.css";
+import classes from "./style.module.css";
 
 // component
 const Footer: React.FC = () => {

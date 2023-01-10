@@ -1,20 +1,16 @@
-import Card from "../UI/Card";
-import classes from "./Home.module.css";
-import gite1_small from "../../img/gite1_small.jpg";
-import gite1_large from "../../img/gite1_large.jpg";
-import gite2_small from "../../img/gite2_small.jpg";
-import gite2_large from "../../img/gite2_large.jpg";
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Alert, { AlertKind } from "../UI/Alert";
-import { useAppSelector } from "../../hooks/use-store";
+import { useAppSelector } from "../../../hooks/use-store";
 
-// interfaces
-interface StatutMessage {
-  message: null | string;
-  alert: null | AlertKind;
-  show: boolean;
-}
+import Card from "../../UI/Card";
+import classes from "./style.module.css";
+import gite1_small from "../../../img/gite1_small.jpg";
+import gite1_large from "../../../img/gite1_large.jpg";
+import gite2_small from "../../../img/gite2_small.jpg";
+import gite2_large from "../../../img/gite2_large.jpg";
+import { Link } from "react-router-dom";
+import Alert, { AlertKind } from "../../UI/Alert";
+// types import
+import { StatutMessage } from "./types";
 
 // variable & constantes
 const initialState = {

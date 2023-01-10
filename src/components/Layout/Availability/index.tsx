@@ -1,31 +1,16 @@
-import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import useHttp from "../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
+
+import dayjs from "dayjs";
 import {
   deleteDateRequest,
   DisabledDatesReturnData,
   postDateRequest,
-} from "../../lib/api";
-import classes from "./Availability.module.css";
-import Planning from "./Planning";
-
-//type
-type DisabledDatesData = {
-  name: string;
-  phone: number;
-  email: string;
-  numberOfPerson: number;
-  from: Date;
-  to: Date;
-  informations: string;
-  booked: boolean;
-  shelter_id: string;
-}[];
-
-// interfaces
-interface AvailabilityProps {
-  shelter: string;
-}
+} from "../../../lib/api";
+import classes from "./style.module.css";
+import Planning from "../Planning";
+// types import
+import { AvailabilityProps, DisabledDatesData } from "./types";
 
 // component
 const Availability: React.FC<AvailabilityProps> = ({ shelter }) => {

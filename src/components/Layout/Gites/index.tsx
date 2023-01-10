@@ -1,19 +1,12 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import useHttp from "../../hooks/use-http";
+import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 
-import Card from "../UI/Card";
-import classes from "./Gites.module.css";
-import GitesItems from "./GitesItems";
-import Loader from "./Loader";
-import { getShelters } from "../../lib/api";
-
-// enum
-enum HTTPStateKind {
-  SEND,
-  SUCCESS,
-  ERROR,
-}
+import Card from "../../UI/Card";
+import classes from "./style.module.css";
+import GitesItems from "../GitesItems";
+import Loader from "../Loader";
+import { getShelters } from "../../../lib/api";
 
 // component
 const Gites: React.FC = () => {

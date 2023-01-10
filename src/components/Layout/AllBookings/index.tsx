@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import useHttp, { HTTPStateKind } from "../../hooks/use-http";
+import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 
 import {
   bookingsGetRequest,
   acceptBookingRequest,
   refuseBookingRequest,
   bookingRequestData,
-} from "../../lib/api";
-import Loader from "./Loader";
-import classes from "./AllBookings.module.css";
+} from "../../../lib/api";
+import Loader from "../Loader";
+import classes from "./style.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPhone,
@@ -16,9 +16,9 @@ import {
   faSliders,
 } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
-import { emailHandler } from "../../lib/emailjs";
-import Modal from "../UI/Modal";
-import Sort, { SortKind } from "./Sort";
+import { emailHandler } from "../../../lib/emailjs";
+import Modal from "../../UI/Modal";
+import Sort from "../Sort";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   Navigation,
@@ -27,64 +27,22 @@ import {
   A11y,
   EffectCoverflow,
 } from "swiper";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import Alert, { AlertKind } from "../UI/Alert";
+import Alert, { AlertKind } from "../../UI/Alert";
+// types import
+import {
+  SortKind,
+  BookingRef,
+  BookingsList,
+  handleEmailFormDisplay,
+  ModalState,
+  StatutMessage,
+} from "./types";
 
 dayjs().format();
-
-// type aliases
-type handleEmailFormDisplay = (
-  bookingChoice: "accept" | "refuse",
-  data: {
-    bookingId: string;
-    shelter: string;
-    name: string;
-    from: string;
-    to: string;
-  }
-) => void;
-type BookingsList = {
-  _id: string;
-  name: string;
-  phone: string;
-  email: string;
-  numberOfPerson: number;
-  from: Date;
-  to: Date;
-  informations: string;
-  booked: boolean;
-  shelter_id: {
-    title: string;
-    number: number;
-  };
-}[];
-
-// interfaces
-interface StatutMessage {
-  message: string;
-  alert: null | AlertKind;
-  show: boolean;
-}
-interface ModalState {
-  show: boolean;
-  booking: boolean;
-  isSorted: boolean;
-}
-interface BookingData {
-  bookingId: string;
-  shelter: string;
-  name: string;
-  from: string;
-  to: string;
-}
-interface BookingRef {
-  value: BookingData | null;
-  bookingChoice: "accept" | "refuse" | null;
-}
 
 // variable & constante
 const initialModalState = {

@@ -1,15 +1,6 @@
-import { InputHTMLAttributes } from "react";
-import classes from "./Input.module.css";
-
-// interfaces
-// InputHTMLAttributes<HTMLInputElement> represents all HTML Input Element attributes, other attributes are not authorized
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  className: string;
-  isVisible: boolean;
-  label: string;
-  forgotPassword?: JSX.Element;
-  onInputDateClick?: () => void;
-}
+import classes from "./style.module.css";
+// types import
+import { InputProps } from "./types";
 
 // component
 const Input: React.FC<InputProps> = ({

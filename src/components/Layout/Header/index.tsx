@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
+
 import { Link, useHistory } from "react-router-dom";
 import { NavLink } from "react-router-dom";
-import classes from "./Header.module.css";
-import { authActions } from "../../store/auth";
-import { menuActions } from "../../store/menu";
-import { logoutRequest } from "../../lib/api";
-import useHttp, { HTTPStateKind } from "../../hooks/use-http";
-import { useAppDispatch, useAppSelector } from "../../hooks/use-store";
+import classes from "./style.module.css";
+import { authActions } from "../../../store/auth";
+import { menuActions } from "../../../store/menu";
+import { logoutRequest } from "../../../lib/api";
+import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 
 // component
 const Header: React.FC = () => {

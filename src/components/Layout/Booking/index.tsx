@@ -1,27 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import useInput from "../../hooks/use-input";
+import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import useInput from "../../../hooks/use-input";
 
-import Loader from "./Loader";
-import Modal from "../UI/Modal";
-import icon_success from "../../img/icon_success.ico";
-import icon_error from "../../img/icon_error.png";
-import Input from "./Input";
-import useHttp, { HTTPStateKind } from "../../hooks/use-http";
-import { bookingRequest, bookingRequestData } from "../../lib/api";
-import classes from "./Booking.module.css";
-import Planning from "./Planning";
-
-// aliases
-type HandleCalendarDisplay = (input: string) => void;
-
-// interfaces
-interface BookingProps {
-  shelter: string;
-}
-interface CalendarStatus {
-  show: boolean;
-  input: null | string;
-}
+import Loader from "../Loader";
+import Modal from "../../UI/Modal";
+import icon_success from "../../../img/icon_success.ico";
+import icon_error from "../../../img/icon_error.png";
+import Input from "../Input";
+import { bookingRequest, bookingRequestData } from "../../../lib/api";
+import classes from "./style.module.css";
+import Planning from "../Planning";
+// types import
+import { BookingProps, CalendarStatus, HandleCalendarDisplay } from "./types";
 
 // variable & contante
 let modalContent: JSX.Element;

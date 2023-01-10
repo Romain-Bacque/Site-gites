@@ -1,8 +1,9 @@
+import { useAppDispatch } from "../../../hooks/use-store";
+
 import React from "react";
-import { useAppDispatch } from "../../hooks/use-store";
-import { menuActions } from "../../store/menu";
-import Footer from "./Footer";
-import Header from "./Header";
+import { menuActions } from "../../../store/menu";
+import Footer from "../Footer";
+import Header from "../Header";
 
 // interfaces
 interface LayoutProps {

@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useAppSelector } from "../../hooks/use-store";
-import useHttp, { HTTPStateKind } from "../../hooks/use-http";
+import { useAppSelector } from "../../../hooks/use-store";
+import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 
-import { deletePictureRequest } from "../../lib/api";
-import classes from "./Gallery.module.css";
+import { deletePictureRequest } from "../../../lib/api";
+import classes from "./style.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import Modal from "../UI/Modal";
+import Modal from "../../UI/Modal";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import CropContent from "./crop/CropContent";
-import Loader from "./Loader";
-import Alert, { AlertKind } from "../UI/Alert";
+import CropContent from "../CropContent";
+import Loader from "../Loader";
+import Alert, { AlertKind } from "../../UI/Alert";
 
 // interfaces
 interface StatutMessage {

@@ -1,4 +1,4 @@
-import Auth from "../components/Layout/Auth";
+import Auth from "../components/Layout/Auth/Auth";
 
 // component
 const AuthPage: React.FC = () => {
