@@ -74,7 +74,6 @@ interface ModalState {
   booking: boolean;
   isSorted: boolean;
 }
-
 interface BookingData {
   bookingId: string;
   shelter: string;

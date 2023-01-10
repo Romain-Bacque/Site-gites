@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Axios configuration
-axios.defaults.baseURL = `http://localhost:3000/`;
+axios.defaults.baseURL = "http://localhost:3000/";
 axios.defaults.withCredentials = true;
 
 // // AUTHENTIFICATION
@@ -111,14 +111,14 @@ export const bookingRequest = async (data: bookingRequestData) => {
 
 // Accept booking
 export const acceptBookingRequest = async (id: string) => {
-  const response = await axios.put("/admin/booking/" + id);
+  const response = await axios.put(`/admin/booking/${id}`);
 
   if (response.status !== 200) throw new Error();
 };
 
 // Refuse booking
 export const refuseBookingRequest = async (id: string) => {
-  const response = await axios.delete("/admin/booking/" + id);
+  const response = await axios.delete(`/admin/booking/${id}`);
 
   if (response.status !== 200) throw new Error();
 };
@@ -219,6 +219,7 @@ export const ratesPostRequest = async (data: RatesPostRequestData) => {
 // Get Picture
 interface PictureRequestReturnData {
   imagesData: {
+    _id: string;
     url: string;
     filename: string;
     shelter_id: {
@@ -237,9 +238,13 @@ export const getPictureRequest = async () => {
 
 // Add Picture
 export const postPictureRequest = async (data: FormData) => {
-  const response = await axios.post("/admin/gallery", data, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const response = await axios.post<PictureRequestReturnData>(
+    "/admin/gallery",
+    data,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  );
 
   if (response.status !== 200) throw new Error();
 
@@ -247,7 +252,6 @@ export const postPictureRequest = async (data: FormData) => {
 };
 
 // Delete Picture
-
 export const deletePictureRequest = async (id: string) => {
   const response = await axios.delete<PictureRequestReturnData>(
     `/admin/gallery/${id}`

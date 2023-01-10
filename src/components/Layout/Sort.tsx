@@ -23,7 +23,7 @@ const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
 
     const chosenFilter =
       "id" in event.target && typeof event.target.id === "string"
-        ? Number(event.target.id)
+        ? +event.target.id
         : null;
 
     setSort(chosenFilter);

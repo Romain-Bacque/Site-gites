@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import useHttp from "../../hooks/use-http";
+import { useAppSelector } from "../../hooks/use-store";
+import useHttp, { HTTPStateKind } from "../../hooks/use-http";
 
 import { deletePictureRequest } from "../../lib/api";
 import classes from "./Gallery.module.css";
@@ -8,7 +9,6 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../UI/Modal";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -16,7 +16,6 @@ import "swiper/css/scrollbar";
 import CropContent from "./crop/CropContent";
 import Loader from "./Loader";
 import Alert, { AlertKind } from "../UI/Alert";
-import { useAppSelector } from "../../hooks/use-store";
 
 // interfaces
 interface StatutMessage {
@@ -24,10 +23,9 @@ interface StatutMessage {
   alert: null | AlertKind;
   show: boolean;
 }
-
-// type aliases
-type GalleryProps = {
+interface GalleryProps {
   imagesData: {
+    _id: string;
     url: string;
     filename: string;
     shelter_id: {
@@ -35,9 +33,11 @@ type GalleryProps = {
     };
   }[];
   shelterNumber: number;
-};
+}
 
-type Tt = {
+// type aliases
+type ImagesData = {
+  _id: string;
   url: string;
   filename: string;
   shelter_id: {
@@ -68,8 +68,8 @@ const Gallery: React.FC<GalleryProps> = ({
     statut: deletePictureStatut,
     data: imagesData,
   } = useHttp(deletePictureRequest);
-  const [imagesList, setImagesList] = useState(shelterImages);
-  const [urlFile, setUrlFile] = useState(null);
+  const [imagesList, setImagesList] = useState<ImagesData>(shelterImages);
+  const [urlFile, setUrlFile] = useState<string>("");
   const [showModal, setShowModal] = useState(initialModalState);
   const [showLoader, setShowLoader] = useState(false);
   const [statutMessage, setStatutMessage] =
@@ -77,16 +77,10 @@ const Gallery: React.FC<GalleryProps> = ({
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
   });
-  const imageRef = useRef<{ imageId: string } | null>(null);
+  const imageRef = useRef<HTMLButtonElement>(null);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
 
-  const handleDeleteAlert = (
-    value: boolean,
-    // With React.SyntheticEvent<HTMLInputElement> we can access to all HTMLInputElement, no need to type guard
-    event: React.SyntheticEvent<HTMLInputElement>
-  ) => {
-    imageRef.current = event.currentTarget.dataset.imageId;
-
+  const handleDeleteAlert = (value: boolean) => {
     setShowModal({
       show: value,
       crop: false,
@@ -98,13 +92,17 @@ const Gallery: React.FC<GalleryProps> = ({
     setShowModal(initialModalState);
     setShowLoader(true);
 
-    deletePictureHttpRequest(imageRef.current);
+    const imageId = imageRef.current?.dataset.imageId;
+
+    imageId && deletePictureHttpRequest(imageId);
   };
 
-  const handleFileValueChange = (event) => {
-    if (event.target.files[0]) {
+  const handleFileValueChange: React.ChangeEventHandler<HTMLInputElement> = (
+    event
+  ) => {
+    if (event.target.files && event.target.files[0]) {
       setUrlFile(URL.createObjectURL(event.target.files[0]));
-      event.target.value = null;
+      event.target.value = "";
       setShowModal({
         show: true,
         crop: true,
@@ -113,8 +111,8 @@ const Gallery: React.FC<GalleryProps> = ({
     }
   };
 
-  const handleCropRequestEnd = (statut: AlertKind) => {
-    if (statut === AlertKind.SUCCESS) {
+  const handleCropRequestEnd = (statut: HTTPStateKind) => {
+    if (statut === HTTPStateKind.SUCCESS) {
       setStatutMessage({
         message: "Photo ajouté",
         alert: AlertKind.INFO,
@@ -132,12 +130,13 @@ const Gallery: React.FC<GalleryProps> = ({
   };
 
   const handleRequestEnd = useCallback(
-    (statut: AlertKind) => {
-      if (statut === AlertKind.SUCCESS) {
-        const filteredImagesData = imagesData.filter(
-          (image) =>
-            parseInt(shelterNumber) === parseInt(image.shelter_id?.number)
-        );
+    (statut: HTTPStateKind) => {
+      if (statut === HTTPStateKind.SUCCESS) {
+        const filteredImagesData = imagesData
+          ? imagesData.filter(
+              (image) => shelterNumber === +image.shelter_id?.number
+            )
+          : [];
 
         setStatutMessage({
           message: "Image supprimé",
@@ -145,7 +144,7 @@ const Gallery: React.FC<GalleryProps> = ({
           show: true,
         });
         setImagesList(filteredImagesData);
-      } else if (statut === AlertKind.ERROR) {
+      } else if (statut === HTTPStateKind.ERROR) {
         setStatutMessage({
           message: "Echec suppression",
           alert: AlertKind.ERROR,
@@ -157,7 +156,7 @@ const Gallery: React.FC<GalleryProps> = ({
     [imagesData, shelterNumber]
   );
 
-  const handleImagesList = (updatedList) => {
+  const handleImagesList = (updatedList: ImagesData) => {
     setImagesList(updatedList);
     setShowModal(initialModalState);
   };
@@ -218,7 +217,7 @@ const Gallery: React.FC<GalleryProps> = ({
             <CropContent
               onRequestEnd={handleCropRequestEnd}
               getImagesList={handleImagesList}
-              shelterNumber={shelter}
+              shelterNumber={shelterNumber}
               url={urlFile}
             />
           ) : null}
@@ -269,11 +268,12 @@ const Gallery: React.FC<GalleryProps> = ({
         pagination={{ clickable: true }}
         className={classes.swiper}
       >
-        {imagesList && imagesList.length ? (
+        {imagesList?.length > 0 ? (
           imagesList.map((image) => (
             <SwiperSlide key={image._id} className={classes.swiper__slide}>
               {isAuth && (
-                <div
+                <button
+                  ref={imageRef}
                   data-image-id={image._id}
                   onClick={handleDeleteAlert.bind(null, true)}
                   className={classes.swiper__icon}
@@ -283,7 +283,7 @@ const Gallery: React.FC<GalleryProps> = ({
                     style={{ pointerEvents: "none" }}
                     icon={faTrash}
                   />
-                </div>
+                </button>
               )}
               <img
                 className={classes.image}

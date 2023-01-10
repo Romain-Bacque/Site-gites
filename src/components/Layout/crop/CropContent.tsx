@@ -1,50 +1,72 @@
-import { useCallback, useState } from "react";
-import useHttp from "../../../hooks/use-http";
+import React, { MouseEventHandler, useCallback, useState } from "react";
+import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 
 import { postPictureRequest } from "../../../lib/api";
-import Cropper from "react-easy-crop";
+import Cropper, { Area } from "react-easy-crop";
 import Loader from "../Loader";
 import classes from "./CropContent.module.css";
 import getCroppedImg from "./lib/cropImage";
 
+// type aliases
+type ImagesData = {
+  _id: string;
+  url: string;
+  filename: string;
+  shelter_id: {
+    number: number;
+  };
+}[];
+
+// interfaces
+interface CropContent {
+  shelterNumber: number;
+  url: string;
+  getImagesList: (arg: ImagesData) => void;
+  onRequestEnd: (arg: HTTPStateKind) => void;
+}
+
 // component
-const CropContent = ({ shelterNumber, url, getImagesList, onRequestEnd }) => {
+const CropContent: React.FC<CropContent> = ({
+  shelterNumber,
+  url,
+  getImagesList,
+  onRequestEnd,
+}) => {
   const [showLoader, setShowLoader] = useState(false);
   const {
     sendHttpRequest: postPictureHttpRequest,
     statut: postPictureStatut,
     data: imagesData,
   } = useHttp(postPictureRequest);
-  const [cropDatas, setCropDatas] = useState([]);
+  const [cropDatas, setCropDatas] = useState<[string, Area] | []>([]);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
 
   const handleCropComplete = useCallback(
-    (_, croppedAreaPixels) => {
+    (_: Area, croppedAreaPixels: Area) => {
       setCropDatas([url, croppedAreaPixels]);
     },
     [url]
   );
 
-  const handleAddPicture = (statut) => {
-    if (statut === "success") {
+  const handleAddPicture = (statut: HTTPStateKind) => {
+    if (statut === HTTPStateKind.SUCCESS && imagesData) {
       getImagesList(imagesData);
     }
     onRequestEnd(statut);
     setShowLoader(false);
   };
 
-  const handleCropImage = useCallback(
+  const handleCropImage: MouseEventHandler<HTMLButtonElement> = useCallback(
     async (event) => {
       event.preventDefault();
-
       setShowLoader(true);
 
       try {
         const file = await getCroppedImg(...cropDatas);
 
         const formData = new FormData();
-        formData.append("shelterNumber", shelterNumber);
+        formData.append("shelterNumber", shelterNumber.toString());
         formData.append("file", file);
 
         postPictureHttpRequest(formData);
@@ -73,9 +95,8 @@ const CropContent = ({ shelterNumber, url, getImagesList, onRequestEnd }) => {
       </div>
       <form className={classes["crop-container__form"]}>
         <div>
-          {postPictureStatut && (
+          {postPictureStatut && showLoader && (
             <Loader
-              show={showLoader}
               statut={postPictureStatut}
               onRequestEnd={handleAddPicture}
               message={{
@@ -88,11 +109,13 @@ const CropContent = ({ shelterNumber, url, getImagesList, onRequestEnd }) => {
           <input
             className={classes["crop-container__input"]}
             type="range"
-            min="1"
-            max="10"
-            step="0.1"
+            min={1}
+            max={10}
+            step={0.1}
             value={zoom}
-            onChange={(event) => setZoom(event.target.value)}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setZoom(+event.target.value)
+            }
           />
           <span className={classes["crop-container__span"]}>+</span>
         </div>

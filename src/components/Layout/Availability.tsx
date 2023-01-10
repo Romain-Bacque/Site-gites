@@ -24,7 +24,7 @@ type DisabledDatesData = {
 
 // interfaces
 interface AvailabilityProps {
-  shelter: number;
+  shelter: string;
 }
 
 // component

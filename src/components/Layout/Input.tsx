@@ -21,8 +21,10 @@ const Input: React.FC<InputProps> = ({
   onInputDateClick,
   ...input
 }) => {
-  const handleInputClick = (event: React.MouseEvent) => {
-    if ((event.target as HTMLInputElement).type === "date") {
+  const handleInputClick: React.MouseEventHandler<HTMLInputElement> = (
+    event
+  ) => {
+    if ("type" in event.target && event.target.type === "date") {
       event.stopPropagation();
       event.preventDefault();
       onInputDateClick && onInputDateClick();
