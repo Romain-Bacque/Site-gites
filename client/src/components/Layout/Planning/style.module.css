@@ -1,0 +1,45 @@
+.calendar-container {
+  max-width: 311px !important;
+  overflow: hidden;
+}
+
+.react-calendar {
+  max-width: 311px !important;
+  border: 2px solid rgb(163, 163, 163) !important;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.disabled-date {
+  text-decoration: line-through !important;
+  background-color: #f0f0f0 !important;
+}
+
+.react-calendar--booking {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1;
+}
+
+.react-calendar--availability {
+  border: none !important;
+  max-width: 100% !important;
+}
+
+.legend {
+  display: flex;
+  align-items: end;
+  gap: 0.5rem;
+}
+
+.legend__image {
+  background-color: #f0f0f0;
+  width: 20px;
+  height: 20px;
+}
+
+.legend__detail {
+  color: rgb(95, 95, 95);
+}

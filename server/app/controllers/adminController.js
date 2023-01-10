@@ -4,11 +4,14 @@ const { cloudinary } = require("../utilities/cloudinary");
 const ExpressError = require("../utilities/ExpressError");
 
 const adminController = {
-  allBooking: async function (_, res, next) {
+  getAllBooking: async function (_, res, next) {
     try {
       const allBookings = await Booking.find({
         to: { $gte: new Date() },
-      }).populate("shelter_id");
+      })
+        .populate("shelter_id")
+        .where("email")
+        .ne(null);
 
       if (allBookings) {
         res.status(200).json({ bookingsData: allBookings });
@@ -43,7 +46,7 @@ const adminController = {
     const bookingId = req.params.bookingId;
 
     try {
-      assert.ok(bookingId, "bookingId doesn't not exists or is null.");
+      assert.ok(bookingId, "bookingId doesn't exists or is null.");
 
       const booking = await Booking.findOneAndDelete({
         _id: bookingId,
@@ -58,14 +61,20 @@ const adminController = {
     }
   },
   postDisabledDate: async function (req, res, next) {
+    const { shelter: shelter_id, date } = req.body;
     try {
-      const ShelterId = await Shelter.findOne({ _id: 1 });
+      const booking = new Booking({
+        shelter_id,
+        from: date,
+        to: date,
+        booked: true,
+      });
 
-      console.log(ShelterId);
+      await booking.save();
 
-      if (allDisabledDates) {
+      if (booking) {
         res.status(200).json({
-          disabledDatesData: allDisabledDates,
+          bookingData: booking,
         });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
@@ -73,7 +82,26 @@ const adminController = {
       next(err);
     }
   },
-  allImages: async function (_, res, next) {
+  deleteDisabledDate: async function (req, res, next) {
+    const { shelter: shelter_id, date } = req.body;
+
+    try {
+      const booking = await Booking.deleteOne(
+        { shelter_id },
+        { $or: [{ from: date }, { to: date }] }
+      )
+        .where("email")
+        .equals(null);
+
+      if (booking) {
+        res.status(200);
+      } else throw new ExpressError("Internal Server Error", 500);
+    } catch (err) {
+      console.trace(err);
+      next(err);
+    }
+  },
+  getAllImages: async function (_, res, next) {
     try {
       const images = await Image.find({}, { filename: 0 }).populate(
         "shelter_id",

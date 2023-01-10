@@ -2,6 +2,18 @@ const { Rates, Booking, Shelter } = require("../models");
 const ExpressError = require("../utilities/ExpressError");
 
 const gitesController = {
+  getShelters: async function (_, res, next) {
+    try {
+      const shelters = await Shelter.find({});
+
+      if (shelters && shelters.length) {
+        res.status(200).json({ sheltersData: shelters });
+      } else throw new ExpressError("Internal Server Error", 500);
+    } catch (err) {
+      console.trace(err);
+      next(err);
+    }
+  },
   postBooking: async function (req, res, next) {
     const { shelter: number } = req.body;
     const { shelter, ...newPayload } = req.body;
@@ -67,7 +79,7 @@ const gitesController = {
 
       if (allDisabledDates) {
         res.status(200).json({
-          disabledDatesData: allDisabledDates,
+          disabledDates: allDisabledDates,
         });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {

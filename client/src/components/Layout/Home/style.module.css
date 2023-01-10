@@ -1,0 +1,71 @@
+.banner {
+  background: url("../../../img/landscape.jpg") center/cover no-repeat;
+}
+
+.summary {
+  line-height: 3rem;
+}
+
+.summary__label {
+  font-weight: bold;
+  font-size: 3rem;
+}
+
+.summary__paragraphe {
+  margin-top: 1rem;
+}
+
+.button {
+  cursor: pointer;
+  outline: none;
+  border: none;
+  background: rgba(88, 49, 1);
+  padding: 1.5rem 2rem;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.button:hover {
+  background: rgb(66, 37, 1);
+}
+
+.button--alpha {
+  position: absolute;
+  bottom: 0;
+  transform: translateY(50%);
+  right: 4rem;
+  background: rgba(88, 49, 1, 0.87);
+}
+
+.gite {
+  padding: 0;
+  overflow: hidden;
+}
+
+.gite__picture {
+  max-width: 100%;
+}
+
+.gite-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  line-height: 3rem;
+  padding: 2rem;
+}
+
+.gite__name {
+  color: #583101;
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+.gite__price--amount {
+  font-weight: bold;
+  font-size: 2rem;
+  color: #583101;
+  font-style: italic;
+  margin: 0 0.5rem;
+}

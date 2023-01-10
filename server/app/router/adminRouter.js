@@ -7,7 +7,7 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
-router.get("/allBooking", checkLogged, adminController.allBooking);
+router.get("/allBooking", checkLogged, adminController.getAllBooking);
 
 router
   .route("/booking/:bookingId")
@@ -16,10 +16,13 @@ router
 
 router
   .route("/gallery")
-  .get(adminController.allImages)
+  .get(adminController.getAllImages)
   .post(checkLogged, upload.single("file"), adminController.addImage);
 
-router.route("/disabledDates", checkLogged, adminController.postDisabledDate);
+router
+  .route("/disabledDates")
+  .post(checkLogged, adminController.postDisabledDate)
+  .delete(checkLogged, adminController.deleteDisabledDate);
 
 router.delete("/gallery/:imageId", checkLogged, adminController.deleteImage);
 
