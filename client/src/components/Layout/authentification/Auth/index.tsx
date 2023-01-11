@@ -1,15 +1,15 @@
-import useInput from "../../../hooks/use-input";
-import { useHistory } from "react-router-dom";
+import useInput from "../../../../hooks/use-input";
+import { Link, useHistory } from "react-router-dom";
 import React, { useCallback, useEffect, useState } from "react";
-import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
-import { useAppDispatch } from "../../../hooks/use-store";
+import useHttp, { HTTPStateKind } from "../../../../hooks/use-http";
+import { useAppDispatch } from "../../../../hooks/use-store";
 
-import Input from "../Input";
-import Card from "../../UI/Card";
-import classes from "./style.module.css";
-import { registerRequest, loginRequest } from "../../../lib/api";
-import Loader from "../Loader";
-import { authActions } from "../../../store/auth";
+import Input from "../../Input";
+import Card from "../../../UI/Card";
+import classes from "../style.module.css";
+import { registerRequest, loginRequest } from "../../../../lib/api";
+import Loader from "../../Loader";
+import { authActions } from "../../../../store/auth";
 // types import
 import { UserData } from "./types";
 
@@ -17,8 +17,11 @@ import { UserData } from "./types";
 const Auth: React.FC = () => {
   const { sendHttpRequest: loginHttpRequest, statut: loginStatut } =
     useHttp(loginRequest);
-  const { sendHttpRequest: registerHttpRequest, statut: registerStatut } =
-    useHttp(registerRequest);
+  const {
+    sendHttpRequest: registerHttpRequest,
+    statut: registerStatut,
+    error: registerErrorMessage,
+  } = useHttp(registerRequest);
   const {
     value: usernameValue,
     isValid: usernameIsValid,
@@ -115,7 +118,7 @@ const Auth: React.FC = () => {
           onRequestEnd={() => setIsNotRegistered(false)}
           message={{
             success: "Enregistrement réussi.",
-            error: "Enregistrement impossible.",
+            error: registerErrorMessage,
           }}
         />
       );
@@ -163,9 +166,13 @@ const Auth: React.FC = () => {
             <Input
               label="Mot de passe"
               forgotPassword={
-                <a href="#" className={classes["auth__link"]}>
-                  {!isNotRegistered && "Oubli ?"}
-                </a>
+                <Link
+                  to="/admin/forgot-password"
+                  href="#"
+                  className={classes["auth__link"]}
+                >
+                  {!isNotRegistered && "Mot de passe perdu ?"}
+                </Link>
               }
               isVisible={true}
               className={
@@ -178,7 +185,7 @@ const Auth: React.FC = () => {
               onBlur={userPasswordBlurHandler}
               type="password"
               value={userPasswordValue}
-              placeholder="Taper votre mot de passe ici"
+              placeholder="Taper le mot de passe ici"
             />
             {userPasswordState.length > 0 && (
               <ul className={classes["auth__password-error-list"]}>

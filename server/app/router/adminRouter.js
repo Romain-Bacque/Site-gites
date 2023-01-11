@@ -3,6 +3,7 @@ const { checkLogged } = require("../middlewares");
 const express = require("express");
 const multer = require("multer");
 const { storage } = require("../utilities/cloudinary");
+const catchAsync = require("../utilities/catchAsync");
 const upload = multer({ storage });
 
 const router = express.Router();
@@ -16,14 +17,22 @@ router
 
 router
   .route("/gallery")
-  .get(adminController.getAllImages)
-  .post(checkLogged, upload.single("file"), adminController.addImage);
+  .get(catchAsync(adminController.getAllImages))
+  .post(
+    checkLogged,
+    upload.single("file"),
+    catchAsync(adminController.addImage)
+  );
 
 router
   .route("/disabledDates")
-  .post(checkLogged, adminController.postDisabledDate)
-  .delete(checkLogged, adminController.deleteDisabledDate);
+  .post(checkLogged, catchAsync(adminController.postDisabledDate))
+  .delete(checkLogged, catchAsync(adminController.deleteDisabledDate));
 
-router.delete("/gallery/:imageId", checkLogged, adminController.deleteImage);
+router.delete(
+  "/gallery/:imageId",
+  checkLogged,
+  catchAsync(adminController.deleteImage)
+);
 
 module.exports = router;

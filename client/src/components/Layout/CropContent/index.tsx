@@ -9,6 +9,8 @@ import getCroppedImg from "./lib/cropImage";
 // types import
 import { CropContentProps } from "./types";
 
+let cropDatas: [string, Area];
+
 // component
 const CropContent: React.FC<CropContentProps> = ({
   shelterNumber,
@@ -22,13 +24,12 @@ const CropContent: React.FC<CropContentProps> = ({
     statut: postPictureStatut,
     data: imagesData,
   } = useHttp(postPictureRequest);
-  const [cropDatas, setCropDatas] = useState<[string, Area] | []>([]);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
 
   const handleCropComplete = useCallback(
     (_: Area, croppedAreaPixels: Area) => {
-      setCropDatas([url, croppedAreaPixels]);
+      cropDatas = [url, croppedAreaPixels];
     },
     [url]
   );
@@ -47,18 +48,18 @@ const CropContent: React.FC<CropContentProps> = ({
       setShowLoader(true);
 
       try {
-        const file = await getCroppedImg(...cropDatas);
+        const file = await getCroppedImg(cropDatas[0], cropDatas[1]);
 
         const formData = new FormData();
         formData.append("shelterNumber", shelterNumber.toString());
-        formData.append("file", file);
+        formData.append("file", file!);
 
         postPictureHttpRequest(formData);
       } catch (err) {
         console.trace(err);
       }
     },
-    [cropDatas, postPictureHttpRequest, shelterNumber]
+    [postPictureHttpRequest, shelterNumber]
   );
 
   return (

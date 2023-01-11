@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Axios configuration
-axios.defaults.baseURL = "http://localhost:3000/";
+axios.defaults.baseURL = "http://localhost:4000/";
 axios.defaults.withCredentials = true;
 
 // // AUTHENTIFICATION
@@ -27,6 +27,19 @@ interface RegisterRequestData {
 
 export const registerRequest = async (data: RegisterRequestData) => {
   const response = await axios.post("/authentification/register", data);
+
+  if (response.status !== 200) throw new Error();
+};
+
+// FORGOT PASSWORD
+interface ForgotPasswordRequestData {
+  email: string;
+}
+
+export const forgotPasswordRequest = async (
+  data: ForgotPasswordRequestData
+) => {
+  const response = await axios.post("/authentification/forgot-password", data);
 
   if (response.status !== 200) throw new Error();
 };

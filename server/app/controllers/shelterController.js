@@ -1,7 +1,8 @@
+const debug = require("debug")("controller:shelter");
 const { Rates, Booking, Shelter } = require("../models");
 const ExpressError = require("../utilities/ExpressError");
 
-const gitesController = {
+const shelterController = {
   getShelters: async function (_, res, next) {
     try {
       const shelters = await Shelter.find({});
@@ -10,7 +11,7 @@ const gitesController = {
         res.status(200).json({ sheltersData: shelters });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -24,11 +25,12 @@ const gitesController = {
         ...newPayload,
         shelter_id: shelter._id,
       });
+
       await newBooking.save();
 
       res.sendStatus(200);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -40,7 +42,7 @@ const gitesController = {
         res.status(200).json({ ratesData: allRates[0] });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -67,7 +69,7 @@ const gitesController = {
           });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -83,10 +85,10 @@ const gitesController = {
         });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
 };
 
-module.exports = gitesController;
+module.exports = shelterController;

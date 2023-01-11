@@ -5,7 +5,7 @@ export interface LoaderProps {
   statut: StatutType;
   onRequestEnd?: (statut: HTTPStateKind) => void;
   message?: {
-    success: null | string;
-    error: null | string;
+    success: string | null;
+    error: string | null;
   };
 }

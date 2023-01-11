@@ -1,3 +1,4 @@
+const debug = require("debug")("controller:admin");
 const { Booking, Shelter, Image } = require("../models");
 const assert = require("assert");
 const { cloudinary } = require("../utilities/cloudinary");
@@ -17,7 +18,7 @@ const adminController = {
         res.status(200).json({ bookingsData: allBookings });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -38,7 +39,7 @@ const adminController = {
         res.sendStatus(200);
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -56,7 +57,7 @@ const adminController = {
         res.sendStatus(200);
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -78,7 +79,7 @@ const adminController = {
         });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -97,7 +98,7 @@ const adminController = {
         res.status(200);
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -112,7 +113,7 @@ const adminController = {
         res.status(200).json({ imagesData: images });
       } else throw new Error();
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -146,7 +147,7 @@ const adminController = {
         res.status(200).json({ imagesData: images });
       } else throw new Error();
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -178,7 +179,7 @@ const adminController = {
         res.status(200).json({ imagesData: images });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },

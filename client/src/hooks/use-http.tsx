@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useReducer, useCallback } from "react";
 
 // enums
@@ -11,7 +10,7 @@ export enum HTTPStateKind {
 // type aliases
 export type StatutType = null | HTTPStateKind;
 type HTTPRequestType = (arg: any) => Promise<any>;
-type ErrorType = string | null | undefined;
+type ErrorType = string | null;
 type DataType<T> = T | null;
 
 // interfaces
@@ -57,7 +56,7 @@ function httpReducer<T>(
       return {
         statut: HTTPStateKind.ERROR,
         data: null,
-        error: errorMessage,
+        error: errorMessage || null,
       };
     default:
       return state;
@@ -84,9 +83,22 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T) {
 
         dispatch({ type: HTTPStateKind.SUCCESS, value: responseData ?? null });
       } catch (err: any) {
+        let errorMessage: string | null = null;
+        const status: number = err.response.status;
+
+        switch (status) {
+          case 400:
+            errorMessage = "Erreur dans un/plusieurs champs.";
+            break;
+          case 409:
+            errorMessage = "Utilisateur déjà enregistré.";
+            break;
+        }
+
+        console.log(err);
         dispatch({
           type: HTTPStateKind.ERROR,
-          errorMessage: err.message || "Une erreur s'est produit !",
+          errorMessage: errorMessage || "Une erreur s'est produit !",
         });
       }
     },

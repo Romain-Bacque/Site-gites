@@ -11,6 +11,7 @@ import AuthPage from "./pages/AuthPage";
 import { loadUserInfos } from "./lib/api";
 import { authActions } from "./store/auth";
 import AllBookingsPage from "./pages/AllBookingsPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 // component
 const App: React.FC = () => {
@@ -48,14 +49,19 @@ const App: React.FC = () => {
         <Route path="/home">
           <HomePage />
         </Route>
-        <Route path="/gites" exact>
-          <GitesPage />
-        </Route>
         {isAuth && (
           <Route path="/admin/allBookings">
             <AllBookingsPage />
           </Route>
         )}
+        {!isAuth && (
+          <Route path="/admin/forgot-password">
+            <ForgotPasswordPage />
+          </Route>
+        )}
+        <Route path="/gites" exact>
+          <GitesPage />
+        </Route>
         <Route path="/gites/:giteId">
           <GitesPage />
         </Route>
