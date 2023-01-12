@@ -8,6 +8,7 @@ import Input from "../../Input";
 import { StatutMessage, UserData } from "./types";
 import classes from "../style.module.css";
 import { forgotPasswordRequest } from "../../../../lib/api";
+import LoaderAndAlert from "../../LoaderAndAlert";
 
 // types import
 
@@ -20,8 +21,9 @@ const initialMessageState = {
 
 // component
 const ForgotPassword: React.FC = () => {
-  const [statutMessage, setStatutMessage] =
-    useState<StatutMessage>(initialMessageState);
+  const [loaderAndAlert, setLoaderAndAlert] = useState<JSX.Element | null>(
+    null
+  );
   const {
     sendHttpRequest: forgotPasswordHttpRequest,
     statut: forgotPasswordStatut,
@@ -33,6 +35,7 @@ const ForgotPassword: React.FC = () => {
     isTouched: userEmailIsTouched,
     changeHandler: userEmailChangeHandler,
     blurHandler: userEmailBlurHandler,
+    resetHandler: userEmailResetHandler,
   } = useInput();
 
   const submitHandler = (event: React.FormEvent) => {
@@ -40,47 +43,37 @@ const ForgotPassword: React.FC = () => {
 
     if (!userEmailIsValid) return;
 
-    let userData: UserData = {
+    const userData: UserData = {
       email: userEmailValue,
     };
 
-    userData.email = userEmailValue;
     forgotPasswordHttpRequest(userData);
   };
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    if (forgotPasswordStatut === HTTPStateKind.SUCCESS) {
-      setStatutMessage({
-        message: "Mail de réinitialisation envoyé avec succés.",
-        alert: AlertKind.SUCCESS,
-        show: true,
-      });
-    } else if (forgotPasswordStatut === HTTPStateKind.ERROR) {
-      setStatutMessage({
-        message: "Adresse mail incorrecte.",
-        alert: AlertKind.ERROR,
-        show: true,
-      });
+  // reset input
+  const handleServerResponse = (statut: HTTPStateKind) => {
+    if (statut === HTTPStateKind.SUCCESS) {
+      userEmailResetHandler();
     }
+  };
 
-    timer = setTimeout(() => {
-      setStatutMessage((prevState) => ({ ...prevState, show: false }));
-    }, 4000);
-
-    return () => {
-      clearTimeout(timer);
-    };
+  useEffect(() => {
+    forgotPasswordStatut &&
+      setLoaderAndAlert(
+        <LoaderAndAlert
+          statut={forgotPasswordStatut}
+          onServerResponse={handleServerResponse}
+          message={{
+            success: "Enregistrement réussi.",
+            error: forgotPasswordErrorMessage,
+          }}
+        />
+      );
   }, [forgotPasswordStatut]);
 
   return (
     <>
-      <Alert
-        message={statutMessage.message}
-        alert={statutMessage.alert}
-        show={statutMessage.show}
-      />
+      {loaderAndAlert}
       <Card className={classes.auth}>
         <form onSubmit={submitHandler} className={classes["auth__form"]}>
           <h3 className={classes["auth__title"]}>
@@ -100,13 +93,13 @@ const ForgotPassword: React.FC = () => {
               onBlur={userEmailBlurHandler}
               type="email"
               value={userEmailValue}
-              placeholder="Taper votre email ici"
+              placeholder="Taper l'adresse email ici"
             />
             <button
               disabled={!userEmailIsValid}
               className={classes["auth__button"]}
             >
-              Envoyer un mail de confirmation
+              Envoyer un mail de réinitialisation
             </button>
           </div>
         </form>

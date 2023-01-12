@@ -14,36 +14,9 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import CropContent from "../CropContent";
-import Loader from "../Loader";
+import Loader from "../LoaderAndAlert";
 import Alert, { AlertKind } from "../../UI/Alert";
-
-// interfaces
-interface StatutMessage {
-  message: null | string;
-  alert: null | AlertKind;
-  show: boolean;
-}
-interface GalleryProps {
-  imagesData: {
-    _id: string;
-    url: string;
-    filename: string;
-    shelter_id: {
-      number: number;
-    };
-  }[];
-  shelterNumber: number;
-}
-
-// type aliases
-type ImagesData = {
-  _id: string;
-  url: string;
-  filename: string;
-  shelter_id: {
-    number: number;
-  };
-}[];
+import { AlertStatut, GalleryProps, ImagesData } from "./types";
 
 // variable & constante
 let slidesPerView = 1;
@@ -72,8 +45,8 @@ const Gallery: React.FC<GalleryProps> = ({
   const [urlFile, setUrlFile] = useState<string>("");
   const [showModal, setShowModal] = useState(initialModalState);
   const [showLoader, setShowLoader] = useState(false);
-  const [statutMessage, setStatutMessage] =
-    useState<StatutMessage>(initialMessageState);
+  const [alertStatut, setAlertStatut] =
+    useState<AlertStatut>(initialMessageState);
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
   });
@@ -113,13 +86,13 @@ const Gallery: React.FC<GalleryProps> = ({
 
   const handleCropRequestEnd = (statut: HTTPStateKind) => {
     if (statut === HTTPStateKind.SUCCESS) {
-      setStatutMessage({
+      setAlertStatut({
         message: "Photo ajouté",
         alert: AlertKind.INFO,
         show: true,
       });
     } else {
-      setStatutMessage({
+      setAlertStatut({
         message: "Echec ajout",
         alert: AlertKind.ERROR,
         show: true,
@@ -129,7 +102,7 @@ const Gallery: React.FC<GalleryProps> = ({
     setShowModal(initialModalState);
   };
 
-  const handleRequestEnd = useCallback(
+  const handleServerResponse = useCallback(
     (statut: HTTPStateKind) => {
       if (statut === HTTPStateKind.SUCCESS) {
         const filteredImagesData = imagesData
@@ -138,14 +111,14 @@ const Gallery: React.FC<GalleryProps> = ({
             )
           : [];
 
-        setStatutMessage({
+        setAlertStatut({
           message: "Image supprimé",
           alert: AlertKind.INFO,
           show: true,
         });
         setImagesList(filteredImagesData);
       } else if (statut === HTTPStateKind.ERROR) {
-        setStatutMessage({
+        setAlertStatut({
           message: "Echec suppression",
           alert: AlertKind.ERROR,
           show: true,
@@ -183,23 +156,23 @@ const Gallery: React.FC<GalleryProps> = ({
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
-    if (statutMessage.show) {
+    if (alertStatut.show) {
       timer = setTimeout(() => {
-        setStatutMessage((prevState) => ({ ...prevState, show: false }));
+        setAlertStatut((prevState) => ({ ...prevState, show: false }));
       }, 4000);
     }
 
     return () => {
       clearTimeout(timer);
     };
-  }, [statutMessage.show]);
+  }, [alertStatut.show]);
 
   return (
     <>
       {showLoader && (
         <Loader
           statut={deletePictureStatut}
-          onRequestEnd={handleRequestEnd}
+          onServerResponse={handleServerResponse}
           message={{
             success: "Suppression réussi.",
             error: "Suppression impossible.",
@@ -215,7 +188,7 @@ const Gallery: React.FC<GalleryProps> = ({
         <>
           {showModal.crop ? (
             <CropContent
-              onRequestEnd={handleCropRequestEnd}
+              onServerResponse={handleCropRequestEnd}
               getImagesList={handleImagesList}
               shelterNumber={shelterNumber}
               url={urlFile}
@@ -237,9 +210,12 @@ const Gallery: React.FC<GalleryProps> = ({
       {isAuth && (
         <>
           <Alert
-            message={statutMessage.message}
-            alert={statutMessage.alert}
-            show={statutMessage.show}
+            message={alertStatut.message}
+            alert={alertStatut.alert}
+            show={alertStatut.show}
+            onAlertClose={() =>
+              setAlertStatut((prevState) => ({ ...prevState, show: false }))
+            }
           />
           <div>
             <label

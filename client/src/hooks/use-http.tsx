@@ -2,7 +2,7 @@ import { useReducer, useCallback } from "react";
 
 // enums
 export enum HTTPStateKind {
-  SEND,
+  SEND = 1,
   SUCCESS,
   ERROR,
 }
@@ -95,7 +95,6 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T) {
             break;
         }
 
-        console.log(err);
         dispatch({
           type: HTTPStateKind.ERROR,
           errorMessage: errorMessage || "Une erreur s'est produit !",

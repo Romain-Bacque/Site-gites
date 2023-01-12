@@ -1,112 +1,121 @@
+// hooks import
 import React, { useEffect, useState } from "react";
 import useInput from "../../../../hooks/use-input";
-
 import useHttp, { HTTPStateKind } from "../../../../hooks/use-http";
-import Alert, { AlertKind } from "../../../UI/Alert";
+import { useParams } from "react-router-dom";
+// types import
+import { UserData } from "./types";
+import LoaderAndAlert from "../../LoaderAndAlert";
+// other import
 import Card from "../../../UI/Card";
 import Input from "../../Input";
-import { StatutMessage, UserData } from "./types";
 import classes from "../style.module.css";
-import { forgotPasswordRequest } from "../../../../lib/api";
-
-// types import
-
-// variable & constante
-const initialMessageState = {
-  message: "",
-  alert: null,
-  show: false,
-};
+import { resetPasswordRequest } from "../../../../lib/api";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 // component
-const ForgotPassword: React.FC = () => {
-  const [statutMessage, setStatutMessage] =
-    useState<StatutMessage>(initialMessageState);
+const ResetPassword: React.FC = () => {
+  const { id, token } = useParams<{ id: string; token: string }>();
+  const [loaderAndAlert, setLoaderAndAlert] = useState<JSX.Element | null>(
+    null
+  );
   const {
-    sendHttpRequest: forgotPasswordHttpRequest,
-    statut: forgotPasswordStatut,
-    error: forgotPasswordErrorMessage,
-  } = useHttp(forgotPasswordRequest);
+    sendHttpRequest: resetPasswordHttpRequest,
+    statut: resetPasswordStatut,
+    error: resetPasswordErrorMessage,
+  } = useHttp(resetPasswordRequest);
   const {
-    value: userEmailValue,
-    isValid: userEmailIsValid,
-    isTouched: userEmailIsTouched,
-    changeHandler: userEmailChangeHandler,
-    blurHandler: userEmailBlurHandler,
+    value: userPasswordValue,
+    isValid: userPasswordIsValid,
+    isTouched: userPasswordIsTouched,
+    changeHandler: userPasswordChangeHandler,
+    blurHandler: userPasswordBlurHandler,
+    resetHandler: userPasswordResetHandler,
+    passwordState: userPasswordState,
   } = useInput();
+  const [isPasswordMasked, setIsPasswordMasked] = useState(true);
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!userEmailIsValid) return;
+    if (!userPasswordIsValid) return;
 
-    let userData: UserData = {
-      email: userEmailValue,
+    const userPassword: UserData = {
+      id,
+      token,
+      password: userPasswordValue,
     };
 
-    userData.email = userEmailValue;
-    forgotPasswordHttpRequest(userData);
+    resetPasswordHttpRequest(userPassword);
+  };
+
+  // reset input
+  const handleServerResponse = (statut: HTTPStateKind) => {
+    if (statut === HTTPStateKind.SUCCESS) {
+      userPasswordResetHandler();
+    }
   };
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    if (forgotPasswordStatut === HTTPStateKind.SUCCESS) {
-      setStatutMessage({
-        message: "Mail de réinitialisation envoyé avec succés.",
-        alert: AlertKind.SUCCESS,
-        show: true,
-      });
-    } else if (forgotPasswordStatut === HTTPStateKind.ERROR) {
-      setStatutMessage({
-        message: "Adresse mail incorrecte.",
-        alert: AlertKind.ERROR,
-        show: true,
-      });
-    }
-
-    timer = setTimeout(() => {
-      setStatutMessage((prevState) => ({ ...prevState, show: false }));
-    }, 4000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [forgotPasswordStatut]);
+    resetPasswordStatut &&
+      setLoaderAndAlert(
+        <LoaderAndAlert
+          statut={resetPasswordStatut}
+          onServerResponse={handleServerResponse}
+          message={{
+            success: "Enregistrement réussi.",
+            error: resetPasswordErrorMessage,
+          }}
+        />
+      );
+  }, [resetPasswordStatut]);
 
   return (
     <>
-      <Alert
-        message={statutMessage.message}
-        alert={statutMessage.alert}
-        show={statutMessage.show}
-      />
+      {loaderAndAlert}
       <Card className={classes.auth}>
         <form onSubmit={submitHandler} className={classes["auth__form"]}>
           <h3 className={classes["auth__title"]}>
-            Réinitialisation Du Mot De Passe
+            Réinitialiser Le Mot De Passe
           </h3>
           <div>
             <Input
-              label="Email"
+              icon={
+                <FontAwesomeIcon
+                  className={classes.form__icon}
+                  onClick={() => setIsPasswordMasked((prevState) => !prevState)}
+                  icon={isPasswordMasked ? faEyeSlash : faEye}
+                />
+              }
+              label="Mot de passe"
               isVisible={true}
               className={
-                !userEmailIsValid && userEmailIsTouched
+                !userPasswordIsValid && userPasswordIsTouched
                   ? "form__input--red"
                   : ""
               }
-              id="user-email"
-              onChange={userEmailChangeHandler}
-              onBlur={userEmailBlurHandler}
-              type="email"
-              value={userEmailValue}
-              placeholder="Taper votre email ici"
+              maxLength={32}
+              id="user-password"
+              onChange={userPasswordChangeHandler}
+              onBlur={userPasswordBlurHandler}
+              type={isPasswordMasked ? "password" : "text"}
+              value={userPasswordValue}
+              placeholder="Taper le mot de passe ici"
             />
+            {userPasswordState.length > 0 && (
+              <ul className={classes["auth__password-error-list"]}>
+                <span>Le mot de passe doit comporter :</span>
+                {userPasswordState.map((item) => (
+                  <li key={item.toString()}>{item}</li>
+                ))}
+              </ul>
+            )}
             <button
-              disabled={!userEmailIsValid}
+              disabled={!userPasswordIsValid}
               className={classes["auth__button"]}
             >
-              Envoyer un mail de confirmation
+              Enregistrer
             </button>
           </div>
         </form>
@@ -115,4 +124,4 @@ const ForgotPassword: React.FC = () => {
   );
 };
 
-export default ForgotPassword;
+export default ResetPassword;

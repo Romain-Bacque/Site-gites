@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 
 import { ratesGetRequest, ratesPostRequest } from "../../../lib/api";
-import Loader from "../Loader";
+import Loader from "../LoaderAndAlert";
 import Alert, { AlertKind } from "../../UI/Alert";
 import classes from "./style.module.css";
 import { useAppSelector } from "../../../hooks/use-store";
 // types import
-import { PriceValues, RatesProps, StatutMessage } from "./types";
+import { PriceValues, RatesProps, AlertStatut } from "./types";
 
 // variable & constante
 const initialState = {
@@ -18,8 +18,7 @@ const initialState = {
 
 // component
 const Rates: React.FC<RatesProps> = ({ shelter }) => {
-  const [statutMessage, setStatutMessage] =
-    useState<StatutMessage>(initialState);
+  const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const [showLoader, setShowLoader] = useState(false);
   const [priceValues, sePriceValues] = useState<PriceValues>({
     price1: 1,
@@ -62,15 +61,15 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
     });
   };
 
-  const handleRequestEnd = useCallback((statut: HTTPStateKind) => {
+  const handleServerResponse = useCallback((statut: HTTPStateKind) => {
     if (statut === HTTPStateKind.SUCCESS) {
-      setStatutMessage({
+      setAlertStatut({
         message: "Prix enregistrés avec succés.",
         alert: AlertKind.INFO,
         show: true,
       });
     } else
-      setStatutMessage({
+      setAlertStatut({
         message: "Enregistrement des prix impossible.",
         alert: AlertKind.ERROR,
         show: true,
@@ -95,28 +94,31 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
-    if (statutMessage.show) {
+    if (alertStatut.show) {
       timer = setTimeout(() => {
-        setStatutMessage((prevState) => ({ ...prevState, show: false }));
+        setAlertStatut((prevState) => ({ ...prevState, show: false }));
       }, 4000);
     }
 
     return () => {
       clearTimeout(timer);
     };
-  }, [statutMessage.show]);
+  }, [alertStatut.show]);
 
   return (
     <>
       <Alert
-        message={statutMessage.message}
-        alert={statutMessage.alert}
-        show={statutMessage.show}
+        message={alertStatut.message}
+        alert={alertStatut.alert}
+        show={alertStatut.show}
+        onAlertClose={() =>
+          setAlertStatut((prevState) => ({ ...prevState, show: false }))
+        }
       />
       {showLoader && (
         <Loader
           statut={postRatesStatut}
-          onRequestEnd={handleRequestEnd}
+          onServerResponse={handleServerResponse}
           message={{
             success: null,
             error: null,

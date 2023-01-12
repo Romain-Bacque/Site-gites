@@ -31,7 +31,7 @@ export const registerRequest = async (data: RegisterRequestData) => {
   if (response.status !== 200) throw new Error();
 };
 
-// FORGOT PASSWORD
+// forgot password
 interface ForgotPasswordRequestData {
   email: string;
 }
@@ -40,6 +40,18 @@ export const forgotPasswordRequest = async (
   data: ForgotPasswordRequestData
 ) => {
   const response = await axios.post("/authentification/forgot-password", data);
+
+  if (response.status !== 200) throw new Error();
+};
+
+// reset password
+type ResetPasswordRequestData = Record<"id" | "token" | "password", string>;
+
+export const resetPasswordRequest = async (data: ResetPasswordRequestData) => {
+  const response = await axios.patch(
+    `/authentification/reset-password/${data.id}/${data.token}`,
+    { password: data.password }
+  );
 
   if (response.status !== 200) throw new Error();
 };

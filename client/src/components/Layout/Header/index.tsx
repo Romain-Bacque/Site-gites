@@ -12,7 +12,8 @@ import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 // component
 const Header: React.FC = () => {
   const [scrollActive, setScrollActive] = useState(false);
-  const { sendHttpRequest, statut: logoutStatut } = useHttp(logoutRequest);
+  const { sendHttpRequest: sendLogoutHttpRequest, statut: logoutStatut } =
+    useHttp(logoutRequest);
   const isAdmin = useAppSelector((state) => state.auth.isAdmin);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const isOpen = useAppSelector((state) => state.menu.isOpen);
@@ -44,7 +45,7 @@ const Header: React.FC = () => {
     dispatch(menuActions.toggleMenu());
     if (isAuth) {
       event.preventDefault();
-      sendHttpRequest();
+      sendLogoutHttpRequest();
     }
   };
 
@@ -130,13 +131,22 @@ const Header: React.FC = () => {
             )}
             {(isAuth || isAdmin) && (
               <li className={classes.header__list}>
-                <Link
-                  className={`${classes.header__link} ${classes.header__auth}`}
-                  to="/authentification"
-                  onClick={handleAuthLink}
-                >
-                  {!isAuth ? "Connexion" : "Déconnexion"}
-                </Link>
+                {!isAuth && (
+                  <Link
+                    className={`${classes.header__link} ${classes.header__auth}`}
+                    to="/authentification"
+                  >
+                    Connexion
+                  </Link>
+                )}
+                {isAuth && (
+                  <button
+                    className={`${classes.header__link} ${classes.header__auth}`}
+                    onClick={handleAuthLink}
+                  >
+                    Déconnexion
+                  </button>
+                )}
               </li>
             )}
           </ul>

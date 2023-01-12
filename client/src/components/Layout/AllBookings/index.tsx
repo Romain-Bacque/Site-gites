@@ -7,7 +7,7 @@ import {
   refuseBookingRequest,
   bookingRequestData,
 } from "../../../lib/api";
-import Loader from "../Loader";
+import Loader from "../LoaderAndAlert";
 import classes from "./style.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -39,7 +39,7 @@ import {
   BookingsList,
   handleEmailFormDisplay,
   ModalState,
-  StatutMessage,
+  AlertStatut,
 } from "./types";
 
 dayjs().format();
@@ -62,8 +62,8 @@ const AllBookings: React.FC = () => {
   const [allBookingsContent, setAllBookingsContent] =
     useState<JSX.Element | null>(null);
   const [showModal, setShowModal] = useState<ModalState>(initialModalState);
-  const [statutMessage, setStatutMessage] =
-    useState<StatutMessage>(initialMessageState);
+  const [statutMessage, setAlertStatut] =
+    useState<AlertStatut>(initialMessageState);
   const [bookingsList, setBookingsList] = useState<BookingsList>([]);
   const [showLoader, setShowLoader] = useState(false);
   const [textareaValue, setTextareaValue] = useState("");
@@ -85,7 +85,7 @@ const AllBookings: React.FC = () => {
   } = useHttp(refuseBookingRequest);
 
   const displayError = () => {
-    setStatutMessage({
+    setAlertStatut({
       message: "Une erreur est survenue",
       alert: AlertKind.ERROR,
       show: true,
@@ -331,7 +331,7 @@ const AllBookings: React.FC = () => {
 
   useEffect(() => {
     if (acceptBookingStatut === HTTPStateKind.SUCCESS) {
-      setStatutMessage({
+      setAlertStatut({
         message: "Demande accepté, verifiez votre mail de confirmation",
         alert: AlertKind.SUCCESS,
         show: true,
@@ -341,7 +341,7 @@ const AllBookings: React.FC = () => {
 
   useEffect(() => {
     if (refuseBookingStatut === HTTPStateKind.SUCCESS) {
-      setStatutMessage({
+      setAlertStatut({
         message: "Demande refusé",
         alert: AlertKind.INFO,
         show: true,
@@ -354,7 +354,7 @@ const AllBookings: React.FC = () => {
 
     if (statutMessage.show) {
       timer = setTimeout(() => {
-        setStatutMessage((prevState) => ({ ...prevState, show: false }));
+        setAlertStatut((prevState) => ({ ...prevState, show: false }));
       }, 4000);
     }
 
@@ -375,7 +375,7 @@ const AllBookings: React.FC = () => {
           {showModal.booking ? (
             <form onSubmit={handleBookingSubmit}>
               <h3>Message à envoyer</h3>
-              <textarea rows={10} cols={25}></textarea>
+              <textarea rows={10} cols={25} />
               <div>
                 <button>Envoyer</button>
                 <button type="button" onClick={handleCancel}>
@@ -385,7 +385,7 @@ const AllBookings: React.FC = () => {
               {showLoader && (
                 <Loader
                   statut={acceptBookingStatut}
-                  onRequestEnd={handleRequestEnd}
+                  onServerResponse={handleRequestEnd}
                 />
               )}
             </form>
@@ -397,16 +397,16 @@ const AllBookings: React.FC = () => {
         message={statutMessage.message}
         alert={statutMessage.alert}
         show={statutMessage.show}
+        onAlertClose={() =>
+          setAlertStatut((prevState) => ({ ...prevState, show: false }))
+        }
       />
       <section>
+        {/* // error: Une erreur est survenue! Impossible d'afficher la liste des
+      demandes. */}
         <Loader
           statut={bookingsRequestStatut}
-          onRequestEnd={handleAllBookings}
-          message={{
-            success: null,
-            error:
-              "Une erreur est survenue! Impossible d'afficher la liste des demandes.",
-          }}
+          onServerResponse={handleAllBookings}
         />
         <div className={classes["bookings__title-container"]}>
           <h2 className={classes["bookings__title"]}>{`Liste des demandes (${

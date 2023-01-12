@@ -1,18 +1,19 @@
 .auth {
-  overflow: hidden;
-  width: max-content;
-  margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 500px;
+  max-width: 70%;
+  padding: 4rem;
+  margin: auto;
   align-items: center;
+  overflow: hidden;
 }
 
 .auth__form {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   gap: 1.5rem;
 }
 
@@ -22,12 +23,15 @@
   color: rgb(97, 97, 97);
 }
 
+.auth__span {
+  margin-right: 1rem;
+}
+
 .auth__link {
   color: rgb(158, 158, 158);
+  border-bottom: 1px solid rgb(158, 158, 158);
   font-size: smaller;
   cursor: pointer;
-  border-bottom: 1px solid rgb(158, 158, 158);
-  margin-top: 0.5rem;
 }
 
 .auth__link:hover {
@@ -57,4 +61,13 @@
   line-height: 2rem;
   margin: 0.5rem 0;
   color: rgb(153, 1, 1);
+}
+
+.form__icon {
+  position: absolute;
+  top: 50%;
+  right: 0.6rem;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: rgb(122, 122, 122);
 }

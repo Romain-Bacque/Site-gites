@@ -36,7 +36,7 @@ export type BookingsList = {
 }[];
 
 // interfaces
-export interface StatutMessage {
+export interface AlertStatut {
   message: string;
   alert: null | AlertKind;
   show: boolean;

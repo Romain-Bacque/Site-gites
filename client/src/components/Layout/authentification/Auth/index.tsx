@@ -8,15 +8,20 @@ import Input from "../../Input";
 import Card from "../../../UI/Card";
 import classes from "../style.module.css";
 import { registerRequest, loginRequest } from "../../../../lib/api";
-import Loader from "../../Loader";
+import LoaderAndAlert from "../../LoaderAndAlert";
 import { authActions } from "../../../../store/auth";
 // types import
-import { UserData } from "./types";
+import { LoginData, UserData } from "./types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 // component
 const Auth: React.FC = () => {
-  const { sendHttpRequest: loginHttpRequest, statut: loginStatut } =
-    useHttp(loginRequest);
+  const {
+    sendHttpRequest: loginHttpRequest,
+    statut: loginStatut,
+    error: loginErrorMessage,
+  } = useHttp(loginRequest);
   const {
     sendHttpRequest: registerHttpRequest,
     statut: registerStatut,
@@ -28,6 +33,7 @@ const Auth: React.FC = () => {
     isTouched: usernameIsTouched,
     changeHandler: usernameChangeHandler,
     blurHandler: usernameBlurHandler,
+    resetHandler: usernameResetHandler,
   } = useInput();
   const {
     value: userEmailValue,
@@ -35,6 +41,7 @@ const Auth: React.FC = () => {
     isTouched: userEmailIsTouched,
     changeHandler: userEmailChangeHandler,
     blurHandler: userEmailBlurHandler,
+    resetHandler: userEmailResetHandler,
   } = useInput();
   const {
     value: userPasswordValue,
@@ -42,11 +49,14 @@ const Auth: React.FC = () => {
     isTouched: userPasswordIsTouched,
     changeHandler: userPasswordChangeHandler,
     blurHandler: userPasswordBlurHandler,
-    resetHandler: resetUserPasswordHandler,
+    resetHandler: userPasswordResetHandler,
     passwordState: userPasswordState,
   } = useInput();
+  const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const [isNotRegistered, setIsNotRegistered] = useState(false);
-  const [statutContent, setStatutContent] = useState<JSX.Element | null>(null);
+  const [loaderAndAlert, setLoaderAndAlert] = useState<JSX.Element | null>(
+    null
+  );
   const dispatch = useAppDispatch();
   const history = useHistory();
 
@@ -63,32 +73,38 @@ const Auth: React.FC = () => {
 
     if (!isFormValid) return;
 
-    let userData: UserData = {
+    let userData: LoginData = {
       username: usernameValue,
       password: userPasswordValue,
     };
 
     if (isNotRegistered) {
-      userData.email = userEmailValue;
+      (userData as UserData<typeof isNotRegistered>).email = userEmailValue;
       registerHttpRequest(userData);
     } else {
       loginHttpRequest(userData);
     }
-
-    resetUserPasswordHandler();
   };
 
   const handleClick = () => {
-    setStatutContent(null);
-    resetUserPasswordHandler();
+    setLoaderAndAlert(null);
+    usernameResetHandler();
+    userEmailResetHandler();
+    userPasswordResetHandler();
     setIsNotRegistered(!isNotRegistered);
   };
 
-  const handleLogin = useCallback(
+  const handleServerResponse = useCallback(
     (statut: HTTPStateKind) => {
       if (statut === HTTPStateKind.SUCCESS) {
-        dispatch(authActions.login());
-        history.replace("/");
+        if (isNotRegistered) {
+          usernameResetHandler();
+          userEmailResetHandler();
+          userPasswordResetHandler();
+        } else {
+          dispatch(authActions.login());
+          history.replace("/");
+        }
       }
     },
     [dispatch, history]
@@ -97,36 +113,35 @@ const Auth: React.FC = () => {
   // login
   useEffect(() => {
     loginStatut &&
-      setStatutContent(
-        <Loader
+      setLoaderAndAlert(
+        <LoaderAndAlert
           statut={loginStatut}
-          onRequestEnd={handleLogin}
+          onServerResponse={handleServerResponse}
           message={{
             success: null,
-            error: "Pseudo ou Mot de passe incorrect.",
+            error: loginErrorMessage,
           }}
         />
       );
-  }, [loginStatut, handleLogin]);
+  }, [loginStatut, handleServerResponse]);
 
   // register
   useEffect(() => {
     registerStatut &&
-      setStatutContent(
-        <Loader
+      setLoaderAndAlert(
+        <LoaderAndAlert
           statut={registerStatut}
-          onRequestEnd={() => setIsNotRegistered(false)}
           message={{
             success: "Enregistrement réussi.",
             error: registerErrorMessage,
           }}
         />
       );
-  }, [registerStatut, history]);
+  }, [registerStatut]);
 
   return (
     <>
-      {statutContent}
+      {loaderAndAlert}
       <Card className={classes.auth}>
         <form onSubmit={submitHandler} className={classes["auth__form"]}>
           <h3 className={classes["auth__title"]}>
@@ -144,7 +159,7 @@ const Auth: React.FC = () => {
               onBlur={usernameBlurHandler}
               type="texte"
               value={usernameValue}
-              placeholder="Taper votre pseudo ici"
+              placeholder="Taper le pseudo ici"
             />
             {isNotRegistered && (
               <Input
@@ -160,18 +175,24 @@ const Auth: React.FC = () => {
                 onBlur={userEmailBlurHandler}
                 type="email"
                 value={userEmailValue}
-                placeholder="Taper votre email ici"
+                placeholder="Taper l'adresse email ici"
               />
             )}
             <Input
+              icon={
+                <FontAwesomeIcon
+                  className={classes.form__icon}
+                  onClick={() => setIsPasswordMasked((prevState) => !prevState)}
+                  icon={isPasswordMasked ? faEyeSlash : faEye}
+                />
+              }
               label="Mot de passe"
               forgotPassword={
                 <Link
                   to="/admin/forgot-password"
-                  href="#"
                   className={classes["auth__link"]}
                 >
-                  {!isNotRegistered && "Mot de passe perdu ?"}
+                  {!isNotRegistered && "Oublié ?"}
                 </Link>
               }
               isVisible={true}
@@ -180,10 +201,11 @@ const Auth: React.FC = () => {
                   ? "form__input--red"
                   : ""
               }
+              maxLength={32}
               id="user-password"
               onChange={userPasswordChangeHandler}
               onBlur={userPasswordBlurHandler}
-              type="password"
+              type={isPasswordMasked ? "password" : "text"}
               value={userPasswordValue}
               placeholder="Taper le mot de passe ici"
             />
@@ -200,13 +222,13 @@ const Auth: React.FC = () => {
             </button>
           </div>
           <div>
-            <span>
+            <span className={classes["auth__span"]}>
               {!isNotRegistered
                 ? "Vous n'avez pas de compte ?"
                 : "Vous avez un compte ?"}
             </span>
-            <a href="#" onClick={handleClick} className={classes["auth__link"]}>
-              {!isNotRegistered ? "S'enregistrer ?" : "Se connecter ?"}
+            <a onClick={handleClick} className={classes["auth__link"]}>
+              {!isNotRegistered ? "S'enregistrer." : "Se connecter."}
             </a>
           </div>
         </form>

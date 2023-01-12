@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 import useInput from "../../../hooks/use-input";
 
-import Loader from "../Loader";
+import Loader from "../LoaderAndAlert";
 import Modal from "../../UI/Modal";
 import icon_success from "../../../img/icon_success.ico";
 import icon_error from "../../../img/icon_error.png";
@@ -232,7 +232,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
       {showLoader && (
         <Loader
           statut={bookingStatut}
-          onRequestEnd={() => setShowLoader(false)}
+          onServerResponse={() => setShowLoader(false)}
         />
       )}
       <form className={classes.form} onSubmit={submitHandler}>

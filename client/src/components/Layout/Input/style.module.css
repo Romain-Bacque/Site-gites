@@ -1,9 +1,18 @@
+.form__input-container {
+  position: relative;
+  margin: 1.5rem 0;
+}
+
+.form__label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
 .form__input {
   outline: none;
   box-sizing: border-box;
   border: 2px solid gray;
   border-radius: 5px;
-  margin: 1rem 0;
   padding: 0.5rem;
   width: 100%;
 }

@@ -11,7 +11,7 @@ import {
 import Calendar from "react-calendar";
 import classes from "./style.module.css";
 import "react-calendar/dist/Calendar.css";
-import Loader from "../Loader";
+import Loader from "../LoaderAndAlert";
 import dayjs from "dayjs";
 // types import
 import { PlanningProps } from "./types";
@@ -128,7 +128,7 @@ const Planning: React.FC<PlanningProps> = ({
       {showLoader && (
         <Loader
           statut={disabledDatesStatut}
-          onRequestEnd={handleCalendarDisplay}
+          onServerResponse={handleCalendarDisplay}
           message={{
             success: null,
             error: "Le calendrier est indisponible.",

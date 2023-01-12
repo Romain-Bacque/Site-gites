@@ -10,7 +10,7 @@ import gite2_large from "../../../img/gite2_large.jpg";
 import { Link } from "react-router-dom";
 import Alert, { AlertKind } from "../../UI/Alert";
 // types import
-import { StatutMessage } from "./types";
+import { AlertStatut } from "./types";
 
 // variable & constantes
 const initialState = {
@@ -22,8 +22,7 @@ let isAuthStatut = false;
 
 // component
 const Home: React.FC = () => {
-  const [statutMessage, setStatutMessage] =
-    useState<StatutMessage>(initialState);
+  const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
 
   useEffect(() => {
@@ -32,18 +31,18 @@ const Home: React.FC = () => {
     if (isAuth && isAuth !== isAuthStatut) {
       isAuthStatut = isAuth;
 
-      setStatutMessage({
+      setAlertStatut({
         message: "Bienvenue !",
         alert: AlertKind.SUCCESS,
         show: true,
       });
 
       timer = setTimeout(() => {
-        setStatutMessage((prevState) => ({ ...prevState, show: false }));
+        setAlertStatut((prevState) => ({ ...prevState, show: false }));
       }, 4000);
     } else if (!isAuth) {
       isAuthStatut = false;
-      setStatutMessage((prevState) => ({ ...prevState, show: false }));
+      setAlertStatut((prevState) => ({ ...prevState, show: false }));
     }
 
     return () => {
@@ -54,9 +53,12 @@ const Home: React.FC = () => {
   return (
     <>
       <Alert
-        message={statutMessage.message}
-        alert={statutMessage.alert}
-        show={statutMessage.show}
+        message={alertStatut.message}
+        alert={alertStatut.alert}
+        show={alertStatut.show}
+        onAlertClose={() =>
+          setAlertStatut((prevState) => ({ ...prevState, show: false }))
+        }
       />
       <section>
         <Card className={classes.banner}>

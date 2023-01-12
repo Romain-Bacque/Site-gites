@@ -1,5 +1,7 @@
+import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "react-transition-group";
-import classes from "./Alert.module.css";
+import classes from "./style.module.css";
 
 // enums
 export enum AlertKind {
@@ -13,13 +15,19 @@ interface AlertProps {
   message: string | null;
   alert: AlertKind | null;
   show: boolean;
+  onAlertClose: () => void;
 }
 
 // variable & constante
 let backgroundColorClass: string;
 
 // component
-const Alert: React.FC<AlertProps> = ({ message, alert, show }) => {
+const Alert: React.FC<AlertProps> = ({
+  message,
+  alert,
+  show,
+  onAlertClose,
+}) => {
   switch (alert) {
     case AlertKind.INFO:
       backgroundColorClass = "alert--gray";
@@ -40,11 +48,16 @@ const Alert: React.FC<AlertProps> = ({ message, alert, show }) => {
         const displayClass = state === "exiting" ? "alert--hide" : "";
 
         return (
-          <span
+          <div
             className={`${classes.alert} ${classes[backgroundColorClass]} ${classes[displayClass]}`}
           >
-            {message}
-          </span>
+            <span className={classes.alert__span}>{message}</span>
+            <FontAwesomeIcon
+              onClick={onAlertClose}
+              className={classes.alert__close}
+              icon={faClose}
+            />
+          </div>
         );
       }}
     </Transition>

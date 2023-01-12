@@ -3,7 +3,7 @@ import React, { MouseEventHandler, useCallback, useState } from "react";
 
 import { postPictureRequest } from "../../../lib/api";
 import Cropper, { Area } from "react-easy-crop";
-import Loader from "../Loader";
+import Loader from "../LoaderAndAlert";
 import classes from "./style.module.css";
 import getCroppedImg from "./lib/cropImage";
 // types import
@@ -16,7 +16,7 @@ const CropContent: React.FC<CropContentProps> = ({
   shelterNumber,
   url,
   getImagesList,
-  onRequestEnd,
+  onServerResponse,
 }) => {
   const [showLoader, setShowLoader] = useState(false);
   const {
@@ -38,7 +38,7 @@ const CropContent: React.FC<CropContentProps> = ({
     if (statut === HTTPStateKind.SUCCESS && imagesData) {
       getImagesList(imagesData);
     }
-    onRequestEnd(statut);
+    onServerResponse(statut);
     setShowLoader(false);
   };
 
@@ -83,11 +83,7 @@ const CropContent: React.FC<CropContentProps> = ({
           {postPictureStatut && showLoader && (
             <Loader
               statut={postPictureStatut}
-              onRequestEnd={handleAddPicture}
-              message={{
-                success: null,
-                error: null,
-              }}
+              onServerResponse={handleAddPicture}
             />
           )}
           <span className={classes["crop-container__span"]}>-</span>

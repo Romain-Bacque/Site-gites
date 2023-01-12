@@ -12,6 +12,7 @@ import { loadUserInfos } from "./lib/api";
 import { authActions } from "./store/auth";
 import AllBookingsPage from "./pages/AllBookingsPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 // component
 const App: React.FC = () => {
@@ -29,10 +30,8 @@ const App: React.FC = () => {
   useEffect(() => {
     if (pathname.includes("admin")) {
       dispatch(authActions.isAdmin());
-      history.replace(pathname.replace("admin", ""));
-    } else if (pathname.includes("user")) {
+    } else {
       dispatch(authActions.isUser());
-      history.replace(pathname.replace("user", ""));
     }
   }, [pathname, history, dispatch]);
 
@@ -50,13 +49,18 @@ const App: React.FC = () => {
           <HomePage />
         </Route>
         {isAuth && (
-          <Route path="/admin/allBookings">
+          <Route path="/admin/allBookings" exact>
             <AllBookingsPage />
           </Route>
         )}
         {!isAuth && (
-          <Route path="/admin/forgot-password">
+          <Route path="/admin/forgot-password" exact>
             <ForgotPasswordPage />
+          </Route>
+        )}
+        {!isAuth && (
+          <Route path="/admin/reset-password/:id/:token" exact>
+            <ResetPasswordPage />
           </Route>
         )}
         <Route path="/gites" exact>

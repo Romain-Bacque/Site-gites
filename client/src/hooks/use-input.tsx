@@ -44,8 +44,11 @@ const inputReducer = (state: InputState, action: InputAction): InputState => {
   }
   if (action.type === InputStateKind.CHANGE) {
     const actionValue = action.value as HTMLInputElement;
+    const inputType = actionValue.id.includes("password")
+      ? "password"
+      : actionValue.type;
 
-    switch (actionValue.type) {
+    switch (inputType) {
       case "text":
         if (action.value && actionValue.value.length > 0) {
           return { ...state, isValid: true, enteredValue: actionValue.value };
