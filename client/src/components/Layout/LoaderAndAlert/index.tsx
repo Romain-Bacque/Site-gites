@@ -48,7 +48,7 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = (props) => {
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
-    // if Alert component is already shown, then we hide it after defined period of time
+    // if Alert component is already shown, then we hide it
     if (alertStatut.show) {
       timer = setTimeout(() => {
         setAlertStatut((prevState) => ({ ...prevState, show: false }));
@@ -68,7 +68,7 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = (props) => {
   }, [statut, onServerResponse]);
 
   return (
-    <>
+    <div className={classes["loader-and-alert"]}>
       {showLoader && <Loader />}
       <Alert
         message={alertStatut.message}
@@ -78,7 +78,7 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = (props) => {
           setAlertStatut((prevState) => ({ ...prevState, show: false }))
         }
       />
-    </>
+    </div>
   );
 };
 

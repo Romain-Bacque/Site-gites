@@ -64,7 +64,7 @@ const ForgotPassword: React.FC = () => {
           statut={forgotPasswordStatut}
           onServerResponse={handleServerResponse}
           message={{
-            success: "Enregistrement réussi.",
+            success: "Envoi du mail réussi.",
             error: forgotPasswordErrorMessage,
           }}
         />

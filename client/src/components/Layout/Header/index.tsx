@@ -1,24 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
 
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import classes from "./style.module.css";
 import { authActions } from "../../../store/auth";
 import { menuActions } from "../../../store/menu";
 import { logoutRequest } from "../../../lib/api";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import LoaderAndAlert from "../LoaderAndAlert";
 
 // component
 const Header: React.FC = () => {
   const [scrollActive, setScrollActive] = useState(false);
-  const { sendHttpRequest: sendLogoutHttpRequest, statut: logoutStatut } =
-    useHttp(logoutRequest);
-  const isAdmin = useAppSelector((state) => state.auth.isAdmin);
+  const {
+    sendHttpRequest: sendLogoutHttpRequest,
+    statut: logoutStatut,
+    error: logoutErrorMessage,
+  } = useHttp(logoutRequest);
+  const [loaderAndAlert, setLoaderAndAlert] = useState<JSX.Element | null>(
+    null
+  );
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
-  const isOpen = useAppSelector((state) => state.menu.isOpen);
+  const isMenuOpen = useAppSelector((state) => state.menu.isOpen);
   const dispatch = useAppDispatch();
-  const history = useHistory();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,123 +41,140 @@ const Header: React.FC = () => {
     };
   }, []);
 
-  const handleToggleButton = (event: React.MouseEvent) => {
+  const handleToggleButton: MouseEventHandler<HTMLDivElement> = (event) => {
     event.stopPropagation();
     dispatch(menuActions.toggleMenu());
   };
 
-  const handleAuthLink = (event: React.MouseEvent) => {
+  const handleCloseMenu: MouseEventHandler<HTMLAnchorElement> = (event) => {
+    event.stopPropagation();
+    dispatch(menuActions.closeMenu());
+  };
+
+  const handleLogout: MouseEventHandler<HTMLButtonElement> = (event) => {
     dispatch(menuActions.toggleMenu());
     if (isAuth) {
       event.preventDefault();
       sendLogoutHttpRequest();
     }
   };
-
   // logout
   useEffect(() => {
     if (logoutStatut === HTTPStateKind.SUCCESS) {
       dispatch(authActions.logout());
-      history.replace("/");
     }
   }, [logoutStatut, dispatch]);
 
+  useEffect(() => {
+    logoutStatut &&
+      setLoaderAndAlert(
+        <LoaderAndAlert
+          statut={logoutStatut}
+          message={{
+            success: null,
+            error: logoutErrorMessage,
+          }}
+        />
+      );
+  }, [logoutStatut]);
+
   return (
-    <header
-      className={`${(scrollActive || isOpen) && classes["background-active"]} ${
-        classes.header
-      }`}
-    >
-      <div className={classes.header__wrapper}>
-        <div className={classes["header__title-container"]}>
-          <h1 className={classes.header__title}>Gîtes Jo & Flo</h1>
-          <span className={classes.header__subtitle}>
-            Dans un lieux reposant
-          </span>
-        </div>
-        <div
-          onClick={handleToggleButton}
-          className={`${classes["menu-button"]} ${
-            isOpen ? classes["active-menu"] : ""
-          }`}
-        >
-          <div className={classes["menu-button__line"]}></div>
-          <div className={classes["menu-button__line"]}></div>
-          <div className={classes["menu-button__line"]}></div>
-        </div>
-        <nav
-          onClick={(event) => event.stopPropagation()}
-          className={`${classes.header__nav} ${
-            isOpen ? classes["active-nav"] : ""
-          }`}
-        >
-          <ul className={classes["header__unorganized-list"]}>
-            <li className={classes.header__list}>
-              <NavLink
-                onClick={handleToggleButton}
-                className={classes.header__link}
-                activeClassName={classes["active-link"]}
-                to="/home"
-              >
-                Accueil
-              </NavLink>
-            </li>
-            <li className={classes.header__list}>
-              <NavLink
-                onClick={handleToggleButton}
-                className={classes.header__link}
-                activeClassName={classes["active-link"]}
-                to="/gites"
-              >
-                Gîtes
-              </NavLink>
-            </li>
-            <li className={classes.header__list}>
-              <NavLink
-                onClick={handleToggleButton}
-                className={`${classes.header__link}`}
-                activeClassName={classes["active-link"]}
-                to="/albums"
-              >
-                Albums
-              </NavLink>
-            </li>
-            {isAuth && (
+    <>
+      {loaderAndAlert}
+      <header
+        className={`${scrollActive && classes["background-active"]} ${
+          classes.header
+        } ${isMenuOpen && classes["active-nav"]}`}
+      >
+        <div className={classes.header__wrapper}>
+          <div className={classes["header__title-container"]}>
+            <h1 className={classes.header__title}>Gîtes Jo & Flo</h1>
+            <span className={classes.header__subtitle}>
+              Dans un lieux reposant
+            </span>
+          </div>
+          {/* Toggle menu button */}
+          <div
+            onClick={handleToggleButton}
+            className={`${classes["menu-button"]} ${
+              isMenuOpen ? classes["active-menu"] : ""
+            }`}
+          >
+            <div className={classes["menu-button__line"]}></div>
+            <div className={classes["menu-button__line"]}></div>
+            <div className={classes["menu-button__line"]}></div>
+          </div>
+          <nav
+            onClick={(event) => event.stopPropagation()}
+            className={`${classes.header__nav} ${
+              isMenuOpen ? classes["active-nav"] : ""
+            }`}
+          >
+            <ul className={classes["header__list"]}>
               <li className={classes.header__list}>
                 <NavLink
-                  onClick={handleToggleButton}
-                  className={`${classes.header__link}`}
+                  onClick={handleCloseMenu}
+                  className={classes.header__link}
                   activeClassName={classes["active-link"]}
-                  to="/admin/allBookings"
+                  to="/home"
                 >
-                  Demandes
+                  Accueil
                 </NavLink>
               </li>
-            )}
-            {(isAuth || isAdmin) && (
               <li className={classes.header__list}>
-                {!isAuth && (
-                  <Link
-                    className={`${classes.header__link} ${classes.header__auth}`}
-                    to="/authentification"
-                  >
-                    Connexion
-                  </Link>
-                )}
-                {isAuth && (
-                  <button
-                    className={`${classes.header__link} ${classes.header__auth}`}
-                    onClick={handleAuthLink}
-                  >
-                    Déconnexion
-                  </button>
-                )}
+                <NavLink
+                  onClick={handleCloseMenu}
+                  className={classes.header__link}
+                  activeClassName={classes["active-link"]}
+                  to="/gites"
+                >
+                  Gîtes
+                </NavLink>
               </li>
+              <li className={classes.header__list}>
+                <NavLink
+                  onClick={handleCloseMenu}
+                  className={`${classes.header__link}`}
+                  activeClassName={classes["active-link"]}
+                  to="/albums"
+                >
+                  Albums
+                </NavLink>
+              </li>
+              {isAuth && (
+                <li className={classes.header__list}>
+                  <NavLink
+                    onClick={handleCloseMenu}
+                    className={`${classes.header__link}`}
+                    activeClassName={classes["active-link"]}
+                    to="/admin/allBookings"
+                  >
+                    Demandes
+                  </NavLink>
+                </li>
+              )}
+              {!isAuth && (
+                <Link
+                  onClick={handleCloseMenu}
+                  className={` ${classes.header__auth}`}
+                  to="/authentification"
+                >
+                  Connexion
+                </Link>
+              )}
+            </ul>
+            {isAuth && (
+              <button
+                className={` ${classes.header__auth}`}
+                onClick={handleLogout}
+              >
+                Déconnexion
+              </button>
             )}
-          </ul>
-        </nav>
-      </div>
-    </header>
+          </nav>
+        </div>
+      </header>
+    </>
   );
 };
 

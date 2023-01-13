@@ -35,10 +35,6 @@ const App: React.FC = () => {
     }
   }, [pathname, history, dispatch]);
 
-  if (authStatut === HTTPStateKind.SUCCESS) {
-    dispatch(authActions.login());
-  }
-
   return (
     <Layout>
       <Switch>
