@@ -121,11 +121,11 @@ export interface bookingRequestData {
   shelterId: string;
   name: string;
   phone: string;
-  numberOfPerson: string;
+  numberOfPerson: number;
   email: string;
   from: string;
   to: string;
-  informations: string;
+  informations?: string;
 }
 
 export const bookingRequest = async (data: bookingRequestData) => {

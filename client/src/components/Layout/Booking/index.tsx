@@ -108,12 +108,14 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
       shelterId: shelter,
       name: nameValue,
       phone: phoneValue,
-      numberOfPerson: personsValue,
+      numberOfPerson: +personsValue,
       email: emailValue,
       from: fromValue,
       to: toValue,
-      informations: infosValue,
     };
+
+    // if user input some complementary infos
+    if (infosValue) userData.informations = infosValue;
 
     bookingHttpRequest<bookingRequestData>(userData);
     setShowLoader(true);

@@ -11,7 +11,7 @@ import { registerRequest, loginRequest } from "../../../../lib/api";
 import LoaderAndAlert from "../../LoaderAndAlert";
 import { authActions } from "../../../../store/auth";
 // types import
-import { LoginData, UserData } from "./types";
+import { LoginData, RegisterData, UserData } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
@@ -80,9 +80,11 @@ const Auth: React.FC = () => {
 
     if (isNotRegistered) {
       (userData as UserData<typeof isNotRegistered>).email = userEmailValue;
-      registerHttpRequest(userData);
+      registerHttpRequest<RegisterData>(
+        userData as UserData<typeof isNotRegistered>
+      );
     } else {
-      loginHttpRequest(userData);
+      loginHttpRequest<LoginData>(userData);
     }
   };
 

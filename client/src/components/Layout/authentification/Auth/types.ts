@@ -3,7 +3,7 @@ export interface LoginData {
   username: string;
   password: string;
 }
-interface RegisterData extends LoginData {
+export interface RegisterData extends LoginData {
   email: string;
 }
 
