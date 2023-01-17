@@ -7,7 +7,7 @@ import {
 
 // enum
 enum InputStateKind {
-  VALUE,
+  VALUE = 1,
   CHANGE,
   BLUR,
   RESET,
@@ -36,11 +36,14 @@ const initialState = {
 
 // reducer
 const inputReducer = (state: InputState, action: InputAction): InputState => {
-  if (
-    action.type === InputStateKind.VALUE &&
-    typeof action.value === "string"
-  ) {
-    return { ...state, isValid: true, enteredValue: action.value };
+  if (action.type === InputStateKind.VALUE) {
+    if (typeof action.value === "string") {
+      return {
+        ...state,
+        isValid: true,
+        enteredValue: action.value,
+      };
+    }
   }
   if (action.type === InputStateKind.CHANGE) {
     const actionValue = action.value as HTMLInputElement;

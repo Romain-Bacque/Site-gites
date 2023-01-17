@@ -10,8 +10,14 @@ import Input from "../Input";
 import { bookingRequest, bookingRequestData } from "../../../lib/api";
 import classes from "./style.module.css";
 import Planning from "../Planning";
+import dayjs from "dayjs";
 // types import
-import { BookingProps, CalendarStatus, HandleCalendarDisplay } from "./types";
+import {
+  BookingProps,
+  CalendarStatus,
+  HandleCalendarDisplay,
+  HandleDateChoiceType,
+} from "./types";
 
 // variable & contante
 let modalContent: JSX.Element;
@@ -143,14 +149,14 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
     }
   };
 
-  type HandleDateChoiceType = (input: any, value: any) => void;
-
   const handleDateChoice: HandleDateChoiceType = useCallback(
     (input, value) => {
+      const DateToString = value.toString();
+
       if (input === "from") {
-        fromValueHandler(value);
+        fromValueHandler(DateToString);
       } else if (input === "to") {
-        toValueHandler(value);
+        toValueHandler(DateToString);
       }
       setCalendarStatus(initialState);
     },

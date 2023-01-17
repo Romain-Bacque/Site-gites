@@ -1,5 +1,6 @@
 // type aliases
 export type HandleCalendarDisplay = (input: string) => void;
+export type HandleDateChoiceType = (input: string, value: object) => void;
 
 // interfaces
 export interface BookingProps {
