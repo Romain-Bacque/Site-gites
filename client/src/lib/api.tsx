@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Axios configuration
-axios.defaults.baseURL = "http://localhost:3000/";
+axios.defaults.baseURL = "http://localhost:4000/";
 axios.defaults.withCredentials = true;
 
 // // AUTHENTIFICATION
@@ -27,6 +27,31 @@ interface RegisterRequestData {
 
 export const registerRequest = async (data: RegisterRequestData) => {
   const response = await axios.post("/authentification/register", data);
+
+  if (response.status !== 200) throw new Error();
+};
+
+// forgot password
+interface ForgotPasswordRequestData {
+  email: string;
+}
+
+export const forgotPasswordRequest = async (
+  data: ForgotPasswordRequestData
+) => {
+  const response = await axios.post("/authentification/forgot-password", data);
+
+  if (response.status !== 200) throw new Error();
+};
+
+// reset password
+type ResetPasswordRequestData = Record<"id" | "token" | "password", string>;
+
+export const resetPasswordRequest = async (data: ResetPasswordRequestData) => {
+  const response = await axios.patch(
+    `/authentification/reset-password/${data.id}/${data.token}`,
+    { password: data.password }
+  );
 
   if (response.status !== 200) throw new Error();
 };
@@ -96,11 +121,11 @@ export interface bookingRequestData {
   shelterId: string;
   name: string;
   phone: string;
-  numberOfPerson: string;
+  numberOfPerson: number;
   email: string;
   from: string;
   to: string;
-  informations: string;
+  informations?: string;
 }
 
 export const bookingRequest = async (data: bookingRequestData) => {

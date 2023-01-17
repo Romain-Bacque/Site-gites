@@ -1,7 +1,7 @@
 import { AlertKind } from "../../UI/Alert";
 
 // interfaces
-export interface StatutMessage {
+export interface AlertStatut {
   message: null | string;
   alert: null | AlertKind;
   show: boolean;

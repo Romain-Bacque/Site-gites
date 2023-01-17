@@ -1,0 +1,9 @@
+.loader-and-alert {
+  position: fixed;
+  z-index: 2;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  width: 400px;
+  max-width: 70%;
+}

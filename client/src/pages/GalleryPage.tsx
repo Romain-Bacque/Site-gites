@@ -3,7 +3,7 @@ import useHttp from "../hooks/use-http";
 
 import { getPictureRequest } from "../lib/api";
 import Gallery from "../components/Layout/Gallery";
-import Loader from "../components/Layout/Loader";
+import Loader from "../components/Layout/LoaderAndAlert";
 
 // component
 const GalleryPage: React.FC = () => {
@@ -17,17 +17,10 @@ const GalleryPage: React.FC = () => {
     getPictureHttpRequest();
   }, [getPictureHttpRequest]);
 
+  // error: affichage des images impossibles
   return (
     <section>
-      {!imagesData && (
-        <Loader
-          statut={getPictureStatut}
-          message={{
-            success: null,
-            error: "Affichage des images impossible.",
-          }}
-        />
-      )}
+      {!imagesData && <Loader statut={getPictureStatut} />}
       {imagesData && (
         <>
           <Gallery

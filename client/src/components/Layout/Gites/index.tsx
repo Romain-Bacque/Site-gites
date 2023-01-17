@@ -5,7 +5,7 @@ import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
 import GitesItems from "../GitesItems";
-import Loader from "../Loader";
+import Loader from "../LoaderAndAlert";
 import { getShelters } from "../../../lib/api";
 
 // component
@@ -51,7 +51,7 @@ const Gites: React.FC = () => {
       {showLoader && (
         <Loader
           statut={sheltersRequestStatut}
-          onRequestEnd={handleSheltersList}
+          onServerResponse={handleSheltersList}
           message={{
             success: null,
             error: "Une erreur est survenue !",

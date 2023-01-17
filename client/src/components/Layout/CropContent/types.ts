@@ -15,5 +15,5 @@ export interface CropContentProps {
   shelterNumber: number;
   url: string;
   getImagesList: (arg: ImagesData) => void;
-  onRequestEnd: (arg: HTTPStateKind) => void;
+  onServerResponse: (arg: HTTPStateKind) => void;
 }

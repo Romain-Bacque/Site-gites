@@ -3,18 +3,20 @@ import React, { MouseEventHandler, useCallback, useState } from "react";
 
 import { postPictureRequest } from "../../../lib/api";
 import Cropper, { Area } from "react-easy-crop";
-import Loader from "../Loader";
+import Loader from "../LoaderAndAlert";
 import classes from "./style.module.css";
 import getCroppedImg from "./lib/cropImage";
 // types import
 import { CropContentProps } from "./types";
+
+let cropDatas: [string, Area];
 
 // component
 const CropContent: React.FC<CropContentProps> = ({
   shelterNumber,
   url,
   getImagesList,
-  onRequestEnd,
+  onServerResponse,
 }) => {
   const [showLoader, setShowLoader] = useState(false);
   const {
@@ -22,13 +24,12 @@ const CropContent: React.FC<CropContentProps> = ({
     statut: postPictureStatut,
     data: imagesData,
   } = useHttp(postPictureRequest);
-  const [cropDatas, setCropDatas] = useState<[string, Area] | []>([]);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
 
   const handleCropComplete = useCallback(
     (_: Area, croppedAreaPixels: Area) => {
-      setCropDatas([url, croppedAreaPixels]);
+      cropDatas = [url, croppedAreaPixels];
     },
     [url]
   );
@@ -37,7 +38,7 @@ const CropContent: React.FC<CropContentProps> = ({
     if (statut === HTTPStateKind.SUCCESS && imagesData) {
       getImagesList(imagesData);
     }
-    onRequestEnd(statut);
+    onServerResponse(statut);
     setShowLoader(false);
   };
 
@@ -47,18 +48,18 @@ const CropContent: React.FC<CropContentProps> = ({
       setShowLoader(true);
 
       try {
-        const file = await getCroppedImg(...cropDatas);
+        const file = await getCroppedImg(cropDatas[0], cropDatas[1]);
 
         const formData = new FormData();
         formData.append("shelterNumber", shelterNumber.toString());
-        formData.append("file", file);
+        formData.append("file", file!);
 
         postPictureHttpRequest(formData);
       } catch (err) {
         console.trace(err);
       }
     },
-    [cropDatas, postPictureHttpRequest, shelterNumber]
+    [postPictureHttpRequest, shelterNumber]
   );
 
   return (
@@ -82,11 +83,7 @@ const CropContent: React.FC<CropContentProps> = ({
           {postPictureStatut && showLoader && (
             <Loader
               statut={postPictureStatut}
-              onRequestEnd={handleAddPicture}
-              message={{
-                success: null,
-                error: null,
-              }}
+              onServerResponse={handleAddPicture}
             />
           )}
           <span className={classes["crop-container__span"]}>-</span>

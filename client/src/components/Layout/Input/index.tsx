@@ -4,6 +4,7 @@ import { InputProps } from "./types";
 
 // component
 const Input: React.FC<InputProps> = ({
+  icon,
   className,
   isVisible,
   name,
@@ -24,19 +25,20 @@ const Input: React.FC<InputProps> = ({
 
   return (
     <>
-      <div>
-        {isVisible && (
-          <label className={classes.form__label} htmlFor={input.id}>
-            {label}
-          </label>
-        )}
-      </div>
+      {isVisible && (
+        <label className={classes.form__label} htmlFor={input.id}>
+          {label}
+        </label>
+      )}
       {forgotPassword && forgotPassword}
-      <input
-        onClick={handleInputClick}
-        className={`${classes.form__input} ${classes[className]}`}
-        {...input}
-      />
+      <div className={classes["form__input-container"]}>
+        <input
+          onClick={handleInputClick}
+          className={`${classes.form__input} ${classes[className]}`}
+          {...input}
+        />
+        {icon}
+      </div>
     </>
   );
 };

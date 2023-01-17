@@ -1,4 +1,9 @@
-import { useCallback, useReducer } from "react";
+import {
+  ChangeEventHandler,
+  FocusEventHandler,
+  useCallback,
+  useReducer,
+} from "react";
 
 // enum
 enum InputStateKind {
@@ -18,7 +23,7 @@ interface InputState {
 
 interface InputAction {
   type: InputStateKind;
-  value?: HTMLInputElement | string;
+  value?: HTMLInputElement | HTMLTextAreaElement | string;
 }
 
 // variable & constante
@@ -39,8 +44,11 @@ const inputReducer = (state: InputState, action: InputAction): InputState => {
   }
   if (action.type === InputStateKind.CHANGE) {
     const actionValue = action.value as HTMLInputElement;
+    const inputType = actionValue.id.includes("password")
+      ? "password"
+      : actionValue.type;
 
-    switch (actionValue.type) {
+    switch (inputType) {
       case "text":
         if (action.value && actionValue.value.length > 0) {
           return { ...state, isValid: true, enteredValue: actionValue.value };
@@ -113,17 +121,21 @@ const useInput = () => {
     dispatch({ type: InputStateKind.VALUE, value });
   };
 
-  const changeHandler = (event: React.ChangeEvent) => {
+  const changeHandler: ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  > = (event) => {
     dispatch({
       type: InputStateKind.CHANGE,
-      value: event.target as HTMLInputElement,
+      value: event.target,
     });
   };
 
-  const blurHandler = (event: React.FocusEvent) => {
+  const blurHandler: FocusEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  > = (event) => {
     dispatch({
       type: InputStateKind.BLUR,
-      value: event.target as HTMLInputElement,
+      value: event.target,
     });
   };
 
