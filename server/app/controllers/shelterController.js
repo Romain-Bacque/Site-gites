@@ -16,17 +16,15 @@ const shelterController = {
     }
   },
   postBooking: async function (req, res, next) {
-    const { shelter: number } = req.body;
-    const { shelter, ...newPayload } = req.body;
+    const { shelterId, ...payload } = req.body;
 
     try {
-      const shelter = await Shelter.findOne({ number });
-      const newBooking = await new Booking({
-        ...newPayload,
-        shelter_id: shelter._id,
+      const booking = await new Booking({
+        ...payload,
+        shelter_id: shelterId,
       });
-
-      await newBooking.save();
+      
+      await booking.save();
 
       res.sendStatus(200);
     } catch (err) {

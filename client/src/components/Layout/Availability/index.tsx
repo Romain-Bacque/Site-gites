@@ -88,6 +88,10 @@ const Availability: React.FC<AvailabilityProps> = ({ shelter }) => {
         onDateClick={handleDateClick}
         className="react-calendar--availability"
       />
+      <div className={classes["legend"]}>
+        <span className={classes["legend__image"]}></span>
+        <span className={classes["legend__title"]}>Non disponible</span>
+      </div>
     </div>
   );
 };

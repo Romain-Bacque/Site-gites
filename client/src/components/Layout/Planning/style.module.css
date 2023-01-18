@@ -27,19 +27,3 @@
   border: none !important;
   max-width: 100% !important;
 }
-
-.legend {
-  display: flex;
-  align-items: end;
-  gap: 0.5rem;
-}
-
-.legend__image {
-  background-color: #f0f0f0;
-  width: 20px;
-  height: 20px;
-}
-
-.legend__detail {
-  color: rgb(95, 95, 95);
-}

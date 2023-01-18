@@ -3,9 +3,6 @@ import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 import useInput from "../../../hooks/use-input";
 
 import Loader from "../LoaderAndAlert";
-import Modal from "../../UI/Modal";
-import icon_success from "../../../img/icon_success.ico";
-import icon_error from "../../../img/icon_error.png";
 import Input from "../Input";
 import { bookingRequest, bookingRequestData } from "../../../lib/api";
 import classes from "./style.module.css";
@@ -18,9 +15,9 @@ import {
   HandleCalendarDisplay,
   HandleDateChoiceType,
 } from "./types";
+import Swal from "sweetalert2";
 
 // variable & contante
-let modalContent: JSX.Element;
 const initialState = {
   show: false,
   input: null,
@@ -31,7 +28,6 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
   const [showLoader, setShowLoader] = useState(false);
   const { sendHttpRequest: bookingHttpRequest, statut: bookingStatut } =
     useHttp(bookingRequest);
-  const [showModal, setShowModal] = useState(false);
   const [calendarStatus, setCalendarStatus] =
     useState<CalendarStatus>(initialState);
   const {
@@ -97,14 +93,6 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
     toIsValid &&
     fromIsValid;
 
-  useEffect(() => {
-    if (
-      bookingStatut === HTTPStateKind.SUCCESS ||
-      bookingStatut === HTTPStateKind.ERROR
-    )
-      setShowModal(true);
-  }, [bookingStatut]);
-
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -127,6 +115,28 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
     setShowLoader(true);
   };
 
+  const handleCalendarDisplay: HandleCalendarDisplay = (input) => {
+    if (input === "from") {
+      setCalendarStatus({ show: true, input: "from" });
+    } else if (input === "to") {
+      setCalendarStatus({ show: true, input: "to" });
+    }
+  };
+
+  const handleDateChoice: HandleDateChoiceType = useCallback(
+    (input, value) => {
+      const formattedDate = dayjs(value.toString()).format("YYYY-MM-DD"); 
+
+      if (input === "from") {
+        fromValueHandler(formattedDate);
+      } else if (input === "to") {
+        toValueHandler(formattedDate);
+      }
+      setCalendarStatus(initialState);
+    },
+    [fromValueHandler, toValueHandler]
+  );
+  
   useEffect(() => {
     const handleHideCalendar = () => {
       if (calendarStatus.show) {
@@ -140,103 +150,40 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
       window.removeEventListener("click", handleHideCalendar);
     };
   }, [calendarStatus.show]);
-
-  const handleCalendarDisplay: HandleCalendarDisplay = (input) => {
-    if (input === "from") {
-      setCalendarStatus({ show: true, input: "from" });
-    } else if (input === "to") {
-      setCalendarStatus({ show: true, input: "to" });
-    }
-  };
-
-  const handleDateChoice: HandleDateChoiceType = useCallback(
-    (input, value) => {
-      const DateToString = value.toString();
-
-      if (input === "from") {
-        fromValueHandler(DateToString);
-      } else if (input === "to") {
-        toValueHandler(DateToString);
-      }
-      setCalendarStatus(initialState);
-    },
-    [fromValueHandler, toValueHandler]
-  );
-
+  
   useEffect(() => {
-    if (bookingStatut === HTTPStateKind.SUCCESS) {
-      modalContent = (
-        <>
-          <img
-            className={classes["modal__icon"]}
-            src={icon_success}
-            alt="success"
-          />
-          <div>
-            <p className={`${classes["modal__text"]} green bold`}>
-              Votre demande a bien été envoyé !
-            </p>
-            <p className={`${classes["modal__text"]} green`}>
-              Nous vous la confirmerons par mail dès que possible.
-            </p>
-          </div>
-          <button
-            className={`${classes["modal__button"]} ${classes["modal__button--success"]}`}
-            type="button"
-            onClick={() => setShowModal(false)}
-          >
-            OK
-          </button>
-        </>
-      );
+    const swalInstance = Swal.mixin({
+      customClass: {
+        popup: 'popup',
+        confirmButton: 'popup__btn',
+      },
+      buttonsStyling: false
+    })
 
+    if (bookingStatut === HTTPStateKind.SUCCESS) {      
+      swalInstance.fire({
+        title: "Demande Envoyée avec succès !",
+        text: "Selon mes disponibilités, je la confirmerai par mail.",
+        icon: "success"
+      });
       resetNameHandler();
-      resetPersonsHandler();
       resetEmailHandler();
       resetPhoneHandler();
+      resetPersonsHandler();
       resetFromHandler();
       resetToHandler();
       resetInfosHandler();
     } else if (bookingStatut === HTTPStateKind.ERROR) {
-      modalContent = (
-        <>
-          <img
-            className={classes["modal__icon"]}
-            src={icon_error}
-            alt="success"
-          />
-          <div>
-            <p className={`${classes["modal__text"]} red bold`}>
-              Une erreur est survenue !
-            </p>
-            <p className={`${classes["modal__text"]} red`}>
-              Echec de l'envoi de votre demande.
-            </p>
-          </div>
-          <button
-            className={`${classes["modal__button"]} ${classes["modal__button--error"]}`}
-            type="button"
-            onClick={() => setShowModal(false)}
-          >
-            OK
-          </button>
-        </>
-      );
-    }
-  }, [
-    bookingStatut,
-    resetNameHandler,
-    resetPersonsHandler,
-    resetEmailHandler,
-    resetPhoneHandler,
-    resetFromHandler,
-    resetToHandler,
-    resetInfosHandler,
-  ]);
+      swalInstance.fire({
+        title: "Echec de l'envoi de la demande",
+        text: "Il y a peut-être une erreur dans un/plusieurs champs.",
+        icon: "error"
+      });
+    }      
+  }, [bookingStatut]);
 
   return (
     <>
-      <Modal show={showModal}>{modalContent}</Modal>
       {showLoader && (
         <Loader
           statut={bookingStatut}

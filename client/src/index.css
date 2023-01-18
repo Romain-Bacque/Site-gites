@@ -53,6 +53,25 @@ section {
   gap: 3rem;
 }
 
+/* popup */
+.popup {
+  width: 350px!important;
+  max-width: 90%;
+}
+
+.popup__btn {
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  background-color: #b28646;
+  padding: 0.6rem 2rem;
+}
+
+.popup__btn:hover {
+  background-color: #946c31;
+}
+
 /* -- utility classes -- */
 .bold {
   font-weight: bold;
@@ -64,10 +83,6 @@ section {
 
 .red {
   color: rgb(153, 1, 1);
-}
-
-.bold {
-  font-weight: 700;
 }
 
 .space {

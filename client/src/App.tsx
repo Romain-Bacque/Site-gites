@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./hooks/use-store";
-import useHttp, { HTTPStateKind } from "./hooks/use-http";
+import useHttp from "./hooks/use-http";
 
 import { Route, Redirect, Switch, useHistory } from "react-router-dom";
 import Layout from "./components/Layout/Layout";

@@ -155,9 +155,11 @@ module.exports.postBookingSchema = joi
     phone: joiPhoneNumber
       .string({ defaultCountry: "FR", format: "national" })
       .phoneNumber(),
-    numberOfPerson: joi.number().required(),
-    email: joi.string().required(),
-    from: joi.string().required(),
+    numberOfPerson: joi.number().min(1).max(4).required(),
+    email: joi
+      .string()
+      .email({ minDomainSegments: 2, tlds: { allow: ["com", "fr", "net"] } })
+      .required(),    from: joi.string().required(),
     to: joi.string().required(),
     informations: joi.string(),
     categories: joi.array().items(joi.number().min(1).required()),
