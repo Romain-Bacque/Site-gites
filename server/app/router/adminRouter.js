@@ -26,7 +26,7 @@ router
 
 router
   .route("/disabledDates")
-  .post(checkLogged, catchAsync(adminController.postDisabledDate))
+  .post(checkLogged, catchAsync(adminController.addDisabledDate))
   .delete(checkLogged, catchAsync(adminController.deleteDisabledDate));
 
 router.delete(

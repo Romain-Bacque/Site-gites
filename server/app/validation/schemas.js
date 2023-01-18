@@ -166,3 +166,15 @@ module.exports.postBookingSchema = joi
   })
   .required();
 
+/**
+ * putRatesSchema monitor the put rates request body, and return an error if any of requirements doesn't match with it
+ */
+module.exports.putRatesSchema = joi
+  .object({
+    shelterId: joi.string().required(),
+    price1: joi.number().max(9999).required(),
+    price2: joi.number().max(9999).required(),
+    price3: joi.number().max(9999).required(),
+  })
+.required();
+

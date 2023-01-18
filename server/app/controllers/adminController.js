@@ -61,46 +61,30 @@ const adminController = {
       next(err);
     }
   },
-  postDisabledDate: async function (req, res, next) {
-    const { shelter: shelter_id, date } = req.body;
-    try {
-      const booking = new Booking({
-        shelter_id,
-        from: date,
-        to: date,
-        booked: true,
-      });
+  addDisabledDate: async function (req, res) {
+    const { shelterId, selectedDate } = req.body;
+    const booking = new Booking({
+      shelter_id: shelterId,
+      from: selectedDate,
+      to: selectedDate,
+      booked: true,
+    });
 
-      await booking.save();
+    await booking.save();
 
-      if (booking) {
-        res.status(200).json({
-          bookingData: booking,
-        });
-      } else throw new ExpressError("Internal Server Error", 500);
-    } catch (err) {
-      debug(err);
-      next(err);
-    }
+    res.sendStatus(200);
   },
-  deleteDisabledDate: async function (req, res, next) {
-    const { shelter: shelter_id, date } = req.body;
+  deleteDisabledDate: async function (req, res) {
+    const { shelterId, selectedDate } = req.body;
+    
+    await Booking.deleteOne(
+      { shelter_id: shelterId },
+      { $or: [{ from: selectedDate }, { to: selectedDate }] }
+    )
+      .where("email")
+      .equals(null);
 
-    try {
-      const booking = await Booking.deleteOne(
-        { shelter_id },
-        { $or: [{ from: date }, { to: date }] }
-      )
-        .where("email")
-        .equals(null);
-
-      if (booking) {
-        res.status(200);
-      } else throw new ExpressError("Internal Server Error", 500);
-    } catch (err) {
-      debug(err);
-      next(err);
-    }
+    res.sendStatus(200);
   },
   getAllImages: async function (_, res, next) {
     try {
