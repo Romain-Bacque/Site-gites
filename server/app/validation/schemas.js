@@ -143,3 +143,24 @@ module.exports.passwordSchema = joi
       .required(),
   })
   .required();
+
+  
+/**
+ * postBookingSchema monitor the post booking request body, and return an error if any of requirements doesn't match with it
+ */
+module.exports.postBookingSchema = joi
+  .object({
+    shelterId: joi.string().required(),
+    name: joi.string().required(),
+    phone: joiPhoneNumber
+      .string({ defaultCountry: "FR", format: "national" })
+      .phoneNumber(),
+    numberOfPerson: joi.number().required(),
+    email: joi.string().required(),
+    from: joi.string().required(),
+    to: joi.string().required(),
+    informations: joi.string(),
+    categories: joi.array().items(joi.number().min(1).required()),
+  })
+  .required();
+
