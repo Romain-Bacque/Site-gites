@@ -67,10 +67,8 @@ const authController = {
       next(err);
     }
   },
-  logout: function (req, res) {
-    if (req.cookies.accessToken) {
+  logout: function (_, res) {
       res.clearCookie("accessToken").sendStatus(200);
-    }
   },
   async handleForgotPassword(req, res) {
     const { email } = req.body;

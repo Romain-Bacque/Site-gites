@@ -12,6 +12,6 @@ router
   .route("/rates")
   .get(catchAsync(shelterController.getRates))
   .put(validate(putRatesSchema), catchAsync(shelterController.editRates));
-router.get("/disabledDates", catchAsync(shelterController.getDisabledDates));
+router.get("/disabledDates/:shelterId", catchAsync(shelterController.getDisabledDates));
 
 module.exports = router;

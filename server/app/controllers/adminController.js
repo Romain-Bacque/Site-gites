@@ -61,7 +61,7 @@ const adminController = {
       next(err);
     }
   },
-  addDisabledDate: async function (req, res) {
+  addDisabledDate: async function (req, res, next) {
     const { shelterId, selectedDate } = req.body;
     const booking = new Booking({
       shelter_id: shelterId,
@@ -72,19 +72,35 @@ const adminController = {
 
     await booking.save();
 
-    res.sendStatus(200);
-  },
-  deleteDisabledDate: async function (req, res) {
-    const { shelterId, selectedDate } = req.body;
-    
-    await Booking.deleteOne(
-      { shelter_id: shelterId },
-      { $or: [{ from: selectedDate }, { to: selectedDate }] }
-    )
-      .where("email")
-      .equals(null);
+    const disabledDates = await Booking.find({ shelter_id: shelterId })
+        .where("booked")
+        .equals(true);
 
-    res.sendStatus(200);
+    if (disabledDates?.length) {
+      res.status(200).json({
+        disabledDates,
+      });
+    } else next();
+  },
+  deleteDisabledDate: async function (req, res, next) {
+    const { shelterId, selectedDate } = req.body;
+    const result = await Booking.deleteOne(
+        { $or: [{ from: selectedDate }, { to: selectedDate }] }
+      )
+        .where("shelter_id").equals(shelterId)
+        .where("email").equals(null);
+        
+    if(result?.deletedCount) {
+      const disabledDates = await Booking.find({ shelter_id: shelterId })
+      .where("booked")
+          .equals(true);
+
+      if (disabledDates?.length) {
+        res.status(200).json({
+          disabledDates,
+        });
+      } else next();
+    } else next();
   },
   getAllImages: async function (_, res, next) {
     try {

@@ -5,18 +5,15 @@ const checkLogged = (req, res, next) => {
   const token = req.cookies?.accessToken;
 
   if (!token) {
-    return res.status(401).json({
-      message: "access unauthorized",
-    });
+    return res.sendStatus(401)
   }
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err) => {
     if (err) {
-      return res.status(401).json({
+      res.status(401).json({
         message: "access unauthorized",
       });
-    }
-    next();
+    } else next();
   });
 };
 
