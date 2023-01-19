@@ -170,13 +170,12 @@ const AllBookings: React.FC = () => {
                 A11y,
                 EffectCoverflow,
               ]}
-              loop={true}
               effect="coverflow"
               grabCursor={true}
               centeredSlides={true}
-              spaceBetween={10}
+              spaceBetween={30}
               coverflowEffect={{
-                rotate: 40,
+                rotate: 10,
                 stretch: 0,
                 depth: 25,
                 modifier: 1,

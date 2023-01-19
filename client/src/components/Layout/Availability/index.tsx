@@ -1,19 +1,20 @@
+// hooks import
 import { useEffect, useState } from "react";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
-
+// components import
+import BookingCalendar from "../BookingCalendar";
+// types import
+import { AvailabilityProps, DisabledDatesData, HandleDateClick } from "./types";
+// other imports
+import LoaderAndAlert from "../LoaderAndAlert";
 import dayjs from "dayjs";
 import {
   deleteDateRequest,
-  DisabledDatesReturnData,
   postDateRequest,
   DateRequestData,
   getDatesRequest,
 } from "../../../lib/api";
 import classes from "./style.module.css";
-import BookingCalendar from "../BookingCalendar";
-// types import
-import { AvailabilityProps, DisabledDatesData, HandleDateClick } from "./types";
-import LoaderAndAlert from "../LoaderAndAlert";
 
 // variable & constante
 let timer: NodeJS.Timeout;
@@ -24,7 +25,6 @@ const Availability: React.FC<AvailabilityProps> = ({ className, shelter: shelter
     null
   );
   const [showDoubleView, setShowDoubleView] = useState(false);
-  const [isVisible, setIsVisible] = useState(false)
   const [disabledDates, setDisabledDates] = useState<DisabledDatesData>([])
   const {
     sendHttpRequest: getDisabledDatesHttpRequest,
@@ -51,6 +51,7 @@ const Availability: React.FC<AvailabilityProps> = ({ className, shelter: shelter
   ) => {
     if (onDateClick) return onDateClick(selectedDate);     
     clearTimeout(timer);
+    // timer to prevent spam click and make the server crash
     timer = setTimeout(() => {      
       const disabledDatesThatMatchSelectedDate =
         disabledDates &&
@@ -88,6 +89,7 @@ const Availability: React.FC<AvailabilityProps> = ({ className, shelter: shelter
     }, 500);
   };
 
+  // change the number of calendars displayed as window size changes
   useEffect(() => {
     const handleShowDoubleView = () => {
       setShowDoubleView(window.innerWidth > 700 ? true : false);
@@ -102,32 +104,29 @@ const Availability: React.FC<AvailabilityProps> = ({ className, shelter: shelter
     };
   }, []);
 
+  // get all disabled dates at initialization
   useEffect(() => {
-    getDisabledDatesHttpRequest();
+    getDisabledDatesHttpRequest(shelterId);
   }, []);
 
   useEffect(() => {
     if (getDisabledDatesStatut === HTTPStateKind.SUCCESS && getDisabledDatesData) {      
       setDisabledDates(getDisabledDatesData);
-      setIsVisible(true);
     } 
   }, [getDisabledDatesStatut]);
 
   useEffect(() => {
     if (postDisabledDatesStatut === HTTPStateKind.SUCCESS && postDisabledDatesData) {      
       setDisabledDates(postDisabledDatesData);
-      setIsVisible(true);
     } 
   }, [postDisabledDatesStatut]);
 
   useEffect(() => {
     if (deleteDisabledDatesStatut === HTTPStateKind.SUCCESS && deleteDisabledDatesData) { 
       setDisabledDates(deleteDisabledDatesData);
-      setIsVisible(true);
     } 
   }, [deleteDisabledDatesStatut]);  
 
-  // get disabled dates
   useEffect(() => {
     getDisabledDatesStatut &&
       setLoaderAndAlert(
@@ -140,7 +139,7 @@ const Availability: React.FC<AvailabilityProps> = ({ className, shelter: shelter
         />
       );
   }, [getDisabledDatesStatut]);
-
+  
   return (
     <>
     {loaderAndAlert}
@@ -157,7 +156,8 @@ const Availability: React.FC<AvailabilityProps> = ({ className, shelter: shelter
             <span className={classes["legend__title"]}>Non disponible/réservé</span>
           </div>      
       </div>}
-    {getDisabledDatesStatut === HTTPStateKind.ERROR && <span>Le calendrier est indisponible.</span>}
+    {getDisabledDatesStatut === HTTPStateKind.ERROR &&
+      <p className="text-center">Le calendrier est indisponible.</p>}
     </>
   );
 };

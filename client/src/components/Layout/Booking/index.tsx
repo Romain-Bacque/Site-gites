@@ -5,7 +5,6 @@ import useInput from "../../../hooks/use-input";
 import Input from "../Input";
 import { bookingRequest, bookingRequestData } from "../../../lib/api";
 import classes from "./style.module.css";
-import BookingCalendar from "../BookingCalendar";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import LoaderAndAlert from "../LoaderAndAlert";
@@ -126,12 +125,10 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
 
   const handleDateChoice: HandleDateChoiceType = useCallback(
     (input, value) => {
-      const formattedDate = dayjs(value.toString()).format("YYYY-MM-DD"); 
-
       if (input === "from") {
-        fromValueHandler(formattedDate);
+        fromValueHandler(value.toString());
       } else if (input === "to") {
-        toValueHandler(formattedDate);
+        toValueHandler(value.toString());
       }
       setCalendarStatus(initialState);
     },
@@ -271,7 +268,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
               id={`from-shelter${shelter}`}
               onBlur={fromBlurHandler}
               type="date"
-              value={fromValue}
+              value={dayjs(fromValue).format("YYYY-MM-DD")}
             />
           </div>
           <div
@@ -296,7 +293,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
               id={`to-shelter${shelter}`}
               onBlur={toBlurHandler}
               type="date"
-              value={toValue}
+              value={dayjs(toValue).format("YYYY-MM-DD")}
             />
           </div>
           <textarea
@@ -312,11 +309,11 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
           />
         </div>
         <button
+          className="button"
           disabled={!isFormValid}
-          className={classes.form__button}
           type="submit"
         >
-          Valider
+          Envoyer
         </button>
       </form>
     </>

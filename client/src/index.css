@@ -1,5 +1,5 @@
 * {
-  transition: all 0.3s linear;
+  transition: all 0.2s linear;
 }
 
 html {
@@ -45,8 +45,8 @@ main {
 section {
   padding: 0 2rem;
   margin: 5rem auto;
-  width: 1000px;
-  max-width: 90%;
+  width: 90%;
+  max-width: 900px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -72,6 +72,34 @@ section {
   background-color: #946c31;
 }
 
+/* -- button -- */
+.button {
+  text-transform: capitalize;
+  cursor: pointer;
+  font-weight: bold;
+  width: 90%;
+  max-width: 500px;
+  padding: 1rem;
+  font-weight: bold;
+  color: inherit;
+  border: 2px solid gray;
+  border-radius: 5px;
+  background: none;
+}
+
+.button:hover {
+  background-color: gray;
+  color: white;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  border-color: gray;
+  color: gray;
+  background-color: transparent;
+}
+
+
 /* -- utility classes -- */
 .bold {
   font-weight: bold;
@@ -85,10 +113,14 @@ section {
   color: rgb(153, 1, 1);
 }
 
-.text-center {
-  text-align: center;
+.m-auto {
+  margin: auto;
 }
 
 .space {
   padding: 2rem 0;
+}
+
+.text-center {
+  text-align: center;
 }

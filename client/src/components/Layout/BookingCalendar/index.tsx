@@ -46,7 +46,7 @@ const Planning: React.FC<PlanningProps> = ({
   const hasDisabledDates = ({ date }: { date: Date }) => {
     if (disabledDates && typeof disabledDates === "object") {
       return disabledDates.some((disabledDate) => {
-        if (disabledDate.email) {
+        if (disabledDate.email || !isAuth) {
           return (
             formatDate(date) >= formatDate(disabledDate.from) &&
             formatDate(date) <= formatDate(disabledDate.to)

@@ -1,5 +1,14 @@
 /* --- Tarifs --- */
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
 .rates__grid-container {
+  align-self: stretch;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border: 1px solid gray;
@@ -20,6 +29,10 @@
   padding: 0;
   border: none;
   background: none;
-  color: black;
   width: 50px;
+}
+
+.rates__edit-icon {
+  color: gray;
+  margin-left: 1rem;
 }

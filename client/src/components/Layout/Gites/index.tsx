@@ -59,6 +59,8 @@ const Gites: React.FC = () => {
         />
       )}
       {shelterList}
+      {sheltersRequestStatut === HTTPStateKind.ERROR &&
+      <p className="text-center">Les gites sont indisponibles.</p>}
     </section>
   );
 };

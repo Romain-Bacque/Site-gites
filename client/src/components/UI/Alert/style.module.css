@@ -12,15 +12,15 @@
 }
 
 .alert--gray {
-  background-color: rgba(105, 105, 105, 0.8);
+  background-color: rgba(105, 105, 105, 0.90);
 }
 
 .alert--green {
-  background-color: rgba(134, 199, 149, 0.8);
+  background-color: rgba(134, 199, 149, 0.90);
 }
 
 .alert--red {
-  background-color: rgba(216, 59, 59, 0.8);
+  background-color: rgba(216, 59, 59, 0.90);
 }
 
 .alert__span {

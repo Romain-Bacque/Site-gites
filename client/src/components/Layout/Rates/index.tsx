@@ -9,6 +9,8 @@ import { useAppSelector } from "../../../hooks/use-store";
 // types import
 import { PriceValues, RatesProps, AlertStatut } from "./types";
 import LoaderAndAlert from "../LoaderAndAlert";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPen } from "@fortawesome/free-solid-svg-icons";
 
 // variable & constante
 const initialState = {
@@ -122,7 +124,8 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
   return (
     <>
       {loaderAndAlert}
-      <form onSubmit={handleSubmit}>
+      {getRatesStatut === HTTPStateKind.SUCCESS &&
+      <form className={classes.form} onSubmit={handleSubmit}>
         <div className={classes["rates__grid-container"]}>
           <p className={classes["rates__grid-items"]}>header1</p>
           <p className={classes["rates__grid-items"]}>header2</p>
@@ -173,8 +176,13 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
             <span>{priceValues.price3 && "€"}</span>
           </div>
         </div>
-        {isAuth && <button>Modifier</button>}
-      </form>
+        {isAuth && <button className="button">
+          Enregistrer les modifications
+          <FontAwesomeIcon className={classes["rates__edit-icon"]} icon={faPen} />
+        </button>}
+      </form>}
+    {getRatesStatut === HTTPStateKind.ERROR &&
+      <p className="text-center">Les tarifs sont indisponibles.</p>}
     </>
   );
 };

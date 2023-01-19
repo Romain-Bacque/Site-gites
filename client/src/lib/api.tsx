@@ -161,8 +161,8 @@ export type DisabledDatesReturnData = {
   }[];
 };
 
-export const getDatesRequest = async () => {
-  const response = await axios.get<DisabledDatesReturnData>("/disabledDates");
+export const getDatesRequest = async (shelterId: string) => {
+  const response = await axios.get<DisabledDatesReturnData>(`/disabledDates/${shelterId}`);
 
   if (response.status !== 200) throw new Error();
 
