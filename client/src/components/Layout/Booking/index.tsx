@@ -2,12 +2,13 @@ import { useCallback, useEffect, useState } from "react";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 import useInput from "../../../hooks/use-input";
 
-import Loader from "../LoaderAndAlert";
 import Input from "../Input";
 import { bookingRequest, bookingRequestData } from "../../../lib/api";
 import classes from "./style.module.css";
-import Planning from "../Planning";
+import BookingCalendar from "../BookingCalendar";
 import dayjs from "dayjs";
+import Swal from "sweetalert2";
+import LoaderAndAlert from "../LoaderAndAlert";
 // types import
 import {
   BookingProps,
@@ -15,7 +16,7 @@ import {
   HandleCalendarDisplay,
   HandleDateChoiceType,
 } from "./types";
-import Swal from "sweetalert2";
+import Availability from "../Availability";
 
 // variable & contante
 const initialState = {
@@ -111,7 +112,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
     // if user input some complementary infos
     if (infosValue) userData.informations = infosValue;
 
-    bookingHttpRequest<bookingRequestData>(userData);
+    bookingHttpRequest(userData);
     setShowLoader(true);
   };
 
@@ -185,7 +186,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
   return (
     <>
       {showLoader && (
-        <Loader
+        <LoaderAndAlert
           statut={bookingStatut}
           onServerResponse={() => setShowLoader(false)}
         />
@@ -253,9 +254,10 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
             className={classes["form__date-container"]}
           >
             {calendarStatus.show && calendarStatus.input === "from" && (
-              <Planning
-                className="react-calendar--booking"
+              <Availability
                 onDateChoice={handleDateChoice.bind(null, "from")}
+                className="calendar--booking"
+                shelter={shelter}
               />
             )}
             <Input
@@ -279,9 +281,10 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
             className={classes["form__date-container"]}
           >
             {calendarStatus.show && calendarStatus.input === "to" && (
-              <Planning
-                className="react-calendar--booking"
-                onDateChoice={handleDateChoice.bind(null, "to")}
+              <Availability
+                  onDateChoice={handleDateChoice.bind(null, "to")}
+                  className="calendar--booking"
+                  shelter={shelter}
               />
             )}
             <Input

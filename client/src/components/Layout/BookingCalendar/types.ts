@@ -1,7 +1,7 @@
 // type aliases
 export type DisabledDatesData = {
   name: string;
-  phone: number;
+  phone: string;
   email: string;
   numberOfPerson: number;
   from: Date;
@@ -13,8 +13,8 @@ export type DisabledDatesData = {
 
 // interfaces
 export interface PlanningProps {
-  className: string;
   onDateChoice?: (date: Date) => void;
   onDateClick?: (date: Date, disabledDates: DisabledDatesData | null) => void;
   isDoubleView?: boolean;
+  disabledDates: DisabledDatesData | null;
 }

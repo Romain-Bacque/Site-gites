@@ -1,5 +1,5 @@
 /* --- Tarifs --- */
-.gites__grid-container {
+.rates__grid-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border: 1px solid gray;
@@ -7,7 +7,7 @@
   text-align: center;
 }
 
-.gites__grid-items {
+.rates__grid-items {
   border: 1px solid gray;
   padding: 5px;
   text-align: center;
@@ -15,7 +15,7 @@
   color: black;
 }
 
-.gites__input {
+.rates__input {
   text-align: end;
   padding: 0;
   border: none;

@@ -45,8 +45,8 @@ main {
 section {
   padding: 0 2rem;
   margin: 5rem auto;
-  width: 90%;
-  max-width: 120rem;
+  width: 1000px;
+  max-width: 90%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -83,6 +83,10 @@ section {
 
 .red {
   color: rgb(153, 1, 1);
+}
+
+.text-center {
+  text-align: center;
 }
 
 .space {

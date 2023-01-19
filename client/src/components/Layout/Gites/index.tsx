@@ -5,7 +5,7 @@ import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
 import GitesItems from "../GitesItems";
-import Loader from "../LoaderAndAlert";
+import LoaderAndAlert from "../LoaderAndAlert";
 import { getShelters } from "../../../lib/api";
 
 // component
@@ -49,7 +49,7 @@ const Gites: React.FC = () => {
   return (
     <section>
       {showLoader && (
-        <Loader
+        <LoaderAndAlert
           statut={sheltersRequestStatut}
           onServerResponse={handleSheltersList}
           message={{

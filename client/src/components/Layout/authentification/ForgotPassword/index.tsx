@@ -2,15 +2,13 @@ import React, { useEffect, useState } from "react";
 import useInput from "../../../../hooks/use-input";
 
 import useHttp, { HTTPStateKind } from "../../../../hooks/use-http";
-import Alert, { AlertKind } from "../../../UI/Alert";
 import Card from "../../../UI/Card";
 import Input from "../../Input";
-import { StatutMessage, UserData } from "./types";
 import classes from "../style.module.css";
 import { forgotPasswordRequest } from "../../../../lib/api";
 import LoaderAndAlert from "../../LoaderAndAlert";
-
 // types import
+import { UserData } from "./types";
 
 // variable & constante
 const initialMessageState = {

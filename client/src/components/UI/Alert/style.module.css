@@ -5,7 +5,6 @@
   font-weight: 500;
   color: white;
   border-radius: 5px;
-  opacity: 0.8;
 }
 
 .alert--hide {
@@ -13,15 +12,15 @@
 }
 
 .alert--gray {
-  background-color: rgb(105, 105, 105);
+  background-color: rgba(105, 105, 105, 0.8);
 }
 
 .alert--green {
-  background-color: rgb(134, 199, 149);
+  background-color: rgba(134, 199, 149, 0.8);
 }
 
 .alert--red {
-  background-color: rgb(216, 59, 59);
+  background-color: rgba(216, 59, 59, 0.8);
 }
 
 .alert__span {

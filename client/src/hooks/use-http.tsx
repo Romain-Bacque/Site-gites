@@ -12,6 +12,7 @@ export type StatutType = null | HTTPStateKind;
 type HTTPRequestType = (arg: any) => Promise<any>;
 type ErrorType = string | null;
 type DataType<T> = T | null;
+type ParameterType<T> = T extends (arg: infer U) => any ? U : never
 
 // interfaces
 interface HTTPState<T> {
@@ -73,7 +74,7 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T) {
   >(httpReducer, initialState);
 
   const sendHttpRequest = useCallback(
-    async <D extends object | number | string>(requestData?: D) => {
+    async (requestData?: ParameterType<T>) => {
       try {
         dispatch({ type: HTTPStateKind.SEND });
 

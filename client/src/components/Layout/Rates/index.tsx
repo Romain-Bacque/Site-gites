@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 
-import { ratesGetRequest, ratesPostRequest } from "../../../lib/api";
+import { ratesGetRequest, ratesPutRequest, RatesPutRequestData } from "../../../lib/api";
 import Loader from "../LoaderAndAlert";
 import Alert, { AlertKind } from "../../UI/Alert";
 import classes from "./style.module.css";
 import { useAppSelector } from "../../../hooks/use-store";
 // types import
 import { PriceValues, RatesProps, AlertStatut } from "./types";
+import LoaderAndAlert from "../LoaderAndAlert";
 
 // variable & constante
 const initialState = {
@@ -18,18 +19,20 @@ const initialState = {
 
 // component
 const Rates: React.FC<RatesProps> = ({ shelter }) => {
+  const [loaderAndAlert, setLoaderAndAlert] = useState<JSX.Element | null>(
+    null
+  );
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
-  const [showLoader, setShowLoader] = useState(false);
   const [priceValues, sePriceValues] = useState<PriceValues>({
     price1: 1,
     price2: 1,
     price3: 1,
   });
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
-  const { sendHttpRequest: getRatesHttpRequest, data: ratesData } =
+  const { sendHttpRequest: getRatesHttpRequest, statut: getRatesStatut, data: getRatesData, error: getRatesError } =
     useHttp(ratesGetRequest);
-  const { sendHttpRequest: postRatesHttpRequest, statut: postRatesStatut } =
-    useHttp(ratesPostRequest);
+  const { sendHttpRequest: putRatesHttpRequest, statut: putRatesStatut, error: putRatesError } =
+    useHttp(ratesPutRequest);
 
   const formIsValid =
     !isNaN(priceValues.price1) &&
@@ -41,15 +44,14 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
 
     if (!formIsValid) return;
 
-    const data = {
+    const data: RatesPutRequestData = {
+      shelterId: shelter,
       price1: priceValues.price1,
       price2: priceValues.price2,
       price3: priceValues.price3,
-      shelter,
     };
 
-    postRatesHttpRequest(data);
-    setShowLoader(true);
+    putRatesHttpRequest(data);
   };
 
   const handleValueChange = (event: React.ChangeEvent) => {
@@ -61,31 +63,15 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
     });
   };
 
-  const handleServerResponse = useCallback((statut: HTTPStateKind) => {
-    if (statut === HTTPStateKind.SUCCESS) {
-      setAlertStatut({
-        message: "Prix enregistrés avec succés.",
-        alert: AlertKind.INFO,
-        show: true,
-      });
-    } else
-      setAlertStatut({
-        message: "Enregistrement des prix impossible.",
-        alert: AlertKind.ERROR,
-        show: true,
-      });
-    setShowLoader(false);
-  }, []);
-
   useEffect(() => {
-    if (ratesData && typeof ratesData === "object") {
+    if (getRatesData && typeof getRatesData === "object") {
       sePriceValues({
-        price1: ratesData.price1,
-        price2: ratesData.price2,
-        price3: ratesData.price3,
+        price1: getRatesData.price1,
+        price2: getRatesData.price2,
+        price3: getRatesData.price3,
       });
     }
-  }, [ratesData]);
+  }, [getRatesData]);
 
   useEffect(() => {
     getRatesHttpRequest();
@@ -105,34 +91,45 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
     };
   }, [alertStatut.show]);
 
-  return (
-    <>
-      <Alert
-        message={alertStatut.message}
-        alert={alertStatut.alert}
-        show={alertStatut.show}
-        onAlertClose={() =>
-          setAlertStatut((prevState) => ({ ...prevState, show: false }))
-        }
-      />
-      {showLoader && (
-        <Loader
-          statut={postRatesStatut}
-          onServerResponse={handleServerResponse}
+  // put rates
+  useEffect(() => {
+    getRatesStatut &&
+      setLoaderAndAlert(
+        <LoaderAndAlert
+          statut={getRatesStatut}
           message={{
             success: null,
-            error: null,
+            error: getRatesError,
           }}
         />
-      )}
+      );
+  }, [getRatesStatut]);
+
+  // put rates
+  useEffect(() => {
+    putRatesStatut &&
+      setLoaderAndAlert(
+        <LoaderAndAlert
+          statut={putRatesStatut}
+          message={{
+            success: "Prix modifiés avec succés.",
+            error: putRatesError,
+          }}
+        />
+      );
+  }, [putRatesStatut]);
+  
+  return (
+    <>
+      {loaderAndAlert}
       <form onSubmit={handleSubmit}>
-        <div className={classes["gites__grid-container"]}>
-          <p className={classes["gites__grid-items"]}>header1</p>
-          <p className={classes["gites__grid-items"]}>header2</p>
-          <p className={classes["gites__grid-items"]}>header3</p>
-          <div className={classes["gites__grid-items"]}>
+        <div className={classes["rates__grid-container"]}>
+          <p className={classes["rates__grid-items"]}>header1</p>
+          <p className={classes["rates__grid-items"]}>header2</p>
+          <p className={classes["rates__grid-items"]}>header3</p>
+          <div className={classes["rates__grid-items"]}>
             <input
-              className={classes["gites__input"]}
+              className={classes["rates__input"]}
               value={priceValues.price1 || "non défini"}
               id="price1"
               min={1}
@@ -145,9 +142,9 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
             />
             <span>{priceValues.price1 && "€"}</span>
           </div>
-          <div className={classes["gites__grid-items"]}>
+          <div className={classes["rates__grid-items"]}>
             <input
-              className={classes["gites__input"]}
+              className={classes["rates__input"]}
               value={priceValues.price2 || "non défini"}
               id="price2"
               min={1}
@@ -160,9 +157,9 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
             />
             <span>{priceValues.price2 && "€"}</span>
           </div>
-          <div className={classes["gites__grid-items"]}>
+          <div className={classes["rates__grid-items"]}>
             <input
-              className={classes["gites__input"]}
+              className={classes["rates__input"]}
               value={priceValues.price3 || "non défini"}
               id="price3"
               min={1}

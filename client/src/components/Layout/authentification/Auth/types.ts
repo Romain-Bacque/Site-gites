@@ -6,8 +6,3 @@ export interface LoginData {
 export interface RegisterData extends LoginData {
   email: string;
 }
-
-// type aliases
-export type UserData<T extends boolean> = T extends true
-  ? RegisterData
-  : LoginData;

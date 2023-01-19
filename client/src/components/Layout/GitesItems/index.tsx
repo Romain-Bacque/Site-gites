@@ -29,7 +29,7 @@ const GitesItems: React.FC<GitesItemsProps> = ({
   } else if (shelterStatut[number].tab === 1) {
     formContent = <Rates shelter={shelter} />;
   } else if (shelterStatut[number].tab === 2) {
-    formContent = <Availability shelter={shelter} />;
+    formContent = <Availability className="calendar--availability" shelter={shelter} />;
   }
 
   const handleShelterTab = (value: number) => {
