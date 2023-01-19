@@ -159,8 +159,9 @@ module.exports.postBookingSchema = joi
     email: joi
       .string()
       .email({ minDomainSegments: 2, tlds: { allow: ["com", "fr", "net"] } })
-      .required(),    from: joi.string().required(),
-    to: joi.string().required(),
+      .required(),
+    from: joi.date(),
+    to: joi.date(),
     informations: joi.string(),
     categories: joi.array().items(joi.number().min(1).required()),
   })
@@ -178,3 +179,12 @@ module.exports.putRatesSchema = joi
   })
 .required();
 
+/**
+ * diabledDatesSchema monitor the disabled dates request body, and return an error if any of requirements doesn't match with it
+ */
+module.exports.disabledDatesSchema = joi
+  .object({
+    shelterId: joi.string().required(),
+    selectedDate: joi.date()
+  })
+.required();

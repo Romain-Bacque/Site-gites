@@ -26,7 +26,7 @@ const errorHandler = {
       debug(error);
     });
 
-    res.status(err.statusCode).json({ message: err.message });
+    res.sendStatus(500);
   },
 };
 

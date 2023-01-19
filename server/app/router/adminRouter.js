@@ -4,6 +4,8 @@ const express = require("express");
 const multer = require("multer");
 const { storage } = require("../utilities/cloudinary");
 const catchAsync = require("../utilities/catchAsync");
+const { validate } = require("../validation/validate");
+const { disabledDatesSchema } = require("../validation/schemas");
 const upload = multer({ storage });
 
 const router = express.Router();
@@ -26,8 +28,8 @@ router
 
 router
   .route("/disabledDates")
-  .post(checkLogged, catchAsync(adminController.addDisabledDate))
-  .delete(checkLogged, catchAsync(adminController.deleteDisabledDate));
+  .post(checkLogged, validate(disabledDatesSchema), catchAsync(adminController.addDisabledDate))
+  .delete(checkLogged, validate(disabledDatesSchema), catchAsync(adminController.deleteDisabledDate));
 
 router.delete(
   "/gallery/:imageId",
