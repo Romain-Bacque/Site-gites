@@ -1,64 +1,71 @@
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
-import React, { MouseEventHandler, useCallback, useState } from "react";
+import { useAppDispatch } from "../../../hooks/use-store";
+import React, { MouseEventHandler, useCallback, useEffect, useState } from "react";
 
 import { postPictureRequest } from "../../../lib/api";
 import Cropper, { Area } from "react-easy-crop";
-import Loader from "../Loader";
 import classes from "./style.module.css";
 import getCroppedImg from "./lib/cropImage";
 // types import
 import { CropContentProps } from "./types";
+import { loadingActions } from "../../../store/loading";
+
+let cropDatas: [string, Area];
 
 // component
 const CropContent: React.FC<CropContentProps> = ({
   shelterNumber,
   url,
   getImagesList,
-  onRequestEnd,
+  onServerResponse,
 }) => {
-  const [showLoader, setShowLoader] = useState(false);
   const {
     sendHttpRequest: postPictureHttpRequest,
     statut: postPictureStatut,
     data: imagesData,
   } = useHttp(postPictureRequest);
-  const [cropDatas, setCropDatas] = useState<[string, Area] | []>([]);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const dispatch = useAppDispatch();
 
   const handleCropComplete = useCallback(
     (_: Area, croppedAreaPixels: Area) => {
-      setCropDatas([url, croppedAreaPixels]);
+      cropDatas = [url, croppedAreaPixels];
     },
     [url]
   );
 
-  const handleAddPicture = (statut: HTTPStateKind) => {
-    if (statut === HTTPStateKind.SUCCESS && imagesData) {
+  useEffect(() => {
+    if(postPictureStatut) {
+      dispatch(loadingActions.setStatut(postPictureStatut))
+      dispatch(loadingActions.setMessage({
+        success: null,
+        error: null
+      }))
+      onServerResponse(postPictureStatut);    
+    }
+    if (postPictureStatut === HTTPStateKind.SUCCESS && imagesData) {
       getImagesList(imagesData);
     }
-    onRequestEnd(statut);
-    setShowLoader(false);
-  };
+  }, [postPictureStatut])
 
   const handleCropImage: MouseEventHandler<HTMLButtonElement> = useCallback(
     async (event) => {
       event.preventDefault();
-      setShowLoader(true);
 
       try {
-        const file = await getCroppedImg(...cropDatas);
+        const file = await getCroppedImg(cropDatas[0], cropDatas[1]);
 
         const formData = new FormData();
         formData.append("shelterNumber", shelterNumber.toString());
-        formData.append("file", file);
+        formData.append("file", file!);
 
         postPictureHttpRequest(formData);
       } catch (err) {
         console.trace(err);
       }
     },
-    [cropDatas, postPictureHttpRequest, shelterNumber]
+    [postPictureHttpRequest, shelterNumber]
   );
 
   return (
@@ -78,17 +85,7 @@ const CropContent: React.FC<CropContentProps> = ({
         />
       </div>
       <form className={classes["crop-container__form"]}>
-        <div>
-          {postPictureStatut && showLoader && (
-            <Loader
-              statut={postPictureStatut}
-              onRequestEnd={handleAddPicture}
-              message={{
-                success: null,
-                error: null,
-              }}
-            />
-          )}
+        <div>         
           <span className={classes["crop-container__span"]}>-</span>
           <input
             className={classes["crop-container__input"]}

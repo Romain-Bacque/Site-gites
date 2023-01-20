@@ -1,3 +1,4 @@
+const debug = require("debug")("controller:admin");
 const { Booking, Shelter, Image } = require("../models");
 const assert = require("assert");
 const { cloudinary } = require("../utilities/cloudinary");
@@ -17,7 +18,7 @@ const adminController = {
         res.status(200).json({ bookingsData: allBookings });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -38,7 +39,7 @@ const adminController = {
         res.sendStatus(200);
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -56,50 +57,50 @@ const adminController = {
         res.sendStatus(200);
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
-  postDisabledDate: async function (req, res, next) {
-    const { shelter: shelter_id, date } = req.body;
-    try {
-      const booking = new Booking({
-        shelter_id,
-        from: date,
-        to: date,
-        booked: true,
+  addDisabledDate: async function (req, res, next) {
+    const { shelterId, selectedDate } = req.body;
+    const booking = new Booking({
+      shelter_id: shelterId,
+      from: selectedDate,
+      to: selectedDate,
+      booked: true,
+    });
+
+    await booking.save();
+
+    const disabledDates = await Booking.find({ shelter_id: shelterId })
+        .where("booked")
+        .equals(true);
+
+    if (disabledDates?.length) {
+      res.status(200).json({
+        disabledDates,
       });
-
-      await booking.save();
-
-      if (booking) {
-        res.status(200).json({
-          bookingData: booking,
-        });
-      } else throw new ExpressError("Internal Server Error", 500);
-    } catch (err) {
-      console.trace(err);
-      next(err);
-    }
+    } else next();
   },
   deleteDisabledDate: async function (req, res, next) {
-    const { shelter: shelter_id, date } = req.body;
-
-    try {
-      const booking = await Booking.deleteOne(
-        { shelter_id },
-        { $or: [{ from: date }, { to: date }] }
+    const { shelterId, selectedDate } = req.body;
+    const result = await Booking.deleteOne(
+        { $or: [{ from: selectedDate }, { to: selectedDate }] }
       )
-        .where("email")
-        .equals(null);
+        .where("shelter_id").equals(shelterId)
+        .where("email").equals(null);
+        
+    if(result?.deletedCount) {
+      const disabledDates = await Booking.find({ shelter_id: shelterId })
+      .where("booked")
+          .equals(true);
 
-      if (booking) {
-        res.status(200);
-      } else throw new ExpressError("Internal Server Error", 500);
-    } catch (err) {
-      console.trace(err);
-      next(err);
-    }
+      if (disabledDates?.length) {
+        res.status(200).json({
+          disabledDates,
+        });
+      } else next();
+    } else next();
   },
   getAllImages: async function (_, res, next) {
     try {
@@ -112,7 +113,7 @@ const adminController = {
         res.status(200).json({ imagesData: images });
       } else throw new Error();
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -146,7 +147,7 @@ const adminController = {
         res.status(200).json({ imagesData: images });
       } else throw new Error();
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },
@@ -178,7 +179,7 @@ const adminController = {
         res.status(200).json({ imagesData: images });
       } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
-      console.trace(err);
+      debug(err);
       next(err);
     }
   },

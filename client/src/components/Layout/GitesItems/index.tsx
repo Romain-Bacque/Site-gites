@@ -1,13 +1,14 @@
 import { useState } from "react";
 
 import classes from "./style.module.css";
-import CSSTransition from "react-transition-group/CSSTransition";
 import Booking from "../Booking";
 import Rates from "../Rates";
 import Slider from "../../UI/slider/Slider";
 import Availability from "../Availability";
 // types import
-import { GitesItemsProps, Tab } from "./types";
+import { GitesItemsProps, Tab, TabKind } from "./types";
+import { useAppDispatch } from "../../../hooks/use-store";
+import { loadingActions } from "../../../store/loading";
 
 // variable & contante
 let formContent: JSX.Element;
@@ -22,20 +23,28 @@ const GitesItems: React.FC<GitesItemsProps> = ({
     { tab: null },
     { tab: null },
   ]);
+  const dispatch = useAppDispatch();
 
-  //Select content
-  if (shelterStatut[number].tab === 0) {
+  if (shelterStatut[number].tab === TabKind.BOOK) {
     formContent = <Booking shelter={shelter} />;
-  } else if (shelterStatut[number].tab === 1) {
+  } else if (shelterStatut[number].tab === TabKind.RATES) {
     formContent = <Rates shelter={shelter} />;
-  } else if (shelterStatut[number].tab === 2) {
-    formContent = <Availability shelter={shelter} />;
+  } else if (shelterStatut[number].tab === TabKind.AVAILABILITY) {
+    formContent = <Availability className="calendar--availability" shelter={shelter} />;
   }
 
-  const handleShelterTab = (value: number) => {
+  const handleShelterTab = (value: TabKind) => {
+    dispatch(loadingActions.resetStore());
     setShelterStatut((prevState) => {
-      return prevState.map((item, index) =>
-        index === number ? (item = { tab: value }) : item
+      return prevState.map((item, index) => {
+        if (index === number) {
+          const tabValue = item.tab === value ? null : value;
+
+          return item = { tab: tabValue } 
+        } else {
+          return item;
+        }
+      }
       );
     });
   };
@@ -57,43 +66,35 @@ const GitesItems: React.FC<GitesItemsProps> = ({
       <div className={classes["gite__buttons-container"]}>
         <button
           className={`${
-            shelterStatut[number].tab === 0 ? classes.active : ""
+            shelterStatut[number].tab === TabKind.BOOK ? classes.active : ""
           } ${classes["gite__button-tab"]}`}
-          onClick={() => handleShelterTab(0)}
+          onClick={() => handleShelterTab(TabKind.BOOK)}
         >
           Réserver
         </button>
         <button
           className={`${
-            shelterStatut[number].tab === 1 ? classes.active : ""
+            shelterStatut[number].tab === TabKind.RATES ? classes.active : ""
           } ${classes["gite__button-tab"]}`}
-          onClick={() => handleShelterTab(1)}
+          onClick={() => handleShelterTab(TabKind.RATES)}
         >
           Tarifs
         </button>
         <button
           className={`${
-            shelterStatut[number].tab === 2 ? classes.active : ""
+            shelterStatut[number].tab === TabKind.AVAILABILITY ? classes.active : ""
           } ${classes["gite__button-tab"]}`}
-          onClick={() => handleShelterTab(2)}
+          onClick={() => handleShelterTab(TabKind.AVAILABILITY)}
         >
           Disponibilités
         </button>
       </div>
       <div className={classes["gite__content"]}>
-        {shelterStatut[number].tab === 0 && <div></div>}
-        {shelterStatut[number].tab === 1 && <div></div>}
-        {shelterStatut[number].tab === 2 && <div></div>}
+        {shelterStatut[number].tab === TabKind.BOOK && <span />}
+        {shelterStatut[number].tab === TabKind.RATES && <span />}
+        {shelterStatut[number].tab === TabKind.AVAILABILITY && <span />}
       </div>
-      <CSSTransition
-        mountOnEnter
-        unmountOnExit
-        in={shelterStatut[number].tab !== null}
-        timeout={300}
-        classNames={classes["fade-content"]}
-      >
-        <div className={classes["gites__tab-container"]}>{formContent}</div>
-      </CSSTransition>
+      {shelterStatut[number].tab !== null && <div className={classes["gites__tab-container"]}>{formContent}</div>}
     </>
   );
 };

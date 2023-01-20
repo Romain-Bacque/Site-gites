@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const shelterSchema = new Schema({
+const imageSchema = new Schema({
   url: {
     type: String,
     default: null,
@@ -16,4 +16,4 @@ const shelterSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("Image", shelterSchema);
+module.exports = mongoose.model("Image", imageSchema);

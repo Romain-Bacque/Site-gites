@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useAppSelector } from "../../../hooks/use-store";
+import { useState } from "react";
 
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
@@ -8,9 +7,9 @@ import gite1_large from "../../../img/gite1_large.jpg";
 import gite2_small from "../../../img/gite2_small.jpg";
 import gite2_large from "../../../img/gite2_large.jpg";
 import { Link } from "react-router-dom";
-import Alert, { AlertKind } from "../../UI/Alert";
+import Alert from "../../UI/Alert";
 // types import
-import { StatutMessage } from "./types";
+import { AlertStatut } from "./types";
 
 // variable & constantes
 const initialState = {
@@ -18,45 +17,20 @@ const initialState = {
   alert: null,
   show: false,
 };
-let isAuthStatut = false;
 
 // component
 const Home: React.FC = () => {
-  const [statutMessage, setStatutMessage] =
-    useState<StatutMessage>(initialState);
-  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    if (isAuth && isAuth !== isAuthStatut) {
-      isAuthStatut = isAuth;
-
-      setStatutMessage({
-        message: "Bienvenue !",
-        alert: AlertKind.SUCCESS,
-        show: true,
-      });
-
-      timer = setTimeout(() => {
-        setStatutMessage((prevState) => ({ ...prevState, show: false }));
-      }, 4000);
-    } else if (!isAuth) {
-      isAuthStatut = false;
-      setStatutMessage((prevState) => ({ ...prevState, show: false }));
-    }
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [isAuth]);
+  const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
 
   return (
     <>
       <Alert
-        message={statutMessage.message}
-        alert={statutMessage.alert}
-        show={statutMessage.show}
+        message={alertStatut.message}
+        alert={alertStatut.alert}
+        show={alertStatut.show}
+        onAlertClose={() =>
+          setAlertStatut((prevState) => ({ ...prevState, show: false }))
+        }
       />
       <section>
         <Card className={classes.banner}>

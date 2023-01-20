@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./hooks/use-store";
-import useHttp, { HTTPStateKind } from "./hooks/use-http";
+import useHttp from "./hooks/use-http";
 
 import { Route, Redirect, Switch, useHistory } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
@@ -11,6 +11,8 @@ import AuthPage from "./pages/AuthPage";
 import { loadUserInfos } from "./lib/api";
 import { authActions } from "./store/auth";
 import AllBookingsPage from "./pages/AllBookingsPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 // component
 const App: React.FC = () => {
@@ -28,16 +30,10 @@ const App: React.FC = () => {
   useEffect(() => {
     if (pathname.includes("admin")) {
       dispatch(authActions.isAdmin());
-      history.replace(pathname.replace("admin", ""));
-    } else if (pathname.includes("user")) {
+    } else {
       dispatch(authActions.isUser());
-      history.replace(pathname.replace("user", ""));
     }
   }, [pathname, history, dispatch]);
-
-  if (authStatut === HTTPStateKind.SUCCESS) {
-    dispatch(authActions.login());
-  }
 
   return (
     <Layout>
@@ -48,14 +44,24 @@ const App: React.FC = () => {
         <Route path="/home">
           <HomePage />
         </Route>
-        <Route path="/gites" exact>
-          <GitesPage />
-        </Route>
         {isAuth && (
-          <Route path="/admin/allBookings">
+          <Route path="/admin/allBookings" exact>
             <AllBookingsPage />
           </Route>
         )}
+        {!isAuth && (
+          <Route path="/admin/forgot-password" exact>
+            <ForgotPasswordPage />
+          </Route>
+        )}
+        {!isAuth && (
+          <Route path="/admin/reset-password/:id/:token" exact>
+            <ResetPasswordPage />
+          </Route>
+        )}
+        <Route path="/gites" exact>
+          <GitesPage />
+        </Route>
         <Route path="/gites/:giteId">
           <GitesPage />
         </Route>

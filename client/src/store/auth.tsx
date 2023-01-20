@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialUserState = {
+const initialAuthState = {
   isAdmin: false,
   isAuthentificated: false,
 };
 
 const authSlice = createSlice({
   name: "authentification",
-  initialState: initialUserState,
+  initialState: initialAuthState,
   reducers: {
     isAdmin(state) {
       state.isAdmin = true;

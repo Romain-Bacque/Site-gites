@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Axios configuration
-axios.defaults.baseURL = "http://localhost:3000/";
+axios.defaults.baseURL = "http://localhost:4000/";
 axios.defaults.withCredentials = true;
 
 // // AUTHENTIFICATION
@@ -11,22 +11,50 @@ interface LoginRequestData {
   password: string;
   username: string;
 }
+interface LoginRequestReturnData {
+  userData: { username: string };
+};
 
 export const loginRequest = async (data: LoginRequestData) => {
-  const response = await axios.post("/authentification/login", data);
+  const response = await axios.post<LoginRequestReturnData>("/authentification/login", data);
 
   if (response.status !== 200) throw new Error();
+console.log(response.data.userData)
+  return response.data.userData;
 };
 
 // Register
-interface RegisterRequestData {
-  name: string;
+interface RegisterRequestData extends LoginRequestData {
   email: string;
-  password: string;
 }
 
 export const registerRequest = async (data: RegisterRequestData) => {
   const response = await axios.post("/authentification/register", data);
+
+  if (response.status !== 200) throw new Error();
+};
+
+// forgot password
+interface ForgotPasswordRequestData {
+  email: string;
+}
+
+export const forgotPasswordRequest = async (
+  data: ForgotPasswordRequestData
+) => {
+  const response = await axios.post("/authentification/forgot-password", data);
+
+  if (response.status !== 200) throw new Error();
+};
+
+// reset password
+type ResetPasswordRequestData = Record<"id" | "token" | "password", string>;
+
+export const resetPasswordRequest = async (data: ResetPasswordRequestData) => {
+  const response = await axios.patch(
+    `/authentification/reset-password/${data.id}/${data.token}`,
+    { password: data.password }
+  );
 
   if (response.status !== 200) throw new Error();
 };
@@ -96,11 +124,11 @@ export interface bookingRequestData {
   shelterId: string;
   name: string;
   phone: string;
-  numberOfPerson: string;
+  numberOfPerson: number;
   email: string;
   from: string;
   to: string;
-  informations: string;
+  informations?: string;
 }
 
 export const bookingRequest = async (data: bookingRequestData) => {
@@ -127,7 +155,7 @@ export const refuseBookingRequest = async (id: string) => {
 export type DisabledDatesReturnData = {
   disabledDates: {
     name: string;
-    phone: number;
+    phone: string;
     email: string;
     numberOfPerson: number;
     from: Date;
@@ -138,8 +166,8 @@ export type DisabledDatesReturnData = {
   }[];
 };
 
-export const getDatesRequest = async () => {
-  const response = await axios.get<DisabledDatesReturnData>("/disabledDates");
+export const getDatesRequest = async (shelterId: string) => {
+  const response = await axios.get<DisabledDatesReturnData>(`/disabledDates/${shelterId}`);
 
   if (response.status !== 200) throw new Error();
 
@@ -147,28 +175,31 @@ export const getDatesRequest = async () => {
 };
 
 // post booked date
-interface PostDateRequestData {
-  shelter: string;
-  date: Date;
+export interface DateRequestData {
+  shelterId: string;
+  selectedDate: Date;
 }
 
-export const postDateRequest = async (data: PostDateRequestData) => {
+export const postDateRequest = async (data: DateRequestData) => {
   const response = await axios.post<DisabledDatesReturnData>(
     "/admin/disabledDates",
     data
   );
+
   if (response.status !== 200) throw new Error();
 
   return response.data.disabledDates;
 };
 
 // delete booked data
-export const deleteDateRequest = async (shelterId: string) => {
-  const response = await axios.delete(`/disabledDates/${shelterId}`);
+export const deleteDateRequest = async (data: DateRequestData) => {
+  const response = await axios.delete<DisabledDatesReturnData>(
+    '/admin/disabledDates',
+    { data });
 
   if (response.status !== 200) throw new Error();
 
-  return response.data.sheltersData;
+  return response.data.disabledDates;
 };
 
 // delete booked date
@@ -183,7 +214,7 @@ export const deleteDateRequest = async (shelterId: string) => {
 // // RATES
 
 // Get Rates
-interface RatesPostRequestReturnData {
+interface RatesPutRequestReturnData {
   ratesData: {
     price1: number;
     price2: number;
@@ -193,7 +224,7 @@ interface RatesPostRequestReturnData {
 }
 
 export const ratesGetRequest = async () => {
-  const response = await axios.get<RatesPostRequestReturnData>("/rates");
+  const response = await axios.get<RatesPutRequestReturnData>("/rates");
 
   if (response.status !== 200) throw new Error();
 
@@ -201,15 +232,15 @@ export const ratesGetRequest = async () => {
 };
 
 // Edit Rates
-interface RatesPostRequestData {
+export interface RatesPutRequestData {
+  shelterId: string;
   price1: number;
   price2: number;
   price3: number;
-  shelter: string;
 }
 
-export const ratesPostRequest = async (data: RatesPostRequestData) => {
-  const response = await axios.put<RatesPostRequestReturnData>("/rates", data);
+export const ratesPutRequest = async (data: RatesPutRequestData) => {
+  const response = await axios.put<RatesPutRequestReturnData>("/rates", data);
 
   if (response.status !== 200) throw new Error();
 };

@@ -1,0 +1,13 @@
+.react-calendar {
+  width: 100% !important;
+  max-width: 650px;
+  border: none !important;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.disabled-date {
+  text-decoration: line-through !important;
+  background-color: #f0f0f0 !important;
+}
+

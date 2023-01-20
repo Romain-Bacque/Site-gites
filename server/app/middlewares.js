@@ -3,10 +3,9 @@ const puppeteer = require("puppeteer");
 
 const checkLogged = (req, res, next) => {
   const token = req.cookies?.accessToken;
+
   if (!token) {
-    res.status(401).json({
-      message: "access unauthorized",
-    });
+    return res.sendStatus(401)
   }
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err) => {
@@ -14,9 +13,7 @@ const checkLogged = (req, res, next) => {
       res.status(401).json({
         message: "access unauthorized",
       });
-    } else {
-      next();
-    }
+    } else next();
   });
 };
 

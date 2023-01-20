@@ -1,7 +1,7 @@
 // type aliases
 export type DisabledDatesData = {
   name: string;
-  phone: number;
+  phone: string;
   email: string;
   numberOfPerson: number;
   from: Date;
@@ -10,8 +10,15 @@ export type DisabledDatesData = {
   booked: boolean;
   shelter_id: string;
 }[];
+export type HandleDateClick = (
+  date: Date,
+  disabledDates: DisabledDatesData | null
+) => void;
 
 // interfaces
 export interface AvailabilityProps {
   shelter: string;
+  className: string;
+  onDateClick?: (arg: Date) => void
+  onDateChoice?: (date: Date) => void;
 }

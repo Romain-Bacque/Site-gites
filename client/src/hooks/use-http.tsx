@@ -1,22 +1,21 @@
-import axios from "axios";
 import { useReducer, useCallback } from "react";
 
 // enums
 export enum HTTPStateKind {
-  SEND,
+  SEND = 1,
   SUCCESS,
   ERROR,
 }
 
 // type aliases
-export type StatutType = null | HTTPStateKind;
 type HTTPRequestType = (arg: any) => Promise<any>;
-type ErrorType = string | null | undefined;
+type ErrorType = string | null;
 type DataType<T> = T | null;
+type ParameterType<T> = T extends (arg: infer U) => any ? U : never
 
 // interfaces
 interface HTTPState<T> {
-  statut: StatutType;
+  statut: HTTPStateKind | null;
   data: DataType<T>;
   error: ErrorType;
 }
@@ -57,7 +56,7 @@ function httpReducer<T>(
       return {
         statut: HTTPStateKind.ERROR,
         data: null,
-        error: errorMessage,
+        error: errorMessage || null,
       };
     default:
       return state;
@@ -74,7 +73,7 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T) {
   >(httpReducer, initialState);
 
   const sendHttpRequest = useCallback(
-    async <D extends object | number | string>(requestData?: D) => {
+    async (requestData?: ParameterType<T>) => {
       try {
         dispatch({ type: HTTPStateKind.SEND });
 
@@ -84,9 +83,24 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T) {
 
         dispatch({ type: HTTPStateKind.SUCCESS, value: responseData ?? null });
       } catch (err: any) {
+        let errorMessage: string | null = null;
+        const status: number = err.response.status;
+
+        switch (status) {
+          case 400:
+            errorMessage = "Erreur dans un/plusieurs champs.";
+            break;
+          case 401:
+            errorMessage = "Action non autorisé.";
+            break;
+          case 409:
+            errorMessage = "Utilisateur déjà enregistré.";
+            break;
+        }
+
         dispatch({
           type: HTTPStateKind.ERROR,
-          errorMessage: err.message || "Une erreur s'est produit !",
+          errorMessage: errorMessage || "Une erreur s'est produit !",
         });
       }
     },

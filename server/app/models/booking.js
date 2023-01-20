@@ -16,7 +16,7 @@ const bookingSchema = new Schema({
   },
   numberOfPerson: {
     type: Number,
-    min: "0",
+    min: "1",
     max: "4",
     default: null,
   },

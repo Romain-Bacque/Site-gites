@@ -1,6 +1,40 @@
-.availability {
+.calendar {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0 2rem 2rem;
+  padding: 1rem;
+  gap: 1.5rem;
+  background-color: white;
+}
+
+.calendar--booking {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1;
+  border: 2px solid rgb(163, 163, 163) !important;
+  border-radius: 10px;
+}
+
+.calendar--availability {
+  border: none !important;
+  max-width: 100% !important;
+}
+
+
+.legend {
+  display: flex;
+  align-items: end;
+  gap: 0.5rem;
+}
+
+.legend__image {
+  background-color: #f0f0f0;
+  width: 20px;
+  height: 20px;
+}
+
+.legend__detail {
+  color: rgb(95, 95, 95);
 }

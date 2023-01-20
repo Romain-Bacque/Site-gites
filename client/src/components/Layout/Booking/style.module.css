@@ -32,43 +32,18 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-content: flex-start;
+  align-content: center;
   gap: 1rem;
   max-width: 100rem;
   transition: all 0.3s ease-out;
 }
 
 .form__input-container {
-  flex: 1;
+  width: 48%;
 }
 
 .form__date-container {
   position: relative;
-}
-
-.form__button {
-  cursor: pointer;
-  font-weight: bold;
-  width: 15rem;
-  padding: 1rem;
-  border: 2px solid black;
-  border-radius: 20px;
-  background: none;
-}
-
-.form__button:hover {
-  font-weight: bold;
-  width: 15rem;
-  padding: 1rem;
-  background-color: black;
-  color: white;
-}
-
-.form__button:disabled {
-  cursor: not-allowed;
-  border-color: gray;
-  color: gray;
-  background-color: transparent;
 }
 
 .form__textarea {

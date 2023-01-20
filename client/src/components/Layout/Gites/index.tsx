@@ -5,30 +5,28 @@ import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
 import GitesItems from "../GitesItems";
-import Loader from "../Loader";
 import { getShelters } from "../../../lib/api";
+import { loadingActions } from "../../../store/loading";
+import { useAppDispatch } from "../../../hooks/use-store";
 
 // component
 const Gites: React.FC = () => {
   const [shelterList, setShelterList] = useState<JSX.Element[]>([]);
-  const [showLoader, setShowLoader] = useState(false);
-  const {
-    sendHttpRequest: sendShelterHttpRequest,
-    statut: sheltersRequestStatut,
-    data: sheltersData,
-  } = useHttp(getShelters);
-  useEffect(() => {
-    sendShelterHttpRequest();
-    setShowLoader(true);
-  }, []);
+  const dispatch = useAppDispatch();
 
+  const {
+    sendHttpRequest: getShelterHttpRequest,
+    statut: getSheltersRequestStatut,
+    data: getSheltersData,
+    error: getSheltersRequestError
+  } = useHttp(getShelters);
+ 
   const handleSheltersList = () => {
-    if (sheltersRequestStatut === HTTPStateKind.SUCCESS && sheltersData) {
+    if (getSheltersRequestStatut === HTTPStateKind.SUCCESS && getSheltersData) {
       let shelters: JSX.Element[] = [];
 
-      setShowLoader(false);
-      if (typeof sheltersData === "object") {
-        shelters = sheltersData
+      if (typeof getSheltersData === "object") {
+        shelters = getSheltersData
           .sort((a, b) => a.number - b.number)
           .map((shelter) => {
             return (
@@ -46,19 +44,30 @@ const Gites: React.FC = () => {
     }
   };
 
+  // fetch all shelters
+  useEffect(() => {
+    getShelterHttpRequest();
+  }, []);
+
+  // shelters request loading handling
+  useEffect(() => {
+    if (getSheltersRequestStatut) {
+      dispatch(loadingActions.setStatut(getSheltersRequestStatut));
+      dispatch(loadingActions.setMessage({
+        success: null,
+        error: getSheltersRequestError,
+      }));
+      if(getSheltersRequestStatut !== HTTPStateKind.SEND) {
+        handleSheltersList();
+      }
+    }
+  }, [getSheltersRequestStatut]);
+
   return (
     <section>
-      {showLoader && (
-        <Loader
-          statut={sheltersRequestStatut}
-          onRequestEnd={handleSheltersList}
-          message={{
-            success: null,
-            error: "Une erreur est survenue !",
-          }}
-        />
-      )}
       {shelterList}
+      {getSheltersRequestStatut === HTTPStateKind.ERROR &&
+      <p className="text-center">Les gites sont indisponibles.</p>}
     </section>
   );
 };
