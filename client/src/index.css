@@ -114,6 +114,10 @@ section {
   background-color: transparent;
 }
 
+.button__icon {
+  color: inherit;
+  margin-left: 1rem;
+}
 
 /* -- utility classes -- */
 .bold {

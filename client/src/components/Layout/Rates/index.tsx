@@ -165,7 +165,7 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
         </div>
         {isAuth && <button className="button button--alt">
           Enregistrer les modifications
-          <FontAwesomeIcon className={classes["rates__edit-icon"]} icon={faPen} />
+          <FontAwesomeIcon className="button__icon" icon={faPen} />
         </button>}
       </form>}
     {getRatesStatut === HTTPStateKind.ERROR &&

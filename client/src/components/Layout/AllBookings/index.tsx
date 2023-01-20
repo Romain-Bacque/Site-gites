@@ -203,7 +203,7 @@ const AllBookings: React.FC = () => {
     if (acceptBookingStatut) {
       dispatch(loadingActions.setStatut(acceptBookingStatut))
       dispatch(loadingActions.setMessage({
-        success: "Demande accepté avec succés, verifiez votre mail de confirmation.",
+        success: "Réservation accepté avec succés, verifiez votre mail de confirmation.",
         error: acceptBookingRequestError
       }))
     }
@@ -214,7 +214,7 @@ const AllBookings: React.FC = () => {
     if (refuseBookingStatut) {
       dispatch(loadingActions.setStatut(refuseBookingStatut))
       dispatch(loadingActions.setMessage({
-        success: "Demande refusé avec succés.",
+        success: "Réservation refusé/annulé avec succés.",
         error: refuseBookingRequestError
       }))
     }
@@ -229,7 +229,7 @@ const AllBookings: React.FC = () => {
         <>
           {showModal.booking ? (
             <form className={classes["message-form"]} onSubmit={handleBookingSubmit}>
-              <h3>Message à envoyer</h3>
+              <h3>Message à joindre</h3>
               <textarea className={classes["message-form__textarea"]} rows={10} cols={25} />
               <div className="button-container">
                 <button className="button">Envoyer</button>

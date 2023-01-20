@@ -1,4 +1,4 @@
-import { faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faPhone, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import Card from '../../../UI/Card';
@@ -28,6 +28,14 @@ interface BookingCardProps {
 };
 
 const BookingCard: React.FC<BookingCardProps> = ({ booking, onChoice }) => {
+    const bookingFormattedData = {
+        bookingId: booking._id,
+        shelter: booking.shelter_id.title,
+        name: booking.name,
+        from: dayjs(booking.from).format("DD/MM/YYYY"),
+        to: dayjs(booking.to).format("DD/MM/YYYY"),
+    };
+
     return (
         <Card className={classes["booking-card"]}>
             <div className={classes["booking-card__title"]}>
@@ -73,38 +81,33 @@ const BookingCard: React.FC<BookingCardProps> = ({ booking, onChoice }) => {
                 </div>
                 </div>              
             </div>
-            {!booking.booked && (
                 <div className="button-container">
+                {booking.booked && (
+                    <button
+                        className="button button--alt"
+                        onClick={() => onChoice("refuse", bookingFormattedData)}
+                    >
+                        Annuler la réservation
+                        <FontAwesomeIcon className="button__icon" icon={faTrash} />
+                    </button>
+                )}
+                {!booking.booked && (
                     <button
                         className="button"
-                        onClick={() => {
-                        onChoice("accept", {
-                            bookingId: booking._id,
-                            shelter: booking.shelter_id.title,
-                            name: booking.name,
-                            from: dayjs(booking.from).format("DD/MM/YYYY"),
-                            to: dayjs(booking.to).format("DD/MM/YYYY"),
-                        });
-                        }}
+                        onClick={() => onChoice("accept", bookingFormattedData)}                        
                     >
                         Accepter
                     </button>
+                )}
+                {!booking.booked && (
                     <button
                         className="button button--alt"
-                        onClick={() => {
-                        onChoice("refuse", {
-                            bookingId: booking._id,
-                            shelter: booking.shelter_id.title,
-                            name: booking.name,
-                            from: dayjs(booking.from).format("DD/MM/YYYY"),
-                            to: dayjs(booking.to).format("DD/MM/YYYY"),
-                        });
-                        }}
+                        onClick={() => onChoice("refuse", bookingFormattedData)}
                     >
                         Refuser
                     </button>
-                </div>
                 )}
+                </div>
             </div>
         </Card>
     );
