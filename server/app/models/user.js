@@ -25,10 +25,13 @@ const userSchema = new Schema({
 
 // Middleware that compare passwords
 userSchema.statics.findAndValidate = async function (password, username) {
-  const foundUser = await this.findOne({ username });
-  const isValid = await bcrypt.compare(password, foundUser.password);
+  const foundedUser = await this.findOne({ username });
 
-  return isValid ? foundUser : false;
+  if (!foundedUser) return false;
+
+  const isValid = await bcrypt.compare(password, foundedUser.password);
+
+  return isValid ? foundedUser : false;
 };
 
 // Middlewares that hashes the password

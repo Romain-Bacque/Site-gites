@@ -13,7 +13,7 @@ const cookieConfig = {
 
 const generateAccessToken = (user) => {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "1y",
+    expiresIn: "24h",
   });
 };
 
@@ -32,40 +32,33 @@ const authController = {
       res.sendStatus(200);
     });
   },
-  login: async function (req, res, next) {
-    try {
-      const { password, username } = req.body;
-      const foundUser = await User.findAndValidate(password, username);
-      if (foundUser) {
-        const user = { password, username };
+  login: async function (req, res) {
+    const { password, username } = req.body;
+    const foundedUser = await User.findAndValidate(password, username);
 
-        const accessToken = generateAccessToken(user);
+    if (!foundedUser) return res.sendStatus(401);
 
-        res.cookie("accessToken", accessToken, cookieConfig).sendStatus(200);
-      } else throw new ExpressError("access unauthorized", 401);
-    } catch (err) {
-      debug(err);
-      next(err);
-    }
+    const user = { 
+      password: foundedUser.password,
+      username: foundedUser.username 
+    };
+    const accessToken = generateAccessToken(user);
+
+    res.cookie("accessToken", accessToken, cookieConfig).sendStatus(200);  
   },
   register: async function (req, res, next) {
-    try {
-      const { password, username, email } = req.body;
+    const { password, username, email } = req.body;
+    const userExist = await User.find({ $or: [{ username }, { email }] });
 
-      const userExist = await User.find({ $or: [{ username }, { email }] });
+    if (userExist.length) return res.sendStatus(409);
 
-      if (userExist.length)
-        throw new ExpressError("This user already exists", 409);
+    const newUser = new User({ username, password, email });
 
-      const newUser = new User({ username, password, email });
-      await newUser.save();
+    await newUser.save();
 
-      const accessToken = generateAccessToken({ username, email });
-      res.cookie("accessToken", accessToken, cookieConfig).sendStatus(200);
-    } catch (err) {
-      debug(err);
-      next(err);
-    }
+    const accessToken = generateAccessToken({ username, email });
+
+    res.cookie("accessToken", accessToken, cookieConfig).sendStatus(200);
   },
   logout: function (_, res) {
       res.clearCookie("accessToken").sendStatus(200);
