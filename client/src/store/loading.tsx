@@ -30,6 +30,10 @@ const loadingSlice = createSlice({
     setMessage(state, action: PayloadAction<Message>) {
       state.message = action.payload;
     },
+    resetStore(state) {
+      state.statut = initialLoadingState.statut;
+      state.message = initialLoadingState.message;
+    }
   },
 });
 

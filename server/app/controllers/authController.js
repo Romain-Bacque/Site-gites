@@ -44,7 +44,14 @@ const authController = {
     };
     const accessToken = generateAccessToken(user);
 
-    res.cookie("accessToken", accessToken, cookieConfig).sendStatus(200);  
+    res
+      .cookie("accessToken", accessToken, cookieConfig)
+      .status(200)
+      .json({
+        userData: {
+          username: user.username,
+        }
+      })
   },
   register: async function (req, res, next) {
     const { password, username, email } = req.body;
@@ -61,16 +68,14 @@ const authController = {
     res.cookie("accessToken", accessToken, cookieConfig).sendStatus(200);
   },
   logout: function (_, res) {
-      res.clearCookie("accessToken").sendStatus(200);
+    res.clearCookie("accessToken").sendStatus(200);
   },
   async handleForgotPassword(req, res) {
     const { email } = req.body;
     const user = await User.findOne({ email });
 
     // Check if user exists in database thanks to its email address
-    if (!user) {
-      return res.status(401).json({ message: "user is not registered" });
-    }
+    if (!user) return res.sendStatus(401);
 
     const { JWT_SECRET } = process.env;
     const secret = JWT_SECRET + user.password; // user password is used in the secret to prevent reset link reusability

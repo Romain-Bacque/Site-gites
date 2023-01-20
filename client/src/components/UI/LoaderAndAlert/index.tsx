@@ -1,8 +1,8 @@
 // hooks import
 import { useEffect, useState } from "react";
 // components import
-import Alert, { AlertKind } from "../../UI/Alert";
-import Loader from "../../UI/Loader";
+import Alert, { AlertKind } from "../Alert";
+import Loader from "../Loader";
 // types import
 import { HTTPStateKind } from "../../../hooks/use-http";
 import { LoaderAndAlertProps, StatutMessage } from "./types";

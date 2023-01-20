@@ -15,22 +15,18 @@ const Gites: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const {
-    sendHttpRequest: sendShelterHttpRequest,
-    statut: sheltersRequestStatut,
-    data: sheltersData,
-    error: sheltersRequestError
+    sendHttpRequest: getShelterHttpRequest,
+    statut: getSheltersRequestStatut,
+    data: getSheltersData,
+    error: getSheltersRequestError
   } = useHttp(getShelters);
-
-  useEffect(() => {
-    sendShelterHttpRequest();
-  }, []);
-
+ 
   const handleSheltersList = () => {
-    if (sheltersRequestStatut === HTTPStateKind.SUCCESS && sheltersData) {
+    if (getSheltersRequestStatut === HTTPStateKind.SUCCESS && getSheltersData) {
       let shelters: JSX.Element[] = [];
 
-      if (typeof sheltersData === "object") {
-        shelters = sheltersData
+      if (typeof getSheltersData === "object") {
+        shelters = getSheltersData
           .sort((a, b) => a.number - b.number)
           .map((shelter) => {
             return (
@@ -48,25 +44,29 @@ const Gites: React.FC = () => {
     }
   };
 
-  // loading
+  // fetch all shelters
   useEffect(() => {
-    if (sheltersRequestStatut) {
-      dispatch(loadingActions.setStatut(sheltersRequestStatut));
+    getShelterHttpRequest();
+  }, []);
+
+  // shelters request loading handling
+  useEffect(() => {
+    if (getSheltersRequestStatut) {
+      dispatch(loadingActions.setStatut(getSheltersRequestStatut));
       dispatch(loadingActions.setMessage({
         success: null,
-        error: sheltersRequestError,
+        error: getSheltersRequestError,
       }));
-
-      if(sheltersRequestStatut !== HTTPStateKind.SEND) {
+      if(getSheltersRequestStatut !== HTTPStateKind.SEND) {
         handleSheltersList();
       }
     }
-  }, [sheltersRequestStatut]);
+  }, [getSheltersRequestStatut]);
 
   return (
     <section>
       {shelterList}
-      {sheltersRequestStatut === HTTPStateKind.ERROR &&
+      {getSheltersRequestStatut === HTTPStateKind.ERROR &&
       <p className="text-center">Les gites sont indisponibles.</p>}
     </section>
   );

@@ -1,13 +1,8 @@
+// hooks import
 import { useCallback, useEffect, useState } from "react";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 import useInput from "../../../hooks/use-input";
-
-import Input from "../Input";
-import { bookingRequest, bookingRequestData } from "../../../lib/api";
-import classes from "./style.module.css";
-import dayjs from "dayjs";
-import Swal from "sweetalert2";
-import LoaderAndAlert from "../LoaderAndAlert";
+import { useAppDispatch } from "../../../hooks/use-store";
 // types import
 import {
   BookingProps,
@@ -16,6 +11,13 @@ import {
   HandleDateChoiceType,
 } from "./types";
 import Availability from "../Availability";
+import { loadingActions } from "../../../store/loading";
+// other import
+import Input from "../Input";
+import { bookingRequest, bookingRequestData } from "../../../lib/api";
+import classes from "./style.module.css";
+import dayjs from "dayjs";
+import Swal from "sweetalert2";
 
 // variable & contante
 const initialState = {
@@ -25,11 +27,11 @@ const initialState = {
 
 // component
 const Booking: React.FC<BookingProps> = ({ shelter }) => {
-  const [showLoader, setShowLoader] = useState(false);
   const { sendHttpRequest: bookingHttpRequest, statut: bookingStatut } =
     useHttp(bookingRequest);
   const [calendarStatus, setCalendarStatus] =
     useState<CalendarStatus>(initialState);
+  const dispatch = useAppDispatch();
   const {
     value: nameValue,
     isValid: nameIsValid,
@@ -110,9 +112,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
 
     // if user input some complementary infos
     if (infosValue) userData.informations = infosValue;
-
     bookingHttpRequest(userData);
-    setShowLoader(true);
   };
 
   const handleCalendarDisplay: HandleCalendarDisplay = (input) => {
@@ -149,7 +149,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
     };
   }, [calendarStatus.show]);
   
-  useEffect(() => {
+  useEffect(() => {   
     const swalInstance = Swal.mixin({
       customClass: {
         popup: 'popup',
@@ -158,6 +158,16 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
       buttonsStyling: false
     })
 
+    // loader display
+    if(bookingStatut) {
+      dispatch(loadingActions.setStatut(bookingStatut))
+      dispatch(loadingActions.setMessage({
+        success: null,
+        error: null
+      }))
+    }
+
+    // popup display
     if (bookingStatut === HTTPStateKind.SUCCESS) {      
       swalInstance.fire({
         title: "Demande Envoyée avec succès !",
@@ -181,142 +191,134 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
   }, [bookingStatut]);
 
   return (
-    <>
-      {showLoader && (
-        <LoaderAndAlert
-          statut={bookingStatut}
-          onServerResponse={() => setShowLoader(false)}
+    <form className={classes.form} onSubmit={submitHandler}>
+      <div className={classes["form__input-container"]}>
+        <Input
+          label="Prénom et Nom"
+          isVisible={true}
+          className={!nameIsValid && nameIsTouched ? "form__input--red" : ""}
+          id={`name-shelter${shelter}`}
+          onChange={nameChangeHandler}
+          onBlur={nameBlurHandler}
+          type="text"
+          value={nameValue}
+          placeholder="Prénom et Nom"
         />
-      )}
-      <form className={classes.form} onSubmit={submitHandler}>
-        <div className={classes["form__input-container"]}>
+        <Input
+          label="Email"
+          isVisible={true}
+          className={
+            !emailIsValid && emailIsTouched ? "form__input--red" : ""
+          }
+          id={`email-shelter${shelter}`}
+          onChange={emailChangeHandler}
+          onBlur={emailBlurHandler}
+          type="email"
+          value={emailValue}
+          placeholder="Adresse mail"
+        />
+        <Input
+          label="Téléphone"
+          isVisible={true}
+          className={
+            !phoneIsValid && phoneIsTouched ? "form__input--red" : ""
+          }
+          id={`phone-shelter${shelter}`}
+          onChange={phoneChangeHandler}
+          onBlur={phoneBlurHandler}
+          type="tel"
+          value={phoneValue}
+          placeholder="Numéro de téléphone"
+        />
+        <Input
+          label="Nombre de personnes"
+          isVisible={true}
+          className={
+            !personsIsValid && personsIsTouched ? "form__input--red" : ""
+          }
+          id={`persons-shelter${shelter}`}
+          onChange={personsChangeHandler}
+          onBlur={personsBlurHandler}
+          min="1"
+          max="4"
+          type="number"
+          value={personsValue}
+          placeholder="4 personnes max"
+        />
+      </div>
+      <div className={classes["form__input-container"]}>
+        <div
+          onClick={(event) => {
+            event.stopPropagation();
+          }}
+          className={classes["form__date-container"]}
+        >
+          {calendarStatus.show && calendarStatus.input === "from" && (
+            <Availability
+              onDateChoice={handleDateChoice.bind(null, "from")}
+              className="calendar--booking"
+              shelter={shelter}
+            />
+          )}
           <Input
-            label="Prénom et Nom"
-            isVisible={true}
-            className={!nameIsValid && nameIsTouched ? "form__input--red" : ""}
-            id={`name-shelter${shelter}`}
-            onChange={nameChangeHandler}
-            onBlur={nameBlurHandler}
-            type="text"
-            value={nameValue}
-            placeholder="Prénom et Nom"
-          />
-          <Input
-            label="Email"
+            onInputDateClick={handleCalendarDisplay.bind(null, "from")}
+            label="Arrivée"
             isVisible={true}
             className={
-              !emailIsValid && emailIsTouched ? "form__input--red" : ""
+              !fromIsValid && fromIsTouched ? "form__input--red" : ""
             }
-            id={`email-shelter${shelter}`}
-            onChange={emailChangeHandler}
-            onBlur={emailBlurHandler}
-            type="email"
-            value={emailValue}
-            placeholder="Adresse mail"
-          />
-          <Input
-            label="Téléphone"
-            isVisible={true}
-            className={
-              !phoneIsValid && phoneIsTouched ? "form__input--red" : ""
-            }
-            id={`phone-shelter${shelter}`}
-            onChange={phoneChangeHandler}
-            onBlur={phoneBlurHandler}
-            type="tel"
-            value={phoneValue}
-            placeholder="Numéro de téléphone"
-          />
-          <Input
-            label="Nombre de personnes"
-            isVisible={true}
-            className={
-              !personsIsValid && personsIsTouched ? "form__input--red" : ""
-            }
-            id={`persons-shelter${shelter}`}
-            onChange={personsChangeHandler}
-            onBlur={personsBlurHandler}
-            min="1"
-            max="4"
-            type="number"
-            value={personsValue}
-            placeholder="4 personnes max"
+            readOnly={true}
+            id={`from-shelter${shelter}`}
+            onBlur={fromBlurHandler}
+            type="date"
+            value={dayjs(fromValue).format("YYYY-MM-DD")}
           />
         </div>
-        <div className={classes["form__input-container"]}>
-          <div
-            onClick={(event) => {
-              event.stopPropagation();
-            }}
-            className={classes["form__date-container"]}
-          >
-            {calendarStatus.show && calendarStatus.input === "from" && (
-              <Availability
-                onDateChoice={handleDateChoice.bind(null, "from")}
+        <div
+          onClick={(event) => {
+            event.stopPropagation();
+          }}
+          className={classes["form__date-container"]}
+        >
+          {calendarStatus.show && calendarStatus.input === "to" && (
+            <Availability
+                onDateChoice={handleDateChoice.bind(null, "to")}
                 className="calendar--booking"
                 shelter={shelter}
-              />
-            )}
-            <Input
-              onInputDateClick={handleCalendarDisplay.bind(null, "from")}
-              label="Arrivée"
-              isVisible={true}
-              className={
-                !fromIsValid && fromIsTouched ? "form__input--red" : ""
-              }
-              readOnly={true}
-              id={`from-shelter${shelter}`}
-              onBlur={fromBlurHandler}
-              type="date"
-              value={dayjs(fromValue).format("YYYY-MM-DD")}
             />
-          </div>
-          <div
-            onClick={(event) => {
-              event.stopPropagation();
-            }}
-            className={classes["form__date-container"]}
-          >
-            {calendarStatus.show && calendarStatus.input === "to" && (
-              <Availability
-                  onDateChoice={handleDateChoice.bind(null, "to")}
-                  className="calendar--booking"
-                  shelter={shelter}
-              />
-            )}
-            <Input
-              onInputDateClick={handleCalendarDisplay.bind(null, "to")}
-              label="Départ"
-              isVisible={true}
-              className={!toIsValid && toIsTouched ? "form__input--red" : ""}
-              readOnly={true}
-              id={`to-shelter${shelter}`}
-              onBlur={toBlurHandler}
-              type="date"
-              value={dayjs(toValue).format("YYYY-MM-DD")}
-            />
-          </div>
-          <textarea
-            className={classes["form__textarea"]}
-            id={`info-shelter${shelter}`}
-            onChange={infosChangeHandler}
-            onBlur={infosBlurHandler}
-            value={infosValue}
-            rows={7}
-            cols={19}
-            maxLength={150}
-            placeholder="Information(s) complémentaire"
+          )}
+          <Input
+            onInputDateClick={handleCalendarDisplay.bind(null, "to")}
+            label="Départ"
+            isVisible={true}
+            className={!toIsValid && toIsTouched ? "form__input--red" : ""}
+            readOnly={true}
+            id={`to-shelter${shelter}`}
+            onBlur={toBlurHandler}
+            type="date"
+            value={dayjs(toValue).format("YYYY-MM-DD")}
           />
         </div>
-        <button
-          className="button"
-          disabled={!isFormValid}
-          type="submit"
-        >
-          Envoyer
-        </button>
-      </form>
-    </>
+        <textarea
+          className={classes["form__textarea"]}
+          id={`info-shelter${shelter}`}
+          onChange={infosChangeHandler}
+          onBlur={infosBlurHandler}
+          value={infosValue}
+          rows={7}
+          cols={19}
+          maxLength={150}
+          placeholder="Information(s) complémentaire"
+        />
+      </div>
+      <button
+        className="button"
+        disabled={!isFormValid}
+        type="submit"
+      >
+        Envoyer
+      </button>
+    </form>
   );
 };
 

@@ -6,7 +6,6 @@ import BookingCalendar from "../BookingCalendar";
 // types import
 import { AvailabilityProps, DisabledDatesData, HandleDateClick } from "./types";
 // other imports
-import LoaderAndAlert from "../LoaderAndAlert";
 import dayjs from "dayjs";
 import {
   deleteDateRequest,
@@ -15,17 +14,17 @@ import {
   getDatesRequest,
 } from "../../../lib/api";
 import classes from "./style.module.css";
+import { useAppDispatch } from "../../../hooks/use-store";
+import { loadingActions } from "../../../store/loading";
 
 // variable & constante
 let timer: NodeJS.Timeout;
 
 // component
 const Availability: React.FC<AvailabilityProps> = ({ className, shelter: shelterId, onDateClick, onDateChoice }) => {
-  const [loaderAndAlert, setLoaderAndAlert] = useState<JSX.Element | null>(
-    null
-  );
   const [showDoubleView, setShowDoubleView] = useState(false);
   const [disabledDates, setDisabledDates] = useState<DisabledDatesData>([])
+  const dispatch = useAppDispatch();
   const {
     sendHttpRequest: getDisabledDatesHttpRequest,
     statut: getDisabledDatesStatut,
@@ -127,22 +126,20 @@ const Availability: React.FC<AvailabilityProps> = ({ className, shelter: shelter
     } 
   }, [deleteDisabledDatesStatut]);  
 
+
+  // get disabled dates request loading handling
   useEffect(() => {
-    getDisabledDatesStatut &&
-      setLoaderAndAlert(
-        <LoaderAndAlert
-          statut={getDisabledDatesStatut}
-          message={{
-            success: null,
-            error: getDisabledDatesError,
-          }}
-        />
-      );
+    if (getDisabledDatesStatut) {
+      dispatch(loadingActions.setStatut(getDisabledDatesStatut))
+      dispatch(loadingActions.setMessage({
+        success: null,
+        error: getDisabledDatesError
+      }))
+    }
   }, [getDisabledDatesStatut]);
-  
+
   return (
     <>
-    {loaderAndAlert}
     {getDisabledDatesStatut === HTTPStateKind.SUCCESS &&
       <div className={`${classes.calendar} ${classes[className]}`}>
           <BookingCalendar

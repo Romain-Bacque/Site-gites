@@ -1,5 +1,5 @@
-import { HTTPStateKind, StatutType } from "../../../hooks/use-http";
-import { AlertKind } from "../../UI/Alert";
+import { HTTPStateKind } from "../../../hooks/use-http";
+import { AlertKind } from "../Alert";
 
 // interfaces
 export interface StatutMessage {
@@ -8,7 +8,7 @@ export interface StatutMessage {
   show: boolean;
 }
 export interface LoaderAndAlertProps {
-  statut: StatutType;
+  statut: HTTPStateKind | null;
   message?: {
     success: string | null;
     error: string | null;

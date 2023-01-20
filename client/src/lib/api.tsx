@@ -11,11 +11,16 @@ interface LoginRequestData {
   password: string;
   username: string;
 }
+interface LoginRequestReturnData {
+  userData: { username: string };
+};
 
 export const loginRequest = async (data: LoginRequestData) => {
-  const response = await axios.post("/authentification/login", data);
+  const response = await axios.post<LoginRequestReturnData>("/authentification/login", data);
 
   if (response.status !== 200) throw new Error();
+console.log(response.data.userData)
+  return response.data.userData;
 };
 
 // Register

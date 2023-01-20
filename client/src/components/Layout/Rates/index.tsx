@@ -39,7 +39,6 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
     if (!formIsValid) return;
 
     const data: RatesPutRequestData = {

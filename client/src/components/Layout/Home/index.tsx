@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useAppSelector } from "../../../hooks/use-store";
+import { useState } from "react";
 
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
@@ -8,7 +7,7 @@ import gite1_large from "../../../img/gite1_large.jpg";
 import gite2_small from "../../../img/gite2_small.jpg";
 import gite2_large from "../../../img/gite2_large.jpg";
 import { Link } from "react-router-dom";
-import Alert, { AlertKind } from "../../UI/Alert";
+import Alert from "../../UI/Alert";
 // types import
 import { AlertStatut } from "./types";
 
@@ -18,37 +17,10 @@ const initialState = {
   alert: null,
   show: false,
 };
-let isAuthStatut = false;
 
 // component
 const Home: React.FC = () => {
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
-  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    if (isAuth && isAuth !== isAuthStatut) {
-      isAuthStatut = isAuth;
-
-      setAlertStatut({
-        message: "Bienvenue !",
-        alert: AlertKind.SUCCESS,
-        show: true,
-      });
-
-      timer = setTimeout(() => {
-        setAlertStatut((prevState) => ({ ...prevState, show: false }));
-      }, 4000);
-    } else if (!isAuth) {
-      isAuthStatut = false;
-      setAlertStatut((prevState) => ({ ...prevState, show: false }));
-    }
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [isAuth]);
 
   return (
     <>

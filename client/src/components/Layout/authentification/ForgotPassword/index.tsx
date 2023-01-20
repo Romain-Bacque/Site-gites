@@ -1,27 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import useInput from "../../../../hooks/use-input";
-
 import useHttp, { HTTPStateKind } from "../../../../hooks/use-http";
+import { useAppDispatch } from "../../../../hooks/use-store";
+
 import Card from "../../../UI/Card";
 import Input from "../../Input";
 import classes from "../style.module.css";
 import { forgotPasswordRequest } from "../../../../lib/api";
-import LoaderAndAlert from "../../LoaderAndAlert";
 // types import
 import { UserData } from "./types";
-
-// variable & constante
-const initialMessageState = {
-  message: "",
-  alert: null,
-  show: false,
-};
+import { loadingActions } from "../../../../store/loading";
 
 // component
 const ForgotPassword: React.FC = () => {
-  const [loaderAndAlert, setLoaderAndAlert] = useState<JSX.Element | null>(
-    null
-  );
   const {
     sendHttpRequest: forgotPasswordHttpRequest,
     statut: forgotPasswordStatut,
@@ -35,6 +26,7 @@ const ForgotPassword: React.FC = () => {
     blurHandler: userEmailBlurHandler,
     resetHandler: userEmailResetHandler,
   } = useInput();
+  const dispatch = useAppDispatch();
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
@@ -48,61 +40,53 @@ const ForgotPassword: React.FC = () => {
     forgotPasswordHttpRequest(userData);
   };
 
-  // reset input
-  const handleServerResponse = (statut: HTTPStateKind) => {
-    if (statut === HTTPStateKind.SUCCESS) {
+  // login request loading handling
+  useEffect(() => {
+    if (forgotPasswordStatut) {
+      dispatch(loadingActions.setStatut(forgotPasswordStatut))
+      dispatch(loadingActions.setMessage({
+        success: "Envoi du mail réussi.",
+        error: forgotPasswordErrorMessage
+      }))
+    }
+    // clear input
+    if (forgotPasswordStatut === HTTPStateKind.SUCCESS) {
       userEmailResetHandler();
     }
-  };
+  }, [forgotPasswordErrorMessage])
 
-  useEffect(() => {
-    forgotPasswordStatut &&
-      setLoaderAndAlert(
-        <LoaderAndAlert
-          statut={forgotPasswordStatut}
-          onServerResponse={handleServerResponse}
-          message={{
-            success: "Envoi du mail réussi.",
-            error: forgotPasswordErrorMessage,
-          }}
-        />
-      );
-  }, [forgotPasswordStatut]);
 
-  return (
-    <>
-      {loaderAndAlert}
-      <Card className={classes.auth}>
-        <form onSubmit={submitHandler} className={classes["auth__form"]}>
-          <h3 className={classes["auth__title"]}>
-            Réinitialisation Du Mot De Passe
-          </h3>
-          <div>
-            <Input
-              label="Email"
-              isVisible={true}
-              className={
-                !userEmailIsValid && userEmailIsTouched
-                  ? "form__input--red"
-                  : ""
-              }
-              id="user-email"
-              onChange={userEmailChangeHandler}
-              onBlur={userEmailBlurHandler}
-              type="email"
-              value={userEmailValue}
-              placeholder="Taper l'adresse email ici"
-            />
-            <button
-              disabled={!userEmailIsValid}
-              className={classes["auth__button"]}
-            >
-              Envoyer un mail de réinitialisation
-            </button>
-          </div>
-        </form>
-      </Card>
-    </>
+  return (    
+    <Card className={classes.auth}>
+      <form onSubmit={submitHandler} className={classes["auth__form"]}>
+        <h3 className={classes["auth__title"]}>
+          Réinitialisation Du Mot De Passe
+        </h3>
+        <div>
+          <Input
+            label="Email"
+            isVisible={true}
+            className={
+              !userEmailIsValid && userEmailIsTouched
+                ? "form__input--red"
+                : ""
+            }
+            id="user-email"
+            onChange={userEmailChangeHandler}
+            onBlur={userEmailBlurHandler}
+            type="email"
+            value={userEmailValue}
+            placeholder="Taper l'adresse email ici"
+          />
+          <button
+            disabled={!userEmailIsValid}
+            className={classes["auth__button"]}
+          >
+            Envoyer un mail de réinitialisation
+          </button>
+        </div>
+      </form>
+    </Card>
   );
 };
 

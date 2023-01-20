@@ -1,4 +1,9 @@
 .loader-container {
+  position: fixed;
+  z-index: 2;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -20%);
   margin: 0 auto 1rem;
   display: flex;
   justify-content: center;
@@ -9,7 +14,7 @@
   border: 1px solid lightgray;
   background-color: rgba(255, 255, 255, 0.90);
   padding: 1rem;
-  max-width: 60px;
+  max-width: 60px; 
 }
 
 .loader-container .loader-container__dot {

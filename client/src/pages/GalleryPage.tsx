@@ -3,7 +3,7 @@ import useHttp from "../hooks/use-http";
 
 import { getPictureRequest } from "../lib/api";
 import Gallery from "../components/Layout/Gallery";
-import Loader from "../components/Layout/LoaderAndAlert";
+import Loader from "../components/UI/LoaderAndAlert";
 
 // component
 const GalleryPage: React.FC = () => {

@@ -20,6 +20,7 @@ const Auth: React.FC = () => {
   const {
     sendHttpRequest: loginHttpRequest,
     statut: loginStatut,
+    data: loginData,
     error: loginErrorMessage,
   } = useHttp(loginRequest);
   const {
@@ -91,10 +92,12 @@ const Auth: React.FC = () => {
 
   // login request loading handling
   useEffect(() => {
+    const userName = loginData ? loginData.username : ""
+
     if (loginStatut) {
       dispatch(loadingActions.setStatut(loginStatut))
       dispatch(loadingActions.setMessage({
-        success: null,
+        success: `Bienvenue ${userName}`,
         error: loginErrorMessage
       }))
     }

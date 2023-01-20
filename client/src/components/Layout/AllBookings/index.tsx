@@ -209,7 +209,7 @@ const AllBookings: React.FC = () => {
     if (acceptBookingStatut) {
       dispatch(loadingActions.setStatut(acceptBookingStatut))
       dispatch(loadingActions.setMessage({
-        success: "Demande refusé avec succés, verifiez votre mail de confirmation.",
+        success: "Demande accepté avec succés, verifiez votre mail de confirmation.",
         error: acceptBookingRequestError
       }))
     }

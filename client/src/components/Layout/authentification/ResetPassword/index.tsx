@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import useInput from "../../../../hooks/use-input";
 import useHttp, { HTTPStateKind } from "../../../../hooks/use-http";
 import { useParams } from "react-router-dom";
+import { useAppDispatch } from "../../../../hooks/use-store";
 // types import
 import { UserData } from "./types";
-import LoaderAndAlert from "../../LoaderAndAlert";
 // other import
 import Card from "../../../UI/Card";
 import Input from "../../Input";
@@ -13,13 +13,13 @@ import classes from "../style.module.css";
 import { resetPasswordRequest } from "../../../../lib/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { loadingActions } from "../../../../store/loading";
 
 // component
 const ResetPassword: React.FC = () => {
   const { id, token } = useParams<{ id: string; token: string }>();
-  const [loaderAndAlert, setLoaderAndAlert] = useState<JSX.Element | null>(
-    null
-  );
+  const [isPasswordMasked, setIsPasswordMasked] = useState(true);
+  const dispatch = useAppDispatch();
   const {
     sendHttpRequest: resetPasswordHttpRequest,
     statut: resetPasswordStatut,
@@ -34,7 +34,6 @@ const ResetPassword: React.FC = () => {
     resetHandler: userPasswordResetHandler,
     passwordState: userPasswordState,
   } = useInput();
-  const [isPasswordMasked, setIsPasswordMasked] = useState(true);
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
@@ -57,23 +56,22 @@ const ResetPassword: React.FC = () => {
     }
   };
 
+  // reset password request loading handling
   useEffect(() => {
-    resetPasswordStatut &&
-      setLoaderAndAlert(
-        <LoaderAndAlert
-          statut={resetPasswordStatut}
-          onServerResponse={handleServerResponse}
-          message={{
-            success: "Enregistrement réussi.",
-            error: resetPasswordErrorMessage,
-          }}
-        />
-      );
-  }, [resetPasswordStatut]);
+    if (resetPasswordStatut) {
+      dispatch(loadingActions.setStatut(resetPasswordStatut))
+      dispatch(loadingActions.setMessage({
+        success: "Enregistrement réussi.",
+        error: resetPasswordErrorMessage
+      }))
+    }
+    // if password is reset successfully, input is cleared
+    if (resetPasswordStatut === HTTPStateKind.SUCCESS) {
+      userPasswordResetHandler();
+    }
+  }, [resetPasswordStatut])
 
   return (
-    <>
-      {loaderAndAlert}
       <Card className={classes.auth}>
         <form onSubmit={submitHandler} className={classes["auth__form"]}>
           <h3 className={classes["auth__title"]}>
@@ -120,7 +118,6 @@ const ResetPassword: React.FC = () => {
           </div>
         </form>
       </Card>
-    </>
   );
 };
 

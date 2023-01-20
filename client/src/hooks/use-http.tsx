@@ -8,7 +8,6 @@ export enum HTTPStateKind {
 }
 
 // type aliases
-export type StatutType = null | HTTPStateKind;
 type HTTPRequestType = (arg: any) => Promise<any>;
 type ErrorType = string | null;
 type DataType<T> = T | null;
@@ -16,7 +15,7 @@ type ParameterType<T> = T extends (arg: infer U) => any ? U : never
 
 // interfaces
 interface HTTPState<T> {
-  statut: StatutType;
+  statut: HTTPStateKind | null;
   data: DataType<T>;
   error: ErrorType;
 }
@@ -92,7 +91,7 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T) {
             errorMessage = "Erreur dans un/plusieurs champs.";
             break;
           case 401:
-            errorMessage = "Accès non autorisé.";
+            errorMessage = "Action non autorisé.";
             break;
           case 409:
             errorMessage = "Utilisateur déjà enregistré.";

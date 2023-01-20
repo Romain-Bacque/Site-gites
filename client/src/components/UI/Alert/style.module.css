@@ -1,4 +1,9 @@
 .alert {
+  position: fixed;
+  z-index: 2;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -20%);
   display: flex;
   justify-content: space-between;
   align-items: center;

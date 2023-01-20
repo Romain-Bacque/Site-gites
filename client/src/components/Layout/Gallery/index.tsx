@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useAppSelector } from "../../../hooks/use-store";
+import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 
 import { deletePictureRequest } from "../../../lib/api";
@@ -14,9 +14,10 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import CropContent from "../CropContent";
-import Loader from "../LoaderAndAlert";
+import Loader from "../../UI/LoaderAndAlert";
 import Alert, { AlertKind } from "../../UI/Alert";
 import { AlertStatut, GalleryProps, ImagesData } from "./types";
+import { loadingActions } from "../../../store/loading";
 
 // variable & constante
 let slidesPerView = 1;
@@ -40,6 +41,7 @@ const Gallery: React.FC<GalleryProps> = ({
     sendHttpRequest: deletePictureHttpRequest,
     statut: deletePictureStatut,
     data: imagesData,
+    error: deletePictureRequestError
   } = useHttp(deletePictureRequest);
   const [imagesList, setImagesList] = useState<ImagesData>(shelterImages);
   const [urlFile, setUrlFile] = useState<string>("");
@@ -52,6 +54,7 @@ const Gallery: React.FC<GalleryProps> = ({
   });
   const imageRef = useRef<HTMLButtonElement>(null);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
+  const dispatch = useAppDispatch();
 
   const handleDeleteAlert = (value: boolean) => {
     setShowModal({
@@ -102,6 +105,11 @@ const Gallery: React.FC<GalleryProps> = ({
     setShowModal(initialModalState);
   };
 
+  const handleImagesList = (updatedList: ImagesData) => {
+    setImagesList(updatedList);
+    setShowModal(initialModalState);
+  };
+
   const handleServerResponse = useCallback(
     (statut: HTTPStateKind) => {
       if (statut === HTTPStateKind.SUCCESS) {
@@ -128,11 +136,6 @@ const Gallery: React.FC<GalleryProps> = ({
     },
     [imagesData, shelterNumber]
   );
-
-  const handleImagesList = (updatedList: ImagesData) => {
-    setImagesList(updatedList);
-    setShowModal(initialModalState);
-  };
 
   useEffect(() => {
     function handleResize() {
@@ -167,18 +170,20 @@ const Gallery: React.FC<GalleryProps> = ({
     };
   }, [alertStatut.show]);
 
+  // delete picture login request loading handling
+  useEffect(() => {
+    if(deletePictureStatut) {
+      dispatch(loadingActions.setStatut(deletePictureStatut))
+      dispatch(loadingActions.setMessage({
+        success: "Suppression réussi.",
+        error: deletePictureRequestError,
+      }))
+    }
+    deletePictureStatut && handleServerResponse(deletePictureStatut)    
+  }, [deletePictureStatut])
+
   return (
     <>
-      {showLoader && (
-        <Loader
-          statut={deletePictureStatut}
-          onServerResponse={handleServerResponse}
-          message={{
-            success: "Suppression réussi.",
-            error: "Suppression impossible.",
-          }}
-        />
-      )}
       <Modal
         show={showModal.show}
         onHide={() => {
