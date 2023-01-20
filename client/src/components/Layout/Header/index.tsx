@@ -8,7 +8,7 @@ import { authActions } from "../../../store/auth";
 import { menuActions } from "../../../store/menu";
 import { logoutRequest } from "../../../lib/api";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
-import LoaderAndAlert from "../LoaderAndAlert";
+import { loadingActions } from "../../../store/loading";
 
 // component
 const Header: React.FC = () => {
@@ -18,9 +18,6 @@ const Header: React.FC = () => {
     statut: logoutStatut,
     error: logoutErrorMessage,
   } = useHttp(logoutRequest);
-  const [loaderAndAlert, setLoaderAndAlert] = useState<JSX.Element | null>(
-    null
-  );
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const isMenuOpen = useAppSelector((state) => state.menu.isOpen);
   const dispatch = useAppDispatch();
@@ -58,6 +55,7 @@ const Header: React.FC = () => {
       sendLogoutHttpRequest();
     }
   };
+
   // logout
   useEffect(() => {
     if (logoutStatut === HTTPStateKind.SUCCESS) {
@@ -65,22 +63,18 @@ const Header: React.FC = () => {
     }
   }, [logoutStatut, dispatch]);
 
+  // loading
   useEffect(() => {
-    logoutStatut &&
-      setLoaderAndAlert(
-        <LoaderAndAlert
-          statut={logoutStatut}
-          message={{
-            success: null,
-            error: logoutErrorMessage,
-          }}
-        />
-      );
+    if (logoutStatut) {
+      dispatch(loadingActions.setStatut(logoutStatut));
+      dispatch(loadingActions.setMessage({
+        success: null,
+        error: logoutErrorMessage,
+      }));
+    }
   }, [logoutStatut]);
 
   return (
-    <>
-      {loaderAndAlert}
       <header
         className={`${scrollActive && classes["background-active"]} ${
           classes.header
@@ -174,7 +168,6 @@ const Header: React.FC = () => {
           </nav>
         </div>
       </header>
-    </>
   );
 };
 

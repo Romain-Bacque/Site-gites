@@ -1,16 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 
 import { ratesGetRequest, ratesPutRequest, RatesPutRequestData } from "../../../lib/api";
-import Loader from "../LoaderAndAlert";
-import Alert, { AlertKind } from "../../UI/Alert";
 import classes from "./style.module.css";
-import { useAppSelector } from "../../../hooks/use-store";
+import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
 // types import
 import { PriceValues, RatesProps, AlertStatut } from "./types";
-import LoaderAndAlert from "../LoaderAndAlert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
+import { loadingActions } from "../../../store/loading";
 
 // variable & constante
 const initialState = {
@@ -21,9 +19,7 @@ const initialState = {
 
 // component
 const Rates: React.FC<RatesProps> = ({ shelter }) => {
-  const [loaderAndAlert, setLoaderAndAlert] = useState<JSX.Element | null>(
-    null
-  );
+  const dispatch = useAppDispatch()
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const [priceValues, sePriceValues] = useState<PriceValues>({
     price1: 1,
@@ -93,37 +89,29 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
     };
   }, [alertStatut.show]);
 
-  // put rates
   useEffect(() => {
-    getRatesStatut &&
-      setLoaderAndAlert(
-        <LoaderAndAlert
-          statut={getRatesStatut}
-          message={{
-            success: null,
-            error: getRatesError,
-          }}
-        />
-      );
+    if (getRatesStatut) {
+      dispatch(loadingActions.setStatut(getRatesStatut));
+      dispatch(loadingActions.setMessage({
+        success: null,
+        error: getRatesError,
+      }));
+    }
   }, [getRatesStatut]);
 
-  // put rates
+  // loading
   useEffect(() => {
-    putRatesStatut &&
-      setLoaderAndAlert(
-        <LoaderAndAlert
-          statut={putRatesStatut}
-          message={{
-            success: "Prix modifiés avec succés.",
-            error: putRatesError,
-          }}
-        />
-      );
+    if (putRatesStatut) {
+      dispatch(loadingActions.setStatut(putRatesStatut));
+      dispatch(loadingActions.setMessage({
+        success: "Prix modifiés avec succés.",
+        error: putRatesError,
+      }));
+    }
   }, [putRatesStatut]);
   
   return (
     <>
-      {loaderAndAlert}
       {getRatesStatut === HTTPStateKind.SUCCESS &&
       <form className={classes.form} onSubmit={handleSubmit}>
         <div className={classes["rates__grid-container"]}>

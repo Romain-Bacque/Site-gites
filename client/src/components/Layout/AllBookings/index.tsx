@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import { useAppDispatch } from "../../../hooks/use-store";
 
 import {
   bookingsGetRequest,
@@ -7,7 +8,6 @@ import {
   refuseBookingRequest,
   bookingRequestData,
 } from "../../../lib/api";
-import Loader from "../LoaderAndAlert";
 import classes from "./style.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -41,6 +41,7 @@ import {
   ModalState,
   AlertStatut,
 } from "./types";
+import { loadingActions } from "../../../store/loading";
 
 dayjs().format();
 
@@ -59,29 +60,30 @@ const initialBookingRefState = { value: null, bookingChoice: null };
 
 // component
 const AllBookings: React.FC = () => {
-  const [allBookingsContent, setAllBookingsContent] =
-    useState<JSX.Element | null>(null);
   const [showModal, setShowModal] = useState<ModalState>(initialModalState);
   const [statutMessage, setAlertStatut] =
     useState<AlertStatut>(initialMessageState);
   const [bookingsList, setBookingsList] = useState<BookingsList>([]);
-  const [showLoader, setShowLoader] = useState(false);
   const [textareaValue, setTextareaValue] = useState("");
+  const dispatch = useAppDispatch()
 
   const bookingRef = useRef<BookingRef>(initialBookingRefState);
 
   const {
-    sendHttpRequest: bookingsHttpRequest,
-    statut: bookingsRequestStatut,
+    sendHttpRequest: getBookingsHttpRequest,
+    statut: getBookingsRequestStatut,
     data: bookingsData,
+    error: getBookingRequestError
   } = useHttp(bookingsGetRequest);
   const {
     sendHttpRequest: acceptBookingHttpRequest,
     statut: acceptBookingStatut,
+    error: acceptBookingRequestError
   } = useHttp(acceptBookingRequest);
   const {
     sendHttpRequest: refuseBookingHttpRequest,
     statut: refuseBookingStatut,
+    error: refuseBookingRequestError
   } = useHttp(refuseBookingRequest);
 
   const displayError = () => {
@@ -95,8 +97,6 @@ const AllBookings: React.FC = () => {
   const handleBookingSubmit = useCallback(
     async (event: React.FormEvent) => {
       event.preventDefault();
-
-      setShowLoader(true);
       setShowModal(initialModalState);
 
       const statutMessage =
@@ -117,7 +117,6 @@ const AllBookings: React.FC = () => {
 
         if (response.status !== 200) throw new Error();
       } catch (err) {
-        setShowLoader(false);
         displayError();
       }
 
@@ -150,17 +149,140 @@ const AllBookings: React.FC = () => {
     []
   );
 
-  const handleRequestEnd = useCallback((statut: HTTPStateKind) => {
-    if (statut === HTTPStateKind.ERROR) {
-      displayError();
-    }
-    setShowLoader(false);
-  }, []);
+  const handleSort = useCallback(
+    (sort: SortKind | null) => {
+      if (sort) {
+        const arrayToSort = bookingsList;
 
-  const handleAllBookings = useCallback(
-    (statut: HTTPStateKind) => {
-      if (statut === HTTPStateKind.SUCCESS) {
-        setAllBookingsContent(
+        arrayToSort.sort((a, b) => {
+          let result = 0;
+
+          switch (sort) {
+            case SortKind.DATE_INCREASING:
+              // valueOf() return the actual date value in milliseconds since midnight, January 1, 1970, to fit with TS constraint
+              result = new Date(a.from).valueOf() - new Date(b.from).valueOf();
+              break;
+            case SortKind.DATE_INCREASING:
+              result = new Date(b.from).valueOf() - new Date(a.from).valueOf();
+              break;
+            case SortKind.AWAITING:
+              result = new Date(a.from).valueOf() - new Date(b.from).valueOf();
+              break;
+            case SortKind.BOOKED:
+              result = +b.booked - +a.booked; // +true = 1, +false = 0
+              break;
+            default:
+              console.log("an error was occured");
+          }
+          return result;
+        });
+
+        setBookingsList(arrayToSort);
+        // handleAllBookings();
+      }
+      setShowModal(initialModalState);
+    },
+    [bookingsList]
+  );
+
+  useEffect(() => {
+    bookingsData && setBookingsList(bookingsData);
+  }, [bookingsData]);
+
+  useEffect(() => {
+    getBookingsHttpRequest();
+  }, [getBookingsHttpRequest]);
+
+  // get booking request loading statut
+  useEffect(() => {
+    if (getBookingsRequestStatut) {
+      dispatch(loadingActions.setStatut(getBookingsRequestStatut))
+      dispatch(loadingActions.setMessage({
+        success: null,
+        error: getBookingRequestError
+      }))
+    }
+  }, [getBookingsRequestStatut])
+
+  // accept booking request loading statut
+  useEffect(() => {
+    if (acceptBookingStatut) {
+      dispatch(loadingActions.setStatut(acceptBookingStatut))
+      dispatch(loadingActions.setMessage({
+        success: "Demande refusé avec succés, verifiez votre mail de confirmation.",
+        error: acceptBookingRequestError
+      }))
+    }
+  }, [acceptBookingStatut])
+
+  // refuse booking request loading statut
+  useEffect(() => {
+    if (refuseBookingStatut) {
+      dispatch(loadingActions.setStatut(refuseBookingStatut))
+      dispatch(loadingActions.setMessage({
+        success: "Demande refusé avec succés.",
+        error: refuseBookingRequestError
+      }))
+    }
+  }, [refuseBookingStatut])
+
+  return (
+    <>
+      <Modal
+        show={showModal.show}
+        onHide={() => {
+          setShowModal(initialModalState);
+        }}
+      >
+        <>
+          {showModal.booking ? (
+            <form onSubmit={handleBookingSubmit}>
+              <h3>Message à envoyer</h3>
+              <textarea rows={10} cols={25} />
+              <div>
+                <button>Envoyer</button>
+                <button type="button" onClick={handleCancel}>
+                  Annuler
+                </button>
+              </div>
+            </form>
+          ) : null}
+          {showModal.isSorted ? <Sort onSortValidation={handleSort} /> : null}
+        </>
+      </Modal>
+      <Alert
+        message={statutMessage.message}
+        alert={statutMessage.alert}
+        show={statutMessage.show}
+        onAlertClose={() =>
+          setAlertStatut((prevState) => ({ ...prevState, show: false }))
+        }
+      />
+      <section>
+        <div className={classes["bookings__title-container"]}>
+          <h2 className={classes["bookings__title"]}>{`Liste des demandes (${
+            bookingsList ? bookingsList.length : "0"
+          })`}</h2>
+          {bookingsList?.length ? (
+            <button
+              onClick={() => {
+                setShowModal({
+                  isSorted: true,
+                  booking: false,
+                  show: true,
+                });
+              }}
+              className={classes["sort-button"]}
+            >
+              <FontAwesomeIcon
+                className={classes["sort-button__icon"]}
+                icon={faSliders}
+              />
+              <span className={classes["sort-button__text"]}>Trier</span>
+            </button>
+          ) : null}
+        </div>
+        {getBookingsRequestStatut === HTTPStateKind.SUCCESS && (
           bookingsList?.length ? (
             <Swiper
               modules={[
@@ -277,160 +399,8 @@ const AllBookings: React.FC = () => {
             <p className="information message">
               Il n'y a actuellement aucune réservation.
             </p>
-          )
-        );
-      }
-    },
-    [bookingsList, handleEmailFormDisplay]
-  );
-
-  const handleSort = useCallback(
-    (sort: SortKind | null) => {
-      if (sort) {
-        const arrayToSort = bookingsList;
-
-        arrayToSort.sort((a, b) => {
-          let result = 0;
-
-          switch (sort) {
-            case SortKind.DATE_INCREASING:
-              // valueOf() return the actual date value in milliseconds since midnight, January 1, 1970, to fit with TS constraint
-              result = new Date(a.from).valueOf() - new Date(b.from).valueOf();
-              break;
-            case SortKind.DATE_INCREASING:
-              result = new Date(b.from).valueOf() - new Date(a.from).valueOf();
-              break;
-            case SortKind.AWAITING:
-              result = new Date(a.from).valueOf() - new Date(b.from).valueOf();
-              break;
-            case SortKind.BOOKED:
-              result = +b.booked - +a.booked; // +true = 1, +false = 0
-              break;
-            default:
-              console.log("an error was occured");
-          }
-          return result;
-        });
-
-        setBookingsList(arrayToSort);
-        // handleAllBookings();
-      }
-      setShowModal(initialModalState);
-    },
-    [bookingsList, handleAllBookings]
-  );
-
-  useEffect(() => {
-    bookingsData && setBookingsList(bookingsData);
-  }, [bookingsData]);
-
-  useEffect(() => {
-    bookingsHttpRequest();
-  }, [bookingsHttpRequest, acceptBookingStatut, refuseBookingStatut]);
-
-  useEffect(() => {
-    if (acceptBookingStatut === HTTPStateKind.SUCCESS) {
-      setAlertStatut({
-        message: "Demande accepté, verifiez votre mail de confirmation",
-        alert: AlertKind.SUCCESS,
-        show: true,
-      });
-    }
-  }, [acceptBookingStatut]);
-
-  useEffect(() => {
-    if (refuseBookingStatut === HTTPStateKind.SUCCESS) {
-      setAlertStatut({
-        message: "Demande refusé",
-        alert: AlertKind.INFO,
-        show: true,
-      });
-    }
-  }, [refuseBookingStatut]);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    if (statutMessage.show) {
-      timer = setTimeout(() => {
-        setAlertStatut((prevState) => ({ ...prevState, show: false }));
-      }, 4000);
-    }
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [statutMessage.show]);
-
-  return (
-    <>
-      <Modal
-        show={showModal.show}
-        onHide={() => {
-          setShowModal(initialModalState);
-        }}
-      >
-        <>
-          {showModal.booking ? (
-            <form onSubmit={handleBookingSubmit}>
-              <h3>Message à envoyer</h3>
-              <textarea rows={10} cols={25} />
-              <div>
-                <button>Envoyer</button>
-                <button type="button" onClick={handleCancel}>
-                  Annuler
-                </button>
-              </div>
-              {showLoader && (
-                <Loader
-                  statut={acceptBookingStatut}
-                  onServerResponse={handleRequestEnd}
-                />
-              )}
-            </form>
-          ) : null}
-          {showModal.isSorted ? <Sort onSortValidation={handleSort} /> : null}
-        </>
-      </Modal>
-      <Alert
-        message={statutMessage.message}
-        alert={statutMessage.alert}
-        show={statutMessage.show}
-        onAlertClose={() =>
-          setAlertStatut((prevState) => ({ ...prevState, show: false }))
-        }
-      />
-      <section>
-        {/* // error: Une erreur est survenue! Impossible d'afficher la liste des
-      demandes. */}
-        <Loader
-          statut={bookingsRequestStatut}
-          onServerResponse={handleAllBookings}
-        />
-        <div className={classes["bookings__title-container"]}>
-          <h2 className={classes["bookings__title"]}>{`Liste des demandes (${
-            bookingsList ? bookingsList.length : "0"
-          })`}</h2>
-          {bookingsList?.length ? (
-            <button
-              onClick={() => {
-                setShowModal({
-                  isSorted: true,
-                  booking: false,
-                  show: true,
-                });
-              }}
-              className={classes["sort-button"]}
-            >
-              <FontAwesomeIcon
-                className={classes["sort-button__icon"]}
-                icon={faSliders}
-              />
-              <span className={classes["sort-button__text"]}>Trier</span>
-            </button>
-          ) : null}
-        </div>
-        {allBookingsContent}
+          )   
+        )}
       </section>
     </>
   );

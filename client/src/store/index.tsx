@@ -2,9 +2,11 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import authReducer from "./auth";
 import menuReducer from "./menu";
+import loadingReducer from "./loading";
+
 
 const store = configureStore({
-  reducer: { auth: authReducer, menu: menuReducer },
+  reducer: { auth: authReducer, menu: menuReducer, loading: loadingReducer },
 });
 
 export default store;

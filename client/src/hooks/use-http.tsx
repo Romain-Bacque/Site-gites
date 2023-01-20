@@ -91,6 +91,9 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T) {
           case 400:
             errorMessage = "Erreur dans un/plusieurs champs.";
             break;
+          case 401:
+            errorMessage = "Accès non autorisé.";
+            break;
           case 409:
             errorMessage = "Utilisateur déjà enregistré.";
             break;

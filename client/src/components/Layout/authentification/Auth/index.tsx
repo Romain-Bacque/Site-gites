@@ -1,6 +1,6 @@
 import useInput from "../../../../hooks/use-input";
 import { Link, useHistory } from "react-router-dom";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import useHttp, { HTTPStateKind } from "../../../../hooks/use-http";
 import { useAppDispatch } from "../../../../hooks/use-store";
 
@@ -8,12 +8,12 @@ import Input from "../../Input";
 import Card from "../../../UI/Card";
 import classes from "../style.module.css";
 import { registerRequest, loginRequest } from "../../../../lib/api";
-import LoaderAndAlert from "../../LoaderAndAlert";
 import { authActions } from "../../../../store/auth";
 // types import
 import { LoginData } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { loadingActions } from "../../../../store/loading";
 
 // component
 const Auth: React.FC = () => {
@@ -25,7 +25,7 @@ const Auth: React.FC = () => {
   const {
     sendHttpRequest: registerHttpRequest,
     statut: registerStatut,
-    error: registerErrorMessage,
+    error: registerRequestError,
   } = useHttp(registerRequest);
   const {
     value: usernameValue,
@@ -54,9 +54,6 @@ const Auth: React.FC = () => {
   } = useInput();
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const [isNotRegistered, setIsNotRegistered] = useState(false);
-  const [loaderAndAlert, setLoaderAndAlert] = useState<JSX.Element | null>(
-    null
-  );
   const dispatch = useAppDispatch();
   const history = useHistory();
 
@@ -86,61 +83,47 @@ const Auth: React.FC = () => {
   };
 
   const handleClick = () => {
-    setLoaderAndAlert(null);
     usernameResetHandler();
     userEmailResetHandler();
     userPasswordResetHandler();
     setIsNotRegistered(!isNotRegistered);
   };
 
-  const handleServerResponse = useCallback(
-    (statut: HTTPStateKind) => {
-      if (statut === HTTPStateKind.SUCCESS) {
-        if (isNotRegistered) {
-          usernameResetHandler();
-          userEmailResetHandler();
-          userPasswordResetHandler();
-        } else {
-          dispatch(authActions.login());
-          history.replace("/");
-        }
-      }
-    },
-    [dispatch, history]
-  );
-
-  // login
+  // login request loading handling
   useEffect(() => {
-    loginStatut &&
-      setLoaderAndAlert(
-        <LoaderAndAlert
-          statut={loginStatut}
-          onServerResponse={handleServerResponse}
-          message={{
-            success: null,
-            error: loginErrorMessage,
-          }}
-        />
-      );
-  }, [loginStatut, handleServerResponse]);
+    if (loginStatut) {
+      dispatch(loadingActions.setStatut(loginStatut))
+      dispatch(loadingActions.setMessage({
+        success: null,
+        error: loginErrorMessage
+      }))
+    }
+    // if user is logged successfully, then we set 'isAuthentificated' to true in store,
+    // and redirect to home page
+    if (loginStatut === HTTPStateKind.SUCCESS && !isNotRegistered) {      
+        dispatch(authActions.login());
+        history.replace("/");
+    }
+  }, [loginStatut])
 
-  // register
+  // register request loading handling
   useEffect(() => {
-    registerStatut &&
-      setLoaderAndAlert(
-        <LoaderAndAlert
-          statut={registerStatut}
-          message={{
-            success: "Enregistrement réussi.",
-            error: registerErrorMessage,
-          }}
-        />
-      );
-  }, [registerStatut]);
+    if (registerStatut) {
+      dispatch(loadingActions.setStatut(registerStatut))
+      dispatch(loadingActions.setMessage({
+        success: "Enregistrement réussi.",
+        error: registerRequestError
+      }))
+    }
+    // if user is registered successfully, then all input are cleared
+    if (registerStatut === HTTPStateKind.SUCCESS && isNotRegistered) {
+        usernameResetHandler();
+        userEmailResetHandler();
+        userPasswordResetHandler();
+    }
+  }, [registerStatut])
 
   return (
-    <>
-      {loaderAndAlert}
       <Card className={classes.auth}>
         <form onSubmit={submitHandler} className={classes["auth__form"]}>
           <h3 className={classes["auth__title"]}>
@@ -232,7 +215,6 @@ const Auth: React.FC = () => {
           </div>
         </form>
       </Card>
-    </>
   );
 };
 

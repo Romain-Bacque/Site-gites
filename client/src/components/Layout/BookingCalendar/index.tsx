@@ -2,7 +2,7 @@
 import { useCallback } from "react";
 import { useAppSelector } from "../../../hooks/use-store";
 // component import
-import Calendar, { Detail } from "react-calendar";
+import Calendar from "react-calendar";
 // types import
 import { PlanningProps } from "./types";
 // other import

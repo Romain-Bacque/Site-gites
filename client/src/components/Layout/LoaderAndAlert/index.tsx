@@ -1,10 +1,10 @@
+// hooks import
 import { useEffect, useState } from "react";
-
-import { HTTPStateKind } from "../../../hooks/use-http";
+// components import
 import Alert, { AlertKind } from "../../UI/Alert";
 import Loader from "../../UI/Loader";
-import classes from "./style.module.css";
 // types import
+import { HTTPStateKind } from "../../../hooks/use-http";
 import { LoaderAndAlertProps, StatutMessage } from "./types";
 
 // constante & variable
@@ -16,18 +16,12 @@ const initialAlertState = {
 
 // component
 const LoaderAndAlert: React.FC<LoaderAndAlertProps> = (props) => {
-  // null is nothing, react.fragment will be an object of type fragment which will have to be created by react.
-  // so, its better to use null in useState generic union type below instead of a fragment, because using fragment is per definition slower
-  const [showLoader, setShowLoader] = useState(false);
   const [alertStatut, setAlertStatut] =
     useState<StatutMessage>(initialAlertState);
-  const { statut, onServerResponse, message } = props;
+  const { statut, message } = props;
 
   useEffect(() => {
-    if (statut === HTTPStateKind.SEND) {
-      setShowLoader(true);
-    } else if (statut === HTTPStateKind.SUCCESS) {
-      setShowLoader(false);
+    if (statut === HTTPStateKind.SUCCESS) {
       if (!message?.success) return setAlertStatut(initialAlertState);
       setAlertStatut({
         message: message.success,
@@ -35,7 +29,6 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = (props) => {
         show: true,
       });
     } else if (statut === HTTPStateKind.ERROR) {
-      setShowLoader(false);
       if (!message?.error) return setAlertStatut(initialAlertState);
       setAlertStatut({
         message: message.error,
@@ -43,7 +36,7 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = (props) => {
         show: true,
       });
     }
-  }, [statut, message, onServerResponse]);
+  }, [statut, message]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -60,16 +53,9 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = (props) => {
     };
   }, [alertStatut.show]);
 
-  useEffect(() => {
-    // We possibly execute the 'onServerResponse' function when we've got the server response
-    if (statut === HTTPStateKind.SUCCESS || statut === HTTPStateKind.ERROR) {
-      onServerResponse && onServerResponse(statut);
-    }
-  }, [statut, onServerResponse]);
-
   return (
-    <div className={classes["loader-and-alert"]}>
-      {showLoader && <Loader />}
+    <>
+      {statut === HTTPStateKind.SEND && <Loader />}
       <Alert
         message={alertStatut.message}
         alert={alertStatut.alertKind}
@@ -78,7 +64,7 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = (props) => {
           setAlertStatut((prevState) => ({ ...prevState, show: false }))
         }
       />
-    </div>
+    </>
   );
 };
 

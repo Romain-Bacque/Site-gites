@@ -9,7 +9,6 @@ export interface StatutMessage {
 }
 export interface LoaderAndAlertProps {
   statut: StatutType;
-  onServerResponse?: (statut: HTTPStateKind) => void;
   message?: {
     success: string | null;
     error: string | null;

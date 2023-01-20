@@ -5,28 +5,30 @@ import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
 import GitesItems from "../GitesItems";
-import LoaderAndAlert from "../LoaderAndAlert";
 import { getShelters } from "../../../lib/api";
+import { loadingActions } from "../../../store/loading";
+import { useAppDispatch } from "../../../hooks/use-store";
 
 // component
 const Gites: React.FC = () => {
   const [shelterList, setShelterList] = useState<JSX.Element[]>([]);
-  const [showLoader, setShowLoader] = useState(false);
+  const dispatch = useAppDispatch();
+
   const {
     sendHttpRequest: sendShelterHttpRequest,
     statut: sheltersRequestStatut,
     data: sheltersData,
+    error: sheltersRequestError
   } = useHttp(getShelters);
+
   useEffect(() => {
     sendShelterHttpRequest();
-    setShowLoader(true);
   }, []);
 
   const handleSheltersList = () => {
     if (sheltersRequestStatut === HTTPStateKind.SUCCESS && sheltersData) {
       let shelters: JSX.Element[] = [];
 
-      setShowLoader(false);
       if (typeof sheltersData === "object") {
         shelters = sheltersData
           .sort((a, b) => a.number - b.number)
@@ -46,18 +48,23 @@ const Gites: React.FC = () => {
     }
   };
 
+  // loading
+  useEffect(() => {
+    if (sheltersRequestStatut) {
+      dispatch(loadingActions.setStatut(sheltersRequestStatut));
+      dispatch(loadingActions.setMessage({
+        success: null,
+        error: sheltersRequestError,
+      }));
+
+      if(sheltersRequestStatut !== HTTPStateKind.SEND) {
+        handleSheltersList();
+      }
+    }
+  }, [sheltersRequestStatut]);
+
   return (
     <section>
-      {showLoader && (
-        <LoaderAndAlert
-          statut={sheltersRequestStatut}
-          onServerResponse={handleSheltersList}
-          message={{
-            success: null,
-            error: "Une erreur est survenue !",
-          }}
-        />
-      )}
       {shelterList}
       {sheltersRequestStatut === HTTPStateKind.ERROR &&
       <p className="text-center">Les gites sont indisponibles.</p>}
