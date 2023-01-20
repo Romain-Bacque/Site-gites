@@ -56,14 +56,14 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = (props) => {
   return (
     <>
       {statut === HTTPStateKind.SEND && <Loader />}
-      <Alert
+      {statut === HTTPStateKind.SUCCESS || statut === HTTPStateKind.ERROR && <Alert
         message={alertStatut.message}
         alert={alertStatut.alertKind}
         show={alertStatut.show}
         onAlertClose={() =>
           setAlertStatut((prevState) => ({ ...prevState, show: false }))
         }
-      />
+      />}
     </>
   );
 };
