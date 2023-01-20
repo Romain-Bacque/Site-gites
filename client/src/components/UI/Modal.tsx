@@ -1,6 +1,8 @@
 import ReactDOM from "react-dom";
 import classes from "./Modal.module.css";
 import Transition from "react-transition-group/Transition";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
 
 // interfaces
 interface ModalProps {
@@ -9,6 +11,7 @@ interface ModalProps {
   show: boolean;
 }
 interface OverlayProps {
+  onHide?: () => void;
   className: string;
   children: JSX.Element | JSX.Element[];
 }
@@ -22,6 +25,7 @@ const Modal: React.FC<ModalProps> = (props) => {
   const Overlay: React.FC<OverlayProps> = (props) => {
     return (
       <div className={`${classes.modal} ${classes[props.className]}`}>
+        <FontAwesomeIcon onClick={props.onHide} className={classes["close-button"]} icon={faClose} />
         {props.children}
       </div>
     );
@@ -45,7 +49,7 @@ const Modal: React.FC<ModalProps> = (props) => {
           document.getElementById("backdrop-root") as HTMLDivElement
         )}
         {ReactDOM.createPortal(
-          <Overlay className={"modalOpen"}>{props.children}</Overlay>,
+          <Overlay onHide={props.onHide} className={"modal-opened"}>{props.children}</Overlay>,
           document.getElementById("overlay-root") as HTMLDivElement
         )}
       </>

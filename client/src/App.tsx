@@ -25,7 +25,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     sendUserHttpRequest();
-  }, [isAuth, sendUserHttpRequest]);
+  }, []);
 
   useEffect(() => {
     if (pathname.includes("admin")) {

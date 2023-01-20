@@ -13,10 +13,6 @@ body {
   color: rgb(56, 56, 56);
 }
 
-#root {
-  min-height: 100vh;
-}
-
 body::before {
   content: "";
   position: fixed;
@@ -26,6 +22,12 @@ body::before {
   right: 0;
   background: rgb(247, 247, 247, 0.9);
   z-index: -1;
+}
+
+h3 {
+  text-transform: capitalize;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 /* main */
@@ -43,7 +45,6 @@ main {
 
 /* -- section -- */
 section {
-  padding: 0 2rem;
   margin: 5rem auto;
   width: 90%;
   max-width: 900px;
@@ -73,22 +74,36 @@ section {
 }
 
 /* -- button -- */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem;
+  margin: 1rem 1rem 0;
+}
+
 .button {
   text-transform: capitalize;
   cursor: pointer;
-  font-weight: bold;
   width: 90%;
   max-width: 500px;
   padding: 1rem;
   font-weight: bold;
-  color: rgb(72, 72, 72);
+  color: white;
+  background-color: gray;
   border: 2px solid gray;
   border-radius: 5px;
+}
+
+.button--alt {
+  color: gray;
   background: none;
 }
 
-.button:hover {
-  background-color: gray;
+.button:hover, .button:focus {
+  background-color: rgb(65, 65, 65);
+  border: 2px solid rgb(65, 65, 65);
   color: white;
 }
 

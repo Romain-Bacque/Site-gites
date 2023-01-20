@@ -163,7 +163,7 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
             <span>{priceValues.price3 && "€"}</span>
           </div>
         </div>
-        {isAuth && <button className="button">
+        {isAuth && <button className="button button--alt">
           Enregistrer les modifications
           <FontAwesomeIcon className={classes["rates__edit-icon"]} icon={faPen} />
         </button>}

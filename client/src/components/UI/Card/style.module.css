@@ -1,6 +1,5 @@
 .card {
   position: relative;
-  /* min-height: 30rem; */
   border-radius: 10px;
   box-shadow: 0 3px 15px rgba(216, 216, 216);
   background-color: rgb(255, 255, 255, 0.8);

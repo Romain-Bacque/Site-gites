@@ -43,6 +43,8 @@ const authController = {
       username: foundedUser.username 
     };
     const accessToken = generateAccessToken(user);
+    
+    if (!accessToken) throw new ExpressError('no value in accessToken const', 500)
 
     res
       .cookie("accessToken", accessToken, cookieConfig)

@@ -2,10 +2,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .bookings__title {
+  text-transform: capitalize;
   font-weight: 500;
   font-size: 2.2rem;
   color: rgb(86, 86, 86);
@@ -37,121 +38,19 @@
 }
 
 .bookings__list {
-  overflow: hidden;
-  width: 100% !important;
-  padding: 5rem 0;
+  width: 100%;
+  padding: 2rem 0 4rem;
   border-top: 1px solid rgb(200, 200, 200);
 }
 
-.booking {
-  background-color: white;
-  border: 1px solid rgb(200, 200, 200);
-  box-shadow: 0 3px 10px 3px rgba(176, 176, 176, 0.4);
+.message-form {
+  width: 100%;
+}
+
+.message-form__textarea {
+  resize: none;
+  border: 1px solid rgb(175, 175, 175);
   border-radius: 5px;
-  overflow: hidden;
-}
-
-.booking__img {
-  width: 50px;
-}
-
-.booking__title {
-  background-color: rgb(0, 0, 0, 0.5);
-  padding: 0.5rem;
-  color: white;
-}
-
-.booking__figcaption {
-  display: inline-block;
-  margin-left: 1.6rem;
-}
-
-.booking__container {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  padding: 1rem;
-}
-
-.booking__user-datas {
-  line-height: 2.2rem;
-  margin: 1rem;
-  flex: 1;
-}
-
-.booking__name {
-  margin-bottom: 0.4rem;
-  color: rgb(110, 110, 110);
-}
-
-.booking__contact,
-.booking__date {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: rgb(173, 173, 173);
-  font-size: 1.3rem;
-}
-
-.booking__informations {
-  font-size: 1.3rem;
-  color: rgb(173, 173, 173);
-  flex: 1;
-  height: 100px;
-  overflow: auto;
-  word-wrap: break-word;
-}
-
-.booking__informations-title {
-  font-size: 1.4rem;
-  color: rgb(67, 67, 67);
-  margin-bottom: 0.5rem;
-}
-
-.booking__actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-top: 1px solid rgb(188, 188, 188);
-  padding: 1rem;
-  margin: 1rem 1rem 0;
-}
-
-.booking__statut {
-  margin-top: 0.5rem;
-  border: 1px solid rgb(67, 67, 67);
-  border-radius: 5px;
-  padding: 0.2rem;
-}
-
-.booking__statut-content {
-  font-style: italic;
-  color: gray;
-}
-
-.booking__button {
-  cursor: pointer;
-  outline: none;
-  border: none;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  margin: 0.5rem;
-  color: white;
-  font-weight: 400;
-}
-
-.booking__button--accept {
-  background-color: #4e885a;
-}
-
-.booking__button--accept:hover {
-  background-color: #2e5134;
-}
-
-.booking__button--refuse {
-  background-color: #a82c30;
-}
-
-.booking__button--refuse:hover {
-  background-color: #83161c;
+  width: 100%;
+  margin-top: 1rem;
 }

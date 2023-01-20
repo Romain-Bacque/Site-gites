@@ -41,7 +41,7 @@ const Availability: React.FC<AvailabilityProps> = ({ className, shelter: shelter
     statut: postDisabledDatesStatut,
     data: postDisabledDatesData,
   } = useHttp(postDateRequest);
-
+  
   const formatDate = (date: Date) => dayjs(date).format("YYYY, MM, DD");
 
   const handleDateClick: HandleDateClick = (

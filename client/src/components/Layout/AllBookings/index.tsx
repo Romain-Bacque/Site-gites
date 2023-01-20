@@ -10,11 +10,7 @@ import {
 } from "../../../lib/api";
 import classes from "./style.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPhone,
-  faEnvelope,
-  faSliders,
-} from "@fortawesome/free-solid-svg-icons";
+import {faSliders} from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 import { emailHandler } from "../../../lib/emailjs";
 import Modal from "../../UI/Modal";
@@ -23,14 +19,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import {
   Navigation,
   Pagination,
-  Scrollbar,
-  A11y,
-  EffectCoverflow,
 } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import "swiper/css/scrollbar";
 import Alert, { AlertKind } from "../../UI/Alert";
 // types import
 import {
@@ -42,6 +34,7 @@ import {
   AlertStatut,
 } from "./types";
 import { loadingActions } from "../../../store/loading";
+import BookingCard from "./BookingCard";
 
 dayjs().format();
 
@@ -136,6 +129,7 @@ const AllBookings: React.FC = () => {
 
   const handleEmailFormDisplay: handleEmailFormDisplay = useCallback(
     (bookingChoice, data) => {
+      // Store the datas in a ref
       bookingRef.current.value = data;
       bookingRef.current.bookingChoice = bookingChoice;
 
@@ -158,7 +152,7 @@ const AllBookings: React.FC = () => {
           let result = 0;
 
           switch (sort) {
-            case SortKind.DATE_INCREASING:
+            case SortKind.DATE_DECREASING:
               // valueOf() return the actual date value in milliseconds since midnight, January 1, 1970, to fit with TS constraint
               result = new Date(a.from).valueOf() - new Date(b.from).valueOf();
               break;
@@ -172,7 +166,7 @@ const AllBookings: React.FC = () => {
               result = +b.booked - +a.booked; // +true = 1, +false = 0
               break;
             default:
-              console.log("an error was occured");
+              console.log("an error has occured.");
           }
           return result;
         });
@@ -230,18 +224,16 @@ const AllBookings: React.FC = () => {
     <>
       <Modal
         show={showModal.show}
-        onHide={() => {
-          setShowModal(initialModalState);
-        }}
+        onHide={() => setShowModal(initialModalState)}
       >
         <>
           {showModal.booking ? (
-            <form onSubmit={handleBookingSubmit}>
+            <form className={classes["message-form"]} onSubmit={handleBookingSubmit}>
               <h3>Message à envoyer</h3>
-              <textarea rows={10} cols={25} />
-              <div>
-                <button>Envoyer</button>
-                <button type="button" onClick={handleCancel}>
+              <textarea className={classes["message-form__textarea"]} rows={10} cols={25} />
+              <div className="button-container">
+                <button className="button">Envoyer</button>
+                <button className="button button--alt" type="button" onClick={handleCancel}>
                   Annuler
                 </button>
               </div>
@@ -283,120 +275,31 @@ const AllBookings: React.FC = () => {
           ) : null}
         </div>
         {getBookingsRequestStatut === HTTPStateKind.SUCCESS && (
-          bookingsList?.length ? (
+          bookingsList?.length > 0 ? (
             <Swiper
               modules={[
                 Navigation,
                 Pagination,
-                Scrollbar,
-                A11y,
-                EffectCoverflow,
               ]}
               effect="coverflow"
-              grabCursor={true}
-              centeredSlides={true}
-              spaceBetween={30}
-              coverflowEffect={{
-                rotate: 10,
-                stretch: 0,
-                depth: 25,
-                modifier: 1,
-                slideShadows: false,
-              }}
-              slidesPerView={2}
+              grabCursor
+              centeredSlides
+              spaceBetween={10}
               navigation
               pagination={{ clickable: true }}
               className={classes.bookings__list}
-            >
-              {bookingsList.length > 0 &&
-                bookingsList.map((booking) => (
-                  <SwiperSlide className={classes.booking} key={booking._id}>
-                    <h3 className={classes.booking__title}>
-                      {booking.shelter_id.title}
-                    </h3>
-                    <div className={classes.booking__container}>
-                      <div className={classes["booking__user-datas"]}>
-                        <div className={classes.booking__name}>
-                          {booking.name}
-                        </div>
-                        <div className={classes.booking__contact}>
-                          <FontAwesomeIcon icon={faPhone} />
-                          <div>{booking.phone}</div>
-                        </div>
-                        <div className={classes.booking__contact}>
-                          <FontAwesomeIcon icon={faEnvelope} />
-                          <a href={`mailto:${booking.email}`}>
-                            {booking.email}
-                          </a>
-                        </div>
-                        <div className={classes["booking__date"]}>
-                          Du {dayjs(booking.from).format("DD/MM/YYYY")}
-                        </div>
-                        <div className={classes["booking__date"]}>
-                          Au {dayjs(booking.to).format("DD/MM/YYYY")}
-                        </div>
-                        <div className={classes["booking__informations"]}>
-                          <div
-                            className={classes["booking__informations-title"]}
-                          >
-                            Informations:
-                          </div>
-                          {booking.informations
-                            ? booking.informations
-                            : "Aucune information complémentaire."}
-                        </div>
-
-                        <div className={classes["booking__statut"]}>
-                          <div>
-                            Statut:
-                            <span
-                              className={classes["booking__statut-content"]}
-                            >
-                              {booking.booked === true
-                                ? "Réservé"
-                                : "En attente"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      {!booking.booked && (
-                        <div className={classes["booking__actions"]}>
-                          <button
-                            className={`${classes["booking__button"]} ${classes["booking__button--accept"]}`}
-                            onClick={() => {
-                              handleEmailFormDisplay("accept", {
-                                bookingId: booking._id,
-                                shelter: booking.shelter_id.title,
-                                name: booking.name,
-                                from: dayjs(booking.from).format("DD/MM/YYYY"),
-                                to: dayjs(booking.to).format("DD/MM/YYYY"),
-                              });
-                            }}
-                          >
-                            Accepter
-                          </button>
-                          <button
-                            className={`${classes["booking__button"]} ${classes["booking__button--refuse"]}`}
-                            onClick={() => {
-                              handleEmailFormDisplay("refuse", {
-                                bookingId: booking._id,
-                                shelter: booking.shelter_id.title,
-                                name: booking.name,
-                                from: dayjs(booking.from).format("DD/MM/YYYY"),
-                                to: dayjs(booking.to).format("DD/MM/YYYY"),
-                              });
-                            }}
-                          >
-                            Refuser
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </SwiperSlide>
-                ))}
+            >           
+              {bookingsList.map((booking) => (
+                <SwiperSlide key={booking._id}>
+                  <BookingCard                    
+                    booking={booking}
+                    onChoice={handleEmailFormDisplay}
+                  />                  
+                </SwiperSlide>
+              ))}
             </Swiper>
           ) : (
-            <p className="information message">
+            <p className="text-center">
               Il n'y a actuellement aucune réservation.
             </p>
           )   

@@ -312,7 +312,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
         />
       </div>
       <button
-        className="button"
+        className="button button--alt"
         disabled={!isFormValid}
         type="submit"
       >
