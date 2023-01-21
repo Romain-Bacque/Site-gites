@@ -135,7 +135,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
     },
     [fromValueHandler, toValueHandler]
   );
-  
+
   useEffect(() => {
     const handleHideCalendar = () => {
       if (calendarStatus.show) {
@@ -149,31 +149,33 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
       window.removeEventListener("click", handleHideCalendar);
     };
   }, [calendarStatus.show]);
-  
-  useEffect(() => {   
+
+  useEffect(() => {
     const swalInstance = Swal.mixin({
       customClass: {
-        popup: 'popup',
-        confirmButton: 'popup__btn',
+        popup: "popup",
+        confirmButton: "popup__btn",
       },
-      buttonsStyling: false
-    })
+      buttonsStyling: false,
+    });
 
     // loader display
-    if(bookingStatut) {
-      dispatch(loadingActions.setStatut(bookingStatut))
-      dispatch(loadingActions.setMessage({
-        success: null,
-        error: null
-      }))
+    if (bookingStatut) {
+      dispatch(loadingActions.setStatut(bookingStatut));
+      dispatch(
+        loadingActions.setMessage({
+          success: null,
+          error: null,
+        })
+      );
     }
 
     // popup display
-    if (bookingStatut === HTTPStateKind.SUCCESS) {      
+    if (bookingStatut === HTTPStateKind.SUCCESS) {
       swalInstance.fire({
         title: "Demande Envoyée avec succès !",
         text: "Selon mes disponibilités, je la confirmerai par mail.",
-        icon: "success"
+        icon: "success",
       });
       resetNameHandler();
       resetEmailHandler();
@@ -186,17 +188,17 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
       swalInstance.fire({
         title: "Echec de l'envoi de la demande",
         text: "Il y a peut-être une erreur dans un/plusieurs champs.",
-        icon: "error"
+        icon: "error",
       });
-    }      
+    }
   }, [bookingStatut]);
 
   // prevent to set an arrive date > depart date
   useEffect(() => {
-    if(new Date(toValue).valueOf() <= new Date(fromValue).valueOf()) {
+    if (new Date(toValue).valueOf() <= new Date(fromValue).valueOf()) {
       fromValueHandler("");
     }
-  }, [fromValue, toValue])
+  }, [fromValue, toValue]);
 
   return (
     <form className={classes.form} onSubmit={submitHandler}>
@@ -215,9 +217,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
         <Input
           label="Email"
           isVisible={true}
-          className={
-            !emailIsValid && emailIsTouched ? "form__input--red" : ""
-          }
+          className={!emailIsValid && emailIsTouched ? "form__input--red" : ""}
           id={`email-shelter${shelter}`}
           onChange={emailChangeHandler}
           onBlur={emailBlurHandler}
@@ -228,9 +228,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
         <Input
           label="Téléphone"
           isVisible={true}
-          className={
-            !phoneIsValid && phoneIsTouched ? "form__input--red" : ""
-          }
+          className={!phoneIsValid && phoneIsTouched ? "form__input--red" : ""}
           id={`phone-shelter${shelter}`}
           onChange={phoneChangeHandler}
           onBlur={phoneBlurHandler}
@@ -272,9 +270,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
             onInputDateClick={handleCalendarDisplay.bind(null, "from")}
             label="Arrivée"
             isVisible={true}
-            className={
-              !fromIsValid && fromIsTouched ? "form__input--red" : ""
-            }
+            className={!fromIsValid && fromIsTouched ? "form__input--red" : ""}
             readOnly={true}
             id={`from-shelter${shelter}`}
             onBlur={fromBlurHandler}
@@ -290,9 +286,9 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
         >
           {calendarStatus.show && calendarStatus.input === "to" && (
             <Availability
-                onDateChoice={handleDateChoice.bind(null, "to")}
-                className="calendar--booking"
-                shelter={shelter}
+              onDateChoice={handleDateChoice.bind(null, "to")}
+              className="calendar--booking"
+              shelter={shelter}
             />
           )}
           <Input

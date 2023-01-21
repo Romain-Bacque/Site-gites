@@ -33,7 +33,7 @@ const adminController = {
       await adminController.getAllBooking(null, res);
     } else next();
   },
-  addDisabledDate: async function (req, res, next) {
+  addDisabledDate: async function (req, res) {
     const { shelterId, selectedDate } = req.body;
     const booking = new Booking({
       shelter_id: shelterId,
@@ -48,13 +48,9 @@ const adminController = {
       .where("booked")
       .equals(true);
 
-    if (disabledDates?.length) {
-      res.status(200).json({
-        disabledDates,
-      });
-    } else next();
+    res.status(200).json({ disabledDates });
   },
-  deleteDisabledDate: async function (req, res, next) {
+  deleteDisabledDate: async function (req, res) {
     const { shelterId, selectedDate } = req.body;
     const result = await Booking.deleteOne({
       $or: [{ from: selectedDate }, { to: selectedDate }],
@@ -64,17 +60,13 @@ const adminController = {
       .where("email")
       .equals(null);
 
-    if (result?.deletedCount) {
+    if (result?.deletedCount > 0) {
       const disabledDates = await Booking.find({ shelter_id: shelterId })
         .where("booked")
         .equals(true);
 
-      if (disabledDates?.length) {
-        res.status(200).json({
-          disabledDates,
-        });
-      } else next();
-    } else next();
+      res.status(200).json({ disabledDates });
+    }
   },
   getAllImages: async function (_, res, next) {
     try {
