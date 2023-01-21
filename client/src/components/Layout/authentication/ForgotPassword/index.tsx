@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import useInput from "../../../../hooks/use-input";
-import useHttp, { HTTPStateKind } from "../../../../hooks/use-http";
+import useHttp from "../../../../hooks/use-http";
 import { useAppDispatch } from "../../../../hooks/use-store";
 
 import Card from "../../../UI/Card";
@@ -10,6 +10,7 @@ import { forgotPasswordRequest } from "../../../../lib/api";
 // types import
 import { UserData } from "./types";
 import { loadingActions } from "../../../../store/loading";
+import { HTTPStateKind } from "../../../../global/types";
 
 // component
 const ForgotPassword: React.FC = () => {

@@ -1,8 +1,8 @@
 import { useReducer, useCallback } from "react";
 
 // enums
-export enum HTTPStateKind {
-  SEND = 1,
+enum HTTPStateKind {
+  PENDING = 1,
   SUCCESS,
   ERROR,
 }
@@ -40,9 +40,9 @@ function httpReducer<T>(
   const { type, value, errorMessage } = action;
 
   switch (type) {
-    case HTTPStateKind.SEND:
+    case HTTPStateKind.PENDING:
       return {
-        statut: HTTPStateKind.SEND,
+        statut: HTTPStateKind.PENDING,
         data: null,
         error: null,
       };
@@ -75,7 +75,7 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T) {
   const sendHttpRequest = useCallback(
     async (requestData?: ParameterType<T>) => {
       try {
-        dispatch({ type: HTTPStateKind.SEND });
+        dispatch({ type: HTTPStateKind.PENDING });
 
         const responseData: Awaited<ReturnType<T>> = await httpRequest(
           requestData

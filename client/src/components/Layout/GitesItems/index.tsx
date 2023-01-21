@@ -57,9 +57,9 @@ const GitesItems: React.FC<GitesItemsProps> = ({
       </div>
       <div className={classes["gites__details"]}>
         <h3 className={classes["gites__capacité-titre"]}>Capacité</h3>
-        <p className={classes["gites__capacité-texte"]}>2 personnes</p>
+        <p className={classes["gites__capacité-texte"]}>4 personnes</p>
         <h3 className={classes["gites__surface-titre"]}>Surface</h3>
-        <p className={classes["gites__surface-texte"]}>17 m2</p>
+        <p className={classes["gites__surface-texte"]}>60 m2</p>
         <h3 className={classes["gites__animaux-titre"]}>Animaux</h3>
         <p className={classes["gites__animaux-texte"]}>sous accord</p>
       </div>

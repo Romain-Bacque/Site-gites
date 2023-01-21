@@ -11,7 +11,7 @@ const catchAsync = require("../utilities/catchAsync");
 
 const router = express.Router();
 
-router.get("/userVerification", authController.authentificationToken);
+router.get("/userVerification", authController.authenticationCheck);
 router.get("/logout", authController.logout);
 router.post("/login", validate(loginSchema), catchAsync(authController.login));
 router.post(

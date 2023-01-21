@@ -5,61 +5,33 @@ const { cloudinary } = require("../utilities/cloudinary");
 const ExpressError = require("../utilities/ExpressError");
 
 const adminController = {
-  getAllBooking: async function (_, res, next) {
-    try {
-      const allBookings = await Booking.find({
-        to: { $gte: new Date() },
-      })
-        .populate("shelter_id")
-        .where("email")
-        .ne(null);
+  getAllBooking: async function (_, res) {
+    const bookings = await Booking.find({
+      to: { $gte: new Date() },
+    })
+      .populate("shelter_id")
+      .where("email")
+      .ne(null);
 
-      if (allBookings) {
-        res.status(200).json({ bookingsData: allBookings });
-      } else throw new ExpressError("Internal Server Error", 500);
-    } catch (err) {
-      debug(err);
-      next(err);
-    }
+    res.status(200).json({ bookingsData: bookings });
   },
   acceptBooking: async function (req, res, next) {
-    const bookingId = req.params.bookingId;
+    const { bookingId } = req.params;
+    const booking = await Booking.findByIdAndUpdate(bookingId,
+      { booked: true }
+    );
 
-    try {
-      assert.ok(bookingId, "bookingId doesn't not exists or is null.");
-
-      const booking = await Booking.findOneAndUpdate(
-        { _id: bookingId },
-        {
-          booked: true,
-        }
-      );
-
-      if (booking) {
-        res.sendStatus(200);
-      } else throw new ExpressError("Internal Server Error", 500);
-    } catch (err) {
-      debug(err);
-      next(err);
-    }
+    if (booking) {
+      await adminController.getAllBooking(null, res);
+    } else next();
   },
-  refuseBooking: async function (req, res, next) {
-    const bookingId = req.params.bookingId;
+  deleteBooking: async function (req, res, next) {
+    const { bookingId } = req.params;
+    const booking = await Booking.findByIdAndDelete(bookingId);
 
-    try {
-      assert.ok(bookingId, "bookingId doesn't exists or is null.");
-
-      const booking = await Booking.findOneAndDelete({
-        _id: bookingId,
-      });
-
-      if (booking) {
-        res.sendStatus(200);
-      } else throw new ExpressError("Internal Server Error", 500);
-    } catch (err) {
-      debug(err);
-      next(err);
-    }
+    if (booking) {
+      await adminController.getAllBooking(null, res);
+    } else next();
   },
   addDisabledDate: async function (req, res, next) {
     const { shelterId, selectedDate } = req.body;

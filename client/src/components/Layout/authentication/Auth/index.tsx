@@ -1,7 +1,7 @@
 import useInput from "../../../../hooks/use-input";
 import { Link, useHistory } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import useHttp, { HTTPStateKind } from "../../../../hooks/use-http";
+import useHttp from "../../../../hooks/use-http";
 import { useAppDispatch } from "../../../../hooks/use-store";
 
 import Input from "../../Input";
@@ -14,6 +14,7 @@ import { LoginData } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { loadingActions } from "../../../../store/loading";
+import { HandleLoading, HTTPStateKind } from "../../../../global/types";
 
 // component
 const Auth: React.FC = () => {
@@ -90,16 +91,20 @@ const Auth: React.FC = () => {
     setIsNotRegistered(!isNotRegistered);
   };
 
+  const handleLoading: HandleLoading = (statut, success, error) => {
+    dispatch(loadingActions.setStatut(statut))
+    dispatch(loadingActions.setMessage({
+      success,
+      error
+    }))
+  }
+
   // login request loading handling
   useEffect(() => {
     const userName = loginData ? loginData.username : ""
 
     if (loginStatut) {
-      dispatch(loadingActions.setStatut(loginStatut))
-      dispatch(loadingActions.setMessage({
-        success: `Bienvenue ${userName}`,
-        error: loginErrorMessage
-      }))
+      handleLoading(loginStatut, `Bienvenue ${userName}`, loginErrorMessage); 
     }
     // if user is logged successfully, then we set 'isAuthentificated' to true in store,
     // and redirect to home page
@@ -110,13 +115,9 @@ const Auth: React.FC = () => {
   }, [loginStatut])
 
   // register request loading handling
-  useEffect(() => {
+  useEffect(() => {    
     if (registerStatut) {
-      dispatch(loadingActions.setStatut(registerStatut))
-      dispatch(loadingActions.setMessage({
-        success: "Enregistrement réussi.",
-        error: registerRequestError
-      }))
+      handleLoading(registerStatut, "Enregistrement réussi.", registerRequestError);
     }
     // if user is registered successfully, then all input are cleared
     if (registerStatut === HTTPStateKind.SUCCESS && isNotRegistered) {

@@ -10,12 +10,12 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
-router.get("/allBooking", checkLogged, adminController.getAllBooking);
+router.get("/allBooking", checkLogged, catchAsync(adminController.getAllBooking));
 
 router
   .route("/booking/:bookingId")
-  .put(checkLogged, adminController.acceptBooking)
-  .delete(checkLogged, adminController.refuseBooking);
+  .put(checkLogged, catchAsync(adminController.acceptBooking))
+  .delete(checkLogged, catchAsync(adminController.deleteBooking));
 
 router
   .route("/gallery")

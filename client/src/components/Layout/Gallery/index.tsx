@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
-import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
 
 import { deletePictureRequest } from "../../../lib/api";
 import classes from "./style.module.css";
@@ -14,10 +14,11 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import CropContent from "../CropContent";
-import Loader from "../../UI/LoaderAndAlert";
-import Alert, { AlertKind } from "../../UI/Alert";
-import { AlertStatut, GalleryProps, ImagesData } from "./types";
+import Alert from "../../UI/Alert";
 import { loadingActions } from "../../../store/loading";
+// types import
+import { AlertStatut, GalleryProps, ImagesData } from "./types";
+import { HTTPStateKind } from "../../../global/types";
 
 // variable & constante
 let slidesPerView = 1;
@@ -91,13 +92,13 @@ const Gallery: React.FC<GalleryProps> = ({
     if (statut === HTTPStateKind.SUCCESS) {
       setAlertStatut({
         message: "Photo ajouté",
-        alert: AlertKind.INFO,
+        alert: HTTPStateKind.SUCCESS,
         show: true,
       });
     } else {
       setAlertStatut({
         message: "Echec ajout",
-        alert: AlertKind.ERROR,
+        alert: HTTPStateKind.ERROR,
         show: true,
       });
     }
@@ -121,14 +122,14 @@ const Gallery: React.FC<GalleryProps> = ({
 
         setAlertStatut({
           message: "Image supprimé",
-          alert: AlertKind.INFO,
+          alert: HTTPStateKind.SUCCESS,
           show: true,
         });
         setImagesList(filteredImagesData);
       } else if (statut === HTTPStateKind.ERROR) {
         setAlertStatut({
           message: "Echec suppression",
-          alert: AlertKind.ERROR,
+          alert: HTTPStateKind.ERROR,
           show: true,
         });
       }

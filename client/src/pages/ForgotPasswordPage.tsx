@@ -1,4 +1,4 @@
-import ForgotPassword from "../components/Layout/authentification/ForgotPassword";
+import ForgotPassword from "../components/Layout/authentication/ForgotPassword";
 
 // component
 const ForgotPasswordPage: React.FC = () => {

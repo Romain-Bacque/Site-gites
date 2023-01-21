@@ -16,7 +16,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 // component
 const App: React.FC = () => {
-  const { sendHttpRequest: sendUserHttpRequest, statut: authStatut } =
+  const { sendHttpRequest: sendUserHttpRequest } =
     useHttp(loadUserInfos);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const dispatch = useAppDispatch();

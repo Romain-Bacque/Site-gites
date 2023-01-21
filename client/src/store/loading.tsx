@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { HTTPStateKind } from "../hooks/use-http";
+import { HTTPStateKind } from "../global/types";
 
 // interfaces
 interface Message {

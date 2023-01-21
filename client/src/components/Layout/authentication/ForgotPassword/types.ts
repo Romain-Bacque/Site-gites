@@ -1,4 +1,4 @@
-import { AlertKind } from "../../../UI/Alert";
+import { HTTPStateKind } from "../../../../global/types";
 
 // interfaces
 export interface UserData {
@@ -6,6 +6,6 @@ export interface UserData {
 }
 export interface StatutMessage {
   message: null | string;
-  alert: null | AlertKind;
+  alert: null | HTTPStateKind;
   show: boolean;
 }

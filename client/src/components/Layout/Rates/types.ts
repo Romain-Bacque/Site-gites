@@ -1,9 +1,9 @@
-import { AlertKind } from "../../UI/Alert";
+import { HTTPStateKind } from "../../../global/types";
 
 // interfaces
 export interface AlertStatut {
   message: null | string;
-  alert: null | AlertKind;
+  alert: null | HTTPStateKind;
   show: boolean;
 }
 export interface RatesProps {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
 
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
@@ -8,6 +8,7 @@ import GitesItems from "../GitesItems";
 import { getShelters } from "../../../lib/api";
 import { loadingActions } from "../../../store/loading";
 import { useAppDispatch } from "../../../hooks/use-store";
+import { HTTPStateKind } from "../../../global/types";
 
 // component
 const Gites: React.FC = () => {
@@ -57,7 +58,7 @@ const Gites: React.FC = () => {
         success: null,
         error: getSheltersRequestError,
       }));
-      if(getSheltersRequestStatut !== HTTPStateKind.SEND) {
+      if(getSheltersRequestStatut !== HTTPStateKind.PENDING) {
         handleSheltersList();
       }
     }

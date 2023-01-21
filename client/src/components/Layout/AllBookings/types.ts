@@ -1,4 +1,4 @@
-import { AlertKind } from "../../UI/Alert";
+import { HTTPStateKind } from "../../../global/types";
 
 // enums
 export enum SortKind {
@@ -38,7 +38,7 @@ export type BookingsList = {
 // interfaces
 export interface AlertStatut {
   message: string;
-  alert: null | AlertKind;
+  alert: null | HTTPStateKind;
   show: boolean;
 }
 export interface ModalState {

@@ -1,7 +1,7 @@
 // hooks import
 import React, { useEffect, useState } from "react";
 import useInput from "../../../../hooks/use-input";
-import useHttp, { HTTPStateKind } from "../../../../hooks/use-http";
+import useHttp from "../../../../hooks/use-http";
 import { useParams } from "react-router-dom";
 import { useAppDispatch } from "../../../../hooks/use-store";
 // types import
@@ -14,6 +14,7 @@ import { resetPasswordRequest } from "../../../../lib/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { loadingActions } from "../../../../store/loading";
+import { HTTPStateKind } from "../../../../global/types";
 
 // component
 const ResetPassword: React.FC = () => {
@@ -47,13 +48,6 @@ const ResetPassword: React.FC = () => {
     };
 
     resetPasswordHttpRequest(userPassword);
-  };
-
-  // reset input
-  const handleServerResponse = (statut: HTTPStateKind) => {
-    if (statut === HTTPStateKind.SUCCESS) {
-      userPasswordResetHandler();
-    }
   };
 
   // reset password request loading handling

@@ -1,6 +1,6 @@
 // hooks import
 import { useEffect, useState } from "react";
-import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
 // components import
 import BookingCalendar from "../BookingCalendar";
 // types import
@@ -16,6 +16,7 @@ import {
 import classes from "./style.module.css";
 import { useAppDispatch } from "../../../hooks/use-store";
 import { loadingActions } from "../../../store/loading";
+import { HTTPStateKind } from "../../../global/types";
 
 // variable & constante
 let timer: NodeJS.Timeout;
