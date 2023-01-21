@@ -1,4 +1,4 @@
-import { HTTPStateKind } from "../../../hooks/use-http";
+import { HTTPStateKind } from "../../../global/types";
 
 // type aliases
 export type ImagesData = {

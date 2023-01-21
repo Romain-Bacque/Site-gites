@@ -50,17 +50,13 @@ const shelterController = {
           throw new ExpressError("Internal Server Error", 500);
         });
   },
-  getDisabledDates: async function (req, res, next) {
+  getDisabledDates: async function (req, res) {
     const { shelterId } = req.params;
     const disabledDates = await Booking.find({ shelter_id: shelterId })
         .where("booked")
         .equals(true);
 
-    if (disabledDates?.length) {
-      res.status(200).json({
-        disabledDates,
-      });
-    } else next();
+    res.status(200).json({ disabledDates });
   },
 };
 

@@ -11,15 +11,15 @@ interface LoginRequestData {
   password: string;
   username: string;
 }
-interface LoginRequestReturnData {
+interface LoginRequestResponseData {
   userData: { username: string };
 };
 
 export const loginRequest = async (data: LoginRequestData) => {
-  const response = await axios.post<LoginRequestReturnData>("/authentification/login", data);
+  const response = await axios.post<LoginRequestResponseData>("/authentification/login", data);
 
   if (response.status !== 200) throw new Error();
-console.log(response.data.userData)
+
   return response.data.userData;
 };
 
@@ -76,12 +76,12 @@ export const loadUserInfos = async () => {
 // // SHELTER
 
 // Get Shelters
-type getSheltersReturnData = {
+type getSheltersResponseData = {
   sheltersData: { _id: string; title: string; number: number }[];
 };
 
 export const getShelters = async () => {
-  const response = await axios.get<getSheltersReturnData>("/shelters");
+  const response = await axios.get<getSheltersResponseData>("/shelters");
 
   if (response.status !== 200) throw new Error(response.statusText);
 
@@ -91,7 +91,7 @@ export const getShelters = async () => {
 // // BOOKING
 
 // Get Bookings
-interface BookingsGetRequestReturnData {
+interface BookingsRequestResponseData {
   bookingsData: {
     _id: string;
     name: string;
@@ -103,6 +103,7 @@ interface BookingsGetRequestReturnData {
     informations: string;
     booked: boolean;
     shelter_id: {
+      _id: string;
       title: string;
       number: number;
     };
@@ -110,7 +111,7 @@ interface BookingsGetRequestReturnData {
 }
 
 export const bookingsGetRequest = async () => {
-  const response = await axios.get<BookingsGetRequestReturnData>(
+  const response = await axios.get<BookingsRequestResponseData>(
     "/admin/allBooking"
   );
 
@@ -139,20 +140,24 @@ export const bookingRequest = async (data: bookingRequestData) => {
 
 // Accept booking
 export const acceptBookingRequest = async (id: string) => {
-  const response = await axios.put(`/admin/booking/${id}`);
+  const response = await axios.put<BookingsRequestResponseData>(`/admin/booking/${id}`);
 
   if (response.status !== 200) throw new Error();
+
+  return response.data.bookingsData;
 };
 
 // Refuse booking
 export const refuseBookingRequest = async (id: string) => {
-  const response = await axios.delete(`/admin/booking/${id}`);
+  const response = await axios.delete<BookingsRequestResponseData>(`/admin/booking/${id}`);
 
   if (response.status !== 200) throw new Error();
+
+  return response.data.bookingsData;
 };
 
 // get booked dates
-export type DisabledDatesReturnData = {
+export type DisabledDatesResponseData = {
   disabledDates: {
     name: string;
     phone: string;
@@ -167,7 +172,7 @@ export type DisabledDatesReturnData = {
 };
 
 export const getDatesRequest = async (shelterId: string) => {
-  const response = await axios.get<DisabledDatesReturnData>(`/disabledDates/${shelterId}`);
+  const response = await axios.get<DisabledDatesResponseData>(`/disabledDates/${shelterId}`);
 
   if (response.status !== 200) throw new Error();
 
@@ -181,7 +186,7 @@ export interface DateRequestData {
 }
 
 export const postDateRequest = async (data: DateRequestData) => {
-  const response = await axios.post<DisabledDatesReturnData>(
+  const response = await axios.post<DisabledDatesResponseData>(
     "/admin/disabledDates",
     data
   );
@@ -193,7 +198,7 @@ export const postDateRequest = async (data: DateRequestData) => {
 
 // delete booked data
 export const deleteDateRequest = async (data: DateRequestData) => {
-  const response = await axios.delete<DisabledDatesReturnData>(
+  const response = await axios.delete<DisabledDatesResponseData>(
     '/admin/disabledDates',
     { data });
 
@@ -202,19 +207,10 @@ export const deleteDateRequest = async (data: DateRequestData) => {
   return response.data.disabledDates;
 };
 
-// delete booked date
-// export const editDateRequest = async (data) => {
-//   const response = await axios.delete("/disabledDates", data);
-
-//   if (response.status !== 200) throw new Error();
-
-//   return response.data.disabledDatesData;
-// };
-
 // // RATES
 
 // Get Rates
-interface RatesPutRequestReturnData {
+interface RatesPutRequestResponseData {
   ratesData: {
     price1: number;
     price2: number;
@@ -224,7 +220,7 @@ interface RatesPutRequestReturnData {
 }
 
 export const ratesGetRequest = async () => {
-  const response = await axios.get<RatesPutRequestReturnData>("/rates");
+  const response = await axios.get<RatesPutRequestResponseData>("/rates");
 
   if (response.status !== 200) throw new Error();
 
@@ -240,7 +236,7 @@ export interface RatesPutRequestData {
 }
 
 export const ratesPutRequest = async (data: RatesPutRequestData) => {
-  const response = await axios.put<RatesPutRequestReturnData>("/rates", data);
+  const response = await axios.put<RatesPutRequestResponseData>("/rates", data);
 
   if (response.status !== 200) throw new Error();
 };
@@ -248,7 +244,7 @@ export const ratesPutRequest = async (data: RatesPutRequestData) => {
 // // Gallery
 
 // Get Picture
-interface PictureRequestReturnData {
+interface PictureRequestResponseData {
   imagesData: {
     _id: string;
     url: string;
@@ -260,7 +256,7 @@ interface PictureRequestReturnData {
 }
 
 export const getPictureRequest = async () => {
-  const response = await axios.get<PictureRequestReturnData>(`/admin/gallery`);
+  const response = await axios.get<PictureRequestResponseData>(`/admin/gallery`);
 
   if (response.status !== 200) throw new Error();
 
@@ -269,7 +265,7 @@ export const getPictureRequest = async () => {
 
 // Add Picture
 export const postPictureRequest = async (data: FormData) => {
-  const response = await axios.post<PictureRequestReturnData>(
+  const response = await axios.post<PictureRequestResponseData>(
     "/admin/gallery",
     data,
     {
@@ -284,7 +280,7 @@ export const postPictureRequest = async (data: FormData) => {
 
 // Delete Picture
 export const deletePictureRequest = async (id: string) => {
-  const response = await axios.delete<PictureRequestReturnData>(
+  const response = await axios.delete<PictureRequestResponseData>(
     `/admin/gallery/${id}`
   );
 

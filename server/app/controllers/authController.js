@@ -5,11 +5,11 @@ const ExpressError = require("../utilities/ExpressError");
 const emailHandler = require("../utilities/emailhandler");
 const path = require("path");
 
-const cookieConfig = {
-  expires: new Date(Date.now() + 900000),
-  httpOnly: true,
-  secure: true,
-};
+const getCookieConfig = () => ({
+  expires: new Date(Date.now() + 86400000), // 86400000ms = 24h
+  httpOnly: true, // set to 'true' to prevent the use the cookie from client side directly in the js script
+  secure: true, // set to 'true' to prevent the use of the cookie without HTTPs
+});
 
 const generateAccessToken = (user) => {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
@@ -18,18 +18,15 @@ const generateAccessToken = (user) => {
 };
 
 const authController = {
-  authentificationToken: function (req, res) {
-    const token = req.cookies.accessToken;
+  authenticationCheck: function (req, res) {
+    const token = req.cookies?.accessToken;
 
-    if (!token) {
-      throw new ExpressError("access unauthorized", 401);
-    }
+    if (!token) return res.sendStatus(401);
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err) => {
       if (err) {
-        throw new ExpressError("access unauthorized", 401);
-      }
-      res.sendStatus(200);
+        res.sendStatus(401);
+      } else res.sendStatus(200);
     });
   },
   login: async function (req, res) {
@@ -43,9 +40,11 @@ const authController = {
       username: foundedUser.username 
     };
     const accessToken = generateAccessToken(user);
+    
+    if (!accessToken) throw new ExpressError('no value in accessToken const', 500)
 
     res
-      .cookie("accessToken", accessToken, cookieConfig)
+      .cookie("accessToken", accessToken, getCookieConfig())
       .status(200)
       .json({
         userData: {
@@ -53,7 +52,7 @@ const authController = {
         }
       })
   },
-  register: async function (req, res, next) {
+  register: async function (req, res) {
     const { password, username, email } = req.body;
     const userExist = await User.find({ $or: [{ username }, { email }] });
 
@@ -65,7 +64,9 @@ const authController = {
 
     const accessToken = generateAccessToken({ username, email });
 
-    res.cookie("accessToken", accessToken, cookieConfig).sendStatus(200);
+    res
+      .cookie("accessToken", accessToken, getCookieConfig())
+      .sendStatus(200);
   },
   logout: function (_, res) {
     res.clearCookie("accessToken").sendStatus(200);

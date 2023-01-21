@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
 
 import { ratesGetRequest, ratesPutRequest, RatesPutRequestData } from "../../../lib/api";
 import classes from "./style.module.css";
@@ -9,6 +9,7 @@ import { PriceValues, RatesProps, AlertStatut } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { loadingActions } from "../../../store/loading";
+import { HandleLoading, HTTPStateKind } from "../../../global/types";
 
 // variable & constante
 const initialState = {
@@ -60,6 +61,14 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
     });
   };
 
+  const handleLoading: HandleLoading = (statut, success, error) => {
+    dispatch(loadingActions.setStatut(statut))
+    dispatch(loadingActions.setMessage({
+      success,
+      error
+    }))
+  }
+
   useEffect(() => {
     if (getRatesData && typeof getRatesData === "object") {
       sePriceValues({
@@ -90,22 +99,14 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
 
   useEffect(() => {
     if (getRatesStatut) {
-      dispatch(loadingActions.setStatut(getRatesStatut));
-      dispatch(loadingActions.setMessage({
-        success: null,
-        error: getRatesError,
-      }));
+      handleLoading(getRatesStatut, null, getRatesError);
     }
   }, [getRatesStatut]);
 
-  // loading
+  // edit rates request loading statut
   useEffect(() => {
     if (putRatesStatut) {
-      dispatch(loadingActions.setStatut(putRatesStatut));
-      dispatch(loadingActions.setMessage({
-        success: "Prix modifiés avec succés.",
-        error: putRatesError,
-      }));
+      handleLoading(putRatesStatut, "Prix modifiés avec succés.", putRatesError);
     }
   }, [putRatesStatut]);
   
@@ -163,9 +164,9 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
             <span>{priceValues.price3 && "€"}</span>
           </div>
         </div>
-        {isAuth && <button className="button">
+        {isAuth && <button className="button button--alt">
           Enregistrer les modifications
-          <FontAwesomeIcon className={classes["rates__edit-icon"]} icon={faPen} />
+          <FontAwesomeIcon className="button__icon" icon={faPen} />
         </button>}
       </form>}
     {getRatesStatut === HTTPStateKind.ERROR &&

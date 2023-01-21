@@ -7,8 +7,9 @@ import classes from "./style.module.css";
 import { authActions } from "../../../store/auth";
 import { menuActions } from "../../../store/menu";
 import { logoutRequest } from "../../../lib/api";
-import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
 import { loadingActions } from "../../../store/loading";
+import { HTTPStateKind } from "../../../global/types";
 
 // component
 const Header: React.FC = () => {

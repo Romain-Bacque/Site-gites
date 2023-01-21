@@ -1,10 +1,9 @@
-import { HTTPStateKind } from "../../../hooks/use-http";
-import { AlertKind } from "../Alert";
+import { HTTPStateKind } from "../../../global/types";
 
 // interfaces
 export interface StatutMessage {
   message: string;
-  alertKind: null | AlertKind;
+  alertKind: null | HTTPStateKind;
   show: boolean;
 }
 export interface LoaderAndAlertProps {

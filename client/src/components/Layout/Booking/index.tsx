@@ -1,6 +1,6 @@
 // hooks import
 import { useCallback, useEffect, useState } from "react";
-import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
 import useInput from "../../../hooks/use-input";
 import { useAppDispatch } from "../../../hooks/use-store";
 // types import
@@ -18,6 +18,7 @@ import { bookingRequest, bookingRequestData } from "../../../lib/api";
 import classes from "./style.module.css";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
+import { HTTPStateKind } from "../../../global/types";
 
 // variable & contante
 const initialState = {
@@ -312,7 +313,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
         />
       </div>
       <button
-        className="button"
+        className="button button--alt"
         disabled={!isFormValid}
         type="submit"
       >

@@ -1,4 +1,4 @@
-import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
 import { useAppDispatch } from "../../../hooks/use-store";
 import React, { MouseEventHandler, useCallback, useEffect, useState } from "react";
 
@@ -9,6 +9,7 @@ import getCroppedImg from "./lib/cropImage";
 // types import
 import { CropContentProps } from "./types";
 import { loadingActions } from "../../../store/loading";
+import { HTTPStateKind } from "../../../global/types";
 
 let cropDatas: [string, Area];
 

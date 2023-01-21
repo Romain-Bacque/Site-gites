@@ -1,37 +1,12 @@
+// hooks import
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import useHttp, { HTTPStateKind } from "../../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
 import { useAppDispatch } from "../../../hooks/use-store";
-
-import {
-  bookingsGetRequest,
-  acceptBookingRequest,
-  refuseBookingRequest,
-  bookingRequestData,
-} from "../../../lib/api";
-import classes from "./style.module.css";
+// components import
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPhone,
-  faEnvelope,
-  faSliders,
-} from "@fortawesome/free-solid-svg-icons";
-import dayjs from "dayjs";
-import { emailHandler } from "../../../lib/emailjs";
 import Modal from "../../UI/Modal";
-import Sort from "../Sort";
 import { Swiper, SwiperSlide } from "swiper/react";
-import {
-  Navigation,
-  Pagination,
-  Scrollbar,
-  A11y,
-  EffectCoverflow,
-} from "swiper";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/scrollbar";
-import Alert, { AlertKind } from "../../UI/Alert";
+import BookingCard from "./BookingCard";
 // types import
 import {
   SortKind,
@@ -39,106 +14,134 @@ import {
   BookingsList,
   handleEmailFormDisplay,
   ModalState,
-  AlertStatut,
 } from "./types";
+import { HandleLoading, HTTPStateKind } from "../../../global/types";
+// other import
 import { loadingActions } from "../../../store/loading";
+import {
+  bookingsGetRequest,
+  acceptBookingRequest,
+  refuseBookingRequest,
+} from "../../../lib/api";
+import classes from "./style.module.css";
+import { faSliders } from "@fortawesome/free-solid-svg-icons";
+import dayjs from "dayjs";
+import { emailHandler } from "../../../lib/emailjs";
+import Sort from "../Sort";
+import { Navigation, Pagination } from "swiper";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 dayjs().format();
 
-// variable & constante
+// variables & constantes
 const initialModalState = {
   show: false,
   booking: false,
   isSorted: false,
-};
-const initialMessageState = {
-  message: "",
-  alert: null,
-  show: false,
 };
 const initialBookingRefState = { value: null, bookingChoice: null };
 
 // component
 const AllBookings: React.FC = () => {
   const [showModal, setShowModal] = useState<ModalState>(initialModalState);
-  const [statutMessage, setAlertStatut] =
-    useState<AlertStatut>(initialMessageState);
   const [bookingsList, setBookingsList] = useState<BookingsList>([]);
   const [textareaValue, setTextareaValue] = useState("");
-  const dispatch = useAppDispatch()
-
+  const dispatch = useAppDispatch();
   const bookingRef = useRef<BookingRef>(initialBookingRefState);
 
   const {
     sendHttpRequest: getBookingsHttpRequest,
     statut: getBookingsRequestStatut,
-    data: bookingsData,
-    error: getBookingRequestError
+    data: getBookingsRequestData,
+    error: getBookingRequestError,
   } = useHttp(bookingsGetRequest);
   const {
     sendHttpRequest: acceptBookingHttpRequest,
     statut: acceptBookingStatut,
-    error: acceptBookingRequestError
+    data: acceptBookingsRequestData,
+    error: acceptBookingRequestError,
   } = useHttp(acceptBookingRequest);
   const {
     sendHttpRequest: refuseBookingHttpRequest,
     statut: refuseBookingStatut,
-    error: refuseBookingRequestError
+    data: refuseBookingsRequestData,
+    error: refuseBookingRequestError,
   } = useHttp(refuseBookingRequest);
 
-  const displayError = () => {
-    setAlertStatut({
-      message: "Une erreur est survenue",
-      alert: AlertKind.ERROR,
-      show: true,
-    });
-  };
+  const handleLoading: HandleLoading = useCallback(
+    (statut, success, error) => {
+      dispatch(loadingActions.setStatut(statut));
+      dispatch(
+        loadingActions.setMessage({
+          success,
+          error,
+        })
+      );
+    },
+    [dispatch]
+  );
 
   const handleBookingSubmit = useCallback(
     async (event: React.FormEvent) => {
       event.preventDefault();
       setShowModal(initialModalState);
 
-      const statutMessage =
-        bookingRef.current.bookingChoice === "accept"
-          ? "acceptée"
-          : "malheureusement refusée";
-
-      const template = {
-        statutMessage,
-        ...bookingRef.current.value,
-        message: textareaValue,
-      };
-
-      delete template.bookingId;
-
-      try {
-        const response = await emailHandler.sendEmail(template);
-
-        if (response.status !== 200) throw new Error();
-      } catch (err) {
-        displayError();
-      }
-
       if (bookingRef.current.value) {
         if (bookingRef.current.bookingChoice === "accept") {
           acceptBookingHttpRequest(bookingRef.current.value.bookingId);
-        } else refuseBookingHttpRequest(bookingRef.current.value.bookingId);
+        } else {
+          refuseBookingHttpRequest(bookingRef.current.value.bookingId);
+        }
       }
     },
-    [acceptBookingHttpRequest, refuseBookingHttpRequest, textareaValue]
+    [acceptBookingHttpRequest, refuseBookingHttpRequest]
   );
+
+  const sendEmailToClient = useCallback(async () => {
+    const statutMessage =
+      bookingRef.current.bookingChoice === "accept"
+        ? "acceptée"
+        : "malheureusement refusée";
+
+    const template = {
+      statutMessage,
+      ...bookingRef.current.value,
+      message: textareaValue,
+    };
+
+    delete template.bookingId;
+
+    try {
+      const response = await emailHandler.sendEmail(template);
+
+      if (response.status !== 200) throw new Error();
+      handleLoading(
+        HTTPStateKind.SUCCESS,
+        "Modification enregistrée, un mail de confirmation vous a été envoyé.",
+        null
+      );
+    } catch (err) {
+      handleLoading(
+        HTTPStateKind.ERROR,
+        "Modification enregistrée, mais echec de l'envoi du mail de confirmation.",
+        null
+      );
+    }
+  }, [bookingRef, handleLoading, textareaValue]);
 
   const handleCancel = () => {
     setTextareaValue("");
     setShowModal(initialModalState);
   };
 
+  // Display the email form, then fill it out (optionnal) to send an email to the client
   const handleEmailFormDisplay: handleEmailFormDisplay = useCallback(
     (bookingChoice, data) => {
+      // Store the datas in a ref
       bookingRef.current.value = data;
       bookingRef.current.bookingChoice = bookingChoice;
-
       // Show the modal
       setShowModal({
         isSorted: false,
@@ -146,7 +149,7 @@ const AllBookings: React.FC = () => {
         show: true,
       });
     },
-    []
+    [bookingRef]
   );
 
   const handleSort = useCallback(
@@ -158,7 +161,7 @@ const AllBookings: React.FC = () => {
           let result = 0;
 
           switch (sort) {
-            case SortKind.DATE_INCREASING:
+            case SortKind.DATE_DECREASING:
               // valueOf() return the actual date value in milliseconds since midnight, January 1, 1970, to fit with TS constraint
               result = new Date(a.from).valueOf() - new Date(b.from).valueOf();
               break;
@@ -172,76 +175,100 @@ const AllBookings: React.FC = () => {
               result = +b.booked - +a.booked; // +true = 1, +false = 0
               break;
             default:
-              console.log("an error was occured");
+              console.log("an error has occured.");
           }
           return result;
         });
 
         setBookingsList(arrayToSort);
-        // handleAllBookings();
       }
       setShowModal(initialModalState);
     },
     [bookingsList]
   );
 
-  useEffect(() => {
-    bookingsData && setBookingsList(bookingsData);
-  }, [bookingsData]);
-
+  // get all bookings list
   useEffect(() => {
     getBookingsHttpRequest();
   }, [getBookingsHttpRequest]);
 
+  // refresh bookings list display on the screen
+  useEffect(() => {
+    getBookingsRequestData && setBookingsList(getBookingsRequestData);
+  }, [getBookingsRequestData]);
+
+  useEffect(() => {
+    acceptBookingsRequestData && setBookingsList(acceptBookingsRequestData);
+  }, [acceptBookingsRequestData]);
+
+  useEffect(() => {
+    refuseBookingsRequestData && setBookingsList(refuseBookingsRequestData);
+  }, [refuseBookingsRequestData]);
+
   // get booking request loading statut
   useEffect(() => {
     if (getBookingsRequestStatut) {
-      dispatch(loadingActions.setStatut(getBookingsRequestStatut))
-      dispatch(loadingActions.setMessage({
-        success: null,
-        error: getBookingRequestError
-      }))
+      handleLoading(getBookingsRequestStatut, null, getBookingRequestError);
     }
-  }, [getBookingsRequestStatut])
+  }, [getBookingsRequestStatut, getBookingRequestError, handleLoading]);
 
-  // accept booking request loading statut
+  // accept booking request handling
   useEffect(() => {
-    if (acceptBookingStatut) {
-      dispatch(loadingActions.setStatut(acceptBookingStatut))
-      dispatch(loadingActions.setMessage({
-        success: "Demande accepté avec succés, verifiez votre mail de confirmation.",
-        error: acceptBookingRequestError
-      }))
+    if (acceptBookingStatut === HTTPStateKind.PENDING) {
+      handleLoading(HTTPStateKind.PENDING, null, null);
+    } else if (acceptBookingStatut === HTTPStateKind.SUCCESS) {
+      sendEmailToClient();
+    } else if (acceptBookingStatut === HTTPStateKind.ERROR) {
+      handleLoading(acceptBookingStatut, null, acceptBookingRequestError);
     }
-  }, [acceptBookingStatut])
+  }, [
+    acceptBookingStatut,
+    acceptBookingRequestError,
+    handleLoading,
+    sendEmailToClient,
+  ]);
 
-  // refuse booking request loading statut
+  // refuse booking request handling
   useEffect(() => {
-    if (refuseBookingStatut) {
-      dispatch(loadingActions.setStatut(refuseBookingStatut))
-      dispatch(loadingActions.setMessage({
-        success: "Demande refusé avec succés.",
-        error: refuseBookingRequestError
-      }))
+    if (refuseBookingStatut === HTTPStateKind.PENDING) {
+      handleLoading(refuseBookingStatut, null, null);
+    } else if (refuseBookingStatut === HTTPStateKind.SUCCESS) {
+      sendEmailToClient();
+    } else if (refuseBookingStatut === HTTPStateKind.ERROR) {
+      handleLoading(refuseBookingStatut, null, refuseBookingRequestError);
     }
-  }, [refuseBookingStatut])
+  }, [
+    refuseBookingStatut,
+    handleLoading,
+    refuseBookingRequestError,
+    sendEmailToClient,
+  ]);
 
   return (
     <>
       <Modal
         show={showModal.show}
-        onHide={() => {
-          setShowModal(initialModalState);
-        }}
+        onHide={() => setShowModal(initialModalState)}
       >
         <>
           {showModal.booking ? (
-            <form onSubmit={handleBookingSubmit}>
-              <h3>Message à envoyer</h3>
-              <textarea rows={10} cols={25} />
-              <div>
-                <button>Envoyer</button>
-                <button type="button" onClick={handleCancel}>
+            <form
+              className={classes["message-form"]}
+              onSubmit={handleBookingSubmit}
+            >
+              <h3>Message à joindre</h3>
+              <textarea
+                className={classes["message-form__textarea"]}
+                rows={10}
+                cols={25}
+              />
+              <div className="button-container">
+                <button className="button">Envoyer</button>
+                <button
+                  className="button button--alt"
+                  type="button"
+                  onClick={handleCancel}
+                >
                   Annuler
                 </button>
               </div>
@@ -250,14 +277,6 @@ const AllBookings: React.FC = () => {
           {showModal.isSorted ? <Sort onSortValidation={handleSort} /> : null}
         </>
       </Modal>
-      <Alert
-        message={statutMessage.message}
-        alert={statutMessage.alert}
-        show={statutMessage.show}
-        onAlertClose={() =>
-          setAlertStatut((prevState) => ({ ...prevState, show: false }))
-        }
-      />
       <section>
         <div className={classes["bookings__title-container"]}>
           <h2 className={classes["bookings__title"]}>{`Liste des demandes (${
@@ -282,125 +301,32 @@ const AllBookings: React.FC = () => {
             </button>
           ) : null}
         </div>
-        {getBookingsRequestStatut === HTTPStateKind.SUCCESS && (
-          bookingsList?.length ? (
+        {getBookingsRequestStatut === HTTPStateKind.SUCCESS &&
+          (bookingsList?.length > 0 ? (
             <Swiper
-              modules={[
-                Navigation,
-                Pagination,
-                Scrollbar,
-                A11y,
-                EffectCoverflow,
-              ]}
+              modules={[Navigation, Pagination]}
               effect="coverflow"
-              grabCursor={true}
-              centeredSlides={true}
-              spaceBetween={30}
-              coverflowEffect={{
-                rotate: 10,
-                stretch: 0,
-                depth: 25,
-                modifier: 1,
-                slideShadows: false,
-              }}
-              slidesPerView={2}
+              grabCursor
+              centeredSlides
+              spaceBetween={10}
               navigation
               pagination={{ clickable: true }}
               className={classes.bookings__list}
             >
-              {bookingsList.length > 0 &&
-                bookingsList.map((booking) => (
-                  <SwiperSlide className={classes.booking} key={booking._id}>
-                    <h3 className={classes.booking__title}>
-                      {booking.shelter_id.title}
-                    </h3>
-                    <div className={classes.booking__container}>
-                      <div className={classes["booking__user-datas"]}>
-                        <div className={classes.booking__name}>
-                          {booking.name}
-                        </div>
-                        <div className={classes.booking__contact}>
-                          <FontAwesomeIcon icon={faPhone} />
-                          <div>{booking.phone}</div>
-                        </div>
-                        <div className={classes.booking__contact}>
-                          <FontAwesomeIcon icon={faEnvelope} />
-                          <a href={`mailto:${booking.email}`}>
-                            {booking.email}
-                          </a>
-                        </div>
-                        <div className={classes["booking__date"]}>
-                          Du {dayjs(booking.from).format("DD/MM/YYYY")}
-                        </div>
-                        <div className={classes["booking__date"]}>
-                          Au {dayjs(booking.to).format("DD/MM/YYYY")}
-                        </div>
-                        <div className={classes["booking__informations"]}>
-                          <div
-                            className={classes["booking__informations-title"]}
-                          >
-                            Informations:
-                          </div>
-                          {booking.informations
-                            ? booking.informations
-                            : "Aucune information complémentaire."}
-                        </div>
-
-                        <div className={classes["booking__statut"]}>
-                          <div>
-                            Statut:
-                            <span
-                              className={classes["booking__statut-content"]}
-                            >
-                              {booking.booked === true
-                                ? "Réservé"
-                                : "En attente"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      {!booking.booked && (
-                        <div className={classes["booking__actions"]}>
-                          <button
-                            className={`${classes["booking__button"]} ${classes["booking__button--accept"]}`}
-                            onClick={() => {
-                              handleEmailFormDisplay("accept", {
-                                bookingId: booking._id,
-                                shelter: booking.shelter_id.title,
-                                name: booking.name,
-                                from: dayjs(booking.from).format("DD/MM/YYYY"),
-                                to: dayjs(booking.to).format("DD/MM/YYYY"),
-                              });
-                            }}
-                          >
-                            Accepter
-                          </button>
-                          <button
-                            className={`${classes["booking__button"]} ${classes["booking__button--refuse"]}`}
-                            onClick={() => {
-                              handleEmailFormDisplay("refuse", {
-                                bookingId: booking._id,
-                                shelter: booking.shelter_id.title,
-                                name: booking.name,
-                                from: dayjs(booking.from).format("DD/MM/YYYY"),
-                                to: dayjs(booking.to).format("DD/MM/YYYY"),
-                              });
-                            }}
-                          >
-                            Refuser
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </SwiperSlide>
-                ))}
+              {bookingsList.map((booking) => (
+                <SwiperSlide key={booking._id}>
+                  <BookingCard
+                    booking={booking}
+                    onChoice={handleEmailFormDisplay}
+                  />
+                </SwiperSlide>
+              ))}
             </Swiper>
           ) : (
-            <p className="information message">
+            <p className="text-center">
               Il n'y a actuellement aucune réservation.
             </p>
-          )   
-        )}
+          ))}
       </section>
     </>
   );

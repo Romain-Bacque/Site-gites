@@ -1,19 +1,13 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "react-transition-group";
+import { HTTPStateKind } from "../../../global/types";
 import classes from "./style.module.css";
-
-// enums
-export enum AlertKind {
-  INFO,
-  SUCCESS,
-  ERROR,
-}
 
 // interfaces
 interface AlertProps {
   message: string | null;
-  alert: AlertKind | null;
+  alert: HTTPStateKind | null;
   show: boolean;
   onAlertClose: () => void;
 }
@@ -29,13 +23,10 @@ const Alert: React.FC<AlertProps> = ({
   onAlertClose,
 }) => {
   switch (alert) {
-    case AlertKind.INFO:
-      backgroundColorClass = "alert--gray";
-      break;
-    case AlertKind.SUCCESS:
+    case HTTPStateKind.SUCCESS:
       backgroundColorClass = "alert--green";
       break;
-    case AlertKind.ERROR:
+    case HTTPStateKind.ERROR:
       backgroundColorClass = "alert--red";
       break;
     default:

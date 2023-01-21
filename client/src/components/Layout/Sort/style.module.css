@@ -26,6 +26,10 @@
   padding: 0.5rem 1rem;
 }
 
+.sort__choice-button:hover, .sort__choice-button:active {
+  background-color: rgb(200, 200, 200);
+}
+
 .sort__validation-button {
   background: none;
   font-weight: bold;
