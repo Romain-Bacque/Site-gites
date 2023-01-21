@@ -21,15 +21,12 @@ const authController = {
   authenticationCheck: function (req, res) {
     const token = req.cookies?.accessToken;
 
-    if (!token) {
-      throw new ExpressError("access unauthorized", 401);
-    }
+    if (!token) return res.sendStatus(401);
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err) => {
       if (err) {
-        throw new ExpressError("access unauthorized", 401);
-      }
-      res.sendStatus(200);
+        res.sendStatus(401);
+      } else res.sendStatus(200);
     });
   },
   login: async function (req, res) {

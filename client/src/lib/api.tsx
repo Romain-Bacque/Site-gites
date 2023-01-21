@@ -69,7 +69,7 @@ export const logoutRequest = async () => {
 // Token verification
 export const loadUserInfos = async () => {
   const response = await axios.get("/authentification/userVerification");
-console.log(response)
+
   if (response.status !== 200) throw new Error();
 };
 

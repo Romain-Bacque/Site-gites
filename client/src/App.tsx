@@ -13,10 +13,11 @@ import { authActions } from "./store/auth";
 import AllBookingsPage from "./pages/AllBookingsPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import { HTTPStateKind } from "./global/types";
 
 // component
 const App: React.FC = () => {
-  const { sendHttpRequest: sendUserHttpRequest } =
+  const { sendHttpRequest: authCheckHttpRequest, statut: authCheckRequestStatut } =
     useHttp(loadUserInfos);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const dispatch = useAppDispatch();
@@ -24,8 +25,14 @@ const App: React.FC = () => {
   const pathname = history.location.pathname;
 
   useEffect(() => {
-    sendUserHttpRequest();
+    authCheckHttpRequest();
   }, []);
+
+  useEffect(() => {
+    if(authCheckRequestStatut === HTTPStateKind.SUCCESS) {
+      dispatch(authActions.login());
+    }
+  }, [authCheckRequestStatut]);
 
   useEffect(() => {
     if (pathname.includes("admin")) {
