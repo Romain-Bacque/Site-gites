@@ -191,6 +191,13 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
     }      
   }, [bookingStatut]);
 
+  // prevent to set an arrive date > depart date
+  useEffect(() => {
+    if(new Date(toValue).valueOf() <= new Date(fromValue).valueOf()) {
+      fromValueHandler("");
+    }
+  }, [fromValue, toValue])
+
   return (
     <form className={classes.form} onSubmit={submitHandler}>
       <div className={classes["form__input-container"]}>

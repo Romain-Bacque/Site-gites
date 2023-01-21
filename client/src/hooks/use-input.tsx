@@ -40,7 +40,7 @@ const inputReducer = (state: InputState, action: InputAction): InputState => {
     if (typeof action.value === "string") {
       return {
         ...state,
-        isValid: true,
+        isValid: !!action.value,
         enteredValue: action.value,
       };
     }
