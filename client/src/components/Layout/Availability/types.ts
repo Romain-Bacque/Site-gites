@@ -22,3 +22,7 @@ export interface AvailabilityProps {
   onDateClick?: (arg: Date) => void
   onDateChoice?: (date: Date) => void;
 }
+export interface DateRequestData {
+  shelterId: string;
+  selectedDate: Date;
+}

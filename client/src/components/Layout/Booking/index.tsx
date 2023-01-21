@@ -6,6 +6,7 @@ import { useAppDispatch } from "../../../hooks/use-store";
 // types import
 import {
   BookingProps,
+  bookingRequestData,
   CalendarStatus,
   HandleCalendarDisplay,
   HandleDateChoiceType,
@@ -14,7 +15,7 @@ import Availability from "../Availability";
 import { loadingActions } from "../../../store/loading";
 // other import
 import Input from "../Input";
-import { bookingRequest, bookingRequestData } from "../../../lib/api";
+import { bookingRequest } from "../../../lib/api";
 import classes from "./style.module.css";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";

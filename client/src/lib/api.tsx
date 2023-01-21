@@ -121,7 +121,7 @@ export const bookingsGetRequest = async () => {
 };
 
 // Post Booking
-export interface bookingRequestData {
+interface bookingRequestData {
   shelterId: string;
   name: string;
   phone: string;
@@ -180,7 +180,7 @@ export const getDatesRequest = async (shelterId: string) => {
 };
 
 // post booked date
-export interface DateRequestData {
+interface DateRequestData {
   shelterId: string;
   selectedDate: Date;
 }
@@ -228,7 +228,7 @@ export const ratesGetRequest = async () => {
 };
 
 // Edit Rates
-export interface RatesPutRequestData {
+interface RatesPutRequestData {
   shelterId: string;
   price1: number;
   price2: number;

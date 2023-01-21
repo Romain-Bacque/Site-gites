@@ -10,3 +10,13 @@ export interface CalendarStatus {
   show: boolean;
   input: null | string;
 }
+export interface bookingRequestData {
+  shelterId: string;
+  name: string;
+  phone: string;
+  numberOfPerson: number;
+  email: string;
+  from: string;
+  to: string;
+  informations?: string;
+}

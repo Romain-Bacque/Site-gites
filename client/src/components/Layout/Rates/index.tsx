@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 
-import { ratesGetRequest, ratesPutRequest, RatesPutRequestData } from "../../../lib/api";
+import { ratesGetRequest, ratesPutRequest } from "../../../lib/api";
 import classes from "./style.module.css";
 import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
 // types import
-import { PriceValues, RatesProps, AlertStatut } from "./types";
+import { PriceValues, RatesProps, AlertStatut, RatesPutRequestData } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { loadingActions } from "../../../store/loading";

@@ -5,7 +5,7 @@ const checkLogged = (req, res, next) => {
   const token = req.cookies?.accessToken;
 
   if (!token) {
-    return res.sendStatus(401)
+    return res.sendStatus(401);
   }
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err) => {
@@ -17,8 +17,7 @@ const checkLogged = (req, res, next) => {
   });
 };
 
-const getActivities = async (req, res) => {
-  // const { url } = req.query;
+const getActivities = async () => {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
@@ -46,7 +45,6 @@ const getActivities = async (req, res) => {
             .href,
         });
       }
-      console.log(list);
       return list;
     });
   };
@@ -56,8 +54,9 @@ const getActivities = async (req, res) => {
       await paginationButtons[i].click();
       list.push(await getActivitiesList(paginationButtons));
     }
-  } else list = await getActivitiesList(paginationButtons);
-  console.log(list);
+  } else {
+    list = await getActivitiesList(paginationButtons);
+  }
 };
 
 module.exports = {

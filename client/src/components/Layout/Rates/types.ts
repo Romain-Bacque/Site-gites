@@ -14,3 +14,10 @@ export interface PriceValues {
   price2: number;
   price3: number;
 }
+export interface RatesPutRequestData {
+  shelterId: string;
+  price1: number;
+  price2: number;
+  price3: number;
+}
+
