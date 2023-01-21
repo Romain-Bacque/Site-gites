@@ -1,28 +1,12 @@
+// hooks import
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import { useAppDispatch } from "../../../hooks/use-store";
-
-import {
-  bookingsGetRequest,
-  acceptBookingRequest,
-  refuseBookingRequest,
-} from "../../../lib/api";
-import classes from "./style.module.css";
+// components import
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faSliders} from "@fortawesome/free-solid-svg-icons";
-import dayjs from "dayjs";
-import { emailHandler } from "../../../lib/emailjs";
 import Modal from "../../UI/Modal";
-import Sort from "../Sort";
 import { Swiper, SwiperSlide } from "swiper/react";
-import {
-  Navigation,
-  Pagination,
-} from "swiper";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import Alert from "../../UI/Alert";
+import BookingCard from "./BookingCard";
 // types import
 import {
   SortKind,
@@ -30,69 +14,79 @@ import {
   BookingsList,
   handleEmailFormDisplay,
   ModalState,
-  AlertStatut,
 } from "./types";
-import { loadingActions } from "../../../store/loading";
-import BookingCard from "./BookingCard";
 import { HandleLoading, HTTPStateKind } from "../../../global/types";
+// other import
+import { loadingActions } from "../../../store/loading";
+import {
+  bookingsGetRequest,
+  acceptBookingRequest,
+  refuseBookingRequest,
+} from "../../../lib/api";
+import classes from "./style.module.css";
+import { faSliders } from "@fortawesome/free-solid-svg-icons";
+import dayjs from "dayjs";
+import { emailHandler } from "../../../lib/emailjs";
+import Sort from "../Sort";
+import { Navigation, Pagination } from "swiper";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 dayjs().format();
 
-// variable & constante
+// variables & constantes
 const initialModalState = {
   show: false,
   booking: false,
   isSorted: false,
-};
-const initialMessageState = {
-  message: "",
-  alert: null,
-  show: false,
 };
 const initialBookingRefState = { value: null, bookingChoice: null };
 
 // component
 const AllBookings: React.FC = () => {
   const [showModal, setShowModal] = useState<ModalState>(initialModalState);
-  const [statutMessage, setAlertStatut] =
-    useState<AlertStatut>(initialMessageState);
   const [bookingsList, setBookingsList] = useState<BookingsList>([]);
   const [textareaValue, setTextareaValue] = useState("");
   const dispatch = useAppDispatch();
-
   const bookingRef = useRef<BookingRef>(initialBookingRefState);
 
   const {
     sendHttpRequest: getBookingsHttpRequest,
     statut: getBookingsRequestStatut,
     data: getBookingsRequestData,
-    error: getBookingRequestError
+    error: getBookingRequestError,
   } = useHttp(bookingsGetRequest);
   const {
     sendHttpRequest: acceptBookingHttpRequest,
     statut: acceptBookingStatut,
     data: acceptBookingsRequestData,
-    error: acceptBookingRequestError
+    error: acceptBookingRequestError,
   } = useHttp(acceptBookingRequest);
   const {
     sendHttpRequest: refuseBookingHttpRequest,
     statut: refuseBookingStatut,
     data: refuseBookingsRequestData,
-    error: refuseBookingRequestError
+    error: refuseBookingRequestError,
   } = useHttp(refuseBookingRequest);
 
-  const handleLoading: HandleLoading = (statut, success, error) => {
-    dispatch(loadingActions.setStatut(statut))
-    dispatch(loadingActions.setMessage({
-      success,
-      error
-    }))
-  }
+  const handleLoading: HandleLoading = useCallback(
+    (statut, success, error) => {
+      dispatch(loadingActions.setStatut(statut));
+      dispatch(
+        loadingActions.setMessage({
+          success,
+          error,
+        })
+      );
+    },
+    [dispatch]
+  );
 
   const handleBookingSubmit = useCallback(
     async (event: React.FormEvent) => {
       event.preventDefault();
-      setShowModal(initialModalState);      
+      setShowModal(initialModalState);
 
       if (bookingRef.current.value) {
         if (bookingRef.current.bookingChoice === "accept") {
@@ -102,14 +96,14 @@ const AllBookings: React.FC = () => {
         }
       }
     },
-    [acceptBookingHttpRequest, refuseBookingHttpRequest, textareaValue]
+    [acceptBookingHttpRequest, refuseBookingHttpRequest]
   );
 
   const sendEmailToClient = useCallback(async () => {
     const statutMessage =
-        bookingRef.current.bookingChoice === "accept"
-          ? "acceptée"
-          : "malheureusement refusée";
+      bookingRef.current.bookingChoice === "accept"
+        ? "acceptée"
+        : "malheureusement refusée";
 
     const template = {
       statutMessage,
@@ -126,15 +120,16 @@ const AllBookings: React.FC = () => {
       handleLoading(
         HTTPStateKind.SUCCESS,
         "Modification enregistrée, un mail de confirmation vous a été envoyé.",
-        null);
+        null
+      );
     } catch (err) {
       handleLoading(
         HTTPStateKind.ERROR,
         "Modification enregistrée, mais echec de l'envoi du mail de confirmation.",
-        null);
+        null
+      );
     }
-
-  }, [bookingRef])
+  }, [bookingRef, handleLoading, textareaValue]);
 
   const handleCancel = () => {
     setTextareaValue("");
@@ -147,7 +142,6 @@ const AllBookings: React.FC = () => {
       // Store the datas in a ref
       bookingRef.current.value = data;
       bookingRef.current.bookingChoice = bookingChoice;
-
       // Show the modal
       setShowModal({
         isSorted: false,
@@ -155,7 +149,7 @@ const AllBookings: React.FC = () => {
         show: true,
       });
     },
-    []
+    [bookingRef]
   );
 
   const handleSort = useCallback(
@@ -192,7 +186,7 @@ const AllBookings: React.FC = () => {
     },
     [bookingsList]
   );
-  
+
   // get all bookings list
   useEffect(() => {
     getBookingsHttpRequest();
@@ -214,22 +208,27 @@ const AllBookings: React.FC = () => {
   // get booking request loading statut
   useEffect(() => {
     if (getBookingsRequestStatut) {
-      handleLoading(getBookingsRequestStatut, null, getBookingRequestError);     
+      handleLoading(getBookingsRequestStatut, null, getBookingRequestError);
     }
-  }, [getBookingsRequestStatut])
+  }, [getBookingsRequestStatut, getBookingRequestError, handleLoading]);
 
-  // accept booking request loading handling
+  // accept booking request handling
   useEffect(() => {
     if (acceptBookingStatut === HTTPStateKind.PENDING) {
-      handleLoading(acceptBookingStatut, null, null);
+      handleLoading(HTTPStateKind.PENDING, null, null);
     } else if (acceptBookingStatut === HTTPStateKind.SUCCESS) {
       sendEmailToClient();
     } else if (acceptBookingStatut === HTTPStateKind.ERROR) {
       handleLoading(acceptBookingStatut, null, acceptBookingRequestError);
-    }      
-  }, [acceptBookingStatut]);
+    }
+  }, [
+    acceptBookingStatut,
+    acceptBookingRequestError,
+    handleLoading,
+    sendEmailToClient,
+  ]);
 
-  // refuse booking request loading handling
+  // refuse booking request handling
   useEffect(() => {
     if (refuseBookingStatut === HTTPStateKind.PENDING) {
       handleLoading(refuseBookingStatut, null, null);
@@ -237,8 +236,13 @@ const AllBookings: React.FC = () => {
       sendEmailToClient();
     } else if (refuseBookingStatut === HTTPStateKind.ERROR) {
       handleLoading(refuseBookingStatut, null, refuseBookingRequestError);
-    }      
-  }, [refuseBookingStatut]);
+    }
+  }, [
+    refuseBookingStatut,
+    handleLoading,
+    refuseBookingRequestError,
+    sendEmailToClient,
+  ]);
 
   return (
     <>
@@ -248,12 +252,23 @@ const AllBookings: React.FC = () => {
       >
         <>
           {showModal.booking ? (
-            <form className={classes["message-form"]} onSubmit={handleBookingSubmit}>
+            <form
+              className={classes["message-form"]}
+              onSubmit={handleBookingSubmit}
+            >
               <h3>Message à joindre</h3>
-              <textarea className={classes["message-form__textarea"]} rows={10} cols={25} />
+              <textarea
+                className={classes["message-form__textarea"]}
+                rows={10}
+                cols={25}
+              />
               <div className="button-container">
                 <button className="button">Envoyer</button>
-                <button className="button button--alt" type="button" onClick={handleCancel}>
+                <button
+                  className="button button--alt"
+                  type="button"
+                  onClick={handleCancel}
+                >
                   Annuler
                 </button>
               </div>
@@ -262,14 +277,6 @@ const AllBookings: React.FC = () => {
           {showModal.isSorted ? <Sort onSortValidation={handleSort} /> : null}
         </>
       </Modal>
-      <Alert
-        message={statutMessage.message}
-        alert={statutMessage.alert}
-        show={statutMessage.show}
-        onAlertClose={() =>
-          setAlertStatut((prevState) => ({ ...prevState, show: false }))
-        }
-      />
       <section>
         <div className={classes["bookings__title-container"]}>
           <h2 className={classes["bookings__title"]}>{`Liste des demandes (${
@@ -294,13 +301,10 @@ const AllBookings: React.FC = () => {
             </button>
           ) : null}
         </div>
-        {getBookingsRequestStatut === HTTPStateKind.SUCCESS && (
-          bookingsList?.length > 0 ? (
+        {getBookingsRequestStatut === HTTPStateKind.SUCCESS &&
+          (bookingsList?.length > 0 ? (
             <Swiper
-              modules={[
-                Navigation,
-                Pagination,
-              ]}
+              modules={[Navigation, Pagination]}
               effect="coverflow"
               grabCursor
               centeredSlides
@@ -308,13 +312,13 @@ const AllBookings: React.FC = () => {
               navigation
               pagination={{ clickable: true }}
               className={classes.bookings__list}
-            >           
+            >
               {bookingsList.map((booking) => (
                 <SwiperSlide key={booking._id}>
-                  <BookingCard                    
+                  <BookingCard
                     booking={booking}
                     onChoice={handleEmailFormDisplay}
-                  />                  
+                  />
                 </SwiperSlide>
               ))}
             </Swiper>
@@ -322,8 +326,7 @@ const AllBookings: React.FC = () => {
             <p className="text-center">
               Il n'y a actuellement aucune réservation.
             </p>
-          )   
-        )}
+          ))}
       </section>
     </>
   );

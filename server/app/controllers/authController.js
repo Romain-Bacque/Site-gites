@@ -40,7 +40,6 @@ const authController = {
       username: foundedUser.username 
     };
     const accessToken = generateAccessToken(user);
-    debug(accessToken);
     
     if (!accessToken) throw new ExpressError('no value in accessToken const', 500)
 

@@ -17,9 +17,9 @@ const adminController = {
   },
   acceptBooking: async function (req, res, next) {
     const { bookingId } = req.params;
-    const booking = await Booking.findByIdAndUpdate(bookingId,
-      { booked: true }
-    );
+    const booking = await Booking.findByIdAndUpdate(bookingId, {
+      booked: true,
+    });
 
     if (booking) {
       await adminController.getAllBooking(null, res);
@@ -45,8 +45,8 @@ const adminController = {
     await booking.save();
 
     const disabledDates = await Booking.find({ shelter_id: shelterId })
-        .where("booked")
-        .equals(true);
+      .where("booked")
+      .equals(true);
 
     if (disabledDates?.length) {
       res.status(200).json({
@@ -56,16 +56,18 @@ const adminController = {
   },
   deleteDisabledDate: async function (req, res, next) {
     const { shelterId, selectedDate } = req.body;
-    const result = await Booking.deleteOne(
-        { $or: [{ from: selectedDate }, { to: selectedDate }] }
-      )
-        .where("shelter_id").equals(shelterId)
-        .where("email").equals(null);
-        
-    if(result?.deletedCount) {
+    const result = await Booking.deleteOne({
+      $or: [{ from: selectedDate }, { to: selectedDate }],
+    })
+      .where("shelter_id")
+      .equals(shelterId)
+      .where("email")
+      .equals(null);
+
+    if (result?.deletedCount) {
       const disabledDates = await Booking.find({ shelter_id: shelterId })
-      .where("booked")
-          .equals(true);
+        .where("booked")
+        .equals(true);
 
       if (disabledDates?.length) {
         res.status(200).json({
