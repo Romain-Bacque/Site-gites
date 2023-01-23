@@ -83,6 +83,10 @@ section {
   margin: 1rem 1rem 0;
 }
 
+.button-container--alt {
+  justify-content: space-between;
+}
+
 .button {
   text-transform: capitalize;
   cursor: pointer;

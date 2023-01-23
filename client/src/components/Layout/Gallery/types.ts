@@ -1,5 +1,13 @@
 import { HTTPStateKind } from "../../../global/types";
 
+// type aliases
+export type ImagesData = {
+  _id: string;
+  url: string;
+  filename: string;
+  shelter_id: string;
+}[];
+
 // interfaces
 export interface AlertStatut {
   message: null | string;
@@ -7,23 +15,7 @@ export interface AlertStatut {
   show: boolean;
 }
 export interface GalleryProps {
-  imagesData: {
-    _id: string;
-    url: string;
-    filename: string;
-    shelter_id: {
-      number: number;
-    };
-  }[];
-  shelterNumber: number;
+  imagesData: ImagesData;
+  shelterTitle: string;
+  shelterId: string;
 }
-
-// type aliases
-export type ImagesData = {
-  _id: string;
-  url: string;
-  filename: string;
-  shelter_id: {
-    number: number;
-  };
-}[];

@@ -5,34 +5,63 @@ import useHttp from "./hooks/use-http";
 import { Route, Redirect, Switch, useHistory } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import HomePage from "./pages/HomePage";
-import GitesPage from "./pages/GitesPage";
+import SheltersPage from "./pages/SheltersPage";
 import GalleryPage from "./pages/GalleryPage";
 import AuthPage from "./pages/AuthPage";
-import { loadUserInfos } from "./lib/api";
+import { getShelters, loadUserInfos } from "./lib/api";
 import { authActions } from "./store/auth";
 import AllBookingsPage from "./pages/AllBookingsPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { HTTPStateKind } from "./global/types";
+import { loadingActions } from "./store/loading";
 
 // component
 const App: React.FC = () => {
-  const { sendHttpRequest: authCheckHttpRequest, statut: authCheckRequestStatut } =
-    useHttp(loadUserInfos);
+  const {
+    sendHttpRequest: authCheckHttpRequest,
+    statut: authCheckRequestStatut,
+  } = useHttp(loadUserInfos);
+  const {
+    sendHttpRequest: getShelterHttpRequest,
+    statut: getSheltersRequestStatut,
+    data: sheltersData,
+    error: getSheltersRequestError,
+  } = useHttp(getShelters);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const dispatch = useAppDispatch();
   const history = useHistory();
   const pathname = history.location.pathname;
 
+  // check user auth token validity
   useEffect(() => {
     authCheckHttpRequest();
   }, []);
 
+  // fetch all shelters
   useEffect(() => {
-    if(authCheckRequestStatut === HTTPStateKind.SUCCESS) {
+    getShelterHttpRequest();
+  }, []);
+
+  // 'isAuthentificated' store state property is set to true if user is authenticated
+  useEffect(() => {
+    if (authCheckRequestStatut === HTTPStateKind.SUCCESS) {
       dispatch(authActions.login());
     }
   }, [authCheckRequestStatut]);
+
+  // shelters request loading handling
+  useEffect(() => {
+    if (getSheltersRequestStatut) {
+      dispatch(loadingActions.setStatut(getSheltersRequestStatut));
+      dispatch(
+        loadingActions.setMessage({
+          success: null,
+          error: getSheltersRequestError,
+        })
+      );
+    }
+  }, [getSheltersRequestStatut]);
 
   useEffect(() => {
     if (pathname.includes("admin")) {
@@ -67,13 +96,10 @@ const App: React.FC = () => {
           </Route>
         )}
         <Route path="/gites" exact>
-          <GitesPage />
-        </Route>
-        <Route path="/gites/:giteId">
-          <GitesPage />
+          <SheltersPage sheltersData={sheltersData} />
         </Route>
         <Route path="/albums">
-          <GalleryPage />
+          <GalleryPage sheltersData={sheltersData} />
         </Route>
         <Route path="/authentification">
           <AuthPage />

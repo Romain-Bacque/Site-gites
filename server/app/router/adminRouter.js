@@ -19,7 +19,7 @@ router
 
 router
   .route("/gallery")
-  .get(catchAsync(adminController.getAllImages))
+  .get(catchAsync(adminController.getImages))
   .post(
     checkLogged,
     upload.single("file"),

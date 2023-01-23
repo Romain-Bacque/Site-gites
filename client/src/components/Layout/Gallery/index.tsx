@@ -2,10 +2,10 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
 import useHttp from "../../../hooks/use-http";
 
-import { deletePictureRequest } from "../../../lib/api";
+import { deletePictureRequest, postPictureRequest } from "../../../lib/api";
 import classes from "./style.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faAdd, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../../UI/Modal";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -14,11 +14,11 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import CropContent from "../CropContent";
-import Alert from "../../UI/Alert";
 import { loadingActions } from "../../../store/loading";
 // types import
 import { AlertStatut, GalleryProps, ImagesData } from "./types";
-import { HTTPStateKind } from "../../../global/types";
+import { HandleLoading } from "../../../global/types";
+import Card from "../../UI/Card";
 
 // variable & constante
 let slidesPerView = 1;
@@ -35,19 +35,25 @@ const initialModalState = {
 
 // component
 const Gallery: React.FC<GalleryProps> = ({
+  shelterId,
+  shelterTitle,
   imagesData: shelterImages,
-  shelterNumber,
 }) => {
+  const {
+    sendHttpRequest: postPictureHttpRequest,
+    statut: postPictureStatut,
+    data: postPictureRequestData,
+    error: postPictureRequestError,
+  } = useHttp(postPictureRequest);
   const {
     sendHttpRequest: deletePictureHttpRequest,
     statut: deletePictureStatut,
-    data: imagesData,
-    error: deletePictureRequestError
+    data: deletePictureRequestData,
+    error: deletePictureRequestError,
   } = useHttp(deletePictureRequest);
   const [imagesList, setImagesList] = useState<ImagesData>(shelterImages);
   const [urlFile, setUrlFile] = useState<string>("");
   const [showModal, setShowModal] = useState(initialModalState);
-  const [showLoader, setShowLoader] = useState(false);
   const [alertStatut, setAlertStatut] =
     useState<AlertStatut>(initialMessageState);
   const [dimensions, setDimensions] = useState({
@@ -67,11 +73,15 @@ const Gallery: React.FC<GalleryProps> = ({
 
   const handleDeleteImage = () => {
     setShowModal(initialModalState);
-    setShowLoader(true);
 
     const imageId = imageRef.current?.dataset.imageId;
 
     imageId && deletePictureHttpRequest(imageId);
+  };
+
+  const handlePostImage = (imagesData: FormData) => {
+    setShowModal(initialModalState);
+    postPictureHttpRequest(imagesData);
   };
 
   const handleFileValueChange: React.ChangeEventHandler<HTMLInputElement> = (
@@ -88,55 +98,49 @@ const Gallery: React.FC<GalleryProps> = ({
     }
   };
 
-  const handleCropRequestEnd = (statut: HTTPStateKind) => {
-    if (statut === HTTPStateKind.SUCCESS) {
-      setAlertStatut({
-        message: "Photo ajouté",
-        alert: HTTPStateKind.SUCCESS,
-        show: true,
-      });
-    } else {
-      setAlertStatut({
-        message: "Echec ajout",
-        alert: HTTPStateKind.ERROR,
-        show: true,
-      });
-    }
-
-    setShowModal(initialModalState);
-  };
-
-  const handleImagesList = (updatedList: ImagesData) => {
-    setImagesList(updatedList);
-    setShowModal(initialModalState);
-  };
-
-  const handleServerResponse = useCallback(
-    (statut: HTTPStateKind) => {
-      if (statut === HTTPStateKind.SUCCESS) {
-        const filteredImagesData = imagesData
-          ? imagesData.filter(
-              (image) => shelterNumber === +image.shelter_id?.number
-            )
-          : [];
-
-        setAlertStatut({
-          message: "Image supprimé",
-          alert: HTTPStateKind.SUCCESS,
-          show: true,
-        });
-        setImagesList(filteredImagesData);
-      } else if (statut === HTTPStateKind.ERROR) {
-        setAlertStatut({
-          message: "Echec suppression",
-          alert: HTTPStateKind.ERROR,
-          show: true,
-        });
-      }
-      setShowLoader(false);
+  const handleLoading: HandleLoading = useCallback(
+    (statut, success, error) => {
+      dispatch(loadingActions.setStatut(statut));
+      dispatch(
+        loadingActions.setMessage({
+          success,
+          error,
+        })
+      );
     },
-    [imagesData, shelterNumber]
+    [dispatch]
   );
+
+  // refresh pictures display on the screen
+  useEffect(() => {
+    deletePictureRequestData && setImagesList(deletePictureRequestData);
+  }, [deletePictureRequestData]);
+
+  useEffect(() => {
+    postPictureRequestData && setImagesList(postPictureRequestData);
+  }, [postPictureRequestData]);
+
+  // delete picture request handling
+  useEffect(() => {
+    if (deletePictureStatut) {
+      handleLoading(
+        deletePictureStatut,
+        "Image supprimé.",
+        deletePictureRequestError
+      );
+    }
+  }, [deletePictureStatut, deletePictureRequestError, handleLoading]);
+
+  // add picture request handling
+  useEffect(() => {
+    if (postPictureStatut) {
+      handleLoading(
+        postPictureStatut,
+        "Image ajouté.",
+        postPictureRequestError
+      );
+    }
+  }, [handleLoading, postPictureStatut, postPictureRequestError]);
 
   useEffect(() => {
     function handleResize() {
@@ -171,17 +175,36 @@ const Gallery: React.FC<GalleryProps> = ({
     };
   }, [alertStatut.show]);
 
-  // delete picture login request loading handling
+  // delete picture request loading handling
   useEffect(() => {
-    if(deletePictureStatut) {
-      dispatch(loadingActions.setStatut(deletePictureStatut))
-      dispatch(loadingActions.setMessage({
-        success: "Suppression réussi.",
-        error: deletePictureRequestError,
-      }))
+    if (deletePictureStatut) {
+      dispatch(loadingActions.setStatut(deletePictureStatut));
+      dispatch(
+        loadingActions.setMessage({
+          success: "Image supprimé avec succés.",
+          error: deletePictureRequestError,
+        })
+      );
     }
-    deletePictureStatut && handleServerResponse(deletePictureStatut)    
-  }, [deletePictureStatut])
+    dispatch(loadingActions.setStatut(deletePictureStatut));
+  }, [
+    dispatch,
+    deletePictureStatut,
+    deletePictureRequestError,
+  ]);
+
+  // add picture request loading handling
+  useEffect(() => {
+    if (postPictureStatut) {
+      dispatch(loadingActions.setStatut(postPictureStatut));
+      dispatch(
+        loadingActions.setMessage({
+          success: "Image ajouté avec succés.",
+          error: null,
+        })
+      );
+    }
+  }, [dispatch, postPictureStatut]);
 
   return (
     <>
@@ -194,18 +217,23 @@ const Gallery: React.FC<GalleryProps> = ({
         <>
           {showModal.crop ? (
             <CropContent
-              onServerResponse={handleCropRequestEnd}
-              getImagesList={handleImagesList}
-              shelterNumber={shelterNumber}
+              shelterId={shelterId}
+              onImagePost={handlePostImage}
               url={urlFile}
             />
           ) : null}
           {showModal.deleteAlert ? (
             <div>
+              <h3>Suppréssion de l'image</h3>
               <p>Etes-vous sûr de vouloir supprimer cette image ?</p>
-              <div>
-                <button onClick={handleDeleteImage}>Oui</button>
-                <button onClick={handleDeleteAlert.bind(null, false)}>
+              <div className="button-container">
+                <button className="button" onClick={handleDeleteImage}>
+                  Oui
+                </button>
+                <button
+                  className="button button--alt"
+                  onClick={handleDeleteAlert.bind(null, false)}
+                >
                   Non
                 </button>
               </div>
@@ -213,72 +241,70 @@ const Gallery: React.FC<GalleryProps> = ({
           ) : null}
         </>
       </Modal>
-      {isAuth && (
+      <Card>
         <>
-          <Alert
-            message={alertStatut.message}
-            alert={alertStatut.alert}
-            show={alertStatut.show}
-            onAlertClose={() =>
-              setAlertStatut((prevState) => ({ ...prevState, show: false }))
-            }
-          />
-          <div>
-            <label
-              htmlFor={`files-shelter${shelterNumber}`}
-              className={classes["file-button"]}
-            >
-              Ajouter une photo
-            </label>
-            <input
-              id={`files-shelter${shelterNumber}`}
-              style={{ visibility: "hidden" }}
-              type="file"
-              name="file"
-              onChange={handleFileValueChange}
-              accept="image/*"
-            />
-          </div>
-        </>
-      )}
-      <Swiper
-        modules={[Navigation, Pagination, Scrollbar, A11y]}
-        spaceBetween={50}
-        centeredSlides={true}
-        slidesPerView={slidesPerView}
-        navigation
-        pagination={{ clickable: true }}
-        className={classes.swiper}
-      >
-        {imagesList?.length > 0 ? (
-          imagesList.map((image) => (
-            <SwiperSlide key={image._id} className={classes.swiper__slide}>
-              {isAuth && (
-                <button
-                  ref={imageRef}
-                  data-image-id={image._id}
-                  onClick={handleDeleteAlert.bind(null, true)}
-                  className={classes.swiper__icon}
-                  title="Supprimer l'image"
+          {isAuth ? (
+            <div className="button-container button-container--alt">
+              <h3>Photos Gîte Flo</h3>
+              <div>
+                <label
+                  htmlFor={`files-shelter${shelterTitle}`}
+                  className="button button--alt"
                 >
-                  <FontAwesomeIcon
-                    style={{ pointerEvents: "none" }}
-                    icon={faTrash}
+                  Ajouter une photo
+                  <FontAwesomeIcon className="button__icon" icon={faAdd} />
+                </label>
+                <input
+                  id={`files-shelter${shelterTitle}`}
+                  style={{ display: "none" }}
+                  type="file"
+                  name="file"
+                  onChange={handleFileValueChange}
+                  accept="image/*"
+                />
+              </div>
+            </div>
+          ) : null}
+          <Swiper
+            modules={[Navigation, Pagination, Scrollbar, A11y]}
+            spaceBetween={50}
+            centeredSlides={true}
+            slidesPerView={slidesPerView}
+            navigation
+            pagination={{ clickable: true }}
+            className={classes.swiper}
+          >
+            {imagesList?.length > 0 ? (
+              imagesList.map((image) => (
+                <SwiperSlide key={image._id} className={classes.swiper__slide}>
+                  {isAuth && (
+                    <button
+                      ref={imageRef}
+                      data-image-id={image._id}
+                      onClick={handleDeleteAlert.bind(null, true)}
+                      className={classes.swiper__icon}
+                      title="Supprimer l'image"
+                    >
+                      <FontAwesomeIcon
+                        style={{ pointerEvents: "none" }}
+                        icon={faTrash}
+                      />
+                    </button>
+                  )}
+                  <img
+                    className={classes.image}
+                    alt={image.filename}
+                    src={image.url}
                   />
-                </button>
-              )}
-              <img
-                className={classes.image}
-                alt={image.filename}
-                src={image.url}
-              />
-            </SwiperSlide>
-          ))
-        ) : (
-          <p>Il n'y a aucune image.</p>
-        )}
-        <p className="space" />
-      </Swiper>
+                </SwiperSlide>
+              ))
+            ) : (
+              <p>Il n'y a aucune image.</p>
+            )}
+            <p className="space" />
+          </Swiper>
+        </>
+      </Card>
     </>
   );
 };

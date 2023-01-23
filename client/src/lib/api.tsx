@@ -13,10 +13,13 @@ interface LoginRequestData {
 }
 interface LoginRequestResponseData {
   userData: { username: string };
-};
+}
 
 export const loginRequest = async (data: LoginRequestData) => {
-  const response = await axios.post<LoginRequestResponseData>("/authentification/login", data);
+  const response = await axios.post<LoginRequestResponseData>(
+    "/authentification/login",
+    data
+  );
 
   if (response.status !== 200) throw new Error();
 
@@ -140,7 +143,9 @@ export const bookingRequest = async (data: bookingRequestData) => {
 
 // Accept booking
 export const acceptBookingRequest = async (id: string) => {
-  const response = await axios.put<BookingsRequestResponseData>(`/admin/booking/${id}`);
+  const response = await axios.put<BookingsRequestResponseData>(
+    `/admin/booking/${id}`
+  );
 
   if (response.status !== 200) throw new Error();
 
@@ -149,7 +154,9 @@ export const acceptBookingRequest = async (id: string) => {
 
 // Refuse booking
 export const refuseBookingRequest = async (id: string) => {
-  const response = await axios.delete<BookingsRequestResponseData>(`/admin/booking/${id}`);
+  const response = await axios.delete<BookingsRequestResponseData>(
+    `/admin/booking/${id}`
+  );
 
   if (response.status !== 200) throw new Error();
 
@@ -172,7 +179,9 @@ export type DisabledDatesResponseData = {
 };
 
 export const getDatesRequest = async (shelterId: string) => {
-  const response = await axios.get<DisabledDatesResponseData>(`/disabledDates/${shelterId}`);
+  const response = await axios.get<DisabledDatesResponseData>(
+    `/disabledDates/${shelterId}`
+  );
 
   if (response.status !== 200) throw new Error();
 
@@ -199,8 +208,9 @@ export const postDateRequest = async (data: DateRequestData) => {
 // delete booked data
 export const deleteDateRequest = async (data: DateRequestData) => {
   const response = await axios.delete<DisabledDatesResponseData>(
-    '/admin/disabledDates',
-    { data });
+    "/admin/disabledDates",
+    { data }
+  );
 
   if (response.status !== 200) throw new Error();
 
@@ -249,14 +259,14 @@ interface PictureRequestResponseData {
     _id: string;
     url: string;
     filename: string;
-    shelter_id: {
-      number: number;
-    };
+    shelter_id: string;
   }[];
 }
 
 export const getPictureRequest = async () => {
-  const response = await axios.get<PictureRequestResponseData>(`/admin/gallery`);
+  const response = await axios.get<PictureRequestResponseData>(
+    `/admin/gallery`
+  );
 
   if (response.status !== 200) throw new Error();
 

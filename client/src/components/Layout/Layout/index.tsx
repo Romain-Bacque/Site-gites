@@ -5,7 +5,6 @@ import { menuActions } from "../../../store/menu";
 import Footer from "../Footer";
 import Header from "../Header";
 import LoaderAndAlert from "../../UI/LoaderAndAlert";
-import { loadingActions } from "../../../store/loading";
 
 // interfaces
 interface LayoutProps {

@@ -3,40 +3,60 @@ import useHttp from "../hooks/use-http";
 
 import { getPictureRequest } from "../lib/api";
 import Gallery from "../components/Layout/Gallery";
-import Loader from "../components/UI/LoaderAndAlert";
+import { loadingActions } from "../store/loading";
+import { useDispatch } from "react-redux";
+
+// interfaces
+export type GalleryPageProps = {
+  sheltersData:
+    | {
+        _id: string;
+        title: string;
+        number: number;
+      }[]
+    | null;
+};
 
 // component
-const GalleryPage: React.FC = () => {
+const GalleryPage: React.FC<GalleryPageProps> = ({ sheltersData }) => {
+  const dispatch = useDispatch();
   const {
     sendHttpRequest: getPictureHttpRequest,
     statut: getPictureStatut,
     data: imagesData,
+    error: getPictureRequestError,
   } = useHttp(getPictureRequest);
 
   useEffect(() => {
     getPictureHttpRequest();
   }, [getPictureHttpRequest]);
 
-  // error: affichage des images impossibles
+  // shelters request loading handling
+  useEffect(() => {
+    if (getPictureStatut) {
+      dispatch(loadingActions.setStatut(getPictureStatut));
+      dispatch(
+        loadingActions.setMessage({
+          success: null,
+          error: getPictureRequestError,
+        })
+      );
+    }
+  }, [dispatch, getPictureStatut, getPictureRequestError]);
+
   return (
     <section>
-      {!imagesData && <Loader statut={getPictureStatut} />}
-      {imagesData && (
-        <>
+      {imagesData &&
+        sheltersData?.map((shelterData) => (
           <Gallery
+            key={shelterData._id}
             imagesData={imagesData.filter(
-              (image) => image.shelter_id?.number === 0
+              (image) => image.shelter_id === shelterData._id
             )}
-            shelterNumber={0}
+            shelterTitle={shelterData.title}
+            shelterId={shelterData._id}
           />
-          <Gallery
-            imagesData={imagesData.filter(
-              (image) => image.shelter_id?.number === 1
-            )}
-            shelterNumber={1}
-          />
-        </>
-      )}
+        ))}
     </section>
   );
 };

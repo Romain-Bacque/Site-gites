@@ -19,6 +19,7 @@ const Header: React.FC = () => {
     statut: logoutStatut,
     error: logoutErrorMessage,
   } = useHttp(logoutRequest);
+  const isAdmin = useAppSelector((state) => state.auth.isAdmin);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const isMenuOpen = useAppSelector((state) => state.menu.isOpen);
   const dispatch = useAppDispatch();
@@ -148,7 +149,7 @@ const Header: React.FC = () => {
                   </NavLink>
                 </li>
               )}
-              {!isAuth && (
+              {!isAuth && isAdmin && (
                 <Link
                   onClick={handleCloseMenu}
                   className={` ${classes.header__auth}`}

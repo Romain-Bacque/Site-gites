@@ -192,14 +192,24 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
         icon: "error",
       });
     }
-  }, [bookingStatut]);
+  }, [
+    dispatch,
+    bookingStatut,
+    resetNameHandler,
+    resetEmailHandler,
+    resetPhoneHandler,
+    resetPersonsHandler,
+    resetFromHandler,
+    resetToHandler,
+    resetInfosHandler,
+  ]);
 
   // prevent to set an arrive date > depart date
   useEffect(() => {
     if (new Date(toValue).valueOf() <= new Date(fromValue).valueOf()) {
       fromValueHandler("");
     }
-  }, [fromValue, toValue]);
+  }, [fromValue, toValue, fromValueHandler]);
 
   return (
     <form className={classes.form} onSubmit={submitHandler}>

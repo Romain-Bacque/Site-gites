@@ -2,8 +2,8 @@ import classes from "./style.module.css";
 
 // interfaces
 interface CardProps {
-  className: string;
-  children: JSX.Element | JSX.Element[];
+  className?: string;
+  children: JSX.Element | JSX.Element[] | null;
 }
 
 // component

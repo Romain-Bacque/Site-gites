@@ -5,15 +5,12 @@ export type ImagesData = {
   _id: string;
   url: string;
   filename: string;
-  shelter_id: {
-    number: number;
-  };
+  shelter_id: string;
 }[];
 
 // interfaces
 export interface CropContentProps {
-  shelterNumber: number;
+  shelterId: string;
   url: string;
-  getImagesList: (arg: ImagesData) => void;
-  onServerResponse: (arg: HTTPStateKind) => void;
+  onImagePost: (arg: FormData) => void;
 }

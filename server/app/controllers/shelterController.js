@@ -31,7 +31,7 @@ const shelterController = {
 
     res.sendStatus(200);
   },
-  getRates: async function (_, res, next) {
+  getRates: async function (_, res) {
     const allRates = await Rates.find({});
 
     if (allRates[0]) {
