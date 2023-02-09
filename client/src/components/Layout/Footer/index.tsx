@@ -4,8 +4,13 @@ import classes from "./style.module.css";
 const Footer: React.FC = () => {
   return (
     <footer className={classes.footer}>
-      <span>Contact :</span>
-      <a href="mailto:bacqueflorence@wanadoo.fr"> bacqueflorence@wanadoo.fr</a>
+      <p>© 2022 <span className="bold">Gites ariège.</span> Tous droits réservés.</p>
+      <div>
+        <span>Contact : </span>
+        <a href="mailto:bacqueflorence@wanadoo.fr">
+          bacqueflorence@wanadoo.fr
+        </a>
+      </div>
     </footer>
   );
 };

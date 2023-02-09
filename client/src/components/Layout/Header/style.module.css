@@ -5,6 +5,7 @@
   padding: 1.5rem;
   background: none;
   transition: 0.2s linear;
+  height: 100px;
 }
 
 .header__wrapper {
