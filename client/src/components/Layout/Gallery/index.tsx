@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
 import useHttp from "../../../hooks/use-http";
 
@@ -16,15 +16,15 @@ import "swiper/css/scrollbar";
 import CropContent from "../CropContent";
 import { loadingActions } from "../../../store/loading";
 // types import
-import { AlertStatut, GalleryProps, ImagesData } from "./types";
+import { AlertStatut, GalleryProps, ImagesData, ModalState } from "./types";
 import { HandleLoading } from "../../../global/types";
 import Card from "../../UI/Card";
 
 // variable & constante
-let slidesPerView = 1;
 const initialModalState = {
     show: false,
     crop: false,
+    value: null,
     deleteAlert: false,
   },
   initialMessageState = {
@@ -51,19 +51,25 @@ const Gallery: React.FC<GalleryProps> = ({
     data: deletePictureRequestData,
     error: deletePictureRequestError,
   } = useHttp(deletePictureRequest);
+  const [imageToDelete, setImageToDelete] = useState("");
   const [imagesList, setImagesList] = useState<ImagesData>(shelterImages);
-  const [urlFile, setUrlFile] = useState<string>("");
-  const [showModal, setShowModal] = useState(initialModalState);
+  const [urlFile, setUrlFile] = useState("");
+  const [showModal, setShowModal] = useState<ModalState>(initialModalState);
   const [alertStatut, setAlertStatut] =
     useState<AlertStatut>(initialMessageState);
-  const [dimensions, setDimensions] = useState({
+  const [_, setDimensions] = useState({
     width: window.innerWidth,
   });
-  const imageRef = useRef<HTMLButtonElement>(null);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const dispatch = useAppDispatch();
 
-  const handleDeleteAlert = (value: boolean) => {
+  const handleDeleteAlert = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    value: boolean
+  ) => {
+    if (value) {
+      setImageToDelete(event.currentTarget.dataset.imageId!);
+    }
     setShowModal({
       show: value,
       crop: false,
@@ -74,9 +80,7 @@ const Gallery: React.FC<GalleryProps> = ({
   const handleDeleteImage = () => {
     setShowModal(initialModalState);
 
-    const imageId = imageRef.current?.dataset.imageId;
-
-    imageId && deletePictureHttpRequest(imageId);
+    imageToDelete && deletePictureHttpRequest(imageToDelete);
   };
 
   const handlePostImage = (imagesData: FormData) => {
@@ -155,12 +159,6 @@ const Gallery: React.FC<GalleryProps> = ({
     };
   }, []);
 
-  if (dimensions.width < 600) {
-    slidesPerView = 1;
-  } else if (dimensions.width > 600 && dimensions.width < 1250) {
-    slidesPerView = 2;
-  } else slidesPerView = 3;
-
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
@@ -187,11 +185,7 @@ const Gallery: React.FC<GalleryProps> = ({
       );
     }
     dispatch(loadingActions.setStatut(deletePictureStatut));
-  }, [
-    dispatch,
-    deletePictureStatut,
-    deletePictureRequestError,
-  ]);
+  }, [dispatch, deletePictureStatut, deletePictureRequestError]);
 
   // add picture request loading handling
   useEffect(() => {
@@ -224,7 +218,7 @@ const Gallery: React.FC<GalleryProps> = ({
           ) : null}
           {showModal.deleteAlert ? (
             <div>
-              <h3>Suppréssion de l'image</h3>
+              <h3>Suppression de l'image</h3>
               <p>Etes-vous sûr de vouloir supprimer cette image ?</p>
               <div className="button-container">
                 <button className="button" onClick={handleDeleteImage}>
@@ -232,7 +226,7 @@ const Gallery: React.FC<GalleryProps> = ({
                 </button>
                 <button
                   className="button button--alt"
-                  onClick={handleDeleteAlert.bind(null, false)}
+                  onClick={(event) => handleDeleteAlert(event, false)}
                 >
                   Non
                 </button>
@@ -243,9 +237,11 @@ const Gallery: React.FC<GalleryProps> = ({
       </Modal>
       <Card>
         <>
-          {isAuth ? (
-            <div className="button-container button-container--alt">
-              <h3>Photos Gîte Flo</h3>
+          <div className="button-container button-container--alt">
+            <h3
+              className={classes["album-title"]}
+            >{`Photos ${shelterTitle}`}</h3>
+            {isAuth ? (
               <div>
                 <label
                   htmlFor={`files-shelter${shelterTitle}`}
@@ -263,13 +259,13 @@ const Gallery: React.FC<GalleryProps> = ({
                   accept="image/*"
                 />
               </div>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
           <Swiper
             modules={[Navigation, Pagination, Scrollbar, A11y]}
             spaceBetween={50}
-            centeredSlides={true}
-            slidesPerView={slidesPerView}
+            centeredSlides
+            slidesPerView="auto"
             navigation
             pagination={{ clickable: true }}
             className={classes.swiper}
@@ -279,13 +275,13 @@ const Gallery: React.FC<GalleryProps> = ({
                 <SwiperSlide key={image._id} className={classes.swiper__slide}>
                   {isAuth && (
                     <button
-                      ref={imageRef}
                       data-image-id={image._id}
-                      onClick={handleDeleteAlert.bind(null, true)}
+                      onClick={(event) => handleDeleteAlert(event, true)}
                       className={classes.swiper__icon}
                       title="Supprimer l'image"
                     >
                       <FontAwesomeIcon
+                        className={classes["delete-icon"]}
                         style={{ pointerEvents: "none" }}
                         icon={faTrash}
                       />

@@ -28,6 +28,7 @@ h3 {
   text-transform: capitalize;
   font-weight: bold;
   letter-spacing: 1px;
+  margin-bottom: 1rem;
 }
 
 /* main */
@@ -78,7 +79,7 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.3rem;
   padding: 1rem;
   margin: 1rem 1rem 0;
 }
@@ -88,6 +89,7 @@ section {
 }
 
 .button {
+  flex: 2;
   text-transform: capitalize;
   cursor: pointer;
   width: 90%;
@@ -146,4 +148,11 @@ section {
 
 .text-center {
   text-align: center;
+}
+
+/* -- media queries -- */
+@media screen and (max-width: 450px){
+  .button {
+    font-size: 1.2rem;
+  }
 }

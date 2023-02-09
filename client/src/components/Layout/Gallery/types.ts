@@ -14,6 +14,11 @@ export interface AlertStatut {
   alert: null | HTTPStateKind;
   show: boolean;
 }
+export interface ModalState {
+  show: boolean,
+  crop: boolean,
+  deleteAlert: boolean,
+}
 export interface GalleryProps {
   imagesData: ImagesData;
   shelterTitle: string;
