@@ -16,7 +16,7 @@ import "swiper/css/scrollbar";
 import CropContent from "../CropContent";
 import { loadingActions } from "../../../store/loading";
 // types import
-import { AlertStatut, GalleryProps, ImagesData, ModalState } from "./types";
+import { AlertStatut, GalleryProps, ImagesData } from "./types";
 import { HandleLoading } from "../../../global/types";
 import Card from "../../UI/Card";
 
@@ -24,7 +24,6 @@ import Card from "../../UI/Card";
 const initialModalState = {
     show: false,
     crop: false,
-    value: null,
     deleteAlert: false,
   },
   initialMessageState = {
@@ -54,7 +53,7 @@ const Gallery: React.FC<GalleryProps> = ({
   const [imageToDelete, setImageToDelete] = useState("");
   const [imagesList, setImagesList] = useState<ImagesData>(shelterImages);
   const [urlFile, setUrlFile] = useState("");
-  const [showModal, setShowModal] = useState<ModalState>(initialModalState);
+  const [showModal, setShowModal] = useState(initialModalState);
   const [alertStatut, setAlertStatut] =
     useState<AlertStatut>(initialMessageState);
   const [_, setDimensions] = useState({

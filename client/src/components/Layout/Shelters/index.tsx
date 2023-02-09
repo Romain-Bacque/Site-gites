@@ -37,10 +37,9 @@ const Shelters: React.FC<SheltersProps> = ({ sheltersData }) => {
 
   return (
     <section>
-      {statut === HTTPStateKind.SUCCESS &&
-        shelterList?.length > 0 &&
-        shelterList}
-      {statut === HTTPStateKind.ERROR && (
+      {statut !== HTTPStateKind.ERROR && shelterList?.length > 0 ? (
+        shelterList
+      ) : (
         <p className="text-center">Les gîtes sont indisponibles.</p>
       )}
     </section>
