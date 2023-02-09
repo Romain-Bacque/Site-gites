@@ -28,6 +28,11 @@
   padding: 1rem;
   z-index: 1;
   position: absolute;
+  transition: transform .15s linear;
+}
+
+.swiper__icon:hover, .swiper__icon:active {
+  transform: scale(1.15);
 }
 
 .image {

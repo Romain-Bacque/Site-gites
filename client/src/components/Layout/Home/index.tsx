@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 import Alert from "../../UI/Alert";
 // types import
 import { AlertStatut } from "./types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 // variable & constantes
 const initialState = {
@@ -34,8 +36,9 @@ const Home: React.FC = () => {
       />
       <section>
         <Card className={classes.banner}>
-          <button className={`${classes.button} ${classes["button--alpha"]}`}>
-            &gt; Rechercher
+          <button className={`${classes.banner__button} ${classes.button}`}>
+            Rechercher
+            <FontAwesomeIcon className="button__icon" icon={faArrowRight} />
           </button>
         </Card>
       </section>

@@ -2,8 +2,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
   background-color: white;
-  padding: 2rem 5rem;
+  padding: 2rem;
   color: gray;
   border-top: 1px solid rgb(236, 236, 236);
+}
+
+@media screen and (max-width: 655px) {
+  .footer {
+    flex-direction: column;
+  }
 }
