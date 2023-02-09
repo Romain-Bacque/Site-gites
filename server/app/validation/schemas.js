@@ -1,7 +1,34 @@
-const joi = require("joi");
+const baseJoi = require("joi");
 const { joiPasswordExtendCore } = require("joi-password");
-const joiPassword = joi.extend(joiPasswordExtendCore);
-const joiPhoneNumber = joi.extend(require("joi-phone-number"));
+const joiPassword = baseJoi.extend(joiPasswordExtendCore);
+const joiPhoneNumber = baseJoi.extend(require("joi-phone-number"));
+const sanitizeHtml = require("sanitize-html");
+
+// Sanitizing
+const extension = (joi) => ({
+  type: "string",
+  base: joi.string(), // extension is defined on joi.string()
+  messages: {
+    "string.escapeHTML": "{{#label}} must not include HTML!",
+  },
+  rules: {
+    escapeHTML: {
+      validate(value, helpers) {
+        // Joi will automatically call this method for whatever value it will receive
+        const clean = sanitizeHtml(value, {
+          allowedTags: [], // no tag are allowed
+          allowedAttributes: {}, // no attribute are allowed
+        });
+        if (clean !== value) return helpers.error("string.escapeHTML");
+        return clean;
+      },
+    },
+  },
+});
+
+const joi = baseJoi.extend(extension);
+
+// Schemas
 
 /**
  * registerSchema monitor the register request body, and return an error if any of requirements doesn't match with it
@@ -11,6 +38,7 @@ module.exports.registerSchema = joi
     username: joi.string().required(),
     email: joi
       .string()
+      .escapeHTML()
       .email({ minDomainSegments: 2, tlds: { allow: ["com", "fr", "net"] } })
       .required(),
     password: joiPassword
@@ -18,6 +46,7 @@ module.exports.registerSchema = joi
       .minOfLowercase(1)
       .minOfUppercase(1)
       .minOfNumeric(1)
+      .minOfSpecialCharacters(1)
       .noWhiteSpaces()
       .min(8)
       .required(),
@@ -35,6 +64,7 @@ module.exports.loginSchema = joi
       .minOfLowercase(1)
       .minOfUppercase(1)
       .minOfNumeric(1)
+      .minOfSpecialCharacters(1)
       .noWhiteSpaces()
       .min(8)
       .required(),
@@ -49,6 +79,7 @@ module.exports.editProfileSchema = joi
     name: joi.string().required(),
     email: joi
       .string()
+      .escapeHTML()
       .email({ minDomainSegments: 2, tlds: { allow: ["com", "fr", "net"] } })
       .required(),
     actualPassword: joiPassword
@@ -56,6 +87,7 @@ module.exports.editProfileSchema = joi
       .minOfLowercase(1)
       .minOfUppercase(1)
       .minOfNumeric(1)
+      .minOfSpecialCharacters(1)
       .noWhiteSpaces()
       .min(8)
       .required(),
@@ -64,6 +96,7 @@ module.exports.editProfileSchema = joi
       .minOfLowercase(1)
       .minOfUppercase(1)
       .minOfNumeric(1)
+      .minOfSpecialCharacters(1)
       .noWhiteSpaces()
       .min(8)
       .required(),
@@ -75,13 +108,13 @@ module.exports.editProfileSchema = joi
  */
 module.exports.postShelterImage = joi
   .object({
-    title: joi.string().required(),
+    title: joi.string().escapeHTML().required(),
     image: joi.binary(),
     phone: joiPhoneNumber
       .string({ defaultCountry: "FR", format: "national" })
       .phoneNumber(),
-    description: joi.string().required(),
-    address: joi.string().required(),
+    description: joi.string().escapeHTML().required(),
+    address: joi.string().escapeHTML().required(),
     lat: joi.number().required(),
     lon: joi.number().required(),
     categories: joi.array().items(joi.number().min(1).required()),
@@ -93,13 +126,13 @@ module.exports.postShelterImage = joi
  */
 module.exports.editBrewerySchema = joi
   .object({
-    title: joi.string().required(),
+    title: joi.string().escapeHTML().required(),
     image: joi.binary(),
     phone: joiPhoneNumber
       .string({ defaultCountry: "FR", format: "national" })
       .phoneNumber(),
-    description: joi.string().required(),
-    address: joi.string().required(),
+    description: joi.string().escapeHTML().required(),
+    address: joi.string().escapeHTML().required(),
     lat: joi.number().required(),
     lon: joi.number().required(),
     categories: joi.array().items(joi.number().min(1).required()),
@@ -111,8 +144,8 @@ module.exports.editBrewerySchema = joi
  */
 module.exports.postEventSchema = joi
   .object({
-    title: joi.string().required(),
-    description: joi.string().required(),
+    title: joi.string().escapeHTML().required(),
+    description: joi.string().escapeHTML().required(),
     eventStart: joi.date().required(),
   })
   .required();
@@ -124,6 +157,7 @@ module.exports.emailSchema = joi
   .object({
     email: joi
       .string()
+      .escapeHTML()
       .email({ minDomainSegments: 2, tlds: { allow: ["com", "fr", "net"] } }),
   })
   .required();
@@ -138,20 +172,20 @@ module.exports.passwordSchema = joi
       .minOfLowercase(1)
       .minOfUppercase(1)
       .minOfNumeric(1)
+      .minOfSpecialCharacters(1)
       .noWhiteSpaces()
       .min(8)
       .required(),
   })
   .required();
 
-  
 /**
  * postBookingSchema monitor the post booking request body, and return an error if any of requirements doesn't match with it
  */
 module.exports.postBookingSchema = joi
   .object({
-    shelterId: joi.string().required(),
-    name: joi.string().required(),
+    shelterId: joi.string().escapeHTML().required(),
+    name: joi.string().escapeHTML().required(),
     phone: joiPhoneNumber
       .string({ defaultCountry: "FR", format: "national" })
       .phoneNumber(),
@@ -162,7 +196,7 @@ module.exports.postBookingSchema = joi
       .required(),
     from: joi.date(),
     to: joi.date(),
-    informations: joi.string(),
+    informations: joi.string().escapeHTML(),
     categories: joi.array().items(joi.number().min(1).required()),
   })
   .required();
@@ -172,19 +206,19 @@ module.exports.postBookingSchema = joi
  */
 module.exports.putRatesSchema = joi
   .object({
-    shelterId: joi.string().required(),
+    shelterId: joi.string().escapeHTML().required(),
     price1: joi.number().max(9999).required(),
     price2: joi.number().max(9999).required(),
     price3: joi.number().max(9999).required(),
   })
-.required();
+  .required();
 
 /**
  * diabledDatesSchema monitor the disabled dates request body, and return an error if any of requirements doesn't match with it
  */
 module.exports.disabledDatesSchema = joi
   .object({
-    shelterId: joi.string().required(),
-    selectedDate: joi.date()
+    shelterId: joi.string().escapeHTML().required(),
+    selectedDate: joi.date(),
   })
-.required();
+  .required();
