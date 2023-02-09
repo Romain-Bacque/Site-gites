@@ -80,6 +80,7 @@ const inputReducer = (state: InputState, action: InputAction): InputState => {
         const lowerCaseLetters = /[a-z]/g;
         const upperCaseLetters = /[A-Z]/g;
         const numbers = /[0-9]/g;
+        const specialChars = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
 
         if (actionValue.value.length < 8) {
           passwordStateArray.push("- Au moin 8 caractères.");
@@ -92,6 +93,9 @@ const inputReducer = (state: InputState, action: InputAction): InputState => {
         }
         if (!actionValue.value.match(numbers)) {
           passwordStateArray.push("- Au moin 1 chiffre.");
+        }
+        if (!actionValue.value.match(specialChars)) {
+          passwordStateArray.push("- Au moin 1 caractère spécial.");
         }
 
         return {
