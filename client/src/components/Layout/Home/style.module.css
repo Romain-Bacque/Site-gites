@@ -72,3 +72,8 @@
   font-style: italic;
   margin: 0 0.5rem;
 }
+
+.activities-modal {
+  width: max-content!important;
+  max-width: 90%;
+}

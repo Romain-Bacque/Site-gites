@@ -1,8 +1,10 @@
 import axios from "axios";
 
 // Axios configuration
-axios.defaults.baseURL = "http://localhost:4000/";
-axios.defaults.withCredentials = true;
+const instance = axios.create({
+  baseURL: process.env.REACT_APP_APIHOST,
+  withCredentials: true, // authorize cookie sending to server
+});
 
 // // AUTHENTIFICATION
 
@@ -16,7 +18,7 @@ interface LoginRequestResponseData {
 }
 
 export const loginRequest = async (data: LoginRequestData) => {
-  const response = await axios.post<LoginRequestResponseData>(
+  const response = await instance.post<LoginRequestResponseData>(
     "/authentification/login",
     data
   );
@@ -32,7 +34,7 @@ interface RegisterRequestData extends LoginRequestData {
 }
 
 export const registerRequest = async (data: RegisterRequestData) => {
-  const response = await axios.post("/authentification/register", data);
+  const response = await instance.post("/authentification/register", data);
 
   if (response.status !== 200) throw new Error();
 };
@@ -45,7 +47,10 @@ interface ForgotPasswordRequestData {
 export const forgotPasswordRequest = async (
   data: ForgotPasswordRequestData
 ) => {
-  const response = await axios.post("/authentification/forgot-password", data);
+  const response = await instance.post(
+    "/authentification/forgot-password",
+    data
+  );
 
   if (response.status !== 200) throw new Error();
 };
@@ -54,7 +59,7 @@ export const forgotPasswordRequest = async (
 type ResetPasswordRequestData = Record<"id" | "token" | "password", string>;
 
 export const resetPasswordRequest = async (data: ResetPasswordRequestData) => {
-  const response = await axios.patch(
+  const response = await instance.patch(
     `/authentification/reset-password/${data.id}/${data.token}`,
     { password: data.password }
   );
@@ -64,14 +69,14 @@ export const resetPasswordRequest = async (data: ResetPasswordRequestData) => {
 
 // Logout
 export const logoutRequest = async () => {
-  const response = await axios.get("/authentification/logout");
+  const response = await instance.get("/authentification/logout");
 
   if (response.status !== 200) throw new Error();
 };
 
 // Token verification
 export const loadUserInfos = async () => {
-  const response = await axios.get("/authentification/userVerification");
+  const response = await instance.get("/authentification/userVerification");
 
   if (response.status !== 200) throw new Error();
 };
@@ -84,7 +89,7 @@ type getSheltersResponseData = {
 };
 
 export const getShelters = async () => {
-  const response = await axios.get<getSheltersResponseData>("/shelters");
+  const response = await instance.get<getSheltersResponseData>("/shelters");
 
   if (response.status !== 200) throw new Error(response.statusText);
 
@@ -114,7 +119,7 @@ interface BookingsRequestResponseData {
 }
 
 export const bookingsGetRequest = async () => {
-  const response = await axios.get<BookingsRequestResponseData>(
+  const response = await instance.get<BookingsRequestResponseData>(
     "/admin/allBooking"
   );
 
@@ -136,14 +141,14 @@ interface bookingRequestData {
 }
 
 export const bookingRequest = async (data: bookingRequestData) => {
-  const response = await axios.post("/booking", data);
+  const response = await instance.post("/booking", data);
 
   if (response.status !== 200) throw new Error();
 };
 
 // Accept booking
 export const acceptBookingRequest = async (id: string) => {
-  const response = await axios.put<BookingsRequestResponseData>(
+  const response = await instance.put<BookingsRequestResponseData>(
     `/admin/booking/${id}`
   );
 
@@ -154,7 +159,7 @@ export const acceptBookingRequest = async (id: string) => {
 
 // Refuse booking
 export const refuseBookingRequest = async (id: string) => {
-  const response = await axios.delete<BookingsRequestResponseData>(
+  const response = await instance.delete<BookingsRequestResponseData>(
     `/admin/booking/${id}`
   );
 
@@ -179,7 +184,7 @@ export type DisabledDatesResponseData = {
 };
 
 export const getDatesRequest = async (shelterId: string) => {
-  const response = await axios.get<DisabledDatesResponseData>(
+  const response = await instance.get<DisabledDatesResponseData>(
     `/disabledDates/${shelterId}`
   );
 
@@ -195,7 +200,7 @@ interface DateRequestData {
 }
 
 export const postDateRequest = async (data: DateRequestData) => {
-  const response = await axios.post<DisabledDatesResponseData>(
+  const response = await instance.post<DisabledDatesResponseData>(
     "/admin/disabledDates",
     data
   );
@@ -207,7 +212,7 @@ export const postDateRequest = async (data: DateRequestData) => {
 
 // delete booked data
 export const deleteDateRequest = async (data: DateRequestData) => {
-  const response = await axios.delete<DisabledDatesResponseData>(
+  const response = await instance.delete<DisabledDatesResponseData>(
     "/admin/disabledDates",
     { data }
   );
@@ -230,7 +235,7 @@ interface RatesPutRequestResponseData {
 }
 
 export const ratesGetRequest = async () => {
-  const response = await axios.get<RatesPutRequestResponseData>("/rates");
+  const response = await instance.get<RatesPutRequestResponseData>("/rates");
 
   if (response.status !== 200) throw new Error();
 
@@ -246,7 +251,10 @@ interface RatesPutRequestData {
 }
 
 export const ratesPutRequest = async (data: RatesPutRequestData) => {
-  const response = await axios.put<RatesPutRequestResponseData>("/rates", data);
+  const response = await instance.put<RatesPutRequestResponseData>(
+    "/rates",
+    data
+  );
 
   if (response.status !== 200) throw new Error();
 };
@@ -264,7 +272,7 @@ interface PictureRequestResponseData {
 }
 
 export const getPictureRequest = async () => {
-  const response = await axios.get<PictureRequestResponseData>(
+  const response = await instance.get<PictureRequestResponseData>(
     `/admin/gallery`
   );
 
@@ -275,7 +283,7 @@ export const getPictureRequest = async () => {
 
 // Add Picture
 export const postPictureRequest = async (data: FormData) => {
-  const response = await axios.post<PictureRequestResponseData>(
+  const response = await instance.post<PictureRequestResponseData>(
     "/admin/gallery",
     data,
     {
@@ -290,7 +298,7 @@ export const postPictureRequest = async (data: FormData) => {
 
 // Delete Picture
 export const deletePictureRequest = async (id: string) => {
-  const response = await axios.delete<PictureRequestResponseData>(
+  const response = await instance.delete<PictureRequestResponseData>(
     `/admin/gallery/${id}`
   );
 
@@ -300,10 +308,20 @@ export const deletePictureRequest = async (id: string) => {
 };
 
 // Sightseeing
-export const getPlaces = async () => {
-  const response = await axios.delete(`/places`);
+type ActivitiesRequestResponseData = {
+  data: {
+    title: string;
+    address: string;
+    link: string;
+  }[];
+};
+
+export const getActivities = async () => {
+  const response = await instance.get<ActivitiesRequestResponseData>(
+    `/activities`
+  );
 
   if (response.status !== 200) throw new Error();
 
-  return response.data.placesData;
+  return response.data.data;
 };

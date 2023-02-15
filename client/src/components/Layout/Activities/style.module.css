@@ -1,0 +1,23 @@
+.activities-list {
+  color: white;
+  height: 90%;
+  overflow-y: auto;
+  line-height: 2rem;
+  padding: 2rem;
+}
+
+.activities-list__item {
+  border-radius: 5px;
+  background: rgb(196, 163, 123);
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.activities-list__title {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.activities-list__link {
+  text-decoration: underline;
+}

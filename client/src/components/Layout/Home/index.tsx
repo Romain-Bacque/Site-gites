@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
@@ -12,6 +12,13 @@ import Alert from "../../UI/Alert";
 import { AlertStatut } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import useHttp from "../../../hooks/use-http";
+import { getActivities } from "../../../lib/api";
+import Activities from "../Activities";
+import Modal from "../../UI/Modal";
+import { HandleLoading, HTTPStateKind } from "../../../global/types";
+import { useDispatch } from "react-redux";
+import { loadingActions } from "../../../store/loading";
 
 // variable & constantes
 const initialState = {
@@ -23,9 +30,41 @@ const initialState = {
 // component
 const Home: React.FC = () => {
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
+  const [showModal, setShowModal] = useState(false);
+  const {
+    sendHttpRequest,
+    data: activitiesList,
+    statut,
+    error,
+  } = useHttp(getActivities);
+  const dispatch = useDispatch();
+
+  const handleLoading: HandleLoading = (statut, success, error) => {
+    dispatch(loadingActions.setStatut(statut));
+    dispatch(
+      loadingActions.setMessage({
+        success,
+        error,
+      })
+    );
+  };
+
+  const handleActivities = () => {
+    sendHttpRequest();
+  };
+
+  useEffect(() => {
+    if (statut) {
+      handleLoading(statut, null, error);
+      if (statut === HTTPStateKind.SUCCESS) setShowModal(true);
+    }
+  }, [statut]);
 
   return (
     <>
+      <Modal className={classes["activities-modal"]} show={showModal} onHide={() => setShowModal(false)}>
+        <Activities activities={activitiesList} />
+      </Modal>
       <Alert
         message={alertStatut.message}
         alert={alertStatut.alert}
@@ -36,8 +75,11 @@ const Home: React.FC = () => {
       />
       <section>
         <Card className={classes.banner}>
-          <button className={`${classes.banner__button} ${classes.button}`}>
-            Rechercher
+          <button
+            className={`${classes.banner__button} ${classes.button}`}
+            onClick={handleActivities}
+          >
+            Activités dans le Couserans
             <FontAwesomeIcon className="button__icon" icon={faArrowRight} />
           </button>
         </Card>
