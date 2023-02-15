@@ -10,6 +10,7 @@
   border-top: 1px solid rgb(236, 236, 236);
 }
 
+/* --- media queries --- */
 @media screen and (max-width: 655px) {
   .footer {
     flex-direction: column;

@@ -4,6 +4,23 @@
 
 html {
   font-size: 10px;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #ddd;
+  border-radius: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 10px;
+  width: 8px;
+  box-shadow: 0 2px 10px #0003;
 }
 
 body {
@@ -57,7 +74,7 @@ section {
 
 /* popup */
 .popup {
-  width: 350px!important;
+  width: 350px !important;
   max-width: 90%;
 }
 
@@ -107,7 +124,8 @@ section {
   background: none;
 }
 
-.button:hover, .button:focus {
+.button:hover,
+.button:focus {
   background-color: rgb(65, 65, 65);
   border: 2px solid rgb(65, 65, 65);
   color: white;
@@ -151,7 +169,7 @@ section {
 }
 
 /* -- media queries -- */
-@media screen and (max-width: 450px){
+@media screen and (max-width: 450px) {
   .button {
     font-size: 1.2rem;
   }
