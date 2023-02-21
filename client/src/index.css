@@ -8,12 +8,16 @@
   /*-------HSL color mode--------*/
   --body-color: hsl(var(--hue-color), 100%, 99%);
   --border-color: hsl(var(--hue-color), 8%, 50%);
-  --border-color-light: hsl(var(--hue-color), 8%, 92%);
-  --box-shadow: hsl(var(--hue-color), 64%, 15%, 0.15);
+  --border-color-alt: hsl(var(--hue-color), 8%, 30%);
+  --border-color-light: hsl(var(--hue-color), 8%, 80%);
+  --border-color-very-light: hsl(var(--hue-color), 8%, 92%);
+  --box-shadow: 0 3px 15px hsl(var(--hue-color), 64%, 15%, 0.15);
+  --bg-color: hsl(var(--hue-color), 20%, 30%);
   --text-color: hsl(var(--hue-color), 20%, 24%);
   --text-color-light: hsl(var(--hue-color), 8%, 60%);
   --button-color: hsl(var(--hue-color), 40%, 32%);
   --button-color-alt: hsl(var(--hue-color), 40%, 20%);
+
 
 
   /*----font and typography--------*/
@@ -115,7 +119,7 @@ main {
   flex-direction: column;
   justify-content: space-between;
   min-height: calc(100vh - 100px);
-  padding-top: 6rem;
+  padding-top: 7rem;
 }
 
 .message.error {
@@ -188,8 +192,8 @@ section {
 
 .button:hover,
 .button:focus {
-  background-color: rgb(65, 65, 65);
-  border: 2px solid rgb(65, 65, 65);
+  background-color: var(--button-color-alt);
+  border: 2px solid var(--button-color-alt);
   color: white;
 }
 
@@ -203,6 +207,15 @@ section {
 .button__icon {
   color: inherit;
   margin-left: 1rem;
+}
+
+/* -- swiper -- */
+.swiper-pagination-bullet-active {
+  background-color: var(--text-color) !important;
+}
+
+.swiper-button-prev, .swiper-button-next {
+  color: var(--text-color) !important;
 }
 
 /* -- utility classes -- */

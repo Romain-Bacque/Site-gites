@@ -41,7 +41,7 @@ const Modal: React.FC<ModalProps> = (props) => {
           document.getElementById("backdrop-root") as HTMLDivElement
         )}
         {ReactDOM.createPortal(
-          <Overlay onHide={props.onHide} className={`${"modal-opened"} ${props.className}`}>{props.children}</Overlay>,
+          <Overlay onHide={props.onHide} className={`${classes["modal-opened"]} ${props.className}`}>{props.children}</Overlay>,
           document.getElementById("overlay-root") as HTMLDivElement
         )}
       </>
