@@ -37,13 +37,13 @@
 }
 
 .modal-opened {
-  animation: openModal 0.5s ease-out forwards;
+  animation: openModal 0.4s ease-out forwards;
 }
 
 @keyframes openModal {
   0% {
     opacity: 0;
-    transform: translate(-50%, -60%);
+    transform: translate(-50%, -40%);
   }
   50% {
     opacity: 1;

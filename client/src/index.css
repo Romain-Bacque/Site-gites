@@ -1,15 +1,15 @@
 :root {
-  --header-height: auto;
-
   /*-------color--------*/
   --hue-color: 22;
-  --current-brightness: none;
 
   /*-------HSL color mode--------*/
   --body-color: hsl(var(--hue-color), 100%, 99%);
   --border-color: hsl(var(--hue-color), 8%, 50%);
-  --border-color-light: hsl(var(--hue-color), 8%, 92%);
-  --box-shadow: hsl(var(--hue-color), 64%, 15%, 0.15);
+  --border-color-alt: hsl(var(--hue-color), 8%, 30%);
+  --border-color-light: hsl(var(--hue-color), 8%, 80%);
+  --border-color-very-light: hsl(var(--hue-color), 8%, 92%);
+  --bg-color: hsl(var(--hue-color), 20%, 30%);
+  --bg-color-alt: hsl(var(--hue-color), 44%, 71%);
   --text-color: hsl(var(--hue-color), 20%, 24%);
   --text-color-light: hsl(var(--hue-color), 8%, 60%);
   --button-color: hsl(var(--hue-color), 40%, 32%);
@@ -19,39 +19,9 @@
   /*----font and typography--------*/
   --body-font: "Open Sans", sans-serif;
   --title-font: "Raleway", sans-serif;
-  --biggest-font-size: 2.5rem;
-  --h1-font-size: 1.5rem;
-  --h2-font-size: 1.25rem;
-  --h3-font-size: 1rem;
-  --normal-font-size: 0.938rem;
-  --small-font-size: 0.813rem;
-  --smaller-font-size: 0.75rem;
 
-  /*-----font weight-------*/
-  --font-medium: 500;
-  --font-semi-bold: 600;
-
-  /* -------box shadow------- */
-  --box-shadow-banner: 5px 5px 15px gray;
-  --box-shadow-table: 2px 2px 10px 2px lightgray;
-
-  /*--------------margin bottom-------------*/
-  --mb-0-25: 0.25rem;
-  --mb-0-5: 0.5rem;
-  --mb-0-75: 0.75rem;
-  --mb-1: 1rem;
-  --mb-1-25: 1.25rem;
-  --mb-1-5: 1.5rem;
-  --mb-2: 1.5rem;
-  --mb-2-5: 2.5rem;
-
-  /*--------------z-index-------------*/
-  --z-tooltip: 2;
-  --z-fixed: 10;
-
-  /*------------Hover overlay---------*/
-  --img-transition: 0.3s;
-  --img-scale: scale(1.1);
+  /* -------box shadow------- */  
+  --box-shadow: 0 3px 15px hsl(var(--hue-color), 64%, 15%, 0.15);
 }
 
 * {
@@ -115,7 +85,7 @@ main {
   flex-direction: column;
   justify-content: space-between;
   min-height: calc(100vh - 100px);
-  padding-top: 6rem;
+  padding-top: 7rem;
 }
 
 .message.error {
@@ -188,8 +158,8 @@ section {
 
 .button:hover,
 .button:focus {
-  background-color: rgb(65, 65, 65);
-  border: 2px solid rgb(65, 65, 65);
+  background-color: var(--button-color-alt);
+  border: 2px solid var(--button-color-alt);
   color: white;
 }
 
@@ -203,6 +173,15 @@ section {
 .button__icon {
   color: inherit;
   margin-left: 1rem;
+}
+
+/* -- swiper -- */
+.swiper-pagination-bullet-active {
+  background-color: var(--text-color) !important;
+}
+
+.swiper-button-prev, .swiper-button-next {
+  color: var(--text-color) !important;
 }
 
 /* -- utility classes -- */
@@ -228,6 +207,10 @@ section {
 
 .text-center {
   text-align: center;
+}
+
+.b-radius {
+  border-radius: 20px;
 }
 
 /* -- media queries -- */

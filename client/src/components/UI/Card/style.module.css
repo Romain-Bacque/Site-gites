@@ -1,7 +1,7 @@
 .card {
   position: relative;
   border-radius: 10px;
-  box-shadow: 0 3px 15px var(--box-shadow);
+  box-shadow: var(--box-shadow);
   background-color: rgb(255, 255, 255, 0.8);
   padding: 2rem;
   margin: 1rem;

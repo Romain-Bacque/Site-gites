@@ -43,7 +43,7 @@ const BookingCard: React.FC<BookingCardProps> = ({ booking, onChoice }) => {
   return (
     <Card className={classes["booking-card"]}>
       <div className={classes["booking-card__title"]}>
-        <h3>{booking.shelter_id.title}</h3>
+        <h3 className={classes["booking-card__title-text"]}>{booking.shelter_id.title}</h3>
         <span>
           Statut :{booking.booked === true ? " Réservé" : " En attente"}
         </span>

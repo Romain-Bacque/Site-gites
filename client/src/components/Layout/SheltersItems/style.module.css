@@ -42,7 +42,7 @@
 }
 
 .gite__button-tab.active {
-  border-bottom: 2px solid rgb(44, 44, 44);
+  border-bottom: 2px solid var(--text-color);
 }
 
 .gite__content {
