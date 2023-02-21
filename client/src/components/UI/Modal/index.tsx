@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import classes from "./Modal.module.css";
+import classes from "./style.module.css";
 import Transition from "react-transition-group/Transition";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";

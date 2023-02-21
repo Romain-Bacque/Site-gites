@@ -10,6 +10,8 @@ import { logoutRequest } from "../../../lib/api";
 import useHttp from "../../../hooks/use-http";
 import { loadingActions } from "../../../store/loading";
 import { HTTPStateKind } from "../../../global/types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHome } from "@fortawesome/free-solid-svg-icons";
 
 // component
 const Header: React.FC = () => {
@@ -26,7 +28,7 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 30) {
+      if (window.scrollY > 40) {
         setScrollActive(true);
       } else {
         setScrollActive(false);
@@ -69,107 +71,111 @@ const Header: React.FC = () => {
   useEffect(() => {
     if (logoutStatut) {
       dispatch(loadingActions.setStatut(logoutStatut));
-      dispatch(loadingActions.setMessage({
-        success: null,
-        error: logoutErrorMessage,
-      }));
+      dispatch(
+        loadingActions.setMessage({
+          success: null,
+          error: logoutErrorMessage,
+        })
+      );
     }
   }, [logoutStatut]);
 
   return (
-      <header
+    <header
+      className={`${classes.header} ${isMenuOpen && classes["active-nav"]}`}
+    >
+      <div
         className={`${scrollActive && classes["background-active"]} ${
-          classes.header
-        } ${isMenuOpen && classes["active-nav"]}`}
+          classes.header__wrapper
+        }`}
       >
-        <div className={classes.header__wrapper}>
-          <div className={classes["header__title-container"]}>
-            <h1 className={classes.header__title}>Gîtes Jo & Flo</h1>
-            <span className={classes.header__subtitle}>
-              Dans un lieux reposant
-            </span>
-          </div>
-          {/* Toggle menu button */}
-          <div
-            onClick={handleToggleButton}
-            className={`${classes["menu-button"]} ${
-              isMenuOpen ? classes["active-menu"] : ""
-            }`}
-          >
-            <div className={classes["menu-button__line"]}></div>
-            <div className={classes["menu-button__line"]}></div>
-            <div className={classes["menu-button__line"]}></div>
-          </div>
-          <nav
-            onClick={(event) => event.stopPropagation()}
-            className={`${classes.header__nav} ${
-              isMenuOpen ? classes["active-nav"] : ""
-            }`}
-          >
-            <ul className={classes["header__list"]}>
-              <li className={classes.header__list}>
-                <NavLink
-                  onClick={handleCloseMenu}
-                  className={classes.header__link}
-                  activeClassName={classes["active-link"]}
-                  to="/home"
-                >
-                  Accueil
-                </NavLink>
-              </li>
-              <li className={classes.header__list}>
-                <NavLink
-                  onClick={handleCloseMenu}
-                  className={classes.header__link}
-                  activeClassName={classes["active-link"]}
-                  to="/gites"
-                >
-                  Gîtes
-                </NavLink>
-              </li>
+        <div className={classes["header__title-container"]}>
+          <Link to="/">
+            <FontAwesomeIcon icon={faHome} />
+          </Link>
+          <h1 className={classes.header__title}>Gîtes.</h1>
+        </div>
+        {/* Toggle menu button */}
+        <div
+          onClick={handleToggleButton}
+          className={`${classes["menu-button"]} ${
+            isMenuOpen ? classes["active-menu"] : ""
+          }`}
+        >
+          <div className={classes["menu-button__line"]}></div>
+          <div className={classes["menu-button__line"]}></div>
+          <div className={classes["menu-button__line"]}></div>
+        </div>
+        <nav
+          onClick={(event) => event.stopPropagation()}
+          className={`${classes.header__nav} ${
+            isMenuOpen ? classes["active-nav"] : ""
+          }`}
+        >
+          <ul className={classes["header__list"]}>
+            <li className={classes.header__list}>
+              <NavLink
+                onClick={handleCloseMenu}
+                className={classes.header__link}
+                activeClassName={classes["active-link"]}
+                to="/home"
+              >
+                Accueil
+              </NavLink>
+            </li>
+            <li className={classes.header__list}>
+              <NavLink
+                onClick={handleCloseMenu}
+                className={classes.header__link}
+                activeClassName={classes["active-link"]}
+                to="/gites"
+              >
+                Gîtes
+              </NavLink>
+            </li>
+            <li className={classes.header__list}>
+              <NavLink
+                onClick={handleCloseMenu}
+                className={`${classes.header__link}`}
+                activeClassName={classes["active-link"]}
+                to="/albums"
+              >
+                Albums
+              </NavLink>
+            </li>
+            {isAuth && (
               <li className={classes.header__list}>
                 <NavLink
                   onClick={handleCloseMenu}
                   className={`${classes.header__link}`}
                   activeClassName={classes["active-link"]}
-                  to="/albums"
+                  to="/admin/allBookings"
                 >
-                  Albums
+                  Demandes
                 </NavLink>
               </li>
-              {isAuth && (
-                <li className={classes.header__list}>
-                  <NavLink
-                    onClick={handleCloseMenu}
-                    className={`${classes.header__link}`}
-                    activeClassName={classes["active-link"]}
-                    to="/admin/allBookings"
-                  >
-                    Demandes
-                  </NavLink>
-                </li>
-              )}
-              {!isAuth && isAdmin && (
-                <Link
-                  onClick={handleCloseMenu}
-                  className={` ${classes.header__auth}`}
-                  to="/authentification"
-                >
-                  Connexion
-                </Link>
-              )}
-            </ul>
-            {isAuth && (
-              <button
-                className={` ${classes.header__auth}`}
-                onClick={handleLogout}
-              >
-                Déconnexion
-              </button>
             )}
-          </nav>
-        </div>
-      </header>
+            {!isAuth && isAdmin && (
+              <Link
+                onClick={handleCloseMenu}
+                className={` ${classes.header__auth}`}
+                to="/authentification"
+              >
+                Connexion
+              </Link>
+            )}
+          </ul>
+          {isAuth && (
+            <button
+              className={` ${classes.header__auth}`}
+              onClick={handleLogout}
+            >
+              Déconnexion
+            </button>
+          )}
+        </nav>
+      </div>
+    </header>
   );
 };
 

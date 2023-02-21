@@ -62,7 +62,11 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Modal className={classes["activities-modal"]} show={showModal} onHide={() => setShowModal(false)}>
+      <Modal
+        className={classes["activities-modal"]}
+        show={showModal}
+        onHide={() => setShowModal(false)}
+      >
         <Activities activities={activitiesList} />
       </Modal>
       <Alert
@@ -102,52 +106,54 @@ const Home: React.FC = () => {
       </section>
       <section>
         <Card className={classes.gite}>
-          <img
-            className={classes.gite__picture}
-            srcSet={`${gite1_small} 573w, ${gite1_large} 2201w`}
-            src={gite1_large}
-            alt="Gite Jo"
-          />
-          <div className={classes["gite-text-container"]}>
-            <h3 className={classes.gite__name}>Gîte Jo</h3>
-            <div>
-              <p className={classes.gite__places}>
-                Nombre de places: <span className="bold">4 personnes</span>
+          <Link to="/gites">
+            <img
+              className={classes.gite__picture}
+              srcSet={`${gite1_small} 573w, ${gite1_large} 2201w`}
+              src={gite1_large}
+              alt="Gite Jo"
+            />
+            <div className={classes["gite-text-container"]}>
+              <div>
+                <h3 className={classes.gite__name}>Gîte Jo</h3>
+                <div>
+                  <p className={classes.gite__places}>
+                    Nombre de places: <span className="bold">4 personnes</span>
+                  </p>
+                </div>
+              </div>
+              <p className={classes.gite__price}>
+                à partir de
+                <span className={classes["gite__price--amount"]}>200€</span>par
+                nuit.
               </p>
             </div>
-            <p className={classes.gite__price}>
-              à partir de
-              <span className={classes["gite__price--amount"]}>200€</span>par
-              nuit.
-            </p>
-            <Link className={classes.button} to="/gites">
-              plus de détails...
-            </Link>
-          </div>
+          </Link>
         </Card>
         <Card className={classes.gite}>
-          <img
-            className={classes.gite__picture}
-            srcSet={`${gite2_small} 576w, ${gite2_large} 2201w`}
-            src={gite2_large}
-            alt="Gite Flo"
-          />
-          <div className={classes["gite-text-container"]}>
-            <h3 className={classes.gite__name}>Gîte Flo</h3>
-            <div>
-              <p className={classes.gite__places}>
-                Nombre de places: <span className="bold">4 personnes</span>
+          <Link to="/gites">
+            <img
+              className={classes.gite__picture}
+              srcSet={`${gite2_small} 576w, ${gite2_large} 2201w`}
+              src={gite2_large}
+              alt="Gite Flo"
+            />
+            <div className={classes["gite-text-container"]}>
+              <div>
+                <h3 className={classes.gite__name}>Gîte Flo</h3>
+                <div>
+                  <p className={classes.gite__places}>
+                    Nombre de places: <span className="bold">4 personnes</span>
+                  </p>
+                </div>
+              </div>
+              <p className={classes.gite__price}>
+                à partir de
+                <span className={classes["gite__price--amount"]}>200€</span>par
+                nuit.
               </p>
             </div>
-            <p className={classes.gite__price}>
-              à partir de
-              <span className={classes["gite__price--amount"]}>200€</span>par
-              nuit.
-            </p>
-            <Link className={classes.button} to="/gites">
-              plus de détails...
-            </Link>
-          </div>
+          </Link>
         </Card>
       </section>
     </>

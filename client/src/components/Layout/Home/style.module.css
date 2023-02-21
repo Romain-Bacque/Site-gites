@@ -30,7 +30,7 @@
   cursor: pointer;
   outline: none;
   border: none;
-  background: rgba(88, 49, 1);
+  background: var(--button-color);
   padding: 1.5rem 2rem;
   color: white;
   border-radius: 5px;
@@ -38,7 +38,7 @@
 }
 
 .button:hover {
-  background: rgb(66, 37, 1);
+  background: var(--button-color-alt);
 }
 
 .gite {
@@ -52,15 +52,14 @@
 
 .gite-text-container {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
+  align-items: end;
   gap: 1rem;
   line-height: 3rem;
   padding: 2rem;
 }
 
 .gite__name {
-  color: #583101;
   font-weight: bold;
   font-size: 2rem;
 }
@@ -68,12 +67,11 @@
 .gite__price--amount {
   font-weight: bold;
   font-size: 2rem;
-  color: #583101;
   font-style: italic;
   margin: 0 0.5rem;
 }
 
 .activities-modal {
-  width: max-content!important;
+  width: max-content !important;
   max-width: 90%;
 }
