@@ -158,7 +158,7 @@ const Header: React.FC = () => {
             {!isAuth && isAdmin && (
               <Link
                 onClick={handleCloseMenu}
-                className={` ${classes.header__auth}`}
+                className={`button button--alt ${classes.header__auth}`}
                 to="/authentification"
               >
                 Connexion
@@ -167,7 +167,7 @@ const Header: React.FC = () => {
           </ul>
           {isAuth && (
             <button
-              className={` ${classes.header__auth}`}
+              className={`button button--alt ${classes.header__auth}`}
               onClick={handleLogout}
             >
               Déconnexion

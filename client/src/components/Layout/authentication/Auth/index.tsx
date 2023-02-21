@@ -203,7 +203,7 @@ const Auth: React.FC = () => {
                 ))}
               </ul>
             )}
-            <button disabled={!isFormValid} className={classes["auth__button"]}>
+            <button disabled={!isFormValid} className={`button ${classes["auth__button"]}`}>
               Se connecter
             </button>
           </div>

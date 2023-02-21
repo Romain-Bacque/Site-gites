@@ -8,7 +8,7 @@
 
 .activities-list__item {
   border-radius: 5px;
-  background: rgb(196, 163, 123);
+  background: var(--bg-color-alt);
   padding: 1rem;
   margin: 1rem 0;
 }
