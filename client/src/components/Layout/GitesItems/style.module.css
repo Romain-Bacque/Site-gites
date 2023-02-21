@@ -24,7 +24,7 @@
   font-size: 1rem;
   margin: 0 2rem;
   padding: 2rem 0 1.5rem;
-  border-bottom: 2px solid var(--border-color);
+  border-bottom: 2px solid gray;
 }
 
 .gite__button-tab {
@@ -32,13 +32,13 @@
   border: none;
   font-size: 1.3rem;
   background: none;
+  color: gray;
   border-bottom: 2px solid transparent;
   transition: 0.1s linear;
-  color: inherit;
 }
 
 .gite__button-tab:hover {
-  color: var(--text-color-light);
+  color: rgb(44, 44, 44);
 }
 
 .gite__button-tab.active {
@@ -58,6 +58,7 @@
     "capacité-titre surface-titre animaux-titre"
     "capacité-texte surface-texte animaux-texte";
   gap: 1rem;
+  color: rgb(88, 88, 88);
 }
 
 .gites__capacité-titre {

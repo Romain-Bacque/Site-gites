@@ -6,8 +6,8 @@
   gap: 2rem;
   background-color: white;
   padding: 2rem;
-  color: gray;
-  border-top: 1px solid rgb(236, 236, 236);
+  color: var(--text-color-light);
+  border-top: 1px solid var(--border-color-light);
 }
 
 /* --- media queries --- */
