@@ -1,18 +1,0 @@
-0:21 Error: access unauthorized0:25 Error: access unauthorized0:26 Error: access unauthorized0:44 Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client0:44 Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client0:44 Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client0:44 Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client0:44 Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client0:44 Error: access unauthorized1:23 Error: access unauthorized1:23 Error: access unauthorized1:25 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...1:25 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...1:26 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...1:27 Error: access unauthorized20:11 Error: access unauthorized20:11 Error: access unauthorized20:32 Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client20:32 Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client20:32 Error: access unauthorized20:33 Error: access unauthorized21:24 Error: access unauthorized21:24 Error: access unauthorized22:44 Error: access unauthorized22:44 Error: access unauthorized22:49 Error: access unauthorized22:52 Error: access unauthorized22:53 Error: access unauthorized23:2 Error: access unauthorized23:19 Error: access unauthorized23:19 Error: access unauthorized23:26 Error: access unauthorized23:42 Error: access unauthorized23:42 Error: access unauthorized23:42 Error: access unauthorized23:44 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:54 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:54 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:54 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:54 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:54 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:54 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:54 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:54 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:54 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:54 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:54 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:56 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...23:56 MongooseError: Query was already executed: Rates.findOneAndUpdate({ username: 'famille-bacque' }, {
-  '...

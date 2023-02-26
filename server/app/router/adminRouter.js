@@ -10,7 +10,11 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
-router.get("/allBooking", checkLogged, catchAsync(adminController.getAllBooking));
+router.get(
+  "/allBooking",
+  checkLogged,
+  catchAsync(adminController.getAllBooking)
+);
 
 router
   .route("/booking/:bookingId")
@@ -28,8 +32,16 @@ router
 
 router
   .route("/disabledDates")
-  .post(checkLogged, validate(disabledDatesSchema), catchAsync(adminController.addDisabledDate))
-  .delete(checkLogged, validate(disabledDatesSchema), catchAsync(adminController.deleteDisabledDate));
+  .post(
+    checkLogged,
+    validate(disabledDatesSchema),
+    catchAsync(adminController.addDisabledDate)
+  )
+  .delete(
+    checkLogged,
+    validate(disabledDatesSchema),
+    catchAsync(adminController.deleteDisabledDate)
+  );
 
 router.delete(
   "/gallery/:imageId",

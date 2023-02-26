@@ -5,6 +5,7 @@ import { getPictureRequest } from "../lib/api";
 import Gallery from "../components/Layout/Gallery";
 import { loadingActions } from "../store/loading";
 import { useDispatch } from "react-redux";
+import { HTTPStateKind } from "../global/types";
 
 // interfaces
 export type GalleryPageProps = {
@@ -57,6 +58,9 @@ const GalleryPage: React.FC<GalleryPageProps> = ({ sheltersData }) => {
             shelterId={shelterData._id}
           />
         ))}
+      {getPictureStatut === HTTPStateKind.ERROR && (
+        <p className="text-center">Les albums sont indisponibles.</p>
+      )}
     </section>
   );
 };

@@ -10,7 +10,11 @@ import { UserData } from "./types";
 import Card from "../../../UI/Card";
 import Input from "../../Input";
 import classes from "../style.module.css";
-import { resetPasswordRequest } from "../../../../lib/api";
+import {
+  getCSRF,
+  resetPasswordRequest,
+  setCSRFToken,
+} from "../../../../lib/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { loadingActions } from "../../../../store/loading";
@@ -21,6 +25,8 @@ const ResetPassword: React.FC = () => {
   const { id, token } = useParams<{ id: string; token: string }>();
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const dispatch = useAppDispatch();
+  const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } =
+    useHttp(getCSRF);
   const {
     sendHttpRequest: resetPasswordHttpRequest,
     statut: resetPasswordStatut,
@@ -50,68 +56,80 @@ const ResetPassword: React.FC = () => {
     resetPasswordHttpRequest(userPassword);
   };
 
+  // get csrf token
+  useEffect(() => {
+    getCSRFttpRequest();
+  }, []);
+
+  // set csrf token
+  useEffect(() => {
+    setCSRFToken(CSRFData);
+  }, [CSRFData]);
+
   // reset password request loading handling
   useEffect(() => {
     if (resetPasswordStatut) {
-      dispatch(loadingActions.setStatut(resetPasswordStatut))
-      dispatch(loadingActions.setMessage({
-        success: "Enregistrement réussi.",
-        error: resetPasswordErrorMessage
-      }))
+      dispatch(loadingActions.setStatut(resetPasswordStatut));
+      dispatch(
+        loadingActions.setMessage({
+          success: "Enregistrement réussi.",
+          error: resetPasswordErrorMessage,
+        })
+      );
     }
     // if password is reset successfully, input is cleared
     if (resetPasswordStatut === HTTPStateKind.SUCCESS) {
       userPasswordResetHandler();
     }
-  }, [resetPasswordStatut])
+  }, [resetPasswordStatut]);
 
   return (
-      <Card className={classes.auth}>
-        <form onSubmit={submitHandler} className={classes["auth__form"]}>
-          <h3 className={classes["auth__title"]}>
-            Réinitialiser Le Mot De Passe
-          </h3>
-          <div>
-            <Input
-              icon={
-                <FontAwesomeIcon
-                  className={classes.form__icon}
-                  onClick={() => setIsPasswordMasked((prevState) => !prevState)}
-                  icon={isPasswordMasked ? faEyeSlash : faEye}
-                />
-              }
-              label="Mot de passe"
-              isVisible={true}
-              className={
-                !userPasswordIsValid && userPasswordIsTouched
-                  ? "form__input--red"
-                  : ""
-              }
-              maxLength={32}
-              id="user-password"
-              onChange={userPasswordChangeHandler}
-              onBlur={userPasswordBlurHandler}
-              type={isPasswordMasked ? "password" : "text"}
-              value={userPasswordValue}
-              placeholder="Taper le mot de passe ici"
-            />
-            {userPasswordState.length > 0 && (
-              <ul className={classes["auth__password-error-list"]}>
-                <span>Le mot de passe doit comporter :</span>
-                {userPasswordState.map((item) => (
-                  <li key={item.toString()}>{item}</li>
-                ))}
-              </ul>
-            )}
-            <button
-              disabled={!userPasswordIsValid}
-              className={classes["auth__button"]}
-            >
-              Enregistrer
-            </button>
-          </div>
-        </form>
-      </Card>
+    <Card className={classes.auth}>
+      <form onSubmit={submitHandler} className={classes["auth__form"]}>
+        <h3 className={classes["auth__title"]}>
+          Réinitialiser Le Mot De Passe
+        </h3>
+        <div>
+          <Input
+            icon={
+              <FontAwesomeIcon
+                className={classes.form__icon}
+                onClick={() => setIsPasswordMasked((prevState) => !prevState)}
+                icon={isPasswordMasked ? faEyeSlash : faEye}
+              />
+            }
+            label="Mot de passe"
+            isVisible={true}
+            className={
+              !userPasswordIsValid && userPasswordIsTouched
+                ? "form__input--red"
+                : ""
+            }
+            maxLength={32}
+            id="user-password"
+            onChange={userPasswordChangeHandler}
+            onBlur={userPasswordBlurHandler}
+            type={isPasswordMasked ? "password" : "text"}
+            value={userPasswordValue}
+            placeholder="Taper le mot de passe ici"
+          />
+          {userPasswordState.length > 0 && (
+            <ul className={classes["auth__password-error-list"]}>
+              <span>Le mot de passe doit comporter :</span>
+              {userPasswordState.map((item) => (
+                <li key={item.toString()}>{item}</li>
+              ))}
+            </ul>
+          )}
+          <button
+            disabled={!userPasswordIsValid}
+            className={`button ${classes["auth__button"]}`}
+          >
+            Enregistrer
+          </button>
+        </div>
+      </form>
+    </Card>
   );
 };
 

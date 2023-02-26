@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 
-import { ratesGetRequest, ratesPutRequest } from "../../../lib/api";
+import { getCSRF, ratesGetRequest, ratesPutRequest, setCSRFToken } from "../../../lib/api";
 import classes from "./style.module.css";
 import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
 // types import
@@ -28,6 +28,8 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
     price3: 1,
   });
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
+  const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } =
+  useHttp(getCSRF);
   const { sendHttpRequest: getRatesHttpRequest, statut: getRatesStatut, data: getRatesData, error: getRatesError } =
     useHttp(ratesGetRequest);
   const { sendHttpRequest: putRatesHttpRequest, statut: putRatesStatut, error: putRatesError } =
@@ -82,6 +84,16 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
   useEffect(() => {
     getRatesHttpRequest();
   }, [getRatesHttpRequest]);
+
+  // get csrf token
+  useEffect(() => {
+    getCSRFttpRequest();
+  }, []);
+
+  // set csrf token
+  useEffect(() => {
+    setCSRFToken(CSRFData);
+  }, [CSRFData]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;

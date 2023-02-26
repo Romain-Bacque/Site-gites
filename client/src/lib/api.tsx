@@ -1,10 +1,27 @@
 import axios from "axios";
 
 // Axios configuration
-const instance = axios.create({
+let instance = axios.create({
   baseURL: process.env.REACT_APP_APIHOST,
   withCredentials: true, // authorize cookie sending to server
 });
+
+// // CSRF
+export const setCSRFToken = (csrfToken: string | null) => {
+  instance.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken || "";
+};
+
+interface CSRFRequestResponseData {
+  csrfToken: string;
+}
+
+export const getCSRF = async () => {
+  const response = await instance.get<CSRFRequestResponseData>("/form");
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.csrfToken;
+};
 
 // // AUTHENTIFICATION
 
@@ -320,7 +337,6 @@ export const getActivities = async () => {
   const response = await instance.get<ActivitiesRequestResponseData>(
     `/activities`
   );
-
   if (response.status !== 200) throw new Error();
 
   return response.data.data;

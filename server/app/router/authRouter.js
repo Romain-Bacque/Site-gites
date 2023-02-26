@@ -8,14 +8,21 @@ const {
   emailSchema,
 } = require("../validation/schemas");
 const catchAsync = require("../utilities/catchAsync");
+const { checkCSRFToken } = require("../middlewares");
 
 const router = express.Router();
 
 router.get("/userVerification", authController.authenticationCheck);
 router.get("/logout", authController.logout);
-router.post("/login", validate(loginSchema), catchAsync(authController.login));
+router.post(
+  "/login",
+  checkCSRFToken,
+  validate(loginSchema),
+  catchAsync(authController.login)
+);
 router.post(
   "/register",
+  checkCSRFToken,
   validate(registerSchema),
   catchAsync(authController.register)
 );
@@ -26,6 +33,7 @@ router.post(
 );
 router.patch(
   "/reset-password/:id/:token",
+  checkCSRFToken,
   validate(passwordSchema),
   catchAsync(authController.resetPassword)
 );

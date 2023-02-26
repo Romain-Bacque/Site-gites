@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const puppeteer = require("puppeteer");
 
+let csrfToken = null;
+
 const checkLogged = (req, res, next) => {
   const token = req.cookies?.accessToken;
 
@@ -15,6 +17,22 @@ const checkLogged = (req, res, next) => {
       });
     } else next();
   });
+};
+
+const createCSRFToken = (req, res) => {
+  csrfToken = req.csrfToken();
+  res.send({ csrfToken });
+};
+
+const checkCSRFToken = (req, res, next) => {
+  if (
+    !csrfToken ||
+    !req.headers["x-csrf-token"] ||
+    csrfToken !== req.headers["x-csrf-token"]
+  ) {
+    return res.sendStatus(403);
+  }
+  next();
 };
 
 const getActivities = async (_, res) => {
@@ -61,5 +79,7 @@ const getActivities = async (_, res) => {
 
 module.exports = {
   checkLogged,
+  createCSRFToken,
+  checkCSRFToken,
   getActivities,
 };
