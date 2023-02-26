@@ -60,7 +60,7 @@ const Slider: React.FC<SliderProps> = ({ shelter }) => {
               src={item.picture}
             />
             <Link to="/albums" className={classes["slider__button-images"]}>
-              Voir toutes les images
+              Voir tout l'album
             </Link>
           </div>
         );

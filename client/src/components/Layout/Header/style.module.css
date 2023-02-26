@@ -130,7 +130,9 @@
 .header__auth {
   border-radius: 20px;
   padding: 0.7rem;
+  width: min-content;
 }
+
 
 @media (min-width: 900px) {
   .menu-button {

@@ -118,7 +118,7 @@ const Home: React.FC = () => {
                 <h3 className={classes.gite__name}>Gîte Jo</h3>
                 <div>
                   <p className={classes.gite__places}>
-                    Nombre de places: <span className="bold">4 personnes</span>
+                    Nombre de places : <span className="bold">4 personnes</span>
                   </p>
                 </div>
               </div>
@@ -143,7 +143,7 @@ const Home: React.FC = () => {
                 <h3 className={classes.gite__name}>Gîte Flo</h3>
                 <div>
                   <p className={classes.gite__places}>
-                    Nombre de places: <span className="bold">4 personnes</span>
+                    Nombre de places : <span className="bold">4 personnes</span>
                   </p>
                 </div>
               </div>

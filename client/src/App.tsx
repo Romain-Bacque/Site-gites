@@ -8,7 +8,7 @@ import HomePage from "./pages/HomePage";
 import SheltersPage from "./pages/SheltersPage";
 import GalleryPage from "./pages/GalleryPage";
 import AuthPage from "./pages/AuthPage";
-import { getShelters, loadUserInfos } from "./lib/api";
+import { getShelters, loadUserInfos, getCSRF, setCSRFToken } from "./lib/api";
 import { authActions } from "./store/auth";
 import AllBookingsPage from "./pages/AllBookingsPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
@@ -33,12 +33,10 @@ const App: React.FC = () => {
   const history = useHistory();
   const pathname = history.location.pathname;
 
-  // check user auth token validity
   useEffect(() => {
     authCheckHttpRequest();
   }, []);
 
-  // fetch all shelters
   useEffect(() => {
     getShelterHttpRequest();
   }, []);

@@ -279,7 +279,7 @@ const AllBookings: React.FC = () => {
       </Modal>
       <section>
         <div className={classes["bookings__title-container"]}>
-          <h2 className={classes["bookings__title"]}>{`Liste des demandes (${
+          <h2 className={classes["bookings__title"]}>{`Liste demandes (${
             bookingsList ? bookingsList.length : "0"
           })`}</h2>
           {bookingsList?.length ? (

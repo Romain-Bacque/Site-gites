@@ -234,12 +234,12 @@ const Gallery: React.FC<GalleryProps> = ({
           ) : null}
         </>
       </Modal>
-      <Card>
+      <Card className={classes.album}>
         <>
           <div className="button-container button-container--alt">
             <h3
               className={classes["album-title"]}
-            >{`Photos ${shelterTitle}`}</h3>
+            >{shelterTitle}</h3>
             {isAuth ? (
               <div>
                 <label
@@ -294,9 +294,8 @@ const Gallery: React.FC<GalleryProps> = ({
                 </SwiperSlide>
               ))
             ) : (
-              <p>Il n'y a aucune image.</p>
+              <p className="text-center space">Il n'y a aucune image.</p>
             )}
-            <p className="space" />
           </Swiper>
         </>
       </Card>

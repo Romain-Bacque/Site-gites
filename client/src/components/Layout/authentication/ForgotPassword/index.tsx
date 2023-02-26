@@ -81,7 +81,7 @@ const ForgotPassword: React.FC = () => {
           />
           <button
             disabled={!userEmailIsValid}
-            className={classes["auth__button"]}
+            className={`button ${classes["auth__button"]}`}
           >
             Envoyer un mail de réinitialisation
           </button>
