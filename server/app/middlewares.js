@@ -73,7 +73,7 @@ const getActivities = async (_, res) => {
     pageNumber++;
   }
 
-  // await browser.close();
+  await browser.close();
 
   res.status(200).json({ data: list.flat() });
 };
