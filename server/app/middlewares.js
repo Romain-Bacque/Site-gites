@@ -36,7 +36,8 @@ const checkCSRFToken = (req, res, next) => {
 };
 
 const getActivities = async (_, res) => {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: true });
+
   const page = await browser.newPage();
   const url =
     "https://www.tourisme-couserans-pyrenees.com/carnet-dadresses/quoi-faire-sur-place/activites-sportives-et-loisirs-2/activites-sportives-et-loisirs/";
@@ -72,7 +73,7 @@ const getActivities = async (_, res) => {
     pageNumber++;
   }
 
-  await browser.close();
+  // await browser.close();
 
   res.status(200).json({ data: list.flat() });
 };

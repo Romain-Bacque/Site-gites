@@ -15,7 +15,7 @@ router.use("/form", createCSRFToken);
 router.use("/", shelterRouter);
 router.use("/authentification", authRouter);
 router.use("/admin", adminRouter);
-router.use("/activities", checkCSRFToken, activitiesRouter);
+router.use("/activities", activitiesRouter);
 
 /**
  * gestion de la 404
