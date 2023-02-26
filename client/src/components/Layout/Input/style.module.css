@@ -1,0 +1,26 @@
+.form__input-container {
+  position: relative;
+  margin: 1.5rem 0;
+}
+
+.form__label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.form__input {
+  outline: none;
+  box-sizing: border-box;
+  border: 2px solid var(--border-color);
+  border-radius: 5px;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.form__input--red {
+  border-color: rgb(153, 1, 1);
+}
+
+.form__input--red::placeholder {
+  color: rgb(153, 1, 1);
+}

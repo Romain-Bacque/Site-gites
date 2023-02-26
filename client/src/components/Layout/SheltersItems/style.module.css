@@ -1,0 +1,108 @@
+.gite__title {
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: start;
+  padding: 2rem;
+}
+
+.gite__picture {
+  max-width: 100%;
+}
+
+.gite__picture-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.gite__buttons-container {
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+  align-items: flex-start;
+  font-size: 1rem;
+  margin: 0 2rem;
+  padding: 2rem 0 1.5rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.gite__button-tab {
+  cursor: pointer;
+  border: none;
+  font-size: 1.3rem;
+  background: none;
+  border-bottom: 2px solid transparent;
+  transition: 0.1s linear;
+  color: inherit;
+}
+
+.gite__button-tab:hover {
+  color: var(--text-color-light);
+}
+
+.gite__button-tab.active {
+  border-bottom: 2px solid var(--text-color);
+}
+
+.gite__content {
+  padding: 1rem;
+}
+
+.gites__details {
+  text-align: center;
+  font-size: 1.3rem;
+  padding: 1rem;
+  display: grid;
+  grid-template-areas:
+    "capacité-titre surface-titre animaux-titre"
+    "capacité-texte surface-texte animaux-texte";
+  gap: 1rem;
+}
+
+.gites__capacité-titre {
+  font-weight: bold;
+  grid-area: capacité-titre;
+}
+
+.gites__surface-titre {
+  font-weight: bold;
+  grid-area: surface-titre;
+}
+
+.gites__animaux-titre {
+  font-weight: bold;
+  grid-area: animaux-titre;
+}
+
+.gites__capacité-texte {
+  grid-area: capacité-texte;
+}
+
+.gites__surface-texte {
+  grid-area: surface-texte;
+}
+
+.gites__animaux-texte {
+  grid-area: animaux-texte;
+}
+
+/* -- gite tab container -- */
+.gites__tab-container {
+  padding: 1rem;
+}
+
+.fade-content-enter {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+.fade-content-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-content-exit-active {
+  opacity: 0;
+  transform: translateY(-100%);
+}
