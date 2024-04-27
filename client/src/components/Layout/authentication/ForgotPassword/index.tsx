@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import useInput from "../../../../hooks/use-input";
 import useHttp from "../../../../hooks/use-http";
-import { useAppDispatch } from "../../../../hooks/use-store";
 
 import Card from "../../../UI/Card";
 import Input from "../../Input";
@@ -9,8 +8,8 @@ import classes from "../style.module.css";
 import { forgotPasswordRequest } from "../../../../lib/api";
 // types import
 import { UserData } from "./types";
-import { loadingActions } from "../../../../store/loading";
 import { HTTPStateKind } from "../../../../global/types";
+import useLoading from "../../../../hooks/use-loading";
 
 // component
 const ForgotPassword: React.FC = () => {
@@ -27,7 +26,7 @@ const ForgotPassword: React.FC = () => {
     blurHandler: userEmailBlurHandler,
     resetHandler: userEmailResetHandler,
   } = useInput();
-  const dispatch = useAppDispatch();
+  const handleLoading = useLoading();
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
@@ -44,20 +43,20 @@ const ForgotPassword: React.FC = () => {
   // login request loading handling
   useEffect(() => {
     if (forgotPasswordStatut) {
-      dispatch(loadingActions.setStatut(forgotPasswordStatut))
-      dispatch(loadingActions.setMessage({
-        success: "Envoi du mail réussi.",
-        error: forgotPasswordErrorMessage
-      }))
+      handleLoading(
+        forgotPasswordStatut,
+        null,
+        "Envoi du mail réussi.",
+        forgotPasswordErrorMessage
+      );
     }
     // clear input
     if (forgotPasswordStatut === HTTPStateKind.SUCCESS) {
       userEmailResetHandler();
     }
-  }, [forgotPasswordErrorMessage])
+  }, [forgotPasswordErrorMessage]);
 
-
-  return (    
+  return (
     <Card className={classes.auth}>
       <form onSubmit={submitHandler} className={classes["auth__form"]}>
         <h3 className={classes["auth__title"]}>
@@ -68,9 +67,7 @@ const ForgotPassword: React.FC = () => {
             label="Email"
             isVisible={true}
             className={
-              !userEmailIsValid && userEmailIsTouched
-                ? "form__input--red"
-                : ""
+              !userEmailIsValid && userEmailIsTouched ? "form__input--red" : ""
             }
             id="user-email"
             onChange={userEmailChangeHandler}

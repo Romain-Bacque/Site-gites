@@ -6,7 +6,7 @@ const shelterRouter = require("./shelterRouter");
 const errorHandler = require("../utilities/errorHandler");
 const router = express.Router();
 const csrf = require("csurf");
-const { createCSRFToken, checkCSRFToken } = require("../middlewares");
+const { createCSRFToken } = require("../middlewares");
 
 router.use(csrf({ cookie: true }));
 

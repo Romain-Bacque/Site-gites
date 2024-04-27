@@ -17,8 +17,8 @@ import CropContent from "../CropContent";
 import { loadingActions } from "../../../store/loading";
 // types import
 import { AlertStatut, GalleryProps, ImagesData } from "./types";
-import { HandleLoading } from "../../../global/types";
 import Card from "../../UI/Card";
+import useLoading from "../../../hooks/use-loading";
 
 // variable & constante
 const initialModalState = {
@@ -61,6 +61,7 @@ const Gallery: React.FC<GalleryProps> = ({
   });
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const dispatch = useAppDispatch();
+  const handleLoading = useLoading();
 
   const handleDeleteAlert = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -101,19 +102,6 @@ const Gallery: React.FC<GalleryProps> = ({
     }
   };
 
-  const handleLoading: HandleLoading = useCallback(
-    (statut, success, error) => {
-      dispatch(loadingActions.setStatut(statut));
-      dispatch(
-        loadingActions.setMessage({
-          success,
-          error,
-        })
-      );
-    },
-    [dispatch]
-  );
-
   // refresh pictures display on the screen
   useEffect(() => {
     deletePictureRequestData && setImagesList(deletePictureRequestData);
@@ -128,6 +116,7 @@ const Gallery: React.FC<GalleryProps> = ({
     if (deletePictureStatut) {
       handleLoading(
         deletePictureStatut,
+        null,
         "Image supprimé.",
         deletePictureRequestError
       );
@@ -139,6 +128,7 @@ const Gallery: React.FC<GalleryProps> = ({
     if (postPictureStatut) {
       handleLoading(
         postPictureStatut,
+        null,
         "Image ajouté.",
         postPictureRequestError
       );
@@ -174,29 +164,17 @@ const Gallery: React.FC<GalleryProps> = ({
 
   // delete picture request loading handling
   useEffect(() => {
-    if (deletePictureStatut) {
-      dispatch(loadingActions.setStatut(deletePictureStatut));
-      dispatch(
-        loadingActions.setMessage({
-          success: "Image supprimé avec succés.",
-          error: deletePictureRequestError,
-        })
-      );
-    }
-    dispatch(loadingActions.setStatut(deletePictureStatut));
+    handleLoading(
+      deletePictureStatut,
+      null,
+      "Image supprimé avec succés.",
+      deletePictureRequestError
+    );
   }, [dispatch, deletePictureStatut, deletePictureRequestError]);
 
   // add picture request loading handling
   useEffect(() => {
-    if (postPictureStatut) {
-      dispatch(loadingActions.setStatut(postPictureStatut));
-      dispatch(
-        loadingActions.setMessage({
-          success: "Image ajouté avec succés.",
-          error: null,
-        })
-      );
-    }
+    handleLoading(postPictureStatut, null, "Image ajouté avec succés.", null);
   }, [dispatch, postPictureStatut]);
 
   return (
@@ -237,9 +215,7 @@ const Gallery: React.FC<GalleryProps> = ({
       <Card className={classes.album}>
         <>
           <div className="button-container button-container--alt">
-            <h3
-              className={classes["album-title"]}
-            >{shelterTitle}</h3>
+            <h3 className={classes["album-title"]}>{shelterTitle}</h3>
             {isAuth ? (
               <div>
                 <label

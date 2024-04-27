@@ -19,12 +19,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { loadingActions } from "../../../../store/loading";
 import { HTTPStateKind } from "../../../../global/types";
+import useLoading from "../../../../hooks/use-loading";
 
 // component
 const ResetPassword: React.FC = () => {
   const { id, token } = useParams<{ id: string; token: string }>();
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const dispatch = useAppDispatch();
+  const handleLoading = useLoading();
   const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } =
     useHttp(getCSRF);
   const {
@@ -68,15 +70,13 @@ const ResetPassword: React.FC = () => {
 
   // reset password request loading handling
   useEffect(() => {
-    if (resetPasswordStatut) {
-      dispatch(loadingActions.setStatut(resetPasswordStatut));
-      dispatch(
-        loadingActions.setMessage({
-          success: "Enregistrement réussi.",
-          error: resetPasswordErrorMessage,
-        })
-      );
-    }
+    handleLoading(
+      resetPasswordStatut,
+      null,
+      "Enregistrement réussi.",
+      resetPasswordErrorMessage
+    );
+
     // if password is reset successfully, input is cleared
     if (resetPasswordStatut === HTTPStateKind.SUCCESS) {
       userPasswordResetHandler();

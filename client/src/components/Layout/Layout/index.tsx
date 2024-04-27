@@ -13,9 +13,9 @@ interface LayoutProps {
 
 // component
 const Layout: React.FC<LayoutProps> = (props) => {
-  const loading = useAppSelector(state => state.loading)
+  const loading = useAppSelector((state) => state.loading);
   const dispatch = useAppDispatch();
-  
+
   return (
     <div onClick={() => dispatch(menuActions.closeMenu())}>
       <Header />
@@ -23,6 +23,7 @@ const Layout: React.FC<LayoutProps> = (props) => {
         <LoaderAndAlert
           statut={loading.statut}
           message={{
+            pending: loading.message.pending, 
             success: loading.message.success,
             error: loading.message.error,
           }}

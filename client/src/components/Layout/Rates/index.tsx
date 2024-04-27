@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 
-import { getCSRF, ratesGetRequest, ratesPutRequest, setCSRFToken } from "../../../lib/api";
+import {
+  getCSRF,
+  ratesGetRequest,
+  ratesPutRequest,
+  setCSRFToken,
+} from "../../../lib/api";
 import classes from "./style.module.css";
 import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
 // types import
-import { PriceValues, RatesProps, AlertStatut, RatesPutRequestData } from "./types";
+import {
+  PriceValues,
+  RatesProps,
+  AlertStatut,
+  RatesPutRequestData,
+} from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { loadingActions } from "../../../store/loading";
-import { HandleLoading, HTTPStateKind } from "../../../global/types";
+import { HTTPStateKind } from "../../../global/types";
+import useLoading from "../../../hooks/use-loading";
 
 // variable & constante
 const initialState = {
@@ -20,7 +31,7 @@ const initialState = {
 
 // component
 const Rates: React.FC<RatesProps> = ({ shelter }) => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const [priceValues, sePriceValues] = useState<PriceValues>({
     price1: 1,
@@ -28,12 +39,21 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
     price3: 1,
   });
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
+  const handleLoading = useLoading();
+
   const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } =
-  useHttp(getCSRF);
-  const { sendHttpRequest: getRatesHttpRequest, statut: getRatesStatut, data: getRatesData, error: getRatesError } =
-    useHttp(ratesGetRequest);
-  const { sendHttpRequest: putRatesHttpRequest, statut: putRatesStatut, error: putRatesError } =
-    useHttp(ratesPutRequest);
+    useHttp(getCSRF);
+  const {
+    sendHttpRequest: getRatesHttpRequest,
+    statut: getRatesStatut,
+    data: getRatesData,
+    error: getRatesError,
+  } = useHttp(ratesGetRequest);
+  const {
+    sendHttpRequest: putRatesHttpRequest,
+    statut: putRatesStatut,
+    error: putRatesError,
+  } = useHttp(ratesPutRequest);
 
   const formIsValid =
     !isNaN(priceValues.price1) &&
@@ -62,14 +82,6 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
       };
     });
   };
-
-  const handleLoading: HandleLoading = (statut, success, error) => {
-    dispatch(loadingActions.setStatut(statut))
-    dispatch(loadingActions.setMessage({
-      success,
-      error
-    }))
-  }
 
   useEffect(() => {
     if (getRatesData && typeof getRatesData === "object") {
@@ -111,78 +123,87 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
 
   useEffect(() => {
     if (getRatesStatut) {
-      handleLoading(getRatesStatut, null, getRatesError);
+      handleLoading(getRatesStatut, null, null, getRatesError);
     }
   }, [getRatesStatut]);
 
   // edit rates request loading statut
   useEffect(() => {
     if (putRatesStatut) {
-      handleLoading(putRatesStatut, "Prix modifiés avec succés.", putRatesError);
+      handleLoading(
+        putRatesStatut,
+        null,
+        "Prix modifiés avec succés.",
+        putRatesError
+      );
     }
   }, [putRatesStatut]);
-  
+
   return (
     <>
-      {getRatesStatut === HTTPStateKind.SUCCESS &&
-      <form className={classes.form} onSubmit={handleSubmit}>
-        <div className={classes["rates__grid-container"]}>
-          <p className={classes["rates__grid-items"]}>header1</p>
-          <p className={classes["rates__grid-items"]}>header2</p>
-          <p className={classes["rates__grid-items"]}>header3</p>
-          <div className={classes["rates__grid-items"]}>
-            <input
-              className={classes["rates__input"]}
-              value={priceValues.price1 || "non défini"}
-              id="price1"
-              min={1}
-              max={9999}
-              onChange={handleValueChange}
-              type="number"
-              name="country"
-              disabled={isAuth ? false : true}
-              required
-            />
-            <span>{priceValues.price1 && "€"}</span>
+      {getRatesStatut === HTTPStateKind.SUCCESS && (
+        <form className={classes.form} onSubmit={handleSubmit}>
+          <div className={classes["rates__grid-container"]}>
+            <p className={classes["rates__grid-items"]}>header1</p>
+            <p className={classes["rates__grid-items"]}>header2</p>
+            <p className={classes["rates__grid-items"]}>header3</p>
+            <div className={classes["rates__grid-items"]}>
+              <input
+                className={classes["rates__input"]}
+                value={priceValues.price1 || "non défini"}
+                id="price1"
+                min={1}
+                max={9999}
+                onChange={handleValueChange}
+                type="number"
+                name="country"
+                disabled={isAuth ? false : true}
+                required
+              />
+              <span>{priceValues.price1 && "€"}</span>
+            </div>
+            <div className={classes["rates__grid-items"]}>
+              <input
+                className={classes["rates__input"]}
+                value={priceValues.price2 || "non défini"}
+                id="price2"
+                min={1}
+                max={9999}
+                onChange={handleValueChange}
+                type="number"
+                name="country"
+                disabled={isAuth ? false : true}
+                required
+              />
+              <span>{priceValues.price2 && "€"}</span>
+            </div>
+            <div className={classes["rates__grid-items"]}>
+              <input
+                className={classes["rates__input"]}
+                value={priceValues.price3 || "non défini"}
+                id="price3"
+                min={1}
+                max={9999}
+                onChange={handleValueChange}
+                type="number"
+                name="country"
+                disabled={isAuth ? false : true}
+                required
+              />
+              <span>{priceValues.price3 && "€"}</span>
+            </div>
           </div>
-          <div className={classes["rates__grid-items"]}>
-            <input
-              className={classes["rates__input"]}
-              value={priceValues.price2 || "non défini"}
-              id="price2"
-              min={1}
-              max={9999}
-              onChange={handleValueChange}
-              type="number"
-              name="country"
-              disabled={isAuth ? false : true}
-              required
-            />
-            <span>{priceValues.price2 && "€"}</span>
-          </div>
-          <div className={classes["rates__grid-items"]}>
-            <input
-              className={classes["rates__input"]}
-              value={priceValues.price3 || "non défini"}
-              id="price3"
-              min={1}
-              max={9999}
-              onChange={handleValueChange}
-              type="number"
-              name="country"
-              disabled={isAuth ? false : true}
-              required
-            />
-            <span>{priceValues.price3 && "€"}</span>
-          </div>
-        </div>
-        {isAuth && <button className="button button--alt">
-          Enregistrer les modifications
-          <FontAwesomeIcon className="button__icon" icon={faPen} />
-        </button>}
-      </form>}
-    {getRatesStatut === HTTPStateKind.ERROR &&
-      <p className="text-center">Les tarifs sont indisponibles.</p>}
+          {isAuth && (
+            <button className="button button--alt">
+              Enregistrer les modifications
+              <FontAwesomeIcon className="button__icon" icon={faPen} />
+            </button>
+          )}
+        </form>
+      )}
+      {getRatesStatut === HTTPStateKind.ERROR && (
+        <p className="text-center">Les tarifs sont indisponibles.</p>
+      )}
     </>
   );
 };

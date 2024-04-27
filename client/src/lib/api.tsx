@@ -337,6 +337,7 @@ export const getActivities = async () => {
   const response = await instance.get<ActivitiesRequestResponseData>(
     `/activities`
   );
+  
   if (response.status !== 200) throw new Error();
 
   return response.data.data;

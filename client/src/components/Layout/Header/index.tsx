@@ -8,10 +8,10 @@ import { authActions } from "../../../store/auth";
 import { menuActions } from "../../../store/menu";
 import { logoutRequest } from "../../../lib/api";
 import useHttp from "../../../hooks/use-http";
-import { loadingActions } from "../../../store/loading";
 import { HTTPStateKind } from "../../../global/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
+import useLoading from "../../../hooks/use-loading";
 
 // component
 const Header: React.FC = () => {
@@ -25,6 +25,7 @@ const Header: React.FC = () => {
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const isMenuOpen = useAppSelector((state) => state.menu.isOpen);
   const dispatch = useAppDispatch();
+  const handleLoading = useLoading();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,15 +70,7 @@ const Header: React.FC = () => {
 
   // loading
   useEffect(() => {
-    if (logoutStatut) {
-      dispatch(loadingActions.setStatut(logoutStatut));
-      dispatch(
-        loadingActions.setMessage({
-          success: null,
-          error: logoutErrorMessage,
-        })
-      );
-    }
+    handleLoading(logoutStatut, null, null, logoutErrorMessage);
   }, [logoutStatut]);
 
   return (

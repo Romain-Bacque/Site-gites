@@ -15,9 +15,8 @@ import {
   handleEmailFormDisplay,
   ModalState,
 } from "./types";
-import { HandleLoading, HTTPStateKind } from "../../../global/types";
+import {  HTTPStateKind } from "../../../global/types";
 // other import
-import { loadingActions } from "../../../store/loading";
 import {
   bookingsGetRequest,
   acceptBookingRequest,
@@ -32,6 +31,7 @@ import { Navigation, Pagination } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import useLoading from "../../../hooks/use-loading";
 
 dayjs().format();
 
@@ -48,14 +48,14 @@ const AllBookings: React.FC = () => {
   const [showModal, setShowModal] = useState<ModalState>(initialModalState);
   const [bookingsList, setBookingsList] = useState<BookingsList>([]);
   const [textareaValue, setTextareaValue] = useState("");
-  const dispatch = useAppDispatch();
   const bookingRef = useRef<BookingRef>(initialBookingRefState);
+  const handleLoading = useLoading();
 
   const {
     sendHttpRequest: getBookingsHttpRequest,
-    statut: getBookingsRequestStatut,
-    data: getBookingsRequestData,
-    error: getBookingRequestError,
+    statut: fetchBookingsRequestStatut,
+    data: fetchBookingsRequestData,
+    error: fetchBookingRequestError,
   } = useHttp(bookingsGetRequest);
   const {
     sendHttpRequest: acceptBookingHttpRequest,
@@ -69,19 +69,6 @@ const AllBookings: React.FC = () => {
     data: refuseBookingsRequestData,
     error: refuseBookingRequestError,
   } = useHttp(refuseBookingRequest);
-
-  const handleLoading: HandleLoading = useCallback(
-    (statut, success, error) => {
-      dispatch(loadingActions.setStatut(statut));
-      dispatch(
-        loadingActions.setMessage({
-          success,
-          error,
-        })
-      );
-    },
-    [dispatch]
-  );
 
   const handleBookingSubmit = useCallback(
     async (event: React.FormEvent) => {
@@ -119,12 +106,14 @@ const AllBookings: React.FC = () => {
       if (response.status !== 200) throw new Error();
       handleLoading(
         HTTPStateKind.SUCCESS,
+        null,
         "Modification enregistrée, un mail de confirmation vous a été envoyé.",
         null
       );
     } catch (err) {
       handleLoading(
         HTTPStateKind.ERROR,
+        null,
         "Modification enregistrée, mais echec de l'envoi du mail de confirmation.",
         null
       );
@@ -194,8 +183,8 @@ const AllBookings: React.FC = () => {
 
   // refresh bookings list display on the screen
   useEffect(() => {
-    getBookingsRequestData && setBookingsList(getBookingsRequestData);
-  }, [getBookingsRequestData]);
+    fetchBookingsRequestData && setBookingsList(fetchBookingsRequestData);
+  }, [fetchBookingsRequestData]);
 
   useEffect(() => {
     acceptBookingsRequestData && setBookingsList(acceptBookingsRequestData);
@@ -207,19 +196,24 @@ const AllBookings: React.FC = () => {
 
   // get booking request loading statut
   useEffect(() => {
-    if (getBookingsRequestStatut) {
-      handleLoading(getBookingsRequestStatut, null, getBookingRequestError);
+    if (fetchBookingsRequestStatut) {
+      handleLoading(
+        fetchBookingsRequestStatut,
+        null,
+        null,
+        fetchBookingRequestError
+      );
     }
-  }, [getBookingsRequestStatut, getBookingRequestError, handleLoading]);
+  }, [fetchBookingsRequestStatut, fetchBookingRequestError, handleLoading]);
 
   // accept booking request handling
   useEffect(() => {
     if (acceptBookingStatut === HTTPStateKind.PENDING) {
-      handleLoading(HTTPStateKind.PENDING, null, null);
+      handleLoading(HTTPStateKind.PENDING, null, null, null);
     } else if (acceptBookingStatut === HTTPStateKind.SUCCESS) {
       sendEmailToClient();
     } else if (acceptBookingStatut === HTTPStateKind.ERROR) {
-      handleLoading(acceptBookingStatut, null, acceptBookingRequestError);
+      handleLoading(acceptBookingStatut, null, null, acceptBookingRequestError);
     }
   }, [
     acceptBookingStatut,
@@ -231,11 +225,11 @@ const AllBookings: React.FC = () => {
   // refuse booking request handling
   useEffect(() => {
     if (refuseBookingStatut === HTTPStateKind.PENDING) {
-      handleLoading(refuseBookingStatut, null, null);
+      handleLoading(refuseBookingStatut, null, null, null);
     } else if (refuseBookingStatut === HTTPStateKind.SUCCESS) {
       sendEmailToClient();
     } else if (refuseBookingStatut === HTTPStateKind.ERROR) {
-      handleLoading(refuseBookingStatut, null, refuseBookingRequestError);
+      handleLoading(refuseBookingStatut, null, null, refuseBookingRequestError);
     }
   }, [
     refuseBookingStatut,
@@ -301,7 +295,7 @@ const AllBookings: React.FC = () => {
             </button>
           ) : null}
         </div>
-        {getBookingsRequestStatut === HTTPStateKind.SUCCESS &&
+        {fetchBookingsRequestStatut === HTTPStateKind.SUCCESS &&
           (bookingsList?.length > 0 ? (
             <Swiper
               modules={[Navigation, Pagination]}
