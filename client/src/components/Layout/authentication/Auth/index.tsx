@@ -7,14 +7,19 @@ import { useAppDispatch } from "../../../../hooks/use-store";
 import Input from "../../Input";
 import Card from "../../../UI/Card";
 import classes from "../style.module.css";
-import { registerRequest, loginRequest, getCSRF, setCSRFToken } from "../../../../lib/api";
+import {
+  registerRequest,
+  loginRequest,
+  getCSRF,
+  setCSRFToken,
+} from "../../../../lib/api";
 import { authActions } from "../../../../store/auth";
 // types import
 import { LoginData } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { loadingActions } from "../../../../store/loading";
-import { HandleLoading, HTTPStateKind } from "../../../../global/types";
+import { HTTPStateKind } from "../../../../global/types";
+import useLoading from "../../../../hooks/use-loading";
 
 // component
 const Auth: React.FC = () => {
@@ -59,6 +64,7 @@ const Auth: React.FC = () => {
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const [isNotRegistered, setIsNotRegistered] = useState(false);
   const dispatch = useAppDispatch();
+  const handleLoading = useLoading();
   const history = useHistory();
 
   let isFormValid: boolean;
@@ -93,16 +99,6 @@ const Auth: React.FC = () => {
     setIsNotRegistered(!isNotRegistered);
   };
 
-  const handleLoading: HandleLoading = (statut, success, error) => {
-    dispatch(loadingActions.setStatut(statut));
-    dispatch(
-      loadingActions.setMessage({
-        success,
-        error,
-      })
-    );
-  };
-
   // get csrf token
   useEffect(() => {
     getCSRFttpRequest();
@@ -118,7 +114,12 @@ const Auth: React.FC = () => {
     const userName = loginData ? loginData.username : "";
 
     if (loginStatut) {
-      handleLoading(loginStatut, `Bienvenue ${userName}`, loginErrorMessage);
+      handleLoading(
+        loginStatut,
+        null,
+        `Bienvenue ${userName}`,
+        loginErrorMessage
+      );
     }
     // if user is logged successfully, then we set 'isAuthentificated' to true in store,
     // and redirect to home page
@@ -133,6 +134,7 @@ const Auth: React.FC = () => {
     if (registerStatut) {
       handleLoading(
         registerStatut,
+        null,
         "Enregistrement réussi.",
         registerRequestError
       );

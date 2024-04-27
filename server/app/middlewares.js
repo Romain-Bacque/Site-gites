@@ -34,20 +34,21 @@ const checkCSRFToken = (req, res, next) => {
   }
   next();
 };
-
 const getActivities = async (_, res) => {
   const browser = await puppeteer.launch({ headless: true });
 
   const page = await browser.newPage();
-  const url =
-    "https://www.tourisme-couserans-pyrenees.com/carnet-dadresses/quoi-faire-sur-place/activites-sportives-et-loisirs-2/activites-sportives-et-loisirs/";
+  const baseUrl =
+    "https://www.tourisme-couserans-pyrenees.com/carnet-dadresses/quoi-faire-sur-place/activites-sportives-et-de-loisirs/activites-sportives-et-loisirs";
+  let pageNumber = 2;
+  let hasNextPage = true;
 
-  await page.goto(url);
-
-  const getActivities = async () => {
+  const getActivitiesList = async () => {
     return await page.evaluate(() => {
       const list = [];
       const activities = document.querySelectorAll(".wpetOffer");
+
+      if (activities.length === 0) return null;
 
       for (const activity of activities) {
         list.push({
@@ -65,17 +66,26 @@ const getActivities = async (_, res) => {
   };
 
   const list = [];
-  let pageNumber = 2;
 
-  while (await page.$(".wpetOffer")) {
-    list.push(await getActivities());
-    await page.goto(`${url}/page/${pageNumber}`);
-    pageNumber++;
+  while (hasNextPage) {
+    await page.goto(`${baseUrl}/page/${String(pageNumber)}/`);
+    
+    const activitiesOnPage = await getActivitiesList();
+
+    if (!activitiesOnPage || activitiesOnPage.length === 0) {
+      // If no activities found on the page, stop looping
+      hasNextPage = false;
+    } else {
+      list.push(...activitiesOnPage);
+      console.log(list);
+
+      pageNumber++;
+    }
   }
 
-  // await browser.close();
+  await browser.close();
 
-  res.status(200).json({ data: list.flat() });
+  res.status(200).json({ data: list });
 };
 
 module.exports = {

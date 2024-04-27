@@ -8,13 +8,14 @@ import HomePage from "./pages/HomePage";
 import SheltersPage from "./pages/SheltersPage";
 import GalleryPage from "./pages/GalleryPage";
 import AuthPage from "./pages/AuthPage";
-import { getShelters, loadUserInfos, getCSRF, setCSRFToken } from "./lib/api";
+import { getShelters, loadUserInfos } from "./lib/api";
 import { authActions } from "./store/auth";
 import AllBookingsPage from "./pages/AllBookingsPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { HTTPStateKind } from "./global/types";
 import { loadingActions } from "./store/loading";
+import useLoading from "./hooks/use-loading";
 
 // component
 const App: React.FC = () => {
@@ -30,6 +31,7 @@ const App: React.FC = () => {
   } = useHttp(getShelters);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const dispatch = useAppDispatch();
+  const handleLoading = useLoading();
   const history = useHistory();
   const pathname = history.location.pathname;
 
@@ -51,12 +53,11 @@ const App: React.FC = () => {
   // shelters request loading handling
   useEffect(() => {
     if (getSheltersRequestStatut) {
-      dispatch(loadingActions.setStatut(getSheltersRequestStatut));
-      dispatch(
-        loadingActions.setMessage({
-          success: null,
-          error: getSheltersRequestError,
-        })
+      handleLoading(
+        getSheltersRequestStatut,
+        null,
+        null,
+        getSheltersRequestError
       );
     }
   }, [getSheltersRequestStatut]);

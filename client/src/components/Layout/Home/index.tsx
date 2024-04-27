@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
@@ -16,9 +16,8 @@ import useHttp from "../../../hooks/use-http";
 import { getActivities } from "../../../lib/api";
 import Activities from "../Activities";
 import Modal from "../../UI/Modal";
-import { HandleLoading, HTTPStateKind } from "../../../global/types";
-import { useDispatch } from "react-redux";
-import { loadingActions } from "../../../store/loading";
+import LoaderAndAlert from "../../UI/LoaderAndAlert";
+import { HTTPStateKind } from "../../../global/types";
 
 // variable & constantes
 const initialState = {
@@ -33,32 +32,15 @@ const Home: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const {
     sendHttpRequest,
-    data: activitiesList,
+    data: activities,
     statut,
     error,
-  } = useHttp(getActivities);
-  const dispatch = useDispatch();
+  } = useHttp(getActivities, "activities");
 
-  const handleLoading: HandleLoading = (statut, success, error) => {
-    dispatch(loadingActions.setStatut(statut));
-    dispatch(
-      loadingActions.setMessage({
-        success,
-        error,
-      })
-    );
-  };
-
-  const handleActivities = () => {
+  const handleFetchActivities = () => {
     sendHttpRequest();
+    setShowModal(true);
   };
-
-  useEffect(() => {
-    if (statut) {
-      handleLoading(statut, null, error);
-      if (statut === HTTPStateKind.SUCCESS) setShowModal(true);
-    }
-  }, [statut]);
 
   return (
     <>
@@ -67,7 +49,11 @@ const Home: React.FC = () => {
         show={showModal}
         onHide={() => setShowModal(false)}
       >
-        <Activities activities={activitiesList} />
+        <LoaderAndAlert
+          statut={statut}
+          message={{ pending: null, success: null, error }}
+        />
+        <Activities activities={activities} />
       </Modal>
       <Alert
         message={alertStatut.message}
@@ -81,7 +67,7 @@ const Home: React.FC = () => {
         <Card className={classes.banner}>
           <button
             className={`${classes.banner__button} ${classes.button}`}
-            onClick={handleActivities}
+            onClick={handleFetchActivities}
           >
             Activités dans le Couserans
             <FontAwesomeIcon className="button__icon" icon={faArrowRight} />

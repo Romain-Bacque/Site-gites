@@ -6,22 +6,21 @@ import Card from "../../UI/Card";
 import classes from "./style.module.css";
 import GitesItems from "../GitesItems";
 import { getShelters } from "../../../lib/api";
-import { loadingActions } from "../../../store/loading";
-import { useAppDispatch } from "../../../hooks/use-store";
 import { HTTPStateKind } from "../../../global/types";
+import useLoading from "../../../hooks/use-loading";
 
 // component
 const Gites: React.FC = () => {
   const [shelterList, setShelterList] = useState<JSX.Element[]>([]);
-  const dispatch = useAppDispatch();
+  const handleLoading = useLoading();
 
   const {
     sendHttpRequest: getShelterHttpRequest,
     statut: getSheltersRequestStatut,
     data: getSheltersData,
-    error: getSheltersRequestError
+    error: getSheltersRequestError,
   } = useHttp(getShelters);
- 
+
   const handleSheltersList = () => {
     if (getSheltersRequestStatut === HTTPStateKind.SUCCESS && getSheltersData) {
       let shelters: JSX.Element[] = [];
@@ -52,23 +51,23 @@ const Gites: React.FC = () => {
 
   // shelters request loading handling
   useEffect(() => {
-    if (getSheltersRequestStatut) {
-      dispatch(loadingActions.setStatut(getSheltersRequestStatut));
-      dispatch(loadingActions.setMessage({
-        success: null,
-        error: getSheltersRequestError,
-      }));
-      if(getSheltersRequestStatut !== HTTPStateKind.PENDING) {
-        handleSheltersList();
-      }
+    handleLoading(
+      getSheltersRequestStatut,
+      null,
+      null,
+      getSheltersRequestError
+    );
+    if (getSheltersRequestStatut !== HTTPStateKind.PENDING) {
+      handleSheltersList();
     }
   }, [getSheltersRequestStatut]);
 
   return (
     <section>
       {shelterList}
-      {getSheltersRequestStatut === HTTPStateKind.ERROR &&
-      <p className="text-center">Les gites sont indisponibles.</p>}
+      {getSheltersRequestStatut === HTTPStateKind.ERROR && (
+        <p className="text-center">Les gites sont indisponibles.</p>
+      )}
     </section>
   );
 };

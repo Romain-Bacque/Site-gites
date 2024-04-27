@@ -1,0 +1,30 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["react", "react-hooks", "@typescript-eslint"],
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/eslint-plugin"
+  ],
+  "rules": {
+    "no-unused-vars": "off",
+    "react-hooks/rules-of-hooks": "error", // prevent us when we don't correctly use react hooks.
+    "react-hooks/exhaustive-deps": "warn", // prevent us when we have a missing dependency in an effect hook.
+    "react/jsx-fragments": ["warn", "syntax"], // prevent us when we should use fragment
+    "prettier/prettier": ["error", {
+      "endOfLine": "auto"
+    }]
+  }
+}

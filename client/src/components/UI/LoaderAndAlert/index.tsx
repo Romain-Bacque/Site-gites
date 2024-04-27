@@ -15,10 +15,9 @@ const initialAlertState = {
 };
 
 // component
-const LoaderAndAlert: React.FC<LoaderAndAlertProps> = (props) => {
+const LoaderAndAlert: React.FC<LoaderAndAlertProps> = ({ statut, message }) => {
   const [alertStatut, setAlertStatut] =
     useState<StatutMessage>(initialAlertState);
-  const { statut, message } = props;
 
   useEffect(() => {
     if (statut === HTTPStateKind.SUCCESS) {
@@ -55,15 +54,19 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = (props) => {
 
   return (
     <>
-      {statut === HTTPStateKind.PENDING && <Loader />}
-      {(statut === HTTPStateKind.SUCCESS || statut === HTTPStateKind.ERROR) && <Alert
-        message={alertStatut.message}
-        alert={alertStatut.alertKind}
-        show={alertStatut.show}
-        onAlertClose={() =>
-          setAlertStatut((prevState) => ({ ...prevState, show: false }))
-        }
-      />}
+      {statut === HTTPStateKind.PENDING && (
+        <Loader message={message?.pending} />
+      )}
+      {(statut === HTTPStateKind.SUCCESS || statut === HTTPStateKind.ERROR) && (
+        <Alert
+          message={alertStatut.message}
+          alert={alertStatut.alertKind}
+          show={alertStatut.show}
+          onAlertClose={() =>
+            setAlertStatut((prevState) => ({ ...prevState, show: false }))
+          }
+        />
+      )}
     </>
   );
 };

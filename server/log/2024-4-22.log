@@ -1,0 +1,18 @@
+19:40 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7819:40 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7819:40 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7819:41 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:6219:41 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:6219:41 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:6219:41 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:6219:49 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7819:49 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7819:49 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7819:49 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7819:50 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7819:51 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7819:52 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7519:55 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'textContent')
+    at pptr://__puppeteer_evaluation_script__:5:7519:56 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7619:56 Error: Evaluation failed: TypeError: Cannot read properties of null (reading 'innerText')
+    at pptr://__puppeteer_evaluation_script__:5:7920:42 TypeError: Assignment to constant variable.20:42 TypeError: Assignment to constant variable.20:42 TypeError: Assignment to constant variable.20:44 TypeError: Assignment to constant variable.20:44 TypeError: Assignment to constant variable.20:58 TypeError: Assignment to constant variable.21:45 ProtocolError: Protocol error (Page.navigate): Target closed.

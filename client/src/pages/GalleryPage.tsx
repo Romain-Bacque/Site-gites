@@ -6,6 +6,7 @@ import Gallery from "../components/Layout/Gallery";
 import { loadingActions } from "../store/loading";
 import { useDispatch } from "react-redux";
 import { HTTPStateKind } from "../global/types";
+import useLoading from "../hooks/use-loading";
 
 // interfaces
 export type GalleryPageProps = {
@@ -21,6 +22,7 @@ export type GalleryPageProps = {
 // component
 const GalleryPage: React.FC<GalleryPageProps> = ({ sheltersData }) => {
   const dispatch = useDispatch();
+  const handleLoading = useLoading();
   const {
     sendHttpRequest: getPictureHttpRequest,
     statut: getPictureStatut,
@@ -34,15 +36,7 @@ const GalleryPage: React.FC<GalleryPageProps> = ({ sheltersData }) => {
 
   // shelters request loading handling
   useEffect(() => {
-    if (getPictureStatut) {
-      dispatch(loadingActions.setStatut(getPictureStatut));
-      dispatch(
-        loadingActions.setMessage({
-          success: null,
-          error: getPictureRequestError,
-        })
-      );
-    }
+    handleLoading(getPictureStatut, null, null, getPictureRequestError);
   }, [dispatch, getPictureStatut, getPictureRequestError]);
 
   return (

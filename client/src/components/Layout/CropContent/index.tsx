@@ -1,9 +1,5 @@
 import { useAppDispatch } from "../../../hooks/use-store";
-import React, {
-  MouseEventHandler,
-  useCallback,
-  useState,
-} from "react";
+import React, { MouseEventHandler, useCallback, useState } from "react";
 
 import Cropper, { Area } from "react-easy-crop";
 import classes from "./style.module.css";
@@ -12,6 +8,7 @@ import getCroppedImg from "./lib/cropImage";
 import { CropContentProps } from "./types";
 import { loadingActions } from "../../../store/loading";
 import { HTTPStateKind } from "../../../global/types";
+import useLoading from "../../../hooks/use-loading";
 
 let cropDatas: [string, Area];
 
@@ -20,10 +17,11 @@ const CropContent: React.FC<CropContentProps> = ({
   shelterId,
   url,
   onImagePost,
-}) => { 
+}) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const dispatch = useAppDispatch();
+  const handleLoading = useLoading();
 
   const handleCropComplete = useCallback(
     (_: Area, croppedAreaPixels: Area) => {
@@ -50,8 +48,7 @@ const CropContent: React.FC<CropContentProps> = ({
 
       onImagePost(formData);
     } catch (err: any) {
-      dispatch(loadingActions.setStatut(HTTPStateKind.ERROR));
-      dispatch(loadingActions.setMessage({ success: null, error: err }));
+      handleLoading(HTTPStateKind.ERROR, null, null, err);
     }
   };
 

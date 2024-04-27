@@ -4,19 +4,21 @@ import { HTTPStateKind } from "../global/types";
 
 // interfaces
 interface Message {
-    success: string | null;
-    error: string | null;
+  pending: string | null;
+  success: string | null;
+  error: string | null;
 }
 interface LoadingState {
-  statut: HTTPStateKind | null
+  statut: HTTPStateKind;
   message: Message;
 }
 
 const initialLoadingState: LoadingState = {
-  statut: null,
+  statut: HTTPStateKind.IDLE,
   message: {
+    pending: null,
     success: null,
-    error: null
+    error: null,
   },
 };
 
@@ -24,16 +26,19 @@ const loadingSlice = createSlice({
   name: "loading",
   initialState: initialLoadingState,
   reducers: {
-    setStatut(state, action: PayloadAction<HTTPStateKind | null>) {
+    setStatut(
+      state,
+      action: PayloadAction<HTTPStateKind>
+    ) {
       state.statut = action.payload;
     },
     setMessage(state, action: PayloadAction<Message>) {
       state.message = action.payload;
     },
-    resetStore(state) {
+    reset(state) {
       state.statut = initialLoadingState.statut;
       state.message = initialLoadingState.message;
-    }
+    },
   },
 });
 

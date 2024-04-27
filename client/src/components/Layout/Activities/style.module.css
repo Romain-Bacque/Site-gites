@@ -1,9 +1,13 @@
+.activities-list-container {
+  padding: 1rem 2rem;
+  height: 100%;
+}
+
 .activities-list {
   color: white;
   height: 90%;
   overflow-y: auto;
-  line-height: 2rem;
-  padding: 2rem;
+  height: 90%;
 }
 
 .activities-list__item {
@@ -11,6 +15,7 @@
   background: var(--bg-color-alt);
   padding: 1rem;
   margin: 1rem 0;
+  line-height: 2rem;
 }
 
 .activities-list__title {

@@ -21,6 +21,7 @@ import classes from "./style.module.css";
 import { useAppDispatch } from "../../../hooks/use-store";
 import { loadingActions } from "../../../store/loading";
 import { HTTPStateKind } from "../../../global/types";
+import useLoading from "../../../hooks/use-loading";
 
 // variable & constante
 let timer: NodeJS.Timeout;
@@ -35,6 +36,7 @@ const Availability: React.FC<AvailabilityProps> = ({
   const [showDoubleView, setShowDoubleView] = useState(false);
   const [disabledDates, setDisabledDates] = useState<DisabledDatesData>([]);
   const dispatch = useAppDispatch();
+  const handleLoading = useLoading();
   const {
     sendHttpRequest: getDisabledDatesHttpRequest,
     statut: getDisabledDatesStatut,
@@ -148,15 +150,7 @@ const Availability: React.FC<AvailabilityProps> = ({
 
   // get disabled dates request loading handling
   useEffect(() => {
-    if (getDisabledDatesStatut) {
-      dispatch(loadingActions.setStatut(getDisabledDatesStatut));
-      dispatch(
-        loadingActions.setMessage({
-          success: null,
-          error: getDisabledDatesError,
-        })
-      );
-    }
+    handleLoading(getDisabledDatesStatut, null, null, getDisabledDatesError);
   }, [getDisabledDatesStatut]);
 
   return (

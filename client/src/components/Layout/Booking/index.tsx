@@ -12,7 +12,6 @@ import {
   HandleDateChoiceType,
 } from "./types";
 import Availability from "../Availability";
-import { loadingActions } from "../../../store/loading";
 // other import
 import Input from "../Input";
 import { bookingRequest } from "../../../lib/api";
@@ -20,6 +19,7 @@ import classes from "./style.module.css";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import { HTTPStateKind } from "../../../global/types";
+import useLoading from "../../../hooks/use-loading";
 
 // variable & contante
 const initialState = {
@@ -34,6 +34,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
   const [calendarStatus, setCalendarStatus] =
     useState<CalendarStatus>(initialState);
   const dispatch = useAppDispatch();
+  const handleLoading = useLoading()
   const {
     value: nameValue,
     isValid: nameIsValid,
@@ -162,13 +163,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
 
     // loader display
     if (bookingStatut) {
-      dispatch(loadingActions.setStatut(bookingStatut));
-      dispatch(
-        loadingActions.setMessage({
-          success: null,
-          error: null,
-        })
-      );
+      handleLoading(bookingStatut, null, null, null);
     }
 
     // popup display
