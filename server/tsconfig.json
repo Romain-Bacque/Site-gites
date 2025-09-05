@@ -20,9 +20,9 @@
     // Enables interoperability between CommonJS and ES Modules (used with packages like Babel).
     "esModuleInterop": true,
     // Sets the module system to ES Modules (ESNext) for output files.
-    "module": "ESNext",
+    "module": "nodenext",
     // Specifies how module resolution should work.
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     // Allows importing JSON files as modules.
     "resolveJsonModule": true,
     // Enables the transpiler to work in isolation (incremental builds).
