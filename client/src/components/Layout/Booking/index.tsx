@@ -28,7 +28,7 @@ const initialState = {
 };
 
 // component
-const Booking: React.FC<BookingProps> = ({ shelter }) => {
+const Booking: React.FC<BookingProps> = ({ shelterId }) => {
   const { sendHttpRequest: bookingHttpRequest, statut: bookingStatut } =
     useHttp(bookingRequest);
   const [calendarStatus, setCalendarStatus] =
@@ -104,7 +104,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
     if (!isFormValid) return;
 
     const userData: bookingRequestData = {
-      shelterId: shelter,
+      shelterId,
       name: nameValue,
       phone: phoneValue,
       numberOfPerson: +personsValue,
@@ -213,7 +213,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
           label="Prénom et Nom"
           isVisible={true}
           className={!nameIsValid && nameIsTouched ? "form__input--red" : ""}
-          id={`name-shelter${shelter}`}
+          id={`name-shelter${shelterId}`}
           onChange={nameChangeHandler}
           onBlur={nameBlurHandler}
           type="text"
@@ -224,7 +224,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
           label="Email"
           isVisible={true}
           className={!emailIsValid && emailIsTouched ? "form__input--red" : ""}
-          id={`email-shelter${shelter}`}
+          id={`email-shelter${shelterId}`}
           onChange={emailChangeHandler}
           onBlur={emailBlurHandler}
           type="email"
@@ -235,7 +235,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
           label="Téléphone"
           isVisible={true}
           className={!phoneIsValid && phoneIsTouched ? "form__input--red" : ""}
-          id={`phone-shelter${shelter}`}
+          id={`phone-shelter${shelterId}`}
           onChange={phoneChangeHandler}
           onBlur={phoneBlurHandler}
           type="tel"
@@ -248,7 +248,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
           className={
             !personsIsValid && personsIsTouched ? "form__input--red" : ""
           }
-          id={`persons-shelter${shelter}`}
+          id={`persons-shelter${shelterId}`}
           onChange={personsChangeHandler}
           onBlur={personsBlurHandler}
           min="1"
@@ -269,7 +269,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
             <Availability
               onDateChoice={handleDateChoice.bind(null, "from")}
               className="calendar--booking"
-              shelter={shelter}
+              shelterId={shelterId}
             />
           )}
           <Input
@@ -278,7 +278,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
             isVisible={true}
             className={!fromIsValid && fromIsTouched ? "form__input--red" : ""}
             readOnly={true}
-            id={`from-shelter${shelter}`}
+            id={`from-shelter${shelterId}`}
             onBlur={fromBlurHandler}
             type="date"
             value={dayjs(fromValue).format("YYYY-MM-DD")}
@@ -294,7 +294,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
             <Availability
               onDateChoice={handleDateChoice.bind(null, "to")}
               className="calendar--booking"
-              shelter={shelter}
+              shelterId={shelterId}
             />
           )}
           <Input
@@ -303,7 +303,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
             isVisible={true}
             className={!toIsValid && toIsTouched ? "form__input--red" : ""}
             readOnly={true}
-            id={`to-shelter${shelter}`}
+            id={`to-shelter${shelterId}`}
             onBlur={toBlurHandler}
             type="date"
             value={dayjs(toValue).format("YYYY-MM-DD")}
@@ -311,7 +311,7 @@ const Booking: React.FC<BookingProps> = ({ shelter }) => {
         </div>
         <textarea
           className={classes["form__textarea"]}
-          id={`info-shelter${shelter}`}
+          id={`info-shelter${shelterId}`}
           onChange={infosChangeHandler}
           onBlur={infosBlurHandler}
           value={infosValue}

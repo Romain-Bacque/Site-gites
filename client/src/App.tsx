@@ -16,6 +16,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { HTTPStateKind } from "./global/types";
 import { loadingActions } from "./store/loading";
 import useLoading from "./hooks/use-loading";
+import EmailConfirmationPage from "./pages/EmailConfirmationPage";
 
 // component
 const App: React.FC = () => {
@@ -82,6 +83,11 @@ const App: React.FC = () => {
         {isAuth && (
           <Route path="/admin/allBookings" exact>
             <AllBookingsPage />
+          </Route>
+        )}
+        {!isAuth && (
+          <Route path="/admin/email-confirm">
+            <EmailConfirmationPage />
           </Route>
         )}
         {!isAuth && (

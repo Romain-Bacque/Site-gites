@@ -15,7 +15,7 @@ import {
   handleEmailFormDisplay,
   ModalState,
 } from "./types";
-import {  HTTPStateKind } from "../../../global/types";
+import { HTTPStateKind } from "../../../global/types";
 // other import
 import {
   bookingsGetRequest,
@@ -32,6 +32,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import useLoading from "../../../hooks/use-loading";
+import Button from "../../UI/Button";
 
 dayjs().format();
 
@@ -257,14 +258,8 @@ const AllBookings: React.FC = () => {
                 cols={25}
               />
               <div className="button-container">
-                <button className="button">Envoyer</button>
-                <button
-                  className="button button--alt"
-                  type="button"
-                  onClick={handleCancel}
-                >
-                  Annuler
-                </button>
+                <Button type="submit">Envoyer</Button>
+                <Button onClick={handleCancel}>Annuler</Button>
               </div>
             </form>
           ) : null}
@@ -277,7 +272,7 @@ const AllBookings: React.FC = () => {
             bookingsList ? bookingsList.length : "0"
           })`}</h2>
           {bookingsList?.length ? (
-            <button
+            <Button
               onClick={() => {
                 setShowModal({
                   isSorted: true,
@@ -292,7 +287,7 @@ const AllBookings: React.FC = () => {
                 icon={faSliders}
               />
               <span className={classes["sort-button__text"]}>Trier</span>
-            </button>
+            </Button>
           ) : null}
         </div>
         {fetchBookingsRequestStatut === HTTPStateKind.SUCCESS &&

@@ -10,14 +10,13 @@ import { Link } from "react-router-dom";
 import Alert from "../../UI/Alert";
 // types import
 import { AlertStatut } from "./types";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import useHttp from "../../../hooks/use-http";
 import { getActivities } from "../../../lib/api";
 import Activities from "../Activities";
 import Modal from "../../UI/Modal";
 import LoaderAndAlert from "../../UI/LoaderAndAlert";
-import { HTTPStateKind } from "../../../global/types";
+import { ArrowRightAlt } from "@mui/icons-material";
+import Button from "../../UI/Button";
 
 // variable & constantes
 const initialState = {
@@ -65,13 +64,15 @@ const Home: React.FC = () => {
       />
       <section>
         <Card className={classes.banner}>
-          <button
-            className={`${classes.banner__button} ${classes.button}`}
+          <Button
+            size="lg"
+            className={classes.banner__button}
+            iconPosition="right"
+            icon={ArrowRightAlt}
             onClick={handleFetchActivities}
           >
             Activités dans le Couserans
-            <FontAwesomeIcon className="button__icon" icon={faArrowRight} />
-          </button>
+          </Button>
         </Card>
       </section>
       <section>

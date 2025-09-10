@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    // Sets the target ECMAScript version to ESNext, the latest version.
-    "target": "ESNext",
+    // Sets the target ECMAScript version to ES2015.
+    "target": "es2015",
     // Specifies the standard library files to be included.
     "lib": ["dom", "dom.iterable", "esnext"],
     // Allows JavaScript files to be included and compiled alongside TypeScript.
@@ -20,31 +20,32 @@
     // Enables interoperability between CommonJS and ES Modules (used with packages like Babel).
     "esModuleInterop": true,
     // Sets the module system to ES Modules (ESNext) for output files.
-    "module": "ESNext",
+    "module": "esnext",
     // Specifies how module resolution should work.
     "moduleResolution": "node",
     // Allows importing JSON files as modules.
     "resolveJsonModule": true,
     // Enables the transpiler to work in isolation (incremental builds).
     "isolatedModules": true,
-    // Specifies how JSX should be handled.
-    "jsx": "preserve",
+    // Specifies how JSX should be handled, it means preserving the JSX syntax, it means that the JSX code will not be transformed.
+    "jsx": "react-jsx",
     // Enables incremental builds, where only modified files are recompiled.
     // Incremental builds are a feature that allows TypeScript to compile only the files that have changed since the last compilation, resulting in faster build times.
     "incremental": true,
     "noImplicitAny": true, // Disables the error that occurs when TypeScript can't infer the type of a variable.
     // Sets up path aliases for easier imports, using "@" as a placeholder.
     "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["./*"]
-    },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@pages/*": ["./pages/*"],
+      "@hooks/*": ["./hooks/*"],
+      "@api/*": ["./api/*"],
+      "@utils/*": ["./utils/*"]
+    }
   },
   // include and exclude properties specify the files to be included and excluded from compilation.
   "include": ["src"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }

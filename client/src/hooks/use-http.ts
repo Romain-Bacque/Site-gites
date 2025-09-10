@@ -20,18 +20,19 @@ interface HTTPState<T> {
   error: ErrorType;
 }
 interface HTTPAction<T> {
-  key?: string;
+  cacheKey?: string;
   type: HTTPStateKind;
   value?: DataType<T>;
   errorMessage?: ErrorType;
 }
 
-function getInitialState(key?: string) {
+// function to create a cache in sessionStorage if 'cacheKey' is provided
+function getInitialState(cacheKey?: string) {
   let item = null;
 
-  if (key) {
+  if (cacheKey) {
     try {
-      item = sessionStorage.getItem(key);
+      item = sessionStorage.getItem(cacheKey);
     } catch (error) {
       console.error(error);
     }
@@ -49,7 +50,7 @@ function httpReducer<T>(
   state: HTTPState<T>,
   action: HTTPAction<T>
 ): HTTPState<T> {
-  const { type, value, errorMessage, key } = action;
+  const { type, value, errorMessage, cacheKey } = action;
 
   switch (type) {
     case HTTPStateKind.PENDING:
@@ -59,9 +60,9 @@ function httpReducer<T>(
         error: null,
       };
     case HTTPStateKind.SUCCESS:
-      if (key) {
+      if (cacheKey) {
         try {
-          window.sessionStorage.setItem(key, JSON.stringify(value));
+          window.sessionStorage.setItem(cacheKey, JSON.stringify(value));
         } catch (error) {
           console.error(error);
         }
@@ -83,20 +84,20 @@ function httpReducer<T>(
 }
 
 // 'T' generic represents the type of the HTTP request passed to 'useHttp' function
-function useHttp<T extends HTTPRequestType>(httpRequest: T, key?: string) {
+function useHttp<T extends HTTPRequestType>(httpRequest: T, cacheKey?: string) {
   const [httpState, dispatch] = useReducer<
     React.Reducer<
       HTTPState<Awaited<ReturnType<T>>>,
       HTTPAction<Awaited<ReturnType<T>>>
     >
-  >(httpReducer, getInitialState(key));
+  >(httpReducer, getInitialState(cacheKey));
 
   const sendHttpRequest = useCallback(
     async (requestData?: ParameterType<T>) => {
       try {
-        dispatch({ type: HTTPStateKind.PENDING, key });
+        dispatch({ type: HTTPStateKind.PENDING, cacheKey });
 
-        const { data } = getInitialState(key);
+        const { data } = getInitialState(cacheKey);
 
         const responseData: Awaited<ReturnType<T>> = data
           ? data
@@ -105,10 +106,11 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T, key?: string) {
         dispatch({
           type: HTTPStateKind.SUCCESS,
           value: responseData ?? null,
-          key,
+          cacheKey,
         });
       } catch (err: any) {
         let errorMessage: string | null = null;
+
         const status: number = err.response.status;
 
         switch (status) {
@@ -121,16 +123,18 @@ function useHttp<T extends HTTPRequestType>(httpRequest: T, key?: string) {
           case 409:
             errorMessage = "Utilisateur déjà enregistré.";
             break;
+          default:
+            errorMessage = "Une erreur s'est produit !";
         }
 
         dispatch({
           type: HTTPStateKind.ERROR,
-          errorMessage: errorMessage || "Une erreur s'est produit !",
-          key,
+          errorMessage,
+          cacheKey,
         });
       }
     },
-    [httpRequest, key]
+    [httpRequest, cacheKey]
   );
 
   return {

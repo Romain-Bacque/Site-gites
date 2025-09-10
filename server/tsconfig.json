@@ -35,6 +35,7 @@
     "noImplicitAny": true, // Disables the error that occurs when TypeScript can't infer the type of a variable.
     // Sets up path aliases for easier imports, using "@" as a placeholder.
     "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
     },

@@ -7,7 +7,7 @@ export interface AlertStatut {
   show: boolean;
 }
 export interface RatesProps {
-  shelter: string;
+  shelterId: string;
 }
 export interface PriceValues {
   price1: number;

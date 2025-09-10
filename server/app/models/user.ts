@@ -6,6 +6,7 @@ export interface IUser extends Document {
   password: string;
   email: string;
   role: string;
+  isEmailVerified: boolean;
 }
 
 interface IUserModel extends Model<IUser> {
@@ -31,6 +32,10 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: [true, "Role cannot be blank"],
     default: "customer",
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false,
   },
 });
 

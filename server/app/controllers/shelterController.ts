@@ -9,7 +9,7 @@ const shelterController = {
   getShelters: async function (_: Request, res: Response) {
     const shelters = await Shelter.find({});
 
-    if (shelters && shelters.length) {
+    if (shelters) {
       res.status(200).json({ sheltersData: shelters });
     } else throw new ExpressError("Internal Server Error", 500);
   },

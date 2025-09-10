@@ -4,7 +4,7 @@ export type HandleDateChoiceType = (input: string, value: object) => void;
 
 // interfaces
 export interface BookingProps {
-  shelter: string;
+  shelterId: string;
 }
 export interface CalendarStatus {
   show: boolean;

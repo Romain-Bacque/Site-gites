@@ -41,8 +41,8 @@ const GalleryPage: React.FC<GalleryPageProps> = ({ sheltersData }) => {
 
   return (
     <section>
-      {imagesData &&
-        sheltersData?.map((shelterData) => (
+      {imagesData && sheltersData ? (
+        sheltersData.map((shelterData) => (
           <Gallery
             key={shelterData._id}
             imagesData={imagesData.filter(
@@ -51,9 +51,12 @@ const GalleryPage: React.FC<GalleryPageProps> = ({ sheltersData }) => {
             shelterTitle={shelterData.title}
             shelterId={shelterData._id}
           />
-        ))}
+        ))
+      ) : (
+        <p className="text-center">Aucune image disponible.</p>
+      )}
       {getPictureStatut === HTTPStateKind.ERROR && (
-        <p className="text-center">Les albums sont indisponibles.</p>
+        <p className="text-center">Une erreur s'est produite.</p>
       )}
     </section>
   );

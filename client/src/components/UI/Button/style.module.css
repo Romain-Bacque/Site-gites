@@ -1,0 +1,105 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  transition: "background 0.2s, color 0.2s, border 0.2s";
+  outline: none;
+  cursor: pointer;
+  font-weight: 500;
+  border: none;
+}
+
+.button:focus {
+  box-shadow: 0 0 0 2px #2563eb33, 0 0 0 4px #fff;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Variants */
+.primary {
+  background: var(--button-color);
+  color: #fff;
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--button-color-alt);
+}
+
+.secondary {
+  background: var(--button-color-alt);
+  color: #000;
+}
+.secondary:hover:not(:disabled) {
+  background: var(--button-color);
+}
+
+.outline {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+.outline:hover:not(:disabled) {
+  background: #eff6ff;
+}
+
+.ghost {
+  background: transparent;
+  color: #2563eb;
+}
+.ghost:hover:not(:disabled) {
+  background: #eff6ff;
+}
+
+/* Sizes */
+.sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.md {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+.lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.125rem;
+}
+
+/* Icon spacing */
+.iconLeft {
+  margin-right: 0.5rem;
+}
+.iconRight {
+  margin-left: 0.5rem;
+}
+
+/* Spinner */
+.spinner {
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+.spinnerSm {
+  width: 1rem;
+  height: 1rem;
+}
+.spinnerMd {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.spinnerLg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -3,7 +3,7 @@ export enum HTTPStateKind {
   PENDING = 1,
   SUCCESS,
   ERROR,
-  IDLE
+  IDLE,
 }
 export enum Status {
   SEND = "SEND",
@@ -16,3 +16,7 @@ export enum AlertKind {
   WARNING = "warning",
   ERROR = "error",
 }
+
+export type ExtendedMuiProps<T> = T & {
+  component?: React.ElementType | JSX.Element;
+};

@@ -2,15 +2,21 @@ import { config } from "dotenv";
 import debugLib from "debug";
 import mongoose from "mongoose";
 
-config(); // Load environment variables from .env file
+config();
 
 const debug = debugLib("database");
 
-mongoose.connect(String(process.env.DB_URL) as string);
+const dbUrl = process.env.DB_URL;
+
+if (!dbUrl) {
+  throw new Error("DB_URL non définie dans le fichier .env");
+}
+
+mongoose.connect(dbUrl);
 
 const database = mongoose.connection;
 
-database.on("error", debug.bind(console, "connection error:"));
+database.on("error", debug.bind(console, "Erreur de connexion :"));
 database.once("open", () => {
-  debug("Database connected");
+  debug("✅ Connexion à MongoDB réussie");
 });

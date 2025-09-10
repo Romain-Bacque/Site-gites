@@ -17,7 +17,7 @@ export type HandleDateClick = (
 
 // interfaces
 export interface AvailabilityProps {
-  shelter: string;
+  shelterId: string;
   className: string;
   onDateClick?: (arg: Date) => void
   onDateChoice?: (date: Date) => void;

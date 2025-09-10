@@ -8,6 +8,10 @@ import emailHandler from "../utilities/emailhandler";
 
 const debug = debugLib("controller:auth");
 
+const redirectFn = (isValid: boolean) => {
+  return `/admin/email-confirm?isValid=${isValid}`;
+};
+
 const getCookieConfig = () => ({
   expires: new Date(Date.now() + 86400000), // 86400000ms = 24h
   httpOnly: true, // accessible only by web server
@@ -30,6 +34,35 @@ const authController = {
       if (err) {
         res.sendStatus(401);
       } else res.sendStatus(200);
+    });
+  },
+
+  emailConfirmation: async function (req: Request, res: Response) {
+    const { id, token } = req.query;
+
+    if (!id || !token) {
+      return res.status(401).redirect(redirectFn(false));
+    }
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(401).redirect(redirectFn(false));
+    } else if (user.isEmailVerified) {
+      return res.status(200).redirect(redirectFn(true));
+    }
+
+    const SECRET = process.env.SECRET as string;
+    const secret = SECRET + user.password; // we combine the secret with the user's password to make sure the token is invalidated if the user changes their password
+
+    jwt.verify(token as string, secret, (err: any) => {
+      if (err) {
+        return res.status(401).redirect(redirectFn(false));
+      } else {
+        user.isEmailVerified = true;
+        user.save();
+        return res.status(200).redirect(redirectFn(true));
+      }
     });
   },
 
@@ -64,13 +97,29 @@ const authController = {
 
     if (userExist.length) return res.sendStatus(409);
 
-    const newUser = new User({ username, password, email });
+    const user = new User({ username, password, email });
 
-    await newUser.save();
+    await user.save();
 
     const accessToken = generateAccessToken({ username, email });
+    // I use id and token as query params to identify the user and verify the token is valid
+    const link = `${process.env.HOST}/api/auth/email-confirm?id=${user.id}&token=${accessToken}`;
 
-    res.cookie("accessToken", accessToken, getCookieConfig()).sendStatus(200);
+    emailHandler.init({
+      service: "gmail",
+      emailFrom: (process.env.ADMIN_EMAIL as string) || "",
+      subject: "Email de confirmation",
+      template: path.join(
+        process.cwd(),
+        "../utilities/emailTemplate/confirmPassword.ejs"
+      ),
+    });
+
+    await emailHandler.sendEmail({
+      name: user.username,
+      email: user.email,
+      link,
+    });
   },
 
   logout: function (_: Request, res: Response) {
@@ -94,7 +143,7 @@ const authController = {
 
     emailHandler.init({
       service: "gmail",
-      emailFrom: "biere.de.ta.region@gmail.com",
+      emailFrom: (process.env.ADMIN_EMAIL as string) || "",
       subject: "Réinitialisation du mot de passe",
       template: path.join(
         __dirname,

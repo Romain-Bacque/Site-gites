@@ -4,6 +4,7 @@ import { config } from "dotenv";
 import appRouter from "./app";
 
 config(); // Load environment variables from .env file
+
 const app = express();
 
 const port = process.env.PORT ?? 3000;

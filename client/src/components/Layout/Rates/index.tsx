@@ -30,7 +30,7 @@ const initialState = {
 };
 
 // component
-const Rates: React.FC<RatesProps> = ({ shelter }) => {
+const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   const dispatch = useAppDispatch();
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const [priceValues, sePriceValues] = useState<PriceValues>({
@@ -65,7 +65,7 @@ const Rates: React.FC<RatesProps> = ({ shelter }) => {
     if (!formIsValid) return;
 
     const data: RatesPutRequestData = {
-      shelterId: shelter,
+      shelterId,
       price1: priceValues.price1,
       price2: priceValues.price2,
       price3: priceValues.price3,

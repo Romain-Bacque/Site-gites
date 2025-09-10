@@ -5,10 +5,34 @@ import cors from "cors";
 import express, { RequestHandler } from "express";
 import cookieParser from "cookie-parser";
 
-const origin = process.env.CORS_ORIGIN;
+// Define a whitelist of allowed origins
+const whitelist = process.env.CORS_WHITELIST
+  ? process.env.CORS_WHITELIST.split(",").map((origin) => origin.trim())
+  : [];
+
+// CORS options
+const corsOptions = {
+  origin: function (
+    origin: string | undefined, // origin can be undefined for same-origin requests or tools like Postman
+    callback: (error: Error | null, allowed?: boolean) => void // callback expects two parameters: error and boolean (true if allowed, false if not)
+  ) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (whitelist.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-TOKEN"],
+  credentials: true, // Allow cookies and HTTP auth
+  optionsSuccessStatus: 204, // Some legacy browsers (IE11, various SmartTVs) choke on 204 while preflighted requests
+};
+
 const app = express();
 
-app.use(cors({ credentials: true, origin }));
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser() as RequestHandler);

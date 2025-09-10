@@ -13,7 +13,7 @@ let formContent: JSX.Element;
 
 // component
 const GitesItems: React.FC<GitesItemsProps> = ({
-  shelterId: shelter,
+  shelterId,
   title,
   number,
 }) => {
@@ -23,12 +23,12 @@ const GitesItems: React.FC<GitesItemsProps> = ({
   ]);
 
   if (shelterStatut[number].tab === TabKind.BOOK) {
-    formContent = <Booking shelter={shelter} />;
+    formContent = <Booking shelterId={shelterId} />;
   } else if (shelterStatut[number].tab === TabKind.RATES) {
-    formContent = <Rates shelter={shelter} />;
+    formContent = <Rates shelterId={shelterId} />;
   } else if (shelterStatut[number].tab === TabKind.AVAILABILITY) {
     formContent = (
-      <Availability className="calendar--availability" shelter={shelter} />
+      <Availability className="calendar--availability" shelterId={shelterId} />
     );
   }
 

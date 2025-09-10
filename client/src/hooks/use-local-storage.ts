@@ -1,4 +1,4 @@
-function useLocalStorage<T>(key: string, defaultValue: T) {
+function useLocalStorage<T>(key: string) {
   function setItem(value: T) {
     try {
       window.localStorage.setItem(key, JSON.stringify(value));

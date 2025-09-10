@@ -5,7 +5,7 @@ let instance = axios.create({
   baseURL: process.env.REACT_APP_APIHOST,
   withCredentials: true, // authorize cookie sending to server
 });
-
+console.log("API HOST:", process.env.REACT_APP_APIHOST);
 // // CSRF
 export const setCSRFToken = (csrfToken: string | null) => {
   instance.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken || "";

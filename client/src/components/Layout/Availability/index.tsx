@@ -18,8 +18,6 @@ import {
   getDatesRequest,
 } from "../../../lib/api";
 import classes from "./style.module.css";
-import { useAppDispatch } from "../../../hooks/use-store";
-import { loadingActions } from "../../../store/loading";
 import { HTTPStateKind } from "../../../global/types";
 import useLoading from "../../../hooks/use-loading";
 
@@ -29,13 +27,12 @@ let timer: NodeJS.Timeout;
 // component
 const Availability: React.FC<AvailabilityProps> = ({
   className,
-  shelter: shelterId,
+  shelterId,
   onDateClick,
   onDateChoice,
 }) => {
   const [showDoubleView, setShowDoubleView] = useState(false);
   const [disabledDates, setDisabledDates] = useState<DisabledDatesData>([]);
-  const dispatch = useAppDispatch();
   const handleLoading = useLoading();
   const {
     sendHttpRequest: getDisabledDatesHttpRequest,
@@ -128,7 +125,7 @@ const Availability: React.FC<AvailabilityProps> = ({
     ) {
       setDisabledDates(getDisabledDatesData);
     }
-  }, [getDisabledDatesStatut]);
+  }, [getDisabledDatesData, getDisabledDatesStatut]);
 
   useEffect(() => {
     if (
@@ -137,7 +134,7 @@ const Availability: React.FC<AvailabilityProps> = ({
     ) {
       setDisabledDates(postDisabledDatesData);
     }
-  }, [postDisabledDatesStatut]);
+  }, [postDisabledDatesData, postDisabledDatesStatut]);
 
   useEffect(() => {
     if (
@@ -146,12 +143,12 @@ const Availability: React.FC<AvailabilityProps> = ({
     ) {
       setDisabledDates(deleteDisabledDatesData);
     }
-  }, [deleteDisabledDatesStatut]);
+  }, [deleteDisabledDatesData, deleteDisabledDatesStatut]);
 
   // get disabled dates request loading handling
   useEffect(() => {
     handleLoading(getDisabledDatesStatut, null, null, getDisabledDatesError);
-  }, [getDisabledDatesStatut]);
+  }, [getDisabledDatesError, getDisabledDatesStatut, handleLoading]);
 
   return (
     <>
