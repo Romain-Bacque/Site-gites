@@ -17,6 +17,7 @@ import Modal from "../../UI/Modal";
 import LoaderAndAlert from "../../UI/LoaderAndAlert";
 import { ArrowRightAlt } from "@mui/icons-material";
 import Button from "../../UI/Button";
+import { HTTPStateKind } from "../../../global/types";
 
 // variable & constantes
 const initialState = {
@@ -43,17 +44,19 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Modal
-        className={classes["activities-modal"]}
-        show={showModal}
-        onHide={() => setShowModal(false)}
-      >
-        <LoaderAndAlert
-          statut={statut}
-          message={{ pending: null, success: null, error }}
-        />
-        <Activities activities={activities} />
-      </Modal>
+      <LoaderAndAlert
+        statut={statut}
+        message={{ pending: null, success: null, error }}
+      />
+      {statut !== HTTPStateKind.PENDING && (
+        <Modal
+          className={classes["activities-modal"]}
+          show={showModal}
+          onHide={() => setShowModal(false)}
+        >
+          <Activities activities={activities} />
+        </Modal>
+      )}
       <Alert
         message={alertStatut.message}
         alert={alertStatut.alert}

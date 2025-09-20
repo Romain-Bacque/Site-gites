@@ -35,7 +35,7 @@ const joi = baseJoi.extend(extension);
  */
 module.exports.registerSchema = joi
   .object({
-    username: joi.string().required(),
+    username: joi.string().escapeHTML().required(),
     email: joi
       .string()
       .escapeHTML()
@@ -58,7 +58,7 @@ module.exports.registerSchema = joi
  */
 module.exports.loginSchema = joi
   .object({
-    username: joi.string().required(),
+    username: joi.string().escapeHTML().required(),
     password: joiPassword
       .string()
       .minOfLowercase(1)
@@ -76,7 +76,7 @@ module.exports.loginSchema = joi
  */
 module.exports.editProfileSchema = joi
   .object({
-    name: joi.string().required(),
+    name: joi.string().escapeHTML().required(),
     email: joi
       .string()
       .escapeHTML()
@@ -147,6 +147,16 @@ module.exports.postEventSchema = joi
     title: joi.string().escapeHTML().required(),
     description: joi.string().escapeHTML().required(),
     eventStart: joi.date().required(),
+  })
+  .required();
+
+/**
+ * confirmEmailSchema monitor the email confirmation request body, and return an error if any of requirements doesn't match with it
+ */
+module.exports.confirmEmailSchema = joi
+  .object({
+    id: joi.string().escapeHTML().required(),
+    token: joi.string().escapeHTML().required(),
   })
   .required();
 

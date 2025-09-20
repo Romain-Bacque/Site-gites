@@ -10,9 +10,9 @@ export interface RatesProps {
   shelterId: string;
 }
 export interface PriceValues {
-  price1: number;
-  price2: number;
-  price3: number;
+  price1: number | null;
+  price2: number | null;
+  price3: number | null;
 }
 export interface RatesPutRequestData {
   shelterId: string;

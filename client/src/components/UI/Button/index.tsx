@@ -57,7 +57,7 @@ const Button: FC<ButtonProps> = ({
           <path
             className={styles.spinnerPath}
             fill="currentColor"
-            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" // d is a SVG path data attribute, means "draw a line from point to point" in this case (see https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d)
             opacity="0.75"
           />
         </svg>

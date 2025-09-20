@@ -36,11 +36,12 @@ const shelterController = {
     res.sendStatus(200);
   },
 
-  getRates: async function (_: Request, res: Response) {
-    const allRates = await Rates.find({});
+  getRatesByShelterId: async function (req: Request, res: Response) {
+    const { shelterId } = req.params;
+    const rates = await Rates.find({ shelter_id: shelterId });
 
-    if (allRates[0]) {
-      res.status(200).json({ ratesData: allRates[0] });
+    if (rates) {
+      res.status(200).json({ ratesData: rates });
     } else throw new ExpressError("Internal Server Error", 500);
   },
 
@@ -51,7 +52,7 @@ const shelterController = {
       const data = await Rates.findOneAndUpdate(
         { shelter_id: shelterId },
         { price1, price2, price3 },
-        { upsert: true, new: true }
+        { upsert: true, new: true } // "upsert" means to create the document if it doesn't exist yet and "new" to return the updated document
       );
       res.status(200).json({ ratesData: data });
     } catch {

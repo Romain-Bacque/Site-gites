@@ -14,8 +14,8 @@ router.post(
   catchAsync(shelterController.postBooking)
 );
 router
-  .route("/rates")
-  .get(catchAsync(shelterController.getRates))
+  .route("/rates/:shelterId")
+  .get(catchAsync(shelterController.getRatesByShelterId))
   .put(
     checkCSRFToken,
     validate(putRatesSchema),

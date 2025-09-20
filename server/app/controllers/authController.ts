@@ -5,11 +5,12 @@ import path from "path";
 import { User } from "../models";
 import ExpressError from "../utilities/ExpressError";
 import emailHandler from "../utilities/emailhandler";
+import axios from "axios";
 
 const debug = debugLib("controller:auth");
 
 const redirectFn = (isValid: boolean) => {
-  return `/admin/email-confirm?isValid=${isValid}`;
+  return `${process.env.CORS_ORIGIN}/admin/email-confirm?isValid=${isValid}`;
 };
 
 const getCookieConfig = () => ({
@@ -23,6 +24,38 @@ const generateAccessToken = (user: object) => {
     expiresIn: "24h",
   });
 };
+
+// Email sending helper
+async function sendEmail({
+  service,
+  emailFrom,
+  subject,
+  templatePath,
+  name,
+  email,
+  link,
+}: {
+  service: string;
+  emailFrom: string;
+  subject: string;
+  templatePath: string;
+  name: string;
+  email: string;
+  link: string;
+}) {
+  emailHandler.init({
+    service,
+    emailFrom,
+    subject,
+    template: templatePath,
+  });
+
+  await emailHandler.sendEmail({
+    name,
+    email,
+    link,
+  });
+}
 
 const authController = {
   authenticationCheck: function (req: Request, res: Response) {
@@ -52,10 +85,9 @@ const authController = {
       return res.status(200).redirect(redirectFn(true));
     }
 
-    const SECRET = process.env.SECRET as string;
-    const secret = SECRET + user.password; // we combine the secret with the user's password to make sure the token is invalidated if the user changes their password
+    const SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 
-    jwt.verify(token as string, secret, (err: any) => {
+    jwt.verify(token as string, SECRET, (err: any) => {
       if (err) {
         return res.status(401).redirect(redirectFn(false));
       } else {
@@ -66,27 +98,46 @@ const authController = {
     });
   },
 
+  verifyRecaptcha: async function (req: Request, res: Response) {
+    const { recaptchaToken } = req.body;
+
+    try {
+      const response = await axios.post(
+        `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+      );
+
+      if (response.data.success) {
+        return res.status(200).json({ success: true });
+      } else {
+        return res.status(400).json({ success: false });
+      }
+    } catch (error) {
+      return res.status(500).json({ success: false });
+    }
+  },
+
   login: async function (req: Request, res: Response) {
     const { password, username } = req.body;
-    const foundedUser = await User.findAndValidate(password, username);
+    const user = await User.findAndValidate(password, username);
 
-    if (!foundedUser) return res.sendStatus(401);
+    if (!user || !user.isEmailVerified) return res.sendStatus(401);
 
-    const user = {
-      password: foundedUser.password,
-      username: foundedUser.username,
+    const userData = {
+      password: user.password,
+      username: user.username,
     };
-    const accessToken = generateAccessToken(user);
+    const accessToken = generateAccessToken(userData);
 
-    if (!accessToken)
+    if (!accessToken) {
       throw new ExpressError("no value in accessToken const", 500);
+    }
 
     res
       .cookie("accessToken", accessToken, getCookieConfig())
       .status(200)
       .json({
         userData: {
-          username: user.username,
+          username: userData.username,
         },
       });
   },
@@ -99,27 +150,29 @@ const authController = {
 
     const user = new User({ username, password, email });
 
-    await user.save();
+    const accessToken = generateAccessToken({ id: user.id });
+    const link = `http${process.env.NODE_ENV === "production" ? "s" : ""}://${
+      process.env.HOST
+    }:${process.env.PORT}/authentification/email-confirm?id=${
+      user.id
+    }&token=${accessToken}`;
 
-    const accessToken = generateAccessToken({ username, email });
-    // I use id and token as query params to identify the user and verify the token is valid
-    const link = `${process.env.HOST}/api/auth/email-confirm?id=${user.id}&token=${accessToken}`;
-
-    emailHandler.init({
+    await sendEmail({
       service: "gmail",
-      emailFrom: (process.env.ADMIN_EMAIL as string) || "",
+      emailFrom: (process.env.EMAIL_FROM as string) || "",
       subject: "Email de confirmation",
-      template: path.join(
-        process.cwd(),
-        "../utilities/emailTemplate/confirmPassword.ejs"
+      templatePath: path.join(
+        __dirname,
+        "../utilities/emailTemplate/confirmEmail.ejs"
       ),
-    });
-
-    await emailHandler.sendEmail({
       name: user.username,
-      email: user.email,
+      email: process.env.ADMIN_EMAIL as string,
       link,
     });
+
+    await user.save();
+
+    res.sendStatus(200);
   },
 
   logout: function (_: Request, res: Response) {
@@ -141,21 +194,19 @@ const authController = {
     const token = jwt.sign(payload, secret, { expiresIn: "24h" });
     const link = `${process.env.CORS_ORIGIN}/reset-password/${user.id}/${token}`;
 
-    emailHandler.init({
+    await sendEmail({
       service: "gmail",
-      emailFrom: (process.env.ADMIN_EMAIL as string) || "",
+      emailFrom: (process.env.EMAIL_FROM as string) || "",
       subject: "Réinitialisation du mot de passe",
-      template: path.join(
+      templatePath: path.join(
         __dirname,
         "../utilities/emailTemplate/resetPassword.ejs"
       ),
-    });
-
-    await emailHandler.sendEmail({
       name: user.username,
-      email: "bacqueromain@orange.fr",
+      email: process.env.ADMIN_EMAIL as string,
       link,
     });
+
     res.sendStatus(200);
   },
 

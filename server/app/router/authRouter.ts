@@ -6,6 +6,7 @@ import {
   loginSchema,
   passwordSchema,
   emailSchema,
+  confirmEmailSchema,
 } from "../validation/schemas";
 import catchAsync from "../utilities/catchAsync";
 import { checkCSRFToken } from "../middlewares";
@@ -14,6 +15,7 @@ const router = express.Router();
 
 router.get("/userVerification", authController.authenticationCheck);
 router.get("/logout", authController.logout);
+router.post("/verify-captcha", authController.verifyRecaptcha);
 router.post(
   "/login",
   checkCSRFToken,
@@ -25,6 +27,11 @@ router.post(
   checkCSRFToken,
   validate(registerSchema),
   catchAsync(authController.register)
+);
+router.get(
+  "/email-confirm",
+  validate(confirmEmailSchema, "query"),
+  catchAsync(authController.emailConfirmation)
 );
 router.post(
   "/forgot-password",

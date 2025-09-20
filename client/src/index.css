@@ -14,6 +14,8 @@
   --text-color-light: hsl(var(--hue-color), 8%, 60%);
   --button-color: hsl(var(--hue-color), 40%, 32%);
   --button-color-alt: hsl(var(--hue-color), 40%, 20%);
+  --button-color-light: hsl(var(--hue-color), 40%, 50%);
+  --button-color-very-light: hsl(var(--hue-color), 40%, 70%);
 
   /*-------- font and typography --------*/
   --body-font: "Open Sans", sans-serif;
@@ -54,6 +56,7 @@ body {
   font-family: var(--body-font);
   color: var(--text-color);
   background-color: var(--body-color);
+  min-height: 100vh;
 }
 
 body::before {

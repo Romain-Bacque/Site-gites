@@ -2,11 +2,11 @@
 export interface ModalProps {
   onHide?: () => void;
   className?: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactNode;
   show: boolean;
 }
 export interface OverlayProps {
   onHide?: () => void;
   className: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactNode;
 }

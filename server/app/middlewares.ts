@@ -27,6 +27,7 @@ export const checkLogged = (
 
 export const createCSRFToken = (req: Request, res: Response): void => {
   csrfToken = req.csrfToken(); // Generate a new CSRF token
+
   res.send({ csrfToken });
 };
 

@@ -6,9 +6,9 @@ import express, { RequestHandler } from "express";
 import cookieParser from "cookie-parser";
 
 // Define a whitelist of allowed origins
-const whitelist = process.env.CORS_WHITELIST
-  ? process.env.CORS_WHITELIST.split(",").map((origin) => origin.trim())
-  : [];
+// const whitelist = process.env.CORS_WHITELIST
+//   ? process.env.CORS_WHITELIST.split(",").map((origin) => origin.trim())
+//   : [];
 
 // CORS options
 const corsOptions = {
@@ -18,7 +18,7 @@ const corsOptions = {
   ) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    if (whitelist.includes(origin)) {
+    if (origin === process.env.CORS_ORIGIN) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));

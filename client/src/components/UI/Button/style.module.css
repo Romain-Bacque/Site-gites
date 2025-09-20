@@ -6,8 +6,9 @@
   transition: "background 0.2s, color 0.2s, border 0.2s";
   outline: none;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 700;
   border: none;
+  max-width: 400px;
 }
 
 .button:focus {
@@ -30,11 +31,13 @@
 }
 
 .secondary {
-  background: var(--button-color-alt);
-  color: #000;
+  border: var(--button-color) 2px solid;
+  background: transparent;
+  color: var(--button-color);
 }
+
 .secondary:hover:not(:disabled) {
-  background: var(--button-color);
+  background:  var(--button-color-very-light);
 }
 
 .outline {

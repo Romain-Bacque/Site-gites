@@ -51,7 +51,7 @@ const emailHandler = {
       service: emailHandler.service,
       auth: {
         user: emailHandler.emailFrom,
-        pass: process.env.AUTH_PASSWORD,
+        pass: process.env.APP_PASSWORD || "",
       },
     });
     const template = await emailHandler.createTemplate(name, link);

@@ -20,11 +20,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { HTTPStateKind } from "../../../../global/types";
 import useLoading from "../../../../hooks/use-loading";
+import useRecaptcha from "../../../../hooks/use-recaptcha";
+import Captcha from "../Captcha";
 
 // component
 const Auth: React.FC = () => {
+  const captchaRef = React.useRef<any>(null);
   const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } =
     useHttp(getCSRF);
+  const { setCaptchaValue, captchaValue, verifyCaptcha } = useRecaptcha();
   const {
     sendHttpRequest: loginHttpRequest,
     statut: loginStatut,
@@ -75,10 +79,16 @@ const Auth: React.FC = () => {
     isFormValid = usernameIsValid && userPasswordIsValid;
   }
 
-  const submitHandler = (event: React.FormEvent) => {
+  const submitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!isFormValid) return;
+
+    const isCaptchaValid = await verifyCaptcha();
+
+    if (!isCaptchaValid) {
+      return;
+    }
 
     let userData: LoginData = {
       username: usernameValue,
@@ -135,7 +145,7 @@ const Auth: React.FC = () => {
       handleLoading(
         registerStatut,
         null,
-        "Enregistrement réussi.",
+        "Inscription réussie ! Veuillez vérifier votre boîte mail pour activer votre compte.",
         registerRequestError
       );
     }
@@ -147,6 +157,18 @@ const Auth: React.FC = () => {
     }
   }, [registerStatut]);
 
+  // reset captcha if login or register failed
+  useEffect(() => {
+    const shouldResetCaptcha =
+      (loginStatut === HTTPStateKind.ERROR || registerStatut === HTTPStateKind.ERROR) &&
+      captchaRef.current;
+
+    if (shouldResetCaptcha) {
+      captchaRef.current.reset();
+      setCaptchaValue(null);
+    }
+  }, [loginStatut, registerStatut, setCaptchaValue]);
+
   return (
     <Card className={classes.auth}>
       <form onSubmit={submitHandler} className={classes["auth__form"]}>
@@ -155,6 +177,7 @@ const Auth: React.FC = () => {
         </h3>
         <div>
           <Input
+            tabIndex={1}
             label="Pseudo"
             isVisible={true}
             className={
@@ -169,6 +192,7 @@ const Auth: React.FC = () => {
           />
           {isNotRegistered && (
             <Input
+              tabIndex={1}
               label="Email"
               isVisible={true}
               className={
@@ -185,6 +209,7 @@ const Auth: React.FC = () => {
             />
           )}
           <Input
+            tabIndex={2}
             icon={
               <FontAwesomeIcon
                 className={classes.form__icon}
@@ -224,7 +249,7 @@ const Auth: React.FC = () => {
             </ul>
           )}
           <button
-            disabled={!isFormValid}
+            disabled={!isFormValid || !captchaValue}
             className={`button ${classes["auth__button"]}`}
           >
             Se connecter
@@ -240,6 +265,7 @@ const Auth: React.FC = () => {
             {!isNotRegistered ? "S'enregistrer." : "Se connecter."}
           </a>
         </div>
+        <Captcha onChange={setCaptchaValue} ref={captchaRef} />
       </form>
     </Card>
   );

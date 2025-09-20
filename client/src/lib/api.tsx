@@ -25,6 +25,17 @@ export const getCSRF = async () => {
 
 // // AUTHENTIFICATION
 
+// Captcha
+export const recaptchaRequest = async (data: { recaptchaToken: string }) => {
+  const response = await instance.post("/authentification/verify-captcha", {
+    recaptchaToken: data.recaptchaToken,
+  });
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data;
+};
+
 // Login
 interface LoginRequestData {
   password: string;
@@ -247,12 +258,14 @@ interface RatesPutRequestResponseData {
     price1: number;
     price2: number;
     price3: number;
-    shelter: string;
+    shelter_Id: string;
   };
 }
 
-export const ratesGetRequest = async () => {
-  const response = await instance.get<RatesPutRequestResponseData>("/rates");
+export const ratesGetRequest = async (shelterId: string) => {
+  const response = await instance.get<RatesPutRequestResponseData>(
+    `/rates/${shelterId}`
+  );
 
   if (response.status !== 200) throw new Error();
 
@@ -337,7 +350,7 @@ export const getActivities = async () => {
   const response = await instance.get<ActivitiesRequestResponseData>(
     `/activities`
   );
-  
+
   if (response.status !== 200) throw new Error();
 
   return response.data.data;

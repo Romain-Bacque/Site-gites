@@ -8,7 +8,7 @@ import {
   setCSRFToken,
 } from "../../../lib/api";
 import classes from "./style.module.css";
-import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
+import { useAppSelector } from "../../../hooks/use-store";
 // types import
 import {
   PriceValues,
@@ -18,7 +18,6 @@ import {
 } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
-import { loadingActions } from "../../../store/loading";
 import { HTTPStateKind } from "../../../global/types";
 import useLoading from "../../../hooks/use-loading";
 
@@ -31,12 +30,11 @@ const initialState = {
 
 // component
 const Rates: React.FC<RatesProps> = ({ shelterId }) => {
-  const dispatch = useAppDispatch();
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const [priceValues, sePriceValues] = useState<PriceValues>({
-    price1: 1,
-    price2: 1,
-    price3: 1,
+    price1: null,
+    price2: null,
+    price3: null,
   });
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const handleLoading = useLoading();
@@ -56,9 +54,9 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   } = useHttp(ratesPutRequest);
 
   const formIsValid =
-    !isNaN(priceValues.price1) &&
-    !isNaN(priceValues.price2) &&
-    !isNaN(priceValues.price3);
+    priceValues.price1 !== null &&
+    priceValues.price2 !== null &&
+    priceValues.price3 !== null;
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -66,9 +64,9 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
 
     const data: RatesPutRequestData = {
       shelterId,
-      price1: priceValues.price1,
-      price2: priceValues.price2,
-      price3: priceValues.price3,
+      price1: priceValues.price1!,
+      price2: priceValues.price2!,
+      price3: priceValues.price3!,
     };
 
     putRatesHttpRequest(data);
@@ -94,8 +92,8 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   }, [getRatesData]);
 
   useEffect(() => {
-    getRatesHttpRequest();
-  }, [getRatesHttpRequest]);
+    getRatesHttpRequest(shelterId);
+  }, [getRatesHttpRequest, shelterId]);
 
   // get csrf token
   useEffect(() => {
@@ -125,7 +123,7 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     if (getRatesStatut) {
       handleLoading(getRatesStatut, null, null, getRatesError);
     }
-  }, [getRatesStatut]);
+  }, [getRatesError, getRatesStatut, handleLoading]);
 
   // edit rates request loading statut
   useEffect(() => {
@@ -137,7 +135,7 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
         putRatesError
       );
     }
-  }, [putRatesStatut]);
+  }, [handleLoading, putRatesError, putRatesStatut]);
 
   return (
     <>
@@ -150,8 +148,8 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
             <div className={classes["rates__grid-items"]}>
               <input
                 className={classes["rates__input"]}
-                value={priceValues.price1 || "non défini"}
-                id="price1"
+                value={priceValues.price1 || undefined}
+                placeholder="non défini"
                 min={1}
                 max={9999}
                 onChange={handleValueChange}
@@ -163,24 +161,28 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
               <span>{priceValues.price1 && "€"}</span>
             </div>
             <div className={classes["rates__grid-items"]}>
-              <input
-                className={classes["rates__input"]}
-                value={priceValues.price2 || "non défini"}
-                id="price2"
-                min={1}
-                max={9999}
-                onChange={handleValueChange}
-                type="number"
-                name="country"
-                disabled={isAuth ? false : true}
-                required
-              />
+              {
+                <input
+                  className={classes["rates__input"]}
+                  value={priceValues.price2 || undefined}
+                  placeholder="non défini"
+                  id="price2"
+                  min={1}
+                  max={9999}
+                  onChange={handleValueChange}
+                  type="number"
+                  name="country"
+                  disabled={isAuth ? false : true}
+                  required
+                />
+              }
               <span>{priceValues.price2 && "€"}</span>
             </div>
             <div className={classes["rates__grid-items"]}>
               <input
                 className={classes["rates__input"]}
-                value={priceValues.price3 || "non défini"}
+                value={priceValues.price3 || undefined}
+                placeholder="non défini"
                 id="price3"
                 min={1}
                 max={9999}
@@ -202,7 +204,7 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
         </form>
       )}
       {getRatesStatut === HTTPStateKind.ERROR && (
-        <p className="text-center">Les tarifs sont indisponibles.</p>
+        <p className="text-center">Une erreur s'est produite.</p>
       )}
     </>
   );

@@ -49,7 +49,7 @@ const App: React.FC = () => {
     if (authCheckRequestStatut === HTTPStateKind.SUCCESS) {
       dispatch(authActions.login());
     }
-  }, [authCheckRequestStatut]);
+  }, [authCheckRequestStatut, dispatch]);
 
   // shelters request loading handling
   useEffect(() => {
@@ -61,12 +61,12 @@ const App: React.FC = () => {
         getSheltersRequestError
       );
     }
-  }, [getSheltersRequestStatut]);
+  }, [getSheltersRequestError, getSheltersRequestStatut, handleLoading]);
 
   useEffect(() => {
-    if (pathname.includes("admin")) {
+    if (pathname.includes("set-admin")) {
       dispatch(authActions.isAdmin());
-    } else {
+    } else if (pathname.includes("set-user")) {
       dispatch(authActions.isUser());
     }
   }, [pathname, history, dispatch]);
