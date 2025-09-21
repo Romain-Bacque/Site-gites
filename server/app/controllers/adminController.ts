@@ -42,6 +42,7 @@ const adminController = {
     const { bookingId } = req.params;
     const booking = await Booking.findByIdAndDelete(bookingId);
 
+
     if (booking) {
       await adminController.getAllBooking(req, res);
     } else next();

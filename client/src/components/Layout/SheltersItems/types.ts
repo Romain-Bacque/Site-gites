@@ -5,7 +5,7 @@ export enum TabKind {
   AVAILABILITY
 }
 // interfaces
-export interface GitesItemsProps {
+export interface SheltersItemsProps {
   shelterId: string;
   title: string;
   number: number;

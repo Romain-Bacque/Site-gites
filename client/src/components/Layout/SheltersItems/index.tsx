@@ -1,18 +1,19 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 import classes from "./style.module.css";
 import Booking from "../Booking";
 import Rates from "../Rates";
 import Slider from "../../UI/slider/Slider";
 import Availability from "../Availability";
+
 // types import
-import { GitesItemsProps, Tab, TabKind } from "./types";
+import { SheltersItemsProps, Tab, TabKind } from "./types";
 
 // variable & contante
-let formContent: JSX.Element;
+let formContent: ReactNode = null;
 
 // component
-const GitesItems: React.FC<GitesItemsProps> = ({
+const SheltersItems: React.FC<SheltersItemsProps> = ({
   shelterId,
   title,
   number,
@@ -47,7 +48,7 @@ const GitesItems: React.FC<GitesItemsProps> = ({
   };
 
   return (
-    <>
+    <div className={classes.gite}>
       <div className={classes["gite__picture-container"]}>
         <h2 className={classes.gite__title}>{title}</h2>
         <Slider shelter={number} />
@@ -93,11 +94,9 @@ const GitesItems: React.FC<GitesItemsProps> = ({
         {shelterStatut[number].tab === TabKind.RATES && <span />}
         {shelterStatut[number].tab === TabKind.AVAILABILITY && <span />}
       </div>
-      {shelterStatut[number].tab !== null && (
-        <div className={classes["gites__tab-container"]}>{formContent}</div>
-      )}
-    </>
+      {shelterStatut[number].tab !== null && formContent}
+    </div>
   );
 };
 
-export default GitesItems;
+export default SheltersItems;

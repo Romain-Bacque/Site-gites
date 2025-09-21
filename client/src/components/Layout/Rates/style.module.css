@@ -1,4 +1,9 @@
 /* --- Tarifs --- */
+
+.rates-container {
+  padding: 1rem;
+}
+
 .form {
   display: flex;
   flex-direction: column;

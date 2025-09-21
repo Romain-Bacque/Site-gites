@@ -281,9 +281,11 @@ interface RatesPutRequestData {
 }
 
 export const ratesPutRequest = async (data: RatesPutRequestData) => {
+  const { shelterId, ...rest } = data;
+  
   const response = await instance.put<RatesPutRequestResponseData>(
-    "/rates",
-    data
+    `/rates/${shelterId}`,
+    rest
   );
 
   if (response.status !== 200) throw new Error();

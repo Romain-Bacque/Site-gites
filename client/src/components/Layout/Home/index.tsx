@@ -101,7 +101,7 @@ const Home: React.FC = () => {
               className={classes.gite__picture}
               srcSet={`${gite1_small} 573w, ${gite1_large} 2201w`}
               src={gite1_large}
-              alt="Gite Jo"
+              alt="Gite 1"
             />
             <div className={classes["gite-text-container"]}>
               <div>
@@ -126,7 +126,7 @@ const Home: React.FC = () => {
               className={classes.gite__picture}
               srcSet={`${gite2_small} 576w, ${gite2_large} 2201w`}
               src={gite2_large}
-              alt="Gite Flo"
+              alt="Gite 1"
             />
             <div className={classes["gite-text-container"]}>
               <div>

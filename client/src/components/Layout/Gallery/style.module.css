@@ -1,5 +1,6 @@
 .album {
   padding: 0;
+  min-height: 50vh
 }
 
 .album-title {
@@ -42,6 +43,11 @@
 
 .image {
   width: 100%;
+}
+
+.emptyImage {
+  font-size: 5rem;
+  color: #bbb;
 }
 
 .crop-backdrop {

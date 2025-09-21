@@ -19,6 +19,7 @@ import { loadingActions } from "../../../store/loading";
 import { AlertStatut, GalleryProps, ImagesData } from "./types";
 import Card from "../../UI/Card";
 import useLoading from "../../../hooks/use-loading";
+import { ImageNotSupported } from "@mui/icons-material";
 
 // variable & constante
 const initialModalState = {
@@ -270,7 +271,10 @@ const Gallery: React.FC<GalleryProps> = ({
                 </SwiperSlide>
               ))
             ) : (
-              <p className="text-center space">Il n'y a aucune image.</p>
+              <div className="text-center space">
+                <ImageNotSupported className={classes.emptyImage} />
+                <p>Aucune image pour le moment.</p>
+              </div>
             )}
           </Swiper>
         </>

@@ -216,7 +216,6 @@ module.exports.postBookingSchema = joi
  */
 module.exports.putRatesSchema = joi
   .object({
-    shelterId: joi.string().escapeHTML().required(),
     price1: joi.number().max(9999).required(),
     price2: joi.number().max(9999).required(),
     price3: joi.number().max(9999).required(),

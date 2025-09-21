@@ -20,6 +20,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { HTTPStateKind } from "../../../global/types";
 import useLoading from "../../../hooks/use-loading";
+import Button from "../../UI/Button"; // <-- Import your custom Button
 
 // variable & constante
 const initialState = {
@@ -137,76 +138,82 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     }
   }, [handleLoading, putRatesError, putRatesStatut]);
 
+  if (getRatesStatut === HTTPStateKind.PENDING) {
+    return null;
+  }
+
   return (
-    <>
-      {getRatesStatut === HTTPStateKind.SUCCESS && (
-        <form className={classes.form} onSubmit={handleSubmit}>
-          <div className={classes["rates__grid-container"]}>
-            <p className={classes["rates__grid-items"]}>header1</p>
-            <p className={classes["rates__grid-items"]}>header2</p>
-            <p className={classes["rates__grid-items"]}>header3</p>
-            <div className={classes["rates__grid-items"]}>
-              <input
-                className={classes["rates__input"]}
-                value={priceValues.price1 || undefined}
-                placeholder="non défini"
-                min={1}
-                max={9999}
-                onChange={handleValueChange}
-                type="number"
-                name="country"
-                disabled={isAuth ? false : true}
-                required
-              />
-              <span>{priceValues.price1 && "€"}</span>
-            </div>
-            <div className={classes["rates__grid-items"]}>
-              {
-                <input
-                  className={classes["rates__input"]}
-                  value={priceValues.price2 || undefined}
-                  placeholder="non défini"
-                  id="price2"
-                  min={1}
-                  max={9999}
-                  onChange={handleValueChange}
-                  type="number"
-                  name="country"
-                  disabled={isAuth ? false : true}
-                  required
-                />
-              }
-              <span>{priceValues.price2 && "€"}</span>
-            </div>
-            <div className={classes["rates__grid-items"]}>
-              <input
-                className={classes["rates__input"]}
-                value={priceValues.price3 || undefined}
-                placeholder="non défini"
-                id="price3"
-                min={1}
-                max={9999}
-                onChange={handleValueChange}
-                type="number"
-                name="country"
-                disabled={isAuth ? false : true}
-                required
-              />
-              <span>{priceValues.price3 && "€"}</span>
-            </div>
+    <div className={classes["rates-container"]}>
+      <form className={classes.form} onSubmit={handleSubmit}>
+        <div className={classes["rates__grid-container"]}>
+          <p className={classes["rates__grid-items"]}>header1</p>
+          <p className={classes["rates__grid-items"]}>header2</p>
+          <p className={classes["rates__grid-items"]}>header3</p>
+          <div className={classes["rates__grid-items"]}>
+            <input
+              className={classes["rates__input"]}
+              value={priceValues.price1 || ""}
+              placeholder="non défini"
+              id="price1"
+              min={1}
+              max={9999}
+              onChange={handleValueChange}
+              type="number"
+              name="country"
+              disabled={isAuth ? false : true}
+              required
+            />
+            <span>{priceValues.price1 && "€"}</span>
           </div>
-          {isAuth && (
-            <button className="button button--alt">
-              Enregistrer les modifications
-              <FontAwesomeIcon className="button__icon" icon={faPen} />
-            </button>
-          )}
-        </form>
-      )}
-      {getRatesStatut === HTTPStateKind.ERROR && (
-        <p className="text-center">Une erreur s'est produite.</p>
-      )}
-    </>
+          <div className={classes["rates__grid-items"]}>
+            {
+              <input
+                className={classes["rates__input"]}
+                value={priceValues.price2 || ""}
+                placeholder="non défini"
+                id="price2"
+                min={1}
+                max={9999}
+                onChange={handleValueChange}
+                type="number"
+                name="country"
+                disabled={isAuth ? false : true}
+                required
+              />
+            }
+            <span>{priceValues.price2 && "€"}</span>
+          </div>
+          <div className={classes["rates__grid-items"]}>
+            <input
+              className={classes["rates__input"]}
+              value={priceValues.price3 || ""}
+              placeholder="non défini"
+              id="price3"
+              min={1}
+              max={9999}
+              onChange={handleValueChange}
+              type="number"
+              name="country"
+              disabled={isAuth ? false : true}
+              required
+            />
+            <span>{priceValues.price3 && "€"}</span>
+          </div>
+        </div>
+        {isAuth && (
+          <Button
+            variant="primary"
+            size="lg"
+            icon={() => <FontAwesomeIcon icon={faPen} />}
+            iconPosition="right"
+            className="button--alt"
+            type="submit"
+          >
+            Enregistrer les modifications
+          </Button>
+        )}
+      </form>
+    </div>
   );
 };
 
