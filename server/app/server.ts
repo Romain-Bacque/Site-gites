@@ -1,7 +1,7 @@
 // import debug from "debug";
 import express from "express";
 import { config } from "dotenv";
-import appRouter from "./app";
+import appRouter from ".";
 
 config(); // Load environment variables from .env file
 
