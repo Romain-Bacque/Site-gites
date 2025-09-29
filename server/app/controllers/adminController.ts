@@ -42,7 +42,6 @@ const adminController = {
     const { bookingId } = req.params;
     const booking = await Booking.findByIdAndDelete(bookingId);
 
-
     if (booking) {
       await adminController.getAllBooking(req, res);
     } else next();
@@ -85,13 +84,24 @@ const adminController = {
     }
   },
 
-  getImages: async function (_: Request, res: Response, next: NextFunction) {
+  getSheltersWithImages: async function (
+    _: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
-      const images = await Image.find({}, { filename: 0 });
+      const shelters = await Shelter.find({}).populate<{
+        images: {
+          _id: string;
+          url: string;
+          filename: string;
+          shelter_id: string;
+        }[];
+      }>("images");
 
-      if (images) {
-        res.status(200).json({ imagesData: images });
-      } else throw new Error();
+      if (shelters) {
+        res.status(200).json({ sheltersData: shelters });
+      } else throw new ExpressError("Internal Server Error", 500);
     } catch (err) {
       debug(err);
       next(err);
@@ -115,13 +125,17 @@ const adminController = {
       filename,
     });
 
-    const images = await Image.find(
-      { shelter_id: shelter._id },
-      { filename: 0 }
-    );
+    const shelters = await Shelter.find({}).populate<{
+      images: {
+        _id: string;
+        url: string;
+        filename: string;
+        shelter_id: string;
+      }[];
+    }>("images");
 
-    if (images) {
-      res.status(200).json({ imagesData: images });
+    if (shelters) {
+      res.status(200).json({ sheltersData: shelters });
     } else throw new Error();
   },
 
@@ -132,7 +146,7 @@ const adminController = {
 
     const image = await Image.findById(imageId, { filename: 1 }).populate(
       "shelter_id",
-      "number"
+      "title"
     );
 
     if (!image) throw new ExpressError("Internal Server Error", 500);
@@ -144,13 +158,17 @@ const adminController = {
 
     await image.deleteOne({ filename: image.filename });
 
-    const images = await Image.find({ shelter_id: shelterId }).populate(
-      "shelter_id",
-      "number"
-    );
+    const shelters = await Shelter.find({}).populate<{
+      images: {
+        _id: string;
+        url: string;
+        filename: string;
+        shelter_id: string;
+      }[];
+    }>("images");
 
-    if (images) {
-      res.status(200).json({ imagesData: images });
+    if (shelters) {
+      res.status(200).json({ sheltersData: shelters });
     } else throw new ExpressError("Internal Server Error", 500);
   },
 };

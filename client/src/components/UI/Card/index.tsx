@@ -10,7 +10,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = (props) => {
   const cardClasses = `${classes.card} ${props.className}`;
 
-  return <article className={cardClasses}>{props.children}</article>;
+  return <div className={cardClasses}>{props.children}</div>;
 };
 
 export default Card;

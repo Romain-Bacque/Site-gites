@@ -24,7 +24,7 @@ router
 
 router
   .route("/gallery")
-  .get(catchAsync(adminController.getImages))
+  .get(catchAsync(adminController.getSheltersWithImages))
   .post(
     checkLogged,
     upload.single("file"),

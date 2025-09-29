@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
@@ -18,6 +18,8 @@ import LoaderAndAlert from "../../UI/LoaderAndAlert";
 import { ArrowRightAlt } from "@mui/icons-material";
 import Button from "../../UI/Button";
 import { HTTPStateKind } from "../../../global/types";
+import { useAppSelector } from "../../../hooks/use-store";
+import useLoading from "../../../hooks/use-loading";
 
 // variable & constantes
 const initialState = {
@@ -26,8 +28,12 @@ const initialState = {
   show: false,
 };
 
+let isFirstRender = true;
+
 // component
 const Home: React.FC = () => {
+  const handleLoading = useLoading();
+  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const [showModal, setShowModal] = useState(false);
   const {
@@ -41,6 +47,12 @@ const Home: React.FC = () => {
     sendHttpRequest();
     setShowModal(true);
   };
+
+  useEffect(() => {
+    if (isAuth && isFirstRender) handleLoading(2, null, `Bienvenue`, null);
+    if (!isAuth) isFirstRender = true;
+    else isFirstRender = false;
+  }, [handleLoading, isAuth]);
 
   return (
     <>

@@ -1,65 +1,8 @@
-import { useEffect } from "react";
-import useHttp from "../hooks/use-http";
-
-import { getPictureRequest } from "../lib/api";
 import Gallery from "../components/Layout/Gallery";
-import { loadingActions } from "../store/loading";
-import { useDispatch } from "react-redux";
-import { HTTPStateKind } from "../global/types";
-import useLoading from "../hooks/use-loading";
-
-// interfaces
-export type GalleryPageProps = {
-  sheltersData:
-    | {
-        _id: string;
-        title: string;
-        number: number;
-      }[]
-    | null;
-};
 
 // component
-const GalleryPage: React.FC<GalleryPageProps> = ({ sheltersData }) => {
-  const dispatch = useDispatch();
-  const handleLoading = useLoading();
-  const {
-    sendHttpRequest: getPictureHttpRequest,
-    statut: getPictureStatut,
-    data: imagesData,
-    error: getPictureRequestError,
-  } = useHttp(getPictureRequest);
-
-  useEffect(() => {
-    getPictureHttpRequest();
-  }, [getPictureHttpRequest]);
-
-  // shelters request loading handling
-  useEffect(() => {
-    handleLoading(getPictureStatut, null, null, getPictureRequestError);
-  }, [dispatch, getPictureStatut, getPictureRequestError]);
-
-  return (
-    <section>
-      {imagesData && sheltersData ? (
-        sheltersData.map((shelterData) => (
-          <Gallery
-            key={shelterData._id}
-            imagesData={imagesData.filter(
-              (image) => image.shelter_id === shelterData._id
-            )}
-            shelterTitle={shelterData.title}
-            shelterId={shelterData._id}
-          />
-        ))
-      ) : (
-        <p className="text-center">Aucune image disponible.</p>
-      )}
-      {getPictureStatut === HTTPStateKind.ERROR && (
-        <p className="text-center">Une erreur s'est produite.</p>
-      )}
-    </section>
-  );
+const GalleryPage: React.FC = () => { 
+  return <Gallery />;
 };
 
 export default GalleryPage;

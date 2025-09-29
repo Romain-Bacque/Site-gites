@@ -14,10 +14,6 @@ export type HandleLoading = (
 const useLoading = () => {
   const dispatch = useDispatch();
 
-  const resetLoadingStatus = useCallback(
-    () => dispatch(loadingActions.reset()),
-    [dispatch]
-  );
 
   const handleLoading: HandleLoading = useCallback(
     (statut, pendingMessage, successMessage, errorMessage) => {
@@ -37,9 +33,9 @@ const useLoading = () => {
 
   useEffect(() => {
     return () => {
-      resetLoadingStatus();
+      dispatch(loadingActions.reset());
     };
-  }, [resetLoadingStatus]);
+  }, [dispatch]);
 
   return handleLoading;
 };

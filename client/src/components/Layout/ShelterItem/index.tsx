@@ -8,6 +8,7 @@ import Availability from "../Availability";
 
 // types import
 import { SheltersItemsProps, Tab, TabKind } from "./types";
+import { ImageNotSupported } from "@mui/icons-material";
 
 // variable & contante
 let formContent: ReactNode = null;
@@ -16,42 +17,45 @@ let formContent: ReactNode = null;
 const SheltersItems: React.FC<SheltersItemsProps> = ({
   shelterId,
   title,
-  number,
+  pictures,
 }) => {
-  const [shelterStatut, setShelterStatut] = useState<Tab[]>([
-    { tab: null },
-    { tab: null },
-  ]);
+  const [shelterStatut, setShelterStatut] = useState<Tab>({ tab: null });
 
-  if (shelterStatut[number].tab === TabKind.BOOK) {
+  if (shelterStatut.tab === TabKind.BOOK) {
     formContent = <Booking shelterId={shelterId} />;
-  } else if (shelterStatut[number].tab === TabKind.RATES) {
+  } else if (shelterStatut.tab === TabKind.RATES) {
     formContent = <Rates shelterId={shelterId} />;
-  } else if (shelterStatut[number].tab === TabKind.AVAILABILITY) {
+  } else if (shelterStatut.tab === TabKind.AVAILABILITY) {
     formContent = (
       <Availability className="calendar--availability" shelterId={shelterId} />
     );
   }
 
-  const handleShelterTab = (value: TabKind) => {
-    setShelterStatut((prevState) => {
-      return prevState.map((item, index) => {
-        if (index === number) {
-          const tabValue = item.tab === value ? null : value;
+  const handleShelterTab = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    value: TabKind
+  ) => {
+    event.stopPropagation();
 
-          return (item = { tab: tabValue });
-        } else {
-          return item;
-        }
-      });
+    setShelterStatut((prevState) => {
+      if (prevState.tab === value) {
+        return { tab: null };
+      }
+      return { tab: value };
     });
   };
 
   return (
-    <div className={classes.gite}>
+    <>
       <div className={classes["gite__picture-container"]}>
         <h2 className={classes.gite__title}>{title}</h2>
-        <Slider shelter={number} />
+        {pictures?.length ? (
+          <Slider title={title} data={pictures} />
+        ) : (
+          <div className="text-center space">
+            <ImageNotSupported sx={{ fontSize: "5rem", color: "#bbb" }} />
+          </div>
+        )}
       </div>
       <div className={classes["gites__details"]}>
         <h3 className={classes["gites__capacité-titre"]}>Capacité</h3>
@@ -63,39 +67,40 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
       </div>
       <div className={classes["gite__buttons-container"]}>
         <button
+          type="button"
           className={`${
-            shelterStatut[number].tab === TabKind.BOOK ? classes.active : ""
+            shelterStatut.tab === TabKind.BOOK ? classes.active : ""
           } ${classes["gite__button-tab"]}`}
-          onClick={() => handleShelterTab(TabKind.BOOK)}
+          onClick={(event) => handleShelterTab(event, TabKind.BOOK)}
         >
           Réserver
         </button>
         <button
+          type="button"
           className={`${
-            shelterStatut[number].tab === TabKind.RATES ? classes.active : ""
+            shelterStatut.tab === TabKind.RATES ? classes.active : ""
           } ${classes["gite__button-tab"]}`}
-          onClick={() => handleShelterTab(TabKind.RATES)}
+          onClick={(event) => handleShelterTab(event, TabKind.RATES)}
         >
           Tarifs
         </button>
         <button
+          type="button"
           className={`${
-            shelterStatut[number].tab === TabKind.AVAILABILITY
-              ? classes.active
-              : ""
+            shelterStatut.tab === TabKind.AVAILABILITY ? classes.active : ""
           } ${classes["gite__button-tab"]}`}
-          onClick={() => handleShelterTab(TabKind.AVAILABILITY)}
+          onClick={(event) => handleShelterTab(event, TabKind.AVAILABILITY)}
         >
           Disponibilités
         </button>
       </div>
       <div className={classes["gite__content"]}>
-        {shelterStatut[number].tab === TabKind.BOOK && <span />}
-        {shelterStatut[number].tab === TabKind.RATES && <span />}
-        {shelterStatut[number].tab === TabKind.AVAILABILITY && <span />}
+        {shelterStatut.tab === TabKind.BOOK && <span />}
+        {shelterStatut.tab === TabKind.RATES && <span />}
+        {shelterStatut.tab === TabKind.AVAILABILITY && <span />}
       </div>
-      {shelterStatut[number].tab !== null && formContent}
-    </div>
+      {shelterStatut.tab !== null && formContent}
+    </>
   );
 };
 

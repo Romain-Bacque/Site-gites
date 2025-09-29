@@ -216,6 +216,11 @@ section {
   border-radius: 20px;
 }
 
+.emptymage {
+  font-size: 5rem;
+  color: #bbb;
+}
+
 /* -- media queries -- */
 @media screen and (max-width: 450px) {
   .button {

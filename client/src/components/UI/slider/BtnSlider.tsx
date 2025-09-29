@@ -12,6 +12,7 @@ interface BtnSliderProps {
 const BtnSlider: React.FC<BtnSliderProps> = ({ direction, moveSlide }) => {
   return (
     <button
+      type="button"
       onClick={moveSlide}
       className={
         direction === "next"

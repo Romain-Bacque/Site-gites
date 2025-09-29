@@ -1,5 +1,7 @@
+.booking-container {
+  padding: 1rem;
+}
 
-/* -- form -- */
 .form {
   display: flex;
   flex-wrap: wrap;

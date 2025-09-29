@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import useHttp from "../../../hooks/use-http";
-
 import {
   getCSRF,
   ratesGetRequest,
@@ -9,7 +8,6 @@ import {
 } from "../../../lib/api";
 import classes from "./style.module.css";
 import { useAppSelector } from "../../../hooks/use-store";
-// types import
 import {
   PriceValues,
   RatesProps,
@@ -20,28 +18,27 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { HTTPStateKind } from "../../../global/types";
 import useLoading from "../../../hooks/use-loading";
-import Button from "../../UI/Button"; // <-- Import your custom Button
+import Button from "../../UI/Button";
 
-// variable & constante
-const initialState = {
+const initialState: AlertStatut = {
   message: null,
   alert: null,
   show: false,
 };
 
-// component
+const initialPrices: PriceValues = {
+  price1: null,
+  price2: null,
+  price3: null,
+};
+
 const Rates: React.FC<RatesProps> = ({ shelterId }) => {
-  const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
-  const [priceValues, sePriceValues] = useState<PriceValues>({
-    price1: null,
-    price2: null,
-    price3: null,
-  });
+  const [alertStatut, setAlertStatut] = useState(initialState);
+  const [priceValues, setPriceValues] = useState(initialPrices);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const handleLoading = useLoading();
 
-  const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } =
-    useHttp(getCSRF);
+  const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } = useHttp(getCSRF);
   const {
     sendHttpRequest: getRatesHttpRequest,
     statut: getRatesStatut,
@@ -65,26 +62,25 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
 
     const data: RatesPutRequestData = {
       shelterId,
-      price1: priceValues.price1!,
-      price2: priceValues.price2!,
-      price3: priceValues.price3!,
+      price1: Number(priceValues.price1),
+      price2: Number(priceValues.price2),
+      price3: Number(priceValues.price3),
     };
 
     putRatesHttpRequest(data);
   };
 
-  const handleValueChange = (event: React.ChangeEvent) => {
-    sePriceValues((prevState) => {
-      return {
-        ...prevState,
-        [event.target.id]: (event.target as HTMLInputElement).value,
-      };
-    });
+  const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = event.target;
+    setPriceValues((prev) => ({
+      ...prev,
+      [id]: value ? Number(value) : null,
+    }));
   };
 
   useEffect(() => {
     if (getRatesData && typeof getRatesData === "object") {
-      sePriceValues({
+      setPriceValues({
         price1: getRatesData.price1,
         price2: getRatesData.price2,
         price3: getRatesData.price3,
@@ -96,28 +92,21 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     getRatesHttpRequest(shelterId);
   }, [getRatesHttpRequest, shelterId]);
 
-  // get csrf token
   useEffect(() => {
     getCSRFttpRequest();
-  }, []);
+  }, [getCSRFttpRequest]);
 
-  // set csrf token
   useEffect(() => {
     setCSRFToken(CSRFData);
   }, [CSRFData]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-
     if (alertStatut.show) {
-      timer = setTimeout(() => {
-        setAlertStatut((prevState) => ({ ...prevState, show: false }));
+      const timer = setTimeout(() => {
+        setAlertStatut((prev) => ({ ...prev, show: false }));
       }, 4000);
+      return () => clearTimeout(timer);
     }
-
-    return () => {
-      clearTimeout(timer);
-    };
   }, [alertStatut.show]);
 
   useEffect(() => {
@@ -126,13 +115,12 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     }
   }, [getRatesError, getRatesStatut, handleLoading]);
 
-  // edit rates request loading statut
   useEffect(() => {
     if (putRatesStatut) {
       handleLoading(
         putRatesStatut,
         null,
-        "Prix modifiés avec succés.",
+        "Prix modifiés avec succès.",
         putRatesError
       );
     }
@@ -142,6 +130,25 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     return null;
   }
 
+  const renderInput = (id: keyof PriceValues) => (
+    <div className={classes["rates__grid-items"]}>
+      <input
+        className={classes["rates__input"]}
+        value={priceValues[id] ?? ""}
+        placeholder="non défini"
+        id={id}
+        min={1}
+        max={9999}
+        onChange={handleValueChange}
+        type="number"
+        name={id}
+        disabled={!isAuth}
+        required
+      />
+      <span>{priceValues[id] && "€"}</span>
+    </div>
+  );
+
   return (
     <div className={classes["rates-container"]}>
       <form className={classes.form} onSubmit={handleSubmit}>
@@ -149,56 +156,9 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
           <p className={classes["rates__grid-items"]}>header1</p>
           <p className={classes["rates__grid-items"]}>header2</p>
           <p className={classes["rates__grid-items"]}>header3</p>
-          <div className={classes["rates__grid-items"]}>
-            <input
-              className={classes["rates__input"]}
-              value={priceValues.price1 || ""}
-              placeholder="non défini"
-              id="price1"
-              min={1}
-              max={9999}
-              onChange={handleValueChange}
-              type="number"
-              name="country"
-              disabled={isAuth ? false : true}
-              required
-            />
-            <span>{priceValues.price1 && "€"}</span>
-          </div>
-          <div className={classes["rates__grid-items"]}>
-            {
-              <input
-                className={classes["rates__input"]}
-                value={priceValues.price2 || ""}
-                placeholder="non défini"
-                id="price2"
-                min={1}
-                max={9999}
-                onChange={handleValueChange}
-                type="number"
-                name="country"
-                disabled={isAuth ? false : true}
-                required
-              />
-            }
-            <span>{priceValues.price2 && "€"}</span>
-          </div>
-          <div className={classes["rates__grid-items"]}>
-            <input
-              className={classes["rates__input"]}
-              value={priceValues.price3 || ""}
-              placeholder="non défini"
-              id="price3"
-              min={1}
-              max={9999}
-              onChange={handleValueChange}
-              type="number"
-              name="country"
-              disabled={isAuth ? false : true}
-              required
-            />
-            <span>{priceValues.price3 && "€"}</span>
-          </div>
+          {renderInput("price1")}
+          {renderInput("price2")}
+          {renderInput("price3")}
         </div>
         {isAuth && (
           <Button

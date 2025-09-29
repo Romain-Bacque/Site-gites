@@ -5,7 +5,7 @@ let instance = axios.create({
   baseURL: process.env.REACT_APP_APIHOST,
   withCredentials: true, // authorize cookie sending to server
 });
-console.log("API HOST:", process.env.REACT_APP_APIHOST);
+
 // // CSRF
 export const setCSRFToken = (csrfToken: string | null) => {
   instance.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken || "";
@@ -282,7 +282,7 @@ interface RatesPutRequestData {
 
 export const ratesPutRequest = async (data: RatesPutRequestData) => {
   const { shelterId, ...rest } = data;
-  
+
   const response = await instance.put<RatesPutRequestResponseData>(
     `/rates/${shelterId}`,
     rest
@@ -294,28 +294,35 @@ export const ratesPutRequest = async (data: RatesPutRequestData) => {
 // // Gallery
 
 // Get Picture
-interface PictureRequestResponseData {
-  imagesData: {
+interface getSheltersWithPicturesRequestResponseData {
+  sheltersData: {
     _id: string;
-    url: string;
-    filename: string;
-    shelter_id: string;
+    title: string;
+    number: number;
+    images: {
+      _id: string;
+      url: string;
+      title: string;
+      filename: string;
+      shelter_id: string;
+    }[];
   }[];
 }
 
-export const getPictureRequest = async () => {
-  const response = await instance.get<PictureRequestResponseData>(
-    `/admin/gallery`
-  );
+export const getSheltersWithPicturesRequest = async () => {
+  const response =
+    await instance.get<getSheltersWithPicturesRequestResponseData>(
+      `/admin/gallery`
+    );
 
   if (response.status !== 200) throw new Error();
 
-  return response.data.imagesData;
+  return response.data.sheltersData;
 };
 
 // Add Picture
 export const postPictureRequest = async (data: FormData) => {
-  const response = await instance.post<PictureRequestResponseData>(
+  const response = await instance.post<getSheltersWithPicturesRequestResponseData>(
     "/admin/gallery",
     data,
     {
@@ -325,18 +332,18 @@ export const postPictureRequest = async (data: FormData) => {
 
   if (response.status !== 200) throw new Error();
 
-  return response.data.imagesData;
+  return response.data.sheltersData;
 };
 
 // Delete Picture
 export const deletePictureRequest = async (id: string) => {
-  const response = await instance.delete<PictureRequestResponseData>(
+  const response = await instance.delete<getSheltersWithPicturesRequestResponseData>(
     `/admin/gallery/${id}`
   );
 
   if (response.status !== 200) throw new Error();
 
-  return response.data.imagesData;
+  return response.data.sheltersData;
 };
 
 // Sightseeing

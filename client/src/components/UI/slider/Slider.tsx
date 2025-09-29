@@ -1,24 +1,31 @@
 import { useEffect, useState } from "react";
 
 import classes from "./Slider.module.css";
-import dataSlider from "./dataSlider";
 import BtnSlider from "./BtnSlider";
 import { Link } from "react-router-dom";
 
-// interfaces
 interface SliderProps {
-  shelter: number;
+  title: string;
+  data:
+    | {
+        _id: string;
+        url: string;
+        title: string;
+        filename: string;
+        shelter_id: string;
+      }[]
+    | null;
 }
 
-const Slider: React.FC<SliderProps> = ({ shelter }) => {
+const Slider: React.FC<SliderProps> = ({ data }) => {
   const [slideIndex, setSlideIndex] = useState(1);
 
   // Navigate to the next image of the slider
   const handleNextSlide = () => {
-    if (slideIndex !== dataSlider[shelter].length) {
+    if (slideIndex !== data?.length) {
       setSlideIndex(slideIndex + 1);
       // If the last image of the slider is displayed, then we switch to the 1st
-    } else if (slideIndex === dataSlider[shelter].length) {
+    } else if (slideIndex === data?.length) {
       setSlideIndex(1);
     }
   };
@@ -29,7 +36,7 @@ const Slider: React.FC<SliderProps> = ({ shelter }) => {
       setSlideIndex(slideIndex - 1);
       // If the 1st image of the slider is displayed, then we switch to the last
     } else if (slideIndex === 1) {
-      setSlideIndex(dataSlider[shelter].length);
+      setSlideIndex(data?.length ?? 1);
     }
   };
 
@@ -44,10 +51,10 @@ const Slider: React.FC<SliderProps> = ({ shelter }) => {
 
   return (
     <div className={classes["container-slider"]}>
-      {dataSlider[shelter].map((item, index) => {
+      {data?.map((item, index) => {
         return (
           <div
-            key={item.id}
+            key={item._id}
             className={
               slideIndex === index + 1
                 ? classes["slide active-anim"]
@@ -55,18 +62,22 @@ const Slider: React.FC<SliderProps> = ({ shelter }) => {
             }
           >
             <img
-              alt={shelter === 0 ? "photo du gite 1" : "photo du gite 2"}
+              alt={item.filename ? item.filename : "Image de l'hébergement"}
               className={classes.slide__img}
-              src={item.picture}
+              src={item.url}
             />
-            <Link to="/albums" className={classes["slider__button-images"]}>
+            <Link to="/albums" className={classes["slider__button-data"]}>
               Voir tout l'album
             </Link>
           </div>
         );
       })}
-      <BtnSlider direction={"next"} moveSlide={handleNextSlide} />
-      <BtnSlider direction={"prev"} moveSlide={handlePrevSlide} />
+      {data && data.length > 1 && (
+        <>
+          <BtnSlider direction={"next"} moveSlide={handleNextSlide} />
+          <BtnSlider direction={"prev"} moveSlide={handlePrevSlide} />
+        </>
+      )}
     </div>
   );
 };

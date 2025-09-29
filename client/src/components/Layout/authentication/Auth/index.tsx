@@ -112,7 +112,7 @@ const Auth: React.FC = () => {
   // get csrf token
   useEffect(() => {
     getCSRFttpRequest();
-  }, []);
+  }, [getCSRFttpRequest]);
 
   // set csrf token
   useEffect(() => {
@@ -121,23 +121,21 @@ const Auth: React.FC = () => {
 
   // login request loading handling
   useEffect(() => {
-    const userName = loginData ? loginData.username : "";
-
-    if (loginStatut) {
-      handleLoading(
-        loginStatut,
-        null,
-        `Bienvenue ${userName}`,
-        loginErrorMessage
-      );
-    }
     // if user is logged successfully, then we set 'isAuthentificated' to true in store,
     // and redirect to home page
     if (loginStatut === HTTPStateKind.SUCCESS && !isNotRegistered) {
       dispatch(authActions.login());
       history.replace("/");
     }
-  }, [loginStatut]);
+  }, [
+    dispatch,
+    handleLoading,
+    history,
+    isNotRegistered,
+    loginData,
+    loginErrorMessage,
+    loginStatut,
+  ]);
 
   // register request loading handling
   useEffect(() => {
@@ -160,7 +158,8 @@ const Auth: React.FC = () => {
   // reset captcha if login or register failed
   useEffect(() => {
     const shouldResetCaptcha =
-      (loginStatut === HTTPStateKind.ERROR || registerStatut === HTTPStateKind.ERROR) &&
+      (loginStatut === HTTPStateKind.ERROR ||
+        registerStatut === HTTPStateKind.ERROR) &&
       captchaRef.current;
 
     if (shouldResetCaptcha) {
