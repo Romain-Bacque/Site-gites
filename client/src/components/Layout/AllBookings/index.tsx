@@ -273,6 +273,7 @@ const AllBookings: React.FC = () => {
           })`}</h2>
           {bookingsList?.length ? (
             <Button
+              variant="secondary"
               onClick={() => {
                 setShowModal({
                   isSorted: true,
@@ -280,13 +281,14 @@ const AllBookings: React.FC = () => {
                   show: true,
                 });
               }}
-              className={classes["sort-button"]}
+              icon={() => (
+                <FontAwesomeIcon
+                  className={classes["sort-button__icon"]}
+                  icon={faSliders}
+                />
+              )}
             >
-              <FontAwesomeIcon
-                className={classes["sort-button__icon"]}
-                icon={faSliders}
-              />
-              <span className={classes["sort-button__text"]}>Trier</span>
+              Trier
             </Button>
           ) : null}
         </div>
