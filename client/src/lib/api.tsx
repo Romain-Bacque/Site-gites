@@ -298,6 +298,7 @@ interface getSheltersWithPicturesRequestResponseData {
   sheltersData: {
     _id: string;
     title: string;
+    description: string;
     number: number;
     images: {
       _id: string;

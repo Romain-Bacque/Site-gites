@@ -8,7 +8,8 @@ export enum TabKind {
 export interface SheltersItemsProps {
   shelterId: string;
   title: string;
-  pictures:
+  description: string;
+  images:
     | {
         _id: string;
         url: string;

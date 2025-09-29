@@ -17,7 +17,8 @@ let formContent: ReactNode = null;
 const SheltersItems: React.FC<SheltersItemsProps> = ({
   shelterId,
   title,
-  pictures,
+  description,
+  images,
 }) => {
   const [shelterStatut, setShelterStatut] = useState<Tab>({ tab: null });
 
@@ -49,8 +50,8 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
     <>
       <div className={classes["gite__picture-container"]}>
         <h2 className={classes.gite__title}>{title}</h2>
-        {pictures?.length ? (
-          <Slider title={title} data={pictures} />
+        {images?.length ? (
+          <Slider title={title} data={images} />
         ) : (
           <div className="text-center space">
             <ImageNotSupported sx={{ fontSize: "5rem", color: "#bbb" }} />
@@ -64,6 +65,12 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
         <p className={classes["gites__surface-texte"]}>60 m2</p>
         <h3 className={classes["gites__animaux-titre"]}>Animaux</h3>
         <p className={classes["gites__animaux-texte"]}>sous accord</p>
+      </div>
+      <div className={classes["gites__description"]}>
+        <h3 className={classes["gites__description-titre"]}>Description</h3>
+        <p className={classes["gites__description-texte"]}>
+          {description ? description : "Aucune description disponible."}
+        </p>
       </div>
       <div className={classes["gite__buttons-container"]}>
         <button

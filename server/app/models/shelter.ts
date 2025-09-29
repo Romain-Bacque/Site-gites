@@ -3,9 +3,8 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IShelter extends Document {
   title: string;
   number: number;
-  images: mongoose.Types.ObjectId[];
+  description: string;
 }
-
 
 const shelterSchema = new Schema<IShelter>({
   title: {
@@ -15,6 +14,10 @@ const shelterSchema = new Schema<IShelter>({
   number: {
     type: Number,
     required: [true, "number cannot be blank"],
+  },
+  description: {
+    type: String,
+    required: [true, "description cannot be blank"],
   },
 });
 

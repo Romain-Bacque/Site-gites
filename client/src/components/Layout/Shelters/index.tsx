@@ -1,39 +1,60 @@
 // hooks import
-import { useState, useEffect } from "react";
+import useHttp from "../../../hooks/use-http";
+import { useEffect } from "react";
+import useLoading from "../../../hooks/use-loading";
 // components import
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
 import ShelterItem from "../ShelterItem";
 // types import
-import { SheltersProps } from "./types";
+import { getSheltersWithPicturesRequest } from "../../../lib/api";
+import { HTTPStateKind } from "../../../global/types";
 
 // component
-const Shelters: React.FC<SheltersProps> = ({ sheltersData }) => {
-  const [shelterList, setShelterList] = useState<JSX.Element[]>([]);
+const Shelters: React.FC = () => {
+  const handleLoading = useLoading();
+  const {
+    sendHttpRequest: getShelterHttpRequest,
+    statut: getSheltersRequestStatut,
+    data: sheltersData,
+    error: getSheltersRequestError,
+  } = useHttp(getSheltersWithPicturesRequest);
 
   useEffect(() => {
-    let sortedShelters: JSX.Element[] = [];
+    getShelterHttpRequest();
+  }, [getShelterHttpRequest]);
 
-    if (sheltersData?.length) {
-      sortedShelters = sheltersData.map((shelter) => {
-        return (
-          <Card key={shelter._id} className={classes.gite}>
-            <ShelterItem
-              shelterId={shelter._id}
-              title={shelter.title}
-              pictures={shelter.images}
-            />
-          </Card>
-        );
-      });
+  // shelters request loading handling
+  useEffect(() => {
+    if (getSheltersRequestStatut) {
+      handleLoading(
+        getSheltersRequestStatut,
+        null,
+        null,
+        getSheltersRequestError
+      );
     }
-    setShelterList(sortedShelters);
-  }, [sheltersData]);
+  }, [getSheltersRequestError, getSheltersRequestStatut, handleLoading]);
+
+  if (getSheltersRequestStatut === HTTPStateKind.PENDING) {
+    return <p className="text-center">Chargement des gîtes...</p>;
+  }
 
   return (
     <section>
-      {shelterList?.length > 0 ? (
-        shelterList
+      {sheltersData && sheltersData.length > 0 ? (
+        sheltersData.map((shelter) => {
+          return (
+            <Card key={shelter._id} className={classes.gite}>
+              <ShelterItem
+                shelterId={shelter._id}
+                title={shelter.title}
+                description={shelter.description}
+                images={shelter.images}
+              />
+            </Card>
+          );
+        })
       ) : (
         <p className="text-center">Les gîtes sont indisponibles.</p>
       )}

@@ -96,13 +96,20 @@ const Home: React.FC = () => {
             Venez découvrir nos gîtes...
           </strong>
           <p className={classes.summary__paragraphe}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Orci ac
-            auctor augue mauris augue neque. Adipiscing diam donec adipiscing
-            tristique risus nec feugiat in fermentum. Sapien nec sagittis
-            aliquam malesuada bibendum arcu vitae. Semper viverra nam libero
-            justo laoreet sit amet. Pellentesque pulvinar pellentesque habitant
-            morbi tristique.
+            Notre gîte est situé dans un petit hameau du Couserans, à 600 m
+            d’altitude, sur un versant exposé plein sud et en lisière de forêt.
+            Indépendant et sans vis-à-vis, il offre une belle vue sur la vallée
+            et la rivière, et se trouve au centre de nombreuses activités de
+            montagne : randonnées tous niveaux, station de ski et luge d’été de
+            Guzet à 30 min, thermes d’Aulus-les-Bains, accrobranche,
+            canoë-kayak, escalade, équitation, vélo… La région compte de
+            nombreux marchés locaux, dont celui très typique de Saint-Girons, où
+            vous pourrez découvrir et savourer les produits du terroir. En
+            saison, profitez aussi des châtaignes, champignons et myrtilles
+            sauvages. À 200 m, la rivière le Garbet est idéale pour la pêche à
+            la truite. Une initiation peut être proposée sur réservation avec le
+            propriétaire, moniteur guide de pêche diplômé (prestation
+            indépendante de la location).
           </p>
         </article>
       </section>
