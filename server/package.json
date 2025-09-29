@@ -35,7 +35,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node app/server.js",
+    "start": "node dist/server.js",
     "dev": "SET DEBUG=server, controller:admin, controller:auth, controller:shelter, model, database, validate:requestBody,validate:error, errorHandler & nodemon app/server.ts"
   },
   "keywords": [],
