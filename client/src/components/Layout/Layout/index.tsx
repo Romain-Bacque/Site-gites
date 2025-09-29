@@ -1,10 +1,10 @@
 import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { menuActions } from "../../../store/menu";
 import Footer from "../Footer";
 import Header from "../Header";
 import LoaderAndAlert from "../../UI/LoaderAndAlert";
+import { HTTPStateKind } from "../../../global/types";
 
 // interfaces
 interface LayoutProps {
@@ -15,6 +15,27 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = (props) => {
   const loading = useAppSelector((state) => state.loading);
   const dispatch = useAppDispatch();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    // Show a loader while the DOM is incomplete
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <LoaderAndAlert statut={HTTPStateKind.PENDING} />
+      </div>
+    );
+  }
 
   return (
     <div onClick={() => dispatch(menuActions.closeMenu())}>
@@ -23,7 +44,7 @@ const Layout: React.FC<LayoutProps> = (props) => {
         <LoaderAndAlert
           statut={loading.statut}
           message={{
-            pending: loading.message.pending, 
+            pending: loading.message.pending,
             success: loading.message.success,
             error: loading.message.error,
           }}

@@ -8,13 +8,12 @@ import HomePage from "./pages/HomePage";
 import SheltersPage from "./pages/SheltersPage";
 import GalleryPage from "./pages/GalleryPage";
 import AuthPage from "./pages/AuthPage";
-import { getShelters, loadUserInfos } from "./lib/api";
+import { loadUserInfos } from "./lib/api";
 import { authActions } from "./store/auth";
 import AllBookingsPage from "./pages/AllBookingsPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { HTTPStateKind } from "./global/types";
-import useLoading from "./hooks/use-loading";
 import EmailConfirmationPage from "./pages/EmailConfirmationPage";
 
 // component
@@ -25,7 +24,6 @@ const App: React.FC = () => {
   } = useHttp(loadUserInfos);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const dispatch = useAppDispatch();
-  const handleLoading = useLoading();
   const history = useHistory();
   const pathname = history.location.pathname;
 
