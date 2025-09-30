@@ -11,13 +11,7 @@ export enum SortKind {
 // type aliases
 export type handleEmailFormDisplay = (
   bookingChoice: "accept" | "refuse",
-  data: {
-    bookingId: string;
-    shelter: string;
-    name: string;
-    from: string;
-    to: string;
-  }
+  data: BookingData
 ) => void;
 export type BookingsList = {
   _id: string;
@@ -52,6 +46,7 @@ export interface BookingData {
   name: string;
   from: string;
   to: string;
+  replyTo: string;
 }
 export interface BookingRef {
   value: BookingData | null;

@@ -1,7 +1,6 @@
 // hooks import
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import useHttp from "../../../hooks/use-http";
-import { useAppDispatch } from "../../../hooks/use-store";
 // components import
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "../../UI/Modal";
@@ -153,7 +152,7 @@ const AllBookings: React.FC = () => {
           switch (sort) {
             case SortKind.DATE_DECREASING:
               // valueOf() return the actual date value in milliseconds since midnight, January 1, 1970, to fit with TS constraint
-              result = new Date(a.from).valueOf() - new Date(b.from).valueOf();
+              result = new Date(a.from).valueOf() - new Date(b.from).valueOf(); // valueOf is used to convert a Date object to a number, the number of milliseconds since January 1, 1970
               break;
             case SortKind.DATE_INCREASING:
               result = new Date(b.from).valueOf() - new Date(a.from).valueOf();
