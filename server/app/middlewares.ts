@@ -57,7 +57,10 @@ export const getActivities = async (
   _: Request,
   res: Response
 ): Promise<void> => {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"], // Necessary for some server environments like Render.com
+  });
   const page = await browser.newPage();
   const baseUrl =
     "https://www.tourisme-couserans-pyrenees.com/carnet-dadresses/quoi-faire-sur-place/activites-sportives-et-de-loisirs/activites-sportives-et-loisirs";
@@ -108,7 +111,6 @@ export const getActivities = async (
       hasNextPage = false;
     } else {
       list.push(...activitiesOnPage);
-      console.log(list);
 
       pageNumber++;
     }
