@@ -26,7 +26,7 @@
     "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "path": "^0.12.7",
-    "puppeteer": "^23.11.1",
+    "puppeteer": "^24.14.0",
     "sanitize-html": "^2.9.0",
     "v5": "^0.1.2",
     "web-vitals": "^2.1.4"
