@@ -1,5 +1,5 @@
 # Étape 1 : Image Node légère
-FROM node:20-slim
+FROM node:18.18.0
 
 # Étape 2 : Installer les dépendances système nécessaires à Chrome
 RUN apt-get update && apt-get install -y \
@@ -48,7 +48,6 @@ COPY package*.json ./
 
 # Étape 6 : Installer les dépendances
 RUN npm install
-RUN npm run build
 
 # Étape 7 : Copier le reste du projet
 COPY . .
