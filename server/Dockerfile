@@ -1,10 +1,31 @@
-# Étape 1 : Image Node légère
-FROM node:18.18.0 AS builder
+# ===============================
+# ÉTAPE 1 : Builder (compile le code TypeScript)
+# ===============================
+FROM node:20-slim AS builder
 
-# Étape 4 : Dossier de travail
 WORKDIR /usr/src/app
 
-# Étape 2 : Installer les dépendances système nécessaires à Chrome
+# Copier les fichiers de dépendances
+COPY package*.json ./
+
+# Installer les dépendances (avec les dev)
+RUN npm ci
+
+# Copier le reste du projet
+COPY . .
+
+# Compiler le code TypeScript
+RUN npm run build
+
+
+# ===============================
+# ÉTAPE 2 : Runner (exécute le serveur Node avec Puppeteer)
+# ===============================
+FROM node:20-slim AS runner
+
+WORKDIR /usr/src/app
+
+# Installer les dépendances système pour Chrome
 RUN apt-get update && apt-get install -y \
     wget \
     ca-certificates \
@@ -39,26 +60,20 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Copier les fichiers compilés
+# Copier les fichiers buildés et nécessaires depuis le builder
 COPY --from=builder /usr/src/app/package*.json ./
 COPY --from=builder /usr/src/app/dist ./dist
 
-# Étape 3 : Variables Puppeteer
+# Installer uniquement les dépendances de prod
+RUN npm ci --omit=dev
+
+# Puppeteer config
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
-# Installer les dépendances (sans les dev pour accélérer le cache)
-RUN npm ci
-
-# Copier le reste du projet
-COPY . .
-
-# Compiler le code TypeScript
-RUN npm run build
-
-# Étape 8 : Définir le port (Render fournit PORT)
+# Port (Render utilisera cette variable)
 ENV PORT=8080
 EXPOSE 8080
 
-# Étape 9 : Lancer ton app
+# Démarrage
 CMD ["node", "dist/server.js"]
