@@ -47,10 +47,6 @@ COPY --from=builder /usr/src/app/dist ./dist
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
-
-# Étape 5 : Copier les fichiers package.json
-COPY package*.json ./
-
 # Installer les dépendances (sans les dev pour accélérer le cache)
 RUN npm ci
 
