@@ -16,11 +16,11 @@ mkdir -p $PUPPETEER_CACHE_DIR
 npx puppeteer browsers install chrome
 
 # Stocker/restaurer le cache Chrome entre les builds
-if [[ -d "$PUPPETEER_CACHE_DIR/chrome" ]]; then
-  echo "Restoring Puppeteer Chrome cache..."
-  cp -R $PUPPETEER_CACHE_DIR/chrome node_modules/puppeteer/.local-chromium/
+if [[ ! -d $PUPPETEER_CACHE_DIR ]]; then
+echo "...Copying Puppeteer Cache from Build Cache"
+# Copying from the actual path where Puppeteer stores its Chrome binary
+cp -R /opt/render/.cache/puppeteer/chrome/ $PUPPETEER_CACHE_DIR
 else
-  echo "Saving Puppeteer Chrome cache..."
-  mkdir -p $PUPPETEER_CACHE_DIR
-  cp -R node_modules/puppeteer/.local-chromium/ $PUPPETEER_CACHE_DIR/chrome/
+echo "...Storing Puppeteer Cache in Build Cache"
+cp -R $PUPPETEER_CACHE_DIR /opt/render/.cache/puppeteer/chrome/
 fi
