@@ -39,7 +39,18 @@ const checkCSRFToken = (req, res, next) => {
 };
 exports.checkCSRFToken = checkCSRFToken;
 const getActivities = async (_, res) => {
-    const browser = await puppeteer_1.default.launch({ headless: true });
+    const browser = await puppeteer_1.default.launch({
+        executablePath: process.env.NODE_ENV === "production"
+            ? process.env.PUPPETEER_EXECUTABLE_PATH
+            : puppeteer_1.default.executablePath(),
+        headless: true,
+        args: [
+            "--no-sandbox", // Disables the Chrome sandbox security feature. This is often required in restricted environments (like some CI/CD pipelines or Docker containers) where the sandbox can't run properly. Note: Disabling the sandbox reduces security.
+            "--disable-setuid-sandbox", // Disables the setuid sandbox, another security layer. Used when the process can't gain the necessary privileges to run the sandbox.
+            "--single-process", // Runs Chrome in a single process. This can help with resource usage in constrained environments.
+            "--no-zygote", // Disables the zygote process, which is responsible for spawning new Chrome processes. This can help with compatibility in some environments.
+        ],
+    });
     const page = await browser.newPage();
     const baseUrl = "https://www.tourisme-couserans-pyrenees.com/carnet-dadresses/quoi-faire-sur-place/activites-sportives-et-de-loisirs/activites-sportives-et-loisirs";
     let pageNumber = 2;
@@ -69,7 +80,6 @@ const getActivities = async (_, res) => {
         }
         else {
             list.push(...activitiesOnPage);
-            console.log(list);
             pageNumber++;
         }
     }

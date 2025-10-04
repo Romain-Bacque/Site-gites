@@ -43,6 +43,10 @@ const shelterSchema = new mongoose_1.Schema({
         type: Number,
         required: [true, "number cannot be blank"],
     },
+    description: {
+        type: String,
+        required: [true, "description cannot be blank"],
+    },
 });
 // Virtual populate for images associated with the shelter
 shelterSchema.virtual("images", {

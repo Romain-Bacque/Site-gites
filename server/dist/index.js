@@ -17,7 +17,6 @@ const corsOptions = {
     origin: function (origin, // origin can be undefined for same-origin requests or tools like Postman
     callback // callback expects two parameters: error and boolean (true if allowed, false if not)
     ) {
-        // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin)
             return callback(null, true);
         if (origin === process.env.CORS_ORIGIN) {

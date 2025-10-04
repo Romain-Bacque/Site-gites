@@ -47,7 +47,8 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Étape 6 : Installer les dépendances
-RUN npm install && npm run build
+RUN npm install
+RUN npm run build
 
 # Étape 7 : Copier le reste du projet
 COPY . .
