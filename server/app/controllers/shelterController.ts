@@ -23,7 +23,6 @@ const shelterController = {
   },
 
   getActivities: async (_: Request, res: Response): Promise<void> => {
-    console.log("getActivities called");
     const browser = await puppeteer.launch({
       args: [
         "--no-sandbox", // Disables the Chrome sandbox security feature. This is often required in restricted environments (like some CI/CD pipelines or Docker containers) where the sandbox can't run properly. Note: Disabling the sandbox reduces security.
