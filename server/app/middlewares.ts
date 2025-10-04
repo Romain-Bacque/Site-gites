@@ -58,9 +58,17 @@ export const getActivities = async (
   res: Response
 ): Promise<void> => {
   const browser = await puppeteer.launch({
-    executablePath: process.env.NODE_ENV === "production" ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
+    executablePath:
+      process.env.NODE_ENV === "production"
+        ? process.env.PUPPETEER_EXECUTABLE_PATH
+        : puppeteer.executablePath(),
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"], // Necessary for some server environments like Render.com
+    args: [
+      "--no-sandbox", // Disables the Chrome sandbox security feature. This is often required in restricted environments (like some CI/CD pipelines or Docker containers) where the sandbox can't run properly. Note: Disabling the sandbox reduces security.
+      "--disable-setuid-sandbox", // Disables the setuid sandbox, another security layer. Used when the process can't gain the necessary privileges to run the sandbox.
+      "--single-process", // Runs Chrome in a single process. This can help with resource usage in constrained environments.
+      "--no-zygote", // Disables the zygote process, which is responsible for spawning new Chrome processes. This can help with compatibility in some environments.
+    ],
   });
   const page = await browser.newPage();
   const baseUrl =
