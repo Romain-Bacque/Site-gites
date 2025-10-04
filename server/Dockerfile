@@ -1,5 +1,5 @@
 # Use the official Puppeteer image as a base
-FROM ghcr.io/puppeteer/puppeteer:24.14.0
+FROM ghcr.io/puppeteer/puppeteer:^24.14.0
 
 # Set the working directory
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
