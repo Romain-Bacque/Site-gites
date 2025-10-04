@@ -46,11 +46,14 @@ WORKDIR /usr/src/app
 # Étape 5 : Copier les fichiers package.json
 COPY package*.json ./
 
-# Étape 6 : Installer les dépendances
-RUN npm install
+# Installer les dépendances (sans les dev pour accélérer le cache)
+RUN npm ci
 
-# Étape 7 : Copier le reste du projet
+# Copier le reste du projet
 COPY . .
+
+# Compiler le code TypeScript
+RUN npm run build
 
 # Étape 8 : Définir le port (Render fournit PORT)
 ENV PORT=8080
