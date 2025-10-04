@@ -1,5 +1,5 @@
 # Étape 1 : Image Node légère
-FROM node:18.18.0
+FROM node:18.18.0 AS builder
 
 # Étape 4 : Dossier de travail
 WORKDIR /usr/src/app
