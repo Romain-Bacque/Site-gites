@@ -1,6 +1,5 @@
 import express from "express";
 import adminRouter from "./adminRouter";
-import activitiesRouter from "./activitiesRouter";
 import authRouter from "./authRouter";
 import shelterRouter from "./shelterRouter";
 import errorHandler from "../utilities/errorHandler";
@@ -16,7 +15,6 @@ router.use("/form", createCSRFToken);
 router.use("/", shelterRouter);
 router.use("/authentification", authRouter);
 router.use("/admin", adminRouter);
-router.use("/activities", activitiesRouter);
 
 /**
  * gestion de la 404

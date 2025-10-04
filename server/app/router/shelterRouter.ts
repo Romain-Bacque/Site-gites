@@ -7,6 +7,7 @@ import { checkCSRFToken } from "../middlewares";
 
 const router = express.Router();
 
+router.get("/activities", catchAsync(shelterController.getActivities));
 router.get("/shelters", catchAsync(shelterController.getShelters));
 router.post(
   "/booking",
