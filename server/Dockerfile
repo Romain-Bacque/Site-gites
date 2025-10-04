@@ -1,5 +1,5 @@
-# Étape 1 : Build de l’app
-FROM node:20-slim AS builder
+# Étape 1 : Image Node légère
+FROM node:18.18.0
 
 # Étape 4 : Dossier de travail
 WORKDIR /usr/src/app
