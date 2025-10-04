@@ -26,7 +26,7 @@
     "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "path": "^0.12.7",
-    "puppeteer": "^24.14.0",
+    "puppeteer": "^23.11.1",
     "sanitize-html": "^2.9.0",
     "v5": "^0.1.2",
     "web-vitals": "^2.1.4"
@@ -36,6 +36,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node dist/server.js",
+    "postinstall": "npx puppeteer browsers install chrome",
     "dev": "SET DEBUG=server, controller:admin, controller:auth, controller:shelter, model, database, validate:requestBody,validate:error, errorHandler & nodemon app/server.ts"
   },
   "keywords": [],
