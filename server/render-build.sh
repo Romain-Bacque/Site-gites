@@ -7,6 +7,7 @@ npm install
 
 # Uncomment this line if you need to build your project
 npm run build
+
 # Ensure the Puppeteer cache directory exists
 PUPPETEER_CACHE_DIR=/opt/render/.cache/puppeteer
 mkdir -p $PUPPETEER_CACHE_DIR
