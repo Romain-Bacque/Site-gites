@@ -2,8 +2,6 @@
 # Exit on error
 set -o errexit
 
-cd server
-
 # Install dependencies
 npm install
 
