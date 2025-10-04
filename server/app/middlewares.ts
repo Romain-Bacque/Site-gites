@@ -58,11 +58,6 @@ export const getActivities = async (
   res: Response
 ): Promise<void> => {
   const browser = await puppeteer.launch({
-    executablePath:
-      process.env.NODE_ENV === "production"
-        ? process.env.PUPPETEER_EXECUTABLE_PATH
-        : puppeteer.executablePath(),
-    headless: true,
     args: [
       "--no-sandbox", // Disables the Chrome sandbox security feature. This is often required in restricted environments (like some CI/CD pipelines or Docker containers) where the sandbox can't run properly. Note: Disabling the sandbox reduces security.
       "--disable-setuid-sandbox", // Disables the setuid sandbox, another security layer. Used when the process can't gain the necessary privileges to run the sandbox.
