@@ -1,5 +1,8 @@
-# Étape 1 : Image Node légère
-FROM node:18.18.0
+# Étape 1 : Build de l’app
+FROM node:20-slim AS builder
+
+# Étape 4 : Dossier de travail
+WORKDIR /usr/src/app
 
 # Étape 2 : Installer les dépendances système nécessaires à Chrome
 RUN apt-get update && apt-get install -y \
@@ -36,12 +39,14 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
+# Copier les fichiers compilés
+COPY --from=builder /usr/src/app/package*.json ./
+COPY --from=builder /usr/src/app/dist ./dist
+
 # Étape 3 : Variables Puppeteer
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
-# Étape 4 : Dossier de travail
-WORKDIR /usr/src/app
 
 # Étape 5 : Copier les fichiers package.json
 COPY package*.json ./
