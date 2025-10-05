@@ -9,7 +9,7 @@ ls -la
 mkdir -p /opt/render/project/src/.cache/puppeteer/chrome/
 
 # Optional: set Puppeteer cache env var
-export PUPPETEER_CACHE_DIR="/opt/render/project/src/.cache/puppeteer/chrome/"
+export PUPPETEER_CACHE_DIR="/opt/render/.cache/puppeteer"
 
 # Install Puppeteer and download Chrome
 npx puppeteer browsers install chrome
