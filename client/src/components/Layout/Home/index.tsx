@@ -56,19 +56,18 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <LoaderAndAlert
-        statut={statut}
-        message={error ?? ""}
-      />
-      {statut !== HTTPStateKind.PENDING && (
-        <Modal
-          className={classes["activities-modal"]}
-          show={showModal}
-          onHide={() => setShowModal(false)}
-        >
+      <LoaderAndAlert statut={statut} message={error ?? ""} />
+      <Modal
+        className={classes["activities-modal"]}
+        show={showModal}
+        onHide={() => setShowModal(false)}
+      >
+        {statut === HTTPStateKind.PENDING ? (
+          <p className="text-center">Chargement des activités...</p>
+        ) : (
           <Activities activities={activities} />
-        </Modal>
-      )}
+        )}
+      </Modal>
       <Alert
         message={alertStatut.message}
         alert={alertStatut.alert}

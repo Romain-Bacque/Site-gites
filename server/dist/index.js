@@ -28,7 +28,7 @@ const corsOptions = {
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-TOKEN"],
-    credentials: true,
+    credentials: true, // Allow cookies and HTTP auth
     optionsSuccessStatus: 204, // Some legacy browsers (IE11, various SmartTVs) choke on 204 while preflighted requests
 };
 const app = (0, express_1.default)();

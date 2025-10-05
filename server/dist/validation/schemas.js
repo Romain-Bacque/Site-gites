@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const baseJoi = require("joi");
 const { joiPasswordExtendCore } = require("joi-password");
 const joiPassword = baseJoi.extend(joiPasswordExtendCore);
@@ -8,7 +7,7 @@ const sanitizeHtml = require("sanitize-html");
 // Sanitizing
 const extension = (joi) => ({
     type: "string",
-    base: joi.string(),
+    base: joi.string(), // extension is defined on joi.string()
     messages: {
         "string.escapeHTML": "{{#label}} must not include HTML!",
     },
@@ -17,7 +16,7 @@ const extension = (joi) => ({
             validate(value, helpers) {
                 // Joi will automatically call this method for whatever value it will receive
                 const clean = sanitizeHtml(value, {
-                    allowedTags: [],
+                    allowedTags: [], // no tag are allowed
                     allowedAttributes: {}, // no attribute are allowed
                 });
                 if (clean !== value)

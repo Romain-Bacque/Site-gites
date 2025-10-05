@@ -15,8 +15,8 @@ const redirectFn = (isValid) => {
     return `${process.env.CORS_ORIGIN}/admin/email-confirm?isValid=${isValid}`;
 };
 const getCookieConfig = () => ({
-    expires: new Date(Date.now() + 86400000),
-    httpOnly: true,
+    expires: new Date(Date.now() + 86400000), // 86400000ms = 24h
+    httpOnly: true, // accessible only by web server
     secure: true,
 });
 const generateAccessToken = (user) => {

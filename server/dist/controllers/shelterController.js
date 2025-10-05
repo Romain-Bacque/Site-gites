@@ -23,7 +23,9 @@ const shelterController = {
     getActivities: async (_, res) => {
         const browser = await puppeteer_core_1.default.launch({
             headless: true,
-            executablePath: chromePath,
+            executablePath: process.env.NODE_ENV === "production"
+                ? chromePath
+                : puppeteer_core_1.default.executablePath(),
             args: [
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
