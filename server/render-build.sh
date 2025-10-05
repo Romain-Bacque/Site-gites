@@ -5,7 +5,6 @@ set -o errexit
 # Install dependencies
 npm install
 
-# Uncomment this line if you need to build your project
 npm run build
 
 # Ensure the Puppeteer cache directory exists
