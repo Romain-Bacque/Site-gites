@@ -1,7 +1,7 @@
 // hooks import
 import useHttp from "../../../hooks/use-http";
 import { useEffect } from "react";
-import useLoading from "../../../hooks/use-loading";
+import useHTTPState from "../../../hooks/use-http-state";
 // components import
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
@@ -12,7 +12,7 @@ import { HTTPStateKind } from "../../../global/types";
 
 // component
 const Shelters: React.FC = () => {
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
   const {
     sendHttpRequest: getShelterHttpRequest,
     statut: getSheltersRequestStatut,
@@ -26,15 +26,12 @@ const Shelters: React.FC = () => {
 
   // shelters request loading handling
   useEffect(() => {
-    if (getSheltersRequestStatut) {
-      handleLoading(
-        getSheltersRequestStatut,
-        null,
-        null,
-        getSheltersRequestError
-      );
+    if (!getSheltersRequestError) {
+      handleHTTPState(getSheltersRequestStatut);
+    } else {
+      handleHTTPState(3, getSheltersRequestError);
     }
-  }, [getSheltersRequestError, getSheltersRequestStatut, handleLoading]);
+  }, [getSheltersRequestError, getSheltersRequestStatut, handleHTTPState]);
 
   if (getSheltersRequestStatut === HTTPStateKind.PENDING) {
     return <p className="text-center">Chargement des gîtes...</p>;

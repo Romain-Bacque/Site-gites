@@ -19,7 +19,7 @@ import { LoginData } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { HTTPStateKind } from "../../../../global/types";
-import useLoading from "../../../../hooks/use-loading";
+import useHTTPState from "../../../../hooks/use-http-state";
 import useRecaptcha from "../../../../hooks/use-recaptcha";
 import Captcha from "../Captcha";
 
@@ -38,7 +38,7 @@ const Auth: React.FC = () => {
   const {
     sendHttpRequest: registerHttpRequest,
     statut: registerStatut,
-    error: registerRequestError,
+    error: registerRequestErrorMsg,
   } = useHttp(registerRequest);
   const {
     value: usernameValue,
@@ -68,7 +68,7 @@ const Auth: React.FC = () => {
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const [isNotRegistered, setIsNotRegistered] = useState(false);
   const dispatch = useAppDispatch();
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
   const history = useHistory();
 
   let isFormValid: boolean;
@@ -84,11 +84,16 @@ const Auth: React.FC = () => {
 
     if (!isFormValid) return;
 
+    handleHTTPState(HTTPStateKind.PENDING);
+
     const isCaptchaValid = await verifyCaptcha();
 
     if (!isCaptchaValid) {
+      handleHTTPState(HTTPStateKind.ERROR, "Captcha invalide.");
       return;
     }
+
+    handleHTTPState(HTTPStateKind.SUCCESS);
 
     let userData: LoginData = {
       username: usernameValue,
@@ -119,7 +124,7 @@ const Auth: React.FC = () => {
     setCSRFToken(CSRFData);
   }, [CSRFData]);
 
-  // login request loading handling
+  // login request HTTPState handling
   useEffect(() => {
     // if user is logged successfully, then we set 'isAuthentificated' to true in store,
     // and redirect to home page
@@ -129,7 +134,7 @@ const Auth: React.FC = () => {
     }
   }, [
     dispatch,
-    handleLoading,
+    handleHTTPState,
     history,
     isNotRegistered,
     loginData,
@@ -137,14 +142,14 @@ const Auth: React.FC = () => {
     loginStatut,
   ]);
 
-  // register request loading handling
+  // register request HTTPState handling
   useEffect(() => {
     if (registerStatut) {
-      handleLoading(
+      handleHTTPState(
         registerStatut,
-        null,
-        "Inscription réussie ! Veuillez vérifier votre boîte mail pour activer votre compte.",
-        registerRequestError
+        registerStatut === HTTPStateKind.SUCCESS
+          ? "Inscription réussie ! Veuillez vérifier votre boîte mail pour activer votre compte."
+          : registerRequestErrorMsg ?? ""
       );
     }
     // if user is registered successfully, then all input are cleared
@@ -153,7 +158,15 @@ const Auth: React.FC = () => {
       userEmailResetHandler();
       userPasswordResetHandler();
     }
-  }, [registerStatut]);
+  }, [
+    handleHTTPState,
+    isNotRegistered,
+    registerRequestErrorMsg,
+    registerStatut,
+    userEmailResetHandler,
+    userPasswordResetHandler,
+    usernameResetHandler,
+  ]);
 
   // reset captcha if login or register failed
   useEffect(() => {

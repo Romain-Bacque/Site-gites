@@ -6,6 +6,7 @@ const catchAsync = (controller) => {
             await controller(req, res, next);
         }
         catch (err) {
+            console.error("Error occurred in controller:", err);
             next(err);
         }
     };

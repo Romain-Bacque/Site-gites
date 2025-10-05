@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import useInput from "../../../../hooks/use-input";
 import useHttp from "../../../../hooks/use-http";
 import { useParams } from "react-router-dom";
-import { useAppDispatch } from "../../../../hooks/use-store";
 // types import
 import { UserData } from "./types";
 // other import
@@ -17,16 +16,14 @@ import {
 } from "../../../../lib/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { loadingActions } from "../../../../store/loading";
 import { HTTPStateKind } from "../../../../global/types";
-import useLoading from "../../../../hooks/use-loading";
+import useHTTPState from "../../../../hooks/use-http-state";
 
 // component
 const ResetPassword: React.FC = () => {
   const { id, token } = useParams<{ id: string; token: string }>();
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
-  const dispatch = useAppDispatch();
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
   const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } =
     useHttp(getCSRF);
   const {
@@ -61,7 +58,7 @@ const ResetPassword: React.FC = () => {
   // get csrf token
   useEffect(() => {
     getCSRFttpRequest();
-  }, []);
+  }, [getCSRFttpRequest]);
 
   // set csrf token
   useEffect(() => {
@@ -70,18 +67,29 @@ const ResetPassword: React.FC = () => {
 
   // reset password request loading handling
   useEffect(() => {
-    handleLoading(
-      resetPasswordStatut,
-      null,
-      "Enregistrement réussi.",
-      resetPasswordErrorMessage
-    );
-
-    // if password is reset successfully, input is cleared
-    if (resetPasswordStatut === HTTPStateKind.SUCCESS) {
-      userPasswordResetHandler();
+    switch (resetPasswordStatut) {
+      case HTTPStateKind.PENDING:
+        handleHTTPState(1);
+        break;
+      case HTTPStateKind.SUCCESS:
+        handleHTTPState(2, "Le mot de passe a été réinitialisé avec succès.");
+        userPasswordResetHandler();
+        break;
+      case HTTPStateKind.ERROR:
+        handleHTTPState(
+          3,
+          resetPasswordErrorMessage ?? "Une erreur est survenue."
+        );
+        break;
+      default:
+        break;
     }
-  }, [resetPasswordStatut]);
+  }, [
+    handleHTTPState,
+    resetPasswordErrorMessage,
+    resetPasswordStatut,
+    userPasswordResetHandler,
+  ]);
 
   return (
     <Card className={classes.auth}>

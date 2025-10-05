@@ -9,7 +9,7 @@ const chromePath =
   process.env.PUPPETEER_EXECUTABLE_PATH ||
   path.resolve(
     "/opt/render/project/src/server/.cache/puppeteer/chrome/linux-138.0.7204.157/chrome-linux64/chrome"
-  );
+  ); // path.resolve is a method used to get the absolute path of a file or directory, it's the same as using __dirname + '/path/to/file'
 
 const debug = debugLib("controller:shelter");
 

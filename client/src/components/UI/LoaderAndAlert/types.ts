@@ -8,9 +8,5 @@ export interface StatutMessage {
 }
 export interface LoaderAndAlertProps {
   statut: HTTPStateKind | null;
-  message?: {
-    pending: string | null;
-    success: string | null;
-    error: string | null;
-  };
+  message?: string;
 }

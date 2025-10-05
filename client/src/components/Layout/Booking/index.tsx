@@ -19,7 +19,7 @@ import classes from "./style.module.css";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import { HTTPStateKind } from "../../../global/types";
-import useLoading from "../../../hooks/use-loading";
+import useHTTPState from "../../../hooks/use-http-state";
 
 // variable & contante
 const initialState = {
@@ -34,7 +34,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
   const [calendarStatus, setCalendarStatus] =
     useState<CalendarStatus>(initialState);
   const dispatch = useAppDispatch();
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
   const {
     value: nameValue,
     isValid: nameIsValid,
@@ -161,9 +161,9 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
       buttonsStyling: false,
     });
 
-    // loader display
+    // handle HTTP state
     if (bookingStatut) {
-      handleLoading(bookingStatut, null, null, null);
+      handleHTTPState(bookingStatut);
     }
 
     // popup display
@@ -197,7 +197,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
     resetFromHandler,
     resetToHandler,
     resetInfosHandler,
-    handleLoading,
+    handleHTTPState,
   ]);
 
   // prevent to set an arrive date > depart date

@@ -17,7 +17,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { HTTPStateKind } from "../../../global/types";
-import useLoading from "../../../hooks/use-loading";
+import useHTTPState from "../../../hooks/use-http-state";
 import Button from "../../UI/Button";
 
 const initialState: AlertStatut = {
@@ -36,9 +36,10 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   const [alertStatut, setAlertStatut] = useState(initialState);
   const [priceValues, setPriceValues] = useState(initialPrices);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
 
-  const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } = useHttp(getCSRF);
+  const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } =
+    useHttp(getCSRF);
   const {
     sendHttpRequest: getRatesHttpRequest,
     statut: getRatesStatut,
@@ -111,20 +112,15 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
 
   useEffect(() => {
     if (getRatesStatut) {
-      handleLoading(getRatesStatut, null, null, getRatesError);
+      handleHTTPState(getRatesStatut);
     }
-  }, [getRatesError, getRatesStatut, handleLoading]);
+  }, [getRatesError, getRatesStatut, handleHTTPState]);
 
   useEffect(() => {
     if (putRatesStatut) {
-      handleLoading(
-        putRatesStatut,
-        null,
-        "Prix modifiés avec succès.",
-        putRatesError
-      );
+      handleHTTPState(putRatesStatut);
     }
-  }, [handleLoading, putRatesError, putRatesStatut]);
+  }, [handleHTTPState, putRatesError, putRatesStatut]);
 
   if (getRatesStatut === HTTPStateKind.PENDING) {
     return null;

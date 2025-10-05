@@ -30,7 +30,7 @@ import { Navigation, Pagination } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import useLoading from "../../../hooks/use-loading";
+import useHTTPState from "../../../hooks/use-http-state";
 import Button from "../../UI/Button";
 
 dayjs().format();
@@ -49,7 +49,7 @@ const AllBookings: React.FC = () => {
   const [bookingsList, setBookingsList] = useState<BookingsList>([]);
   const [textareaValue, setTextareaValue] = useState("");
   const bookingRef = useRef<BookingRef>(initialBookingRefState);
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
 
   const {
     sendHttpRequest: getBookingsHttpRequest,
@@ -104,21 +104,17 @@ const AllBookings: React.FC = () => {
       const response = await emailHandler.sendEmail(template);
 
       if (response.status !== 200) throw new Error();
-      handleLoading(
+      handleHTTPState(
         HTTPStateKind.SUCCESS,
-        null,
-        "Modification enregistrée, un mail de confirmation vous a été envoyé.",
-        null
+        "Modification enregistrée, un mail de confirmation vous a été envoyé."
       );
     } catch (err) {
-      handleLoading(
+      handleHTTPState(
         HTTPStateKind.ERROR,
-        null,
-        "Modification enregistrée, mais echec de l'envoi du mail de confirmation.",
-        null
+        "Modification enregistrée, mais echec de l'envoi du mail de confirmation."
       );
     }
-  }, [bookingRef, handleLoading, textareaValue]);
+  }, [handleHTTPState, textareaValue]);
 
   const handleCancel = () => {
     setTextareaValue("");
@@ -197,44 +193,35 @@ const AllBookings: React.FC = () => {
   // get booking request loading statut
   useEffect(() => {
     if (fetchBookingsRequestStatut) {
-      handleLoading(
+      handleHTTPState(
         fetchBookingsRequestStatut,
-        null,
-        null,
-        fetchBookingRequestError
+        fetchBookingRequestError ?? ""
       );
     }
-  }, [fetchBookingsRequestStatut, fetchBookingRequestError, handleLoading]);
+  }, [fetchBookingsRequestStatut, fetchBookingRequestError, handleHTTPState]);
 
   // accept booking request handling
+  // handle booking request (accept or refuse)
   useEffect(() => {
-    if (acceptBookingStatut === HTTPStateKind.PENDING) {
-      handleLoading(HTTPStateKind.PENDING, null, null, null);
-    } else if (acceptBookingStatut === HTTPStateKind.SUCCESS) {
-      sendEmailToClient();
-    } else if (acceptBookingStatut === HTTPStateKind.ERROR) {
-      handleLoading(acceptBookingStatut, null, null, acceptBookingRequestError);
-    }
+    const handleStatut = (statut: HTTPStateKind | null, error: string | null) => {
+      if (!statut) return;
+      if (statut === HTTPStateKind.PENDING) {
+        handleHTTPState(HTTPStateKind.PENDING);
+      } else if (statut === HTTPStateKind.SUCCESS) {
+        sendEmailToClient();
+      } else if (statut === HTTPStateKind.ERROR) {
+        handleHTTPState(statut, error ?? "");
+      }
+    };
+
+    handleStatut(acceptBookingStatut, acceptBookingRequestError);
+    handleStatut(refuseBookingStatut, refuseBookingRequestError);
   }, [
     acceptBookingStatut,
     acceptBookingRequestError,
-    handleLoading,
-    sendEmailToClient,
-  ]);
-
-  // refuse booking request handling
-  useEffect(() => {
-    if (refuseBookingStatut === HTTPStateKind.PENDING) {
-      handleLoading(refuseBookingStatut, null, null, null);
-    } else if (refuseBookingStatut === HTTPStateKind.SUCCESS) {
-      sendEmailToClient();
-    } else if (refuseBookingStatut === HTTPStateKind.ERROR) {
-      handleLoading(refuseBookingStatut, null, null, refuseBookingRequestError);
-    }
-  }, [
     refuseBookingStatut,
-    handleLoading,
     refuseBookingRequestError,
+    handleHTTPState,
     sendEmailToClient,
   ]);
 

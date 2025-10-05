@@ -10,6 +10,7 @@ const validate_1 = require("../validation/validate");
 const schemas_1 = require("../validation/schemas");
 const middlewares_1 = require("../middlewares");
 const router = express_1.default.Router();
+router.get("/activities", (0, catchAsync_1.default)(shelterController_1.default.getActivities));
 router.get("/shelters", (0, catchAsync_1.default)(shelterController_1.default.getShelters));
 router.post("/booking", (0, validate_1.validate)(schemas_1.postBookingSchema), (0, catchAsync_1.default)(shelterController_1.default.postBooking));
 router

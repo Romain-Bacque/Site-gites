@@ -11,7 +11,7 @@ import useHttp from "../../../hooks/use-http";
 import { HTTPStateKind } from "../../../global/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
-import useLoading from "../../../hooks/use-loading";
+import useHTTPState from "../../../hooks/use-http-state";
 
 // component
 const Header: React.FC = () => {
@@ -25,7 +25,7 @@ const Header: React.FC = () => {
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const isMenuOpen = useAppSelector((state) => state.menu.isOpen);
   const dispatch = useAppDispatch();
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,8 +70,8 @@ const Header: React.FC = () => {
 
   // loading
   useEffect(() => {
-    handleLoading(logoutStatut, null, null, logoutErrorMessage);
-  }, [logoutStatut]);
+    handleHTTPState(logoutStatut, logoutErrorMessage ?? "");
+  }, [handleHTTPState, logoutErrorMessage, logoutStatut]);
 
   return (
     <header

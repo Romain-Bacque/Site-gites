@@ -19,7 +19,7 @@ import {
 } from "../../../lib/api";
 import classes from "./style.module.css";
 import { HTTPStateKind } from "../../../global/types";
-import useLoading from "../../../hooks/use-loading";
+import useHTTPState from "../../../hooks/use-http-state";
 
 // variable & constante
 let timer: NodeJS.Timeout;
@@ -33,7 +33,7 @@ const Availability: React.FC<AvailabilityProps> = ({
 }) => {
   const [showDoubleView, setShowDoubleView] = useState(false);
   const [disabledDates, setDisabledDates] = useState<DisabledDatesData>([]);
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
   const {
     sendHttpRequest: getDisabledDatesHttpRequest,
     statut: getDisabledDatesStatut,
@@ -147,8 +147,8 @@ const Availability: React.FC<AvailabilityProps> = ({
 
   // get disabled dates request loading handling
   useEffect(() => {
-    handleLoading(getDisabledDatesStatut, null, null, getDisabledDatesError);
-  }, [getDisabledDatesError, getDisabledDatesStatut, handleLoading]);
+    handleHTTPState(getDisabledDatesStatut, getDisabledDatesError ?? "");
+  }, [getDisabledDatesError, getDisabledDatesStatut, handleHTTPState]);
 
   return (
     <>

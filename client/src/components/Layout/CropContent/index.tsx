@@ -8,7 +8,7 @@ import getCroppedImg from "./lib/cropImage";
 import { CropContentProps } from "./types";
 import { loadingActions } from "../../../store/loading";
 import { HTTPStateKind } from "../../../global/types";
-import useLoading from "../../../hooks/use-loading";
+import useHTTPState from "../../../hooks/use-http-state";
 
 let cropDatas: [string, Area];
 
@@ -21,7 +21,7 @@ const CropContent: React.FC<CropContentProps> = ({
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const dispatch = useAppDispatch();
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
 
   const handleCropComplete = useCallback(
     (_: Area, croppedAreaPixels: Area) => {
@@ -48,7 +48,7 @@ const CropContent: React.FC<CropContentProps> = ({
 
       onImagePost(formData);
     } catch (err: any) {
-      handleLoading(HTTPStateKind.ERROR, null, null, err);
+      handleHTTPState(HTTPStateKind.ERROR, err);
     }
   };
 

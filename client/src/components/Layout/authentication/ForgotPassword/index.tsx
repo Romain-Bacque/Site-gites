@@ -9,7 +9,7 @@ import { forgotPasswordRequest } from "../../../../lib/api";
 // types import
 import { UserData } from "./types";
 import { HTTPStateKind } from "../../../../global/types";
-import useLoading from "../../../../hooks/use-loading";
+import useHTTPState from "../../../../hooks/use-http-state";
 
 // component
 const ForgotPassword: React.FC = () => {
@@ -26,7 +26,7 @@ const ForgotPassword: React.FC = () => {
     blurHandler: userEmailBlurHandler,
     resetHandler: userEmailResetHandler,
   } = useInput();
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
@@ -43,18 +43,15 @@ const ForgotPassword: React.FC = () => {
   // login request loading handling
   useEffect(() => {
     if (forgotPasswordStatut) {
-      handleLoading(
-        forgotPasswordStatut,
-        null,
-        "Envoi du mail réussi.",
-        forgotPasswordErrorMessage
+      handleHTTPState(
+        forgotPasswordStatut
       );
     }
     // clear input
     if (forgotPasswordStatut === HTTPStateKind.SUCCESS) {
       userEmailResetHandler();
     }
-  }, [forgotPasswordErrorMessage]);
+  }, [forgotPasswordErrorMessage, forgotPasswordStatut, handleHTTPState, userEmailResetHandler]);
 
   return (
     <Card className={classes.auth}>

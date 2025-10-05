@@ -5,7 +5,7 @@ import { HTTPStateKind } from "../../../global/types";
 import Alert from "../Alert";
 import Loader from "../Loader";
 // types import
-import { LoaderAndAlertProps, StatutMessage } from "./types";
+import { StatutMessage } from "./types";
 
 // constante & variable
 const initialAlertState = {
@@ -14,27 +14,26 @@ const initialAlertState = {
   show: false,
 };
 
+interface LoaderAndAlertProps {
+  statut: HTTPStateKind | null;
+  message?: string;
+}
+
+
 // component
 const LoaderAndAlert: React.FC<LoaderAndAlertProps> = ({ statut, message }) => {
   const [alertStatut, setAlertStatut] =
     useState<StatutMessage>(initialAlertState);
 
   useEffect(() => {
-    if (statut === HTTPStateKind.SUCCESS) {
-      if (!message?.success) return setAlertStatut(initialAlertState);
+    if (statut === HTTPStateKind.SUCCESS || statut === HTTPStateKind.ERROR) {
+      if (!message) return setAlertStatut(initialAlertState);
       setAlertStatut({
-        message: message.success,
-        alertKind: HTTPStateKind.SUCCESS,
+        message,
+        alertKind: statut,
         show: true,
       });
-    } else if (statut === HTTPStateKind.ERROR) {
-      if (!message?.error) return setAlertStatut(initialAlertState);
-      setAlertStatut({
-        message: message.error,
-        alertKind: HTTPStateKind.ERROR,
-        show: true,
-      });
-    }
+    } 
   }, [statut, message]);
 
   useEffect(() => {
@@ -55,7 +54,7 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = ({ statut, message }) => {
   return (
     <>
       {statut === HTTPStateKind.PENDING && (
-        <Loader message={message?.pending} />
+        <Loader message={message} />
       )}
       {(statut === HTTPStateKind.SUCCESS || statut === HTTPStateKind.ERROR) && (
         <Alert

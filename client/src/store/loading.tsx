@@ -1,47 +1,24 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { HTTPStateKind } from "../global/types";
 
-// interfaces
-interface Message {
-  pending: string | null;
-  success: string | null;
-  error: string | null;
-}
-interface LoadingState {
-  statut: HTTPStateKind;
-  message: Message;
-}
-
-const initialLoadingState: LoadingState = {
+const initialState = {
   statut: HTTPStateKind.IDLE,
-  message: {
-    pending: null,
-    success: null,
-    error: null,
-  },
+  message: "",
 };
 
 const loadingSlice = createSlice({
   name: "loading",
-  initialState: initialLoadingState,
+  initialState,
   reducers: {
-    setStatut(
-      state,
-      action: PayloadAction<HTTPStateKind>
-    ) {
-      state.statut = action.payload;
+    setStatut: (state, { payload }: PayloadAction<HTTPStateKind>) => {
+      state.statut = payload;
     },
-    setMessage(state, action: PayloadAction<Message>) {
-      state.message = action.payload;
+    setMessage: (state, { payload }: PayloadAction<string>) => {
+      state.message = payload;
     },
-    reset(state) {
-      state.statut = initialLoadingState.statut;
-      state.message = initialLoadingState.message;
-    },
+    reset: () => initialState,
   },
 });
 
 export const loadingActions = loadingSlice.actions;
-
 export default loadingSlice.reducer;

@@ -41,14 +41,7 @@ const Layout: React.FC<LayoutProps> = (props) => {
     <div onClick={() => dispatch(menuActions.closeMenu())}>
       <Header />
       <main>
-        <LoaderAndAlert
-          statut={loading.statut}
-          message={{
-            pending: loading.message.pending,
-            success: loading.message.success,
-            error: loading.message.error,
-          }}
-        />
+        <LoaderAndAlert statut={loading.statut} message={loading.message} />
         {props.children}
       </main>
       <Footer />

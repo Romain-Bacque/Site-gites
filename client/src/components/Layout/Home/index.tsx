@@ -19,7 +19,7 @@ import { ArrowRightAlt } from "@mui/icons-material";
 import Button from "../../UI/Button";
 import { HTTPStateKind } from "../../../global/types";
 import { useAppSelector } from "../../../hooks/use-store";
-import useLoading from "../../../hooks/use-loading";
+import useHTTPState from "../../../hooks/use-http-state";
 
 // variable & constantes
 const initialState = {
@@ -32,7 +32,7 @@ let isFirstRender = true;
 
 // component
 const Home: React.FC = () => {
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const [showModal, setShowModal] = useState(false);
@@ -49,16 +49,16 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isAuth && isFirstRender) handleLoading(2, null, `Bienvenue`, null);
+    if (isAuth && isFirstRender) handleHTTPState(2);
     if (!isAuth) isFirstRender = true;
     else isFirstRender = false;
-  }, [handleLoading, isAuth]);
+  }, [handleHTTPState, isAuth]);
 
   return (
     <>
       <LoaderAndAlert
         statut={statut}
-        message={{ pending: null, success: null, error }}
+        message={error ?? ""}
       />
       {statut !== HTTPStateKind.PENDING && (
         <Modal

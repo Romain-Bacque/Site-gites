@@ -7,7 +7,7 @@ import {
 } from "../../../lib/api";
 import Modal from "../../UI/Modal";
 import CropContent from "../CropContent";
-import useLoading from "../../../hooks/use-loading";
+import useHTTPState from "../../../hooks/use-http-state";
 import GalleryItem from "../GalleryItem";
 import { ShelterType } from "./types";
 
@@ -50,7 +50,7 @@ const Gallery: React.FC = () => {
   const [sheltersData, setSheltersData] = useState<ShelterType[] | null>(null);
   const [showModal, setShowModal] = useState(initialModalState);
   const [alertStatut, setAlertStatut] = useState(initialMessageState);
-  const handleLoading = useLoading();
+  const handleHTTPState = useHTTPState();
 
   const handleDeleteAlert = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -91,31 +91,21 @@ const Gallery: React.FC = () => {
   // delete picture request handling
   useEffect(() => {
     if (deletePictureStatut) {
-      handleLoading(
-        deletePictureStatut,
-        null,
-        "Image supprimé.",
-        deletePictureRequestError
-      );
+      handleHTTPState(deletePictureStatut, deletePictureRequestError ?? "");
     }
-  }, [deletePictureStatut, deletePictureRequestError, handleLoading]);
+  }, [deletePictureStatut, deletePictureRequestError, handleHTTPState]);
 
   // add picture request handling
   useEffect(() => {
     if (postPictureStatut) {
-      handleLoading(
-        postPictureStatut,
-        null,
-        "Image ajouté.",
-        postPictureRequestError
-      );
+      handleHTTPState(postPictureStatut, postPictureRequestError ?? "");
     }
-  }, [handleLoading, postPictureStatut, postPictureRequestError]);
+  }, [handleHTTPState, postPictureStatut, postPictureRequestError]);
 
   // shelters request loading handling
   useEffect(() => {
-    handleLoading(getPictureStatut, null, null, getPictureRequestError);
-  }, [getPictureStatut, getPictureRequestError, handleLoading]);
+    handleHTTPState(getPictureStatut, getPictureRequestError ?? "");
+  }, [getPictureStatut, getPictureRequestError, handleHTTPState]);
 
   // refresh pictures display on the screen
   useEffect(() => {
