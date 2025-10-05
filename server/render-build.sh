@@ -34,3 +34,10 @@ fi
 
 echo "✅ Puppeteer cache synchronization done."
 echo "=== 🧩 Render Puppeteer Build Completed ==="
+
+# Get Chrome executable path dynamically
+CHROME_PATH=$(npx puppeteer browsers executable-path chrome)
+
+# Make it available to your app on Render
+echo "PUPPETEER_EXECUTABLE_PATH=$CHROME_PATH" >> .env
+echo "✅ Chrome path saved to .env: $CHROME_PATH"

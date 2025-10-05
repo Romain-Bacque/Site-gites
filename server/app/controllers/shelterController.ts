@@ -2,10 +2,13 @@ import debugLib from "debug";
 import { Request, Response } from "express";
 import { Rates, Booking, Shelter } from "../models";
 import ExpressError from "../utilities/ExpressError";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 
 const debug = debugLib("controller:shelter");
 
+const executablePath =
+  process.env.PUPPETEER_EXECUTABLE_PATH ||
+  "/opt/render/.cache/puppeteer/chrome/linux-138.0.7204.157/chrome-linux64/chrome";
 
 interface Activity {
   title: string;
@@ -24,6 +27,8 @@ const shelterController = {
 
   getActivities: async (_: Request, res: Response): Promise<void> => {
     const browser = await puppeteer.launch({
+      headless: true,
+      executablePath,
       args: [
         "--no-sandbox", // Disables the Chrome sandbox security feature. This is often required in restricted environments (like some CI/CD pipelines or Docker containers) where the sandbox can't run properly. Note: Disabling the sandbox reduces security.
         "--disable-setuid-sandbox", // Disables the setuid sandbox, another security layer. Used when the process can't gain the necessary privileges to run the sandbox.
