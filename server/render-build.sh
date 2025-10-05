@@ -11,6 +11,9 @@ mkdir -p /opt/render/project/src/.cache/puppeteer/chrome/
 # Optional: set Puppeteer cache env var
 export PUPPETEER_CACHE_DIR="/opt/render/project/src/.cache/puppeteer/chrome/"
 
+# Install Puppeteer and download Chrome
+npx puppeteer browsers install chrome
+
 # Copy cache safely if source exists
 if [ -d "/opt/render/.cache/puppeteer/chrome/" ]; then
   echo "Copying Puppeteer cache..."
