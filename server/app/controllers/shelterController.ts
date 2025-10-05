@@ -3,12 +3,15 @@ import { Request, Response } from "express";
 import { Rates, Booking, Shelter } from "../models";
 import ExpressError from "../utilities/ExpressError";
 import puppeteer from "puppeteer-core";
+import path from "path";
+
+const chromePath =
+  process.env.PUPPETEER_EXECUTABLE_PATH ||
+  path.resolve(
+    "/opt/render/project/src/server/.cache/puppeteer/chrome/linux-138.0.7204.157/chrome-linux64/chrome"
+  );
 
 const debug = debugLib("controller:shelter");
-
-const executablePath =
-  process.env.PUPPETEER_EXECUTABLE_PATH ||
-  "/opt/render/.cache/puppeteer/chrome/linux-138.0.7204.157/chrome-linux64/chrome";
 
 interface Activity {
   title: string;
@@ -28,12 +31,13 @@ const shelterController = {
   getActivities: async (_: Request, res: Response): Promise<void> => {
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath,
+      executablePath: chromePath,
       args: [
-        "--no-sandbox", // Disables the Chrome sandbox security feature. This is often required in restricted environments (like some CI/CD pipelines or Docker containers) where the sandbox can't run properly. Note: Disabling the sandbox reduces security.
-        "--disable-setuid-sandbox", // Disables the setuid sandbox, another security layer. Used when the process can't gain the necessary privileges to run the sandbox.
-        "--single-process", // Runs Chrome in a single process. This can help with resource usage in constrained environments.
-        "--no-zygote", // Disables the zygote process, which is responsible for spawning new Chrome processes. This can help with compatibility in some environments.
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--single-process",
+        "--no-zygote",
       ],
     });
     const page = await browser.newPage();
