@@ -16,15 +16,16 @@ npx puppeteer browsers install chrome
 
 echo "Chemin actuel du projet : $(pwd)"
 
+PUPPETEER_PROJECT_CACHE_DIR=/opt/render/project/src/server/.cache/puppeteer/chrome/
 # Ensure the Puppeteer cache directory in the project exists
-mkdir -p /opt/render/project/src/server/.cache/puppeteer/chrome/
+mkdir -p $PUPPETEER_PROJECT_CACHE_DIR
 
 # Store/pull Puppeteer cache with build cache
 if [[ ! -d $PUPPETEER_CACHE_DIR ]]; then # -d means "if directory exists"
 echo "...Copying Puppeteer Cache from Build Cache"
 # Copying from the actual path where Puppeteer stores its Chrome binary
-cp -R /opt/render/project/src/server/.cache/puppeteer/chrome/ $PUPPETEER_CACHE_DIR
+cp -R $PUPPETEER_PROJECT_CACHE_DIR $PUPPETEER_CACHE_DIR
 else
 echo "...Storing Puppeteer Cache in Build Cache"
-cp -R $PUPPETEER_CACHE_DIR /opt/render/project/src/server/.cache/puppeteer/chrome/
+cp -R $PUPPETEER_CACHE_DIR $PUPPETEER_PROJECT_CACHE_DIR
 fi
