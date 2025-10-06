@@ -15,9 +15,7 @@ const router = express.Router();
 
 router.get("/userVerification", authController.authenticationCheck);
 router.get("/logout", authController.logout);
-router.post("/verify-captcha", () => {
-  console.log("test");
-});
+router.post("/verify-captcha", authController.verifyRecaptcha);
 router.post(
   "/login",
   checkCSRFToken,

@@ -13,7 +13,7 @@ router.use(csrf({ cookie: true }));
 router.use("/favicon.ico", (_, res) => res.sendStatus(200)); // Ignore favicon requests
 router.use("/form", createCSRFToken);
 router.use("/", shelterRouter);
-router.use("/authentification", authRouter);
+router.use("/authentification", () => console.log("authentification route"));
 router.use("/admin", adminRouter);
 
 /**
