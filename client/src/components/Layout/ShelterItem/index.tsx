@@ -9,6 +9,7 @@ import Availability from "../Availability";
 // types import
 import { SheltersItemsProps, Tab, TabKind } from "./types";
 import { ImageNotSupported } from "@mui/icons-material";
+import Card from "../../UI/Card";
 
 // variable & contante
 let formContent: ReactNode = null;
@@ -47,7 +48,7 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
   };
 
   return (
-    <>
+    <Card key={shelterId}>
       <div className={classes["gite__picture-container"]}>
         <h2 className={classes.gite__title}>{title}</h2>
         {images?.length ? (
@@ -107,7 +108,7 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
         {shelterStatut.tab === TabKind.AVAILABILITY && <span />}
       </div>
       {shelterStatut.tab !== null && formContent}
-    </>
+    </Card>
   );
 };
 

@@ -42,14 +42,12 @@ const Shelters: React.FC = () => {
       {sheltersData && sheltersData.length > 0 ? (
         sheltersData.map((shelter) => {
           return (
-            <Card key={shelter._id} className={classes.gite}>
-              <ShelterItem
-                shelterId={shelter._id}
-                title={shelter.title}
-                description={shelter.description}
-                images={shelter.images}
-              />
-            </Card>
+            <ShelterItem
+              shelterId={shelter._id}
+              title={shelter.title}
+              description={shelter.description}
+              images={shelter.images}
+            />
           );
         })
       ) : (
