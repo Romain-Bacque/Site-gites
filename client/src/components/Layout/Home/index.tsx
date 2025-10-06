@@ -57,17 +57,12 @@ const Home: React.FC = () => {
   return (
     <>
       <LoaderAndAlert statut={statut} message={error ?? ""} />
-      <Modal
-        className={classes["activities-modal"]}
-        show={showModal}
+      <Activities
+        httpStatut={statut}
         onHide={() => setShowModal(false)}
-      >
-        {statut === HTTPStateKind.PENDING ? (
-          <p className="text-center">Chargement des activités...</p>
-        ) : (
-          <Activities activities={activities} />
-        )}
-      </Modal>
+        showModal={showModal}
+        activities={activities}
+      />
       <Alert
         message={alertStatut.message}
         alert={alertStatut.alert}

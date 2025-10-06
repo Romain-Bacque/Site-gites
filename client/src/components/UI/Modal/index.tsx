@@ -4,11 +4,16 @@ import Transition from "react-transition-group/Transition";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { ModalProps, OverlayProps } from "./types";
+import { memo } from "react";
+
+const animationTiming = {
+  enter: 500,
+  exit: 0,
+};
 
 // component
 const Modal: React.FC<ModalProps> = (props) => {
   const Backdrop: React.FC = () => {
-
     return <div className={classes.backdrop} onClick={props.onHide}></div>;
   };
 
@@ -17,15 +22,14 @@ const Modal: React.FC<ModalProps> = (props) => {
 
     return (
       <div className={`${classes.modal} ${customClass}`}>
-        <FontAwesomeIcon onClick={props.onHide} className={classes["close-button"]} icon={faClose} />
+        <FontAwesomeIcon
+          onClick={props.onHide}
+          className={classes["close-button"]}
+          icon={faClose}
+        />
         {props.children}
       </div>
     );
-  };
-
-  const animationTiming = {
-    enter: 500,
-    exit: 0,
   };
 
   return (
@@ -41,7 +45,12 @@ const Modal: React.FC<ModalProps> = (props) => {
           document.getElementById("backdrop-root") as HTMLDivElement
         )}
         {ReactDOM.createPortal(
-          <Overlay onHide={props.onHide} className={`${classes["modal-opened"]} ${props.className}`}>{props.children}</Overlay>,
+          <Overlay
+            onHide={props.onHide}
+            className={`${classes["modal-opened"]} ${props.className}`}
+          >
+            {props.children}
+          </Overlay>,
           document.getElementById("overlay-root") as HTMLDivElement
         )}
       </>
@@ -49,4 +58,4 @@ const Modal: React.FC<ModalProps> = (props) => {
   );
 };
 
-export default Modal;
+export default memo(Modal);

@@ -29,7 +29,6 @@ const shelterController = {
   },
 
   getActivities: async (_: Request, res: Response): Promise<void> => {
-    console.log(puppeteer.executablePath());
     const browser = await puppeteer.launch({
       headless: true,
       executablePath:
