@@ -100,7 +100,7 @@ const authController = {
 
   verifyRecaptcha: async function (req: Request, res: Response) {
     const { recaptchaToken } = req.body;
-console.log(recaptchaToken, process.env.RECAPTCHA_SECRET_KEY);
+
     try {
       const response = await axios.post(
         `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
