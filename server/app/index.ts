@@ -23,8 +23,8 @@ const corsOptions = {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-TOKEN"],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'X-CSRF-Token'], // accept is 
   credentials: true, // Allow cookies and HTTP auth
   optionsSuccessStatus: 204, // Some legacy browsers (IE11, various SmartTVs) choke on 204 while preflighted requests
 };
