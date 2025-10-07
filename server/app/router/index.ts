@@ -10,11 +10,10 @@ const router = express.Router();
 
 // router.use(csrf({ cookie: true }));
 
-router.post("/test", () => console.log("test"));
 router.use("/favicon.ico", (_, res) => res.sendStatus(200)); // Ignore favicon requests
 router.use("/form", createCSRFToken);
 router.use("/", shelterRouter);
-router.use("/authentification", authRouter);
+router.post("/authentification/verifyCaptcha", () => console.log("test"));
 router.use("/admin", adminRouter);
 
 /**
