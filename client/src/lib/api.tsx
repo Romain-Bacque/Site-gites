@@ -4,6 +4,7 @@ import axios from "axios";
 let instance = axios.create({
   baseURL: process.env.REACT_APP_APIHOST,
   withCredentials: true, // authorize cookie sending to server
+  headers: { "Content-Type": "application/json" },
 });
 
 // // CSRF
