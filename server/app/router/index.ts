@@ -8,7 +8,7 @@ import { createCSRFToken } from "../middlewares";
 
 const router = express.Router();
 
-// router.use(csrf({ cookie: true }));
+router.use(csrf({ cookie: true }));
 
 router.use("/favicon.ico", (_, res) => res.sendStatus(200)); // Ignore favicon requests
 router.use("/form", createCSRFToken);

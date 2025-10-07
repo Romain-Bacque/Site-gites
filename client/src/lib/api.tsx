@@ -27,7 +27,7 @@ export const getCSRF = async () => {
 
 // Captcha
 export const recaptchaRequest = async (data: { recaptchaToken: string }) => {
-  const response = await instance.post("/authentification/verify-captcha", {
+  const response = await instance.post("/authentification/verifyCaptcha", {
     recaptchaToken: data.recaptchaToken,
   });
 
