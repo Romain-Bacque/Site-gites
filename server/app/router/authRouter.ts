@@ -13,9 +13,9 @@ import { checkCSRFToken } from "../middlewares";
 
 const router = express.Router();
 
-router.get("/userVerification", checkCSRFToken, authController.authenticationCheck);
-router.get("/logout", checkCSRFToken, authController.logout);
-router.post("/verifyCaptcha", checkCSRFToken, catchAsync(authController.verifyRecaptcha));
+router.get("/userVerification", authController.authenticationCheck);
+router.get("/logout", authController.logout);
+router.post("/verifyCaptcha", catchAsync(authController.verifyRecaptcha));
 router.post(
   "/login",
   checkCSRFToken,
@@ -30,13 +30,11 @@ router.post(
 );
 router.get(
   "/email-confirm",
-  checkCSRFToken,
   validate(confirmEmailSchema, "query"),
   catchAsync(authController.emailConfirmation)
 );
 router.post(
   "/forgot-password",
-  checkCSRFToken,
   validate(emailSchema),
   catchAsync(authController.handleForgotPassword)
 );
