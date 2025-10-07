@@ -10,6 +10,8 @@ let instance = axios.create({
 // // CSRF
 export const setCSRFToken = (csrfToken: string | null) => {
   instance.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken || "";
+
+  console.log("CSRF token set to:", instance.defaults.headers.common["X-CSRF-TOKEN"]);
 };
 
 interface CSRFRequestResponseData {
