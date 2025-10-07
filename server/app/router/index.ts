@@ -8,10 +8,11 @@ import { createCSRFToken } from "../middlewares";
 
 const router = express.Router();
 
-router.use(csrf({ cookie: true }));
+// const csrfProtection = csrf({ cookie: true });
 
-router.use("/favicon.ico", (_, res) => res.sendStatus(200)); // Ignore favicon requests
+// router.use(csrfProtection);
 router.use("/form", createCSRFToken);
+router.use("/favicon.ico", (_, res) => res.sendStatus(200)); // Ignore favicon requests
 router.use("/", shelterRouter);
 router.use("/authentification", authRouter);
 router.use("/admin", adminRouter);
