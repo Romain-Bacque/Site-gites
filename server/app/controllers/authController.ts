@@ -100,7 +100,6 @@ const authController = {
 
   verifyRecaptcha: async function (req: Request, res: Response) {
     const { recaptchaToken } = req.body;
-    console.log(recaptchaToken);
 
     try {
       const response = await axios.post(
