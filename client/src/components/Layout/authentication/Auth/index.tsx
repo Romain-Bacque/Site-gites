@@ -7,12 +7,7 @@ import { useAppDispatch } from "../../../../hooks/use-store";
 import Input from "../../Input";
 import Card from "../../../UI/Card";
 import classes from "../style.module.css";
-import {
-  registerRequest,
-  loginRequest,
-  getCSRF,
-  setCSRFToken,
-} from "../../../../lib/api";
+import { registerRequest, loginRequest, getCSRF } from "../../../../lib/api";
 import { authActions } from "../../../../store/auth";
 // types import
 import { LoginData } from "./types";
@@ -26,8 +21,7 @@ import Captcha from "../Captcha";
 // component
 const Auth: React.FC = () => {
   const captchaRef = React.useRef<any>(null);
-  const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } =
-    useHttp(getCSRF);
+  const { sendHttpRequest: fetchCSRFttpRequest } = useHttp(getCSRF);
   const { setCaptchaValue, captchaValue, verifyCaptcha } = useRecaptcha();
   const {
     sendHttpRequest: loginHttpRequest,
@@ -116,13 +110,8 @@ const Auth: React.FC = () => {
 
   // get csrf token
   useEffect(() => {
-    getCSRFttpRequest();
-  }, [getCSRFttpRequest]);
-
-  // set csrf token
-  useEffect(() => {
-    setCSRFToken(CSRFData);
-  }, [CSRFData]);
+    fetchCSRFttpRequest();
+  }, [fetchCSRFttpRequest]);
 
   // login request HTTPState handling
   useEffect(() => {

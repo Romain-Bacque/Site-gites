@@ -9,11 +9,7 @@ import { UserData } from "./types";
 import Card from "../../../UI/Card";
 import Input from "../../Input";
 import classes from "../style.module.css";
-import {
-  getCSRF,
-  resetPasswordRequest,
-  setCSRFToken,
-} from "../../../../lib/api";
+import { getCSRF, resetPasswordRequest } from "../../../../lib/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { HTTPStateKind } from "../../../../global/types";
@@ -59,11 +55,6 @@ const ResetPassword: React.FC = () => {
   useEffect(() => {
     getCSRFttpRequest();
   }, [getCSRFttpRequest]);
-
-  // set csrf token
-  useEffect(() => {
-    setCSRFToken(CSRFData);
-  }, [CSRFData]);
 
   // reset password request loading handling
   useEffect(() => {

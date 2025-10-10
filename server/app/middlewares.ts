@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 export const csrfProtection = csurf({
-  cookie: { httpOnly: false, secure: process.env.NODE_ENV === "production" },
+  cookie: true // stocke le token dans un cookie accessible côté client
 });
 
 // Vérifie que l'utilisateur est connecté
@@ -24,16 +24,7 @@ export const checkLogged = (
 
 // Génère un nouveau token et le renvoie au client
 export const createCSRFToken = (req: Request, res: Response): void => {
-  const token = req.csrfToken();
+  const csrfToken = req.csrfToken();
 
-  console.log("Generated CSRF token:", token);
-
-  // Stocker dans un cookie lisible côté client
-  res.cookie("XSRF-TOKEN", token, {
-    secure: process.env.NODE_ENV === "production", // true si en production (HTTPS)
-    sameSite: "none", // 'none' pour autoriser les requêtes cross-site
-    httpOnly: false,
-  });
-
-  res.status(200).json({ csrfToken: token });
+  res.status(200).json({ csrfToken });
 };

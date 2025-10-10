@@ -8,10 +8,6 @@ let instance = axios.create({
 });
 
 // // CSRF
-export const setCSRFToken = (csrfToken: string | null) => {
-  instance.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken || "";
-};
-
 interface CSRFRequestResponseData {
   csrfToken: string;
 }
@@ -20,8 +16,11 @@ export const getCSRF = async () => {
   const response = await instance.get<CSRFRequestResponseData>("/createCSRF");
 
   if (response.status !== 200) throw new Error();
+  
+  const csrfToken = response.data.csrfToken;
 
-  return response.data.csrfToken;
+  instance.defaults.headers.common["x-csrf-token"] = csrfToken;
+  return csrfToken;
 };
 
 // // AUTHENTIFICATION

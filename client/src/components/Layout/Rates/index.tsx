@@ -1,10 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import {
   getCSRF,
   ratesGetRequest,
   ratesPutRequest,
-  setCSRFToken,
 } from "../../../lib/api";
 import classes from "./style.module.css";
 import { useAppSelector } from "../../../hooks/use-store";
@@ -96,10 +95,6 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   useEffect(() => {
     getCSRFttpRequest();
   }, [getCSRFttpRequest]);
-
-  useEffect(() => {
-    setCSRFToken(CSRFData);
-  }, [CSRFData]);
 
   useEffect(() => {
     if (alertStatut.show) {
