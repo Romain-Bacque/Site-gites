@@ -19,6 +19,8 @@ const errorHandler = {
   manage(err: any, _: Request, res: Response, __: NextFunction) {
     // creation of log file
     console.error(err);
+    console.error(err.stack);
+    
     const now = new Date();
     const fileName = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.log`;
     const filePath = path.join(__dirname, `../../log/${fileName}`);
