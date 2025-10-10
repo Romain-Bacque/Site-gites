@@ -198,7 +198,8 @@ module.exports.postBookingSchema = joi
     name: joi.string().escapeHTML().required(),
     phone: joiPhoneNumber
       .string({ defaultCountry: "FR", format: "national" })
-      .phoneNumber(),
+      .phoneNumber()
+      .required(),
     numberOfPerson: joi.number().min(1).max(4).required(),
     email: joi
       .string()

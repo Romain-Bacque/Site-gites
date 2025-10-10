@@ -9,22 +9,17 @@ import {
   confirmEmailSchema,
 } from "../validation/schemas";
 import catchAsync from "../utilities/catchAsync";
-import { checkCSRFToken } from "../middlewares";
+import { csrfProtection } from "../middlewares";
 
 const router = express.Router();
 
 router.get("/userVerification", authController.authenticationCheck);
 router.get("/logout", authController.logout);
-router.post("/verifyCaptcha", catchAsync(authController.verifyRecaptcha));
-router.post(
-  "/login",
-  checkCSRFToken,
-  validate(loginSchema),
-  catchAsync(authController.login)
-);
+router.post("/verifyCaptcha", csrfProtection, catchAsync(authController.verifyRecaptcha));
+router.post("/login", csrfProtection, validate(loginSchema), catchAsync(authController.login));
 router.post(
   "/register",
-  checkCSRFToken,
+  csrfProtection,
   validate(registerSchema),
   catchAsync(authController.register)
 );
@@ -35,12 +30,13 @@ router.get(
 );
 router.post(
   "/forgot-password",
+  csrfProtection,
   validate(emailSchema),
   catchAsync(authController.handleForgotPassword)
 );
 router.patch(
   "/reset-password/:id/:token",
-  checkCSRFToken,
+  csrfProtection,
   validate(passwordSchema),
   catchAsync(authController.resetPassword)
 );

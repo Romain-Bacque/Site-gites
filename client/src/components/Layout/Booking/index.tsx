@@ -214,6 +214,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
           <Input
             label="Prénom et Nom"
             isVisible={true}
+            required
             className={!nameIsValid && nameIsTouched ? "form__input--red" : ""}
             id={`name-shelter${shelterId}`}
             onChange={nameChangeHandler}
@@ -225,6 +226,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
           <Input
             label="Email"
             isVisible={true}
+            required
             className={
               !emailIsValid && emailIsTouched ? "form__input--red" : ""
             }
@@ -238,6 +240,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
           <Input
             label="Téléphone"
             isVisible={true}
+            required
             className={
               !phoneIsValid && phoneIsTouched ? "form__input--red" : ""
             }
@@ -251,6 +254,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
           <Input
             label="Nombre de personnes"
             isVisible={true}
+            required
             className={
               !personsIsValid && personsIsTouched ? "form__input--red" : ""
             }
@@ -282,6 +286,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
               onInputDateClick={handleCalendarDisplay.bind(null, "from")}
               label="Arrivée"
               isVisible={true}
+              required
               className={
                 !fromIsValid && fromIsTouched ? "form__input--red" : ""
               }
@@ -309,6 +314,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
               onInputDateClick={handleCalendarDisplay.bind(null, "to")}
               label="Départ"
               isVisible={true}
+              required
               className={!toIsValid && toIsTouched ? "form__input--red" : ""}
               readOnly={true}
               id={`to-shelter${shelterId}`}

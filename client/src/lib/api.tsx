@@ -10,8 +10,6 @@ let instance = axios.create({
 // // CSRF
 export const setCSRFToken = (csrfToken: string | null) => {
   instance.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken || "";
-
-  console.log("CSRF token set to:", instance.defaults.headers.common["X-CSRF-TOKEN"]);
 };
 
 interface CSRFRequestResponseData {
@@ -19,7 +17,7 @@ interface CSRFRequestResponseData {
 }
 
 export const getCSRF = async () => {
-  const response = await instance.get<CSRFRequestResponseData>("/form");
+  const response = await instance.get<CSRFRequestResponseData>("/createCSRF");
 
   if (response.status !== 200) throw new Error();
 

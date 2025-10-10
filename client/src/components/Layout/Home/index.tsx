@@ -13,11 +13,9 @@ import { AlertStatut } from "./types";
 import useHttp from "../../../hooks/use-http";
 import { getActivities } from "../../../lib/api";
 import Activities from "../Activities";
-import Modal from "../../UI/Modal";
 import LoaderAndAlert from "../../UI/LoaderAndAlert";
 import { ArrowRightAlt } from "@mui/icons-material";
 import Button from "../../UI/Button";
-import { HTTPStateKind } from "../../../global/types";
 import { useAppSelector } from "../../../hooks/use-store";
 import useHTTPState from "../../../hooks/use-http-state";
 

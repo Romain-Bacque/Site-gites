@@ -17,10 +17,16 @@
   width: 100%;
 }
 
-.form__input--red {
+.form__input--error {
   border-color: rgb(153, 1, 1);
 }
 
-.form__input--red::placeholder {
+.form__input--error::placeholder {
   color: rgb(153, 1, 1);
+}
+
+.form__error {
+  color: rgb(153, 1, 1);
+  font-size: 0.875rem;
+  margin: 1rem 0;
 }

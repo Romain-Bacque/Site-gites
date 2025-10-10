@@ -48,7 +48,7 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
   };
 
   return (
-    <Card key={shelterId}>
+    <Card className={classes.gite}>
       <div className={classes["gite__picture-container"]}>
         <h2 className={classes.gite__title}>{title}</h2>
         {images?.length ? (
