@@ -1,7 +1,7 @@
 import csurf from "csurf";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-
+console.log(process.env.NODE_ENV);
 export const csrfProtection = csurf({
   cookie: { httpOnly: false, secure: process.env.NODE_ENV === "production" },
 });
