@@ -1,7 +1,7 @@
 import csurf from "csurf";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-console.log(process.env.NODE_ENV);
+
 export const csrfProtection = csurf({
   cookie: { httpOnly: false, secure: process.env.NODE_ENV === "production" },
 });
@@ -25,6 +25,8 @@ export const checkLogged = (
 // Génère un nouveau token et le renvoie au client
 export const createCSRFToken = (req: Request, res: Response): void => {
   const token = req.csrfToken();
+
+  console.log("Generated CSRF token:", token);
 
   // Stocker dans un cookie lisible côté client
   res.cookie("XSRF-TOKEN", token, {
