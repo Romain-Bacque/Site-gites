@@ -20,7 +20,7 @@ const errorHandler = {
     // creation of log file
     console.error(err);
     console.error(err.stack);
-    
+    console.log(_, res)
     const now = new Date();
     const fileName = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.log`;
     const filePath = path.join(__dirname, `../../log/${fileName}`);
