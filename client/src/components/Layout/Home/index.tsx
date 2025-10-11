@@ -47,7 +47,7 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isAuth && isFirstRender) handleHTTPState(2);
+    if (isAuth && isFirstRender) handleHTTPState(2, "Bienvenue !");
     if (!isAuth) isFirstRender = true;
     else isFirstRender = false;
   }, [handleHTTPState, isAuth]);
