@@ -1,5 +1,5 @@
 import debugLib from "debug";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 import path from "path";
 import { User } from "../models";
@@ -13,10 +13,11 @@ const redirectFn = (isValid: boolean) => {
   return `${process.env.CORS_ORIGIN}/admin/email-confirm?isValid=${isValid}`;
 };
 
-const getCookieConfig = () => ({
+const getCookieConfig = (): CookieOptions => ({
   expires: new Date(Date.now() + 86400000), // 86400000ms = 24h
   httpOnly: true, // accessible only by web server
   secure: true,
+  sameSite: "none",
 });
 
 const generateAccessToken = (user: object) => {
@@ -105,8 +106,6 @@ const authController = {
       const response = await axios.post(
         `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
       );
-
-      console.log(response.data);
 
       if (response.data.success) {
         return res.status(200).json({ success: true });
