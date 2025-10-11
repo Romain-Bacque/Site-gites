@@ -106,6 +106,8 @@ const authController = {
         `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
       );
 
+      console.log(response.data);
+
       if (response.data.success) {
         return res.status(200).json({ success: true });
       } else {
