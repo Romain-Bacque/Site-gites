@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
-import {
-  getCSRF,
-  ratesGetRequest,
-  ratesPutRequest,
-} from "../../../lib/api";
+import { getCSRF, ratesGetRequest, ratesPutRequest } from "../../../lib/api";
 import classes from "./style.module.css";
 import { useAppSelector } from "../../../hooks/use-store";
 import {
@@ -37,8 +33,7 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const handleHTTPState = useHTTPState();
 
-  const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } =
-    useHttp(getCSRF);
+  const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
   const {
     sendHttpRequest: getRatesHttpRequest,
     statut: getRatesStatut,
@@ -96,37 +91,12 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     getCSRFttpRequest();
   }, [getCSRFttpRequest]);
 
-  useEffect(() => {
-    if (alertStatut.show) {
-      const timer = setTimeout(() => {
-        setAlertStatut((prev) => ({ ...prev, show: false }));
-      }, 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [alertStatut.show]);
-
-  useEffect(() => {
-    if (getRatesStatut) {
-      handleHTTPState(getRatesStatut);
-    }
-  }, [getRatesError, getRatesStatut, handleHTTPState]);
-
-  useEffect(() => {
-    if (putRatesStatut) {
-      handleHTTPState(putRatesStatut);
-    }
-  }, [handleHTTPState, putRatesError, putRatesStatut]);
-
-  if (getRatesStatut === HTTPStateKind.PENDING) {
-    return null;
-  }
-
   const renderInput = (id: keyof PriceValues) => (
-    <div className={classes["rates__grid-items"]}>
+    <div className={classes["rates__cell-input"]}>
       <input
         className={classes["rates__input"]}
         value={priceValues[id] ?? ""}
-        placeholder="non défini"
+        placeholder="—"
         id={id}
         min={1}
         max={9999}
@@ -136,7 +106,7 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
         disabled={!isAuth}
         required
       />
-      <span>{priceValues[id] && "€"}</span>
+      <span className={classes["rates__euro"]}>€</span>
     </div>
   );
 
@@ -144,20 +114,28 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     <div className={classes["rates-container"]}>
       <form className={classes.form} onSubmit={handleSubmit}>
         <div className={classes["rates__grid-container"]}>
-          <p className={classes["rates__grid-items"]}>Basse saison</p>
-          <p className={classes["rates__grid-items"]}>Moyenne saison</p>
-          <p className={classes["rates__grid-items"]}>Haute saison</p>
+          <p className={`${classes["rates__grid-header"]} ${classes["low"]}`}>
+            Basse saison
+          </p>
+          <p className={`${classes["rates__grid-header"]} ${classes["mid"]}`}>
+            Moyenne saison
+          </p>
+          <p className={`${classes["rates__grid-header"]} ${classes["high"]}`}>
+            Haute saison
+          </p>
+
           {renderInput("price1")}
           {renderInput("price2")}
           {renderInput("price3")}
         </div>
+
         {isAuth && (
           <Button
             variant="primary"
             size="lg"
             icon={() => <FontAwesomeIcon icon={faPen} />}
             iconPosition="right"
-            className="button--alt"
+            className={classes["rates__button"]}
             type="submit"
           >
             Enregistrer les modifications
