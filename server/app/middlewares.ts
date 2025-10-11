@@ -1,5 +1,5 @@
 import csurf from "csurf";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 
 export const csrfProtection = csurf({

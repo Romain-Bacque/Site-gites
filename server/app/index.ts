@@ -34,7 +34,7 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cookieParser() as RequestHandler);
+app.use(cookieParser()); // use to parse cookies from the request headers
 app.use(routerIndex);
 
 export default app;
