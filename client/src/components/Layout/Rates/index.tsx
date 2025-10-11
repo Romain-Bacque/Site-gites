@@ -91,6 +91,31 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     getCSRFttpRequest();
   }, [getCSRFttpRequest]);
 
+  useEffect(() => {
+    if (alertStatut.show) {
+      const timer = setTimeout(() => {
+        setAlertStatut((prev) => ({ ...prev, show: false }));
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [alertStatut.show]);
+
+  useEffect(() => {
+    if (getRatesStatut) {
+      handleHTTPState(getRatesStatut);
+    }
+  }, [getRatesError, getRatesStatut, handleHTTPState]);
+
+  useEffect(() => {
+    if (putRatesStatut) {
+      handleHTTPState(putRatesStatut);
+    } 
+  }, [handleHTTPState, putRatesError, putRatesStatut]);
+
+  if (getRatesStatut === HTTPStateKind.PENDING) {
+    return null;
+  }
+
   const renderInput = (id: keyof PriceValues) => (
     <div className={classes["rates__cell-input"]}>
       <input
