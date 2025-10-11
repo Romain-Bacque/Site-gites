@@ -48,67 +48,69 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
   };
 
   return (
-    <Card className={classes.gite}>
-      <div className={classes["gite__picture-container"]}>
-        <h2 className={classes.gite__title}>{title}</h2>
-        {images?.length ? (
-          <Slider title={title} data={images} />
-        ) : (
-          <div className="text-center space">
-            <ImageNotSupported sx={{ fontSize: "5rem", color: "#bbb" }} />
-          </div>
-        )}
-      </div>
-      <div className={classes["gites__details"]}>
-        <h3 className={classes["gites__capacité-titre"]}>Capacité</h3>
-        <p className={classes["gites__capacité-texte"]}>4 personnes</p>
-        <h3 className={classes["gites__surface-titre"]}>Surface</h3>
-        <p className={classes["gites__surface-texte"]}>60 m2</p>
-        <h3 className={classes["gites__animaux-titre"]}>Animaux</h3>
-        <p className={classes["gites__animaux-texte"]}>sous accord</p>
-      </div>
-      <div className={classes["gites__description"]}>
-        <h3 className={classes["gites__description-titre"]}>Description</h3>
-        <p className={classes["gites__description-texte"]}>
-          {description ? description : "Aucune description disponible."}
-        </p>
-      </div>
-      <div className={classes["gite__buttons-container"]}>
-        <button
-          type="button"
-          className={`${
-            shelterStatut.tab === TabKind.BOOK ? classes.active : ""
-          } ${classes["gite__button-tab"]}`}
-          onClick={(event) => handleShelterTab(event, TabKind.BOOK)}
-        >
-          Réserver
-        </button>
-        <button
-          type="button"
-          className={`${
-            shelterStatut.tab === TabKind.RATES ? classes.active : ""
-          } ${classes["gite__button-tab"]}`}
-          onClick={(event) => handleShelterTab(event, TabKind.RATES)}
-        >
-          Tarifs
-        </button>
-        <button
-          type="button"
-          className={`${
-            shelterStatut.tab === TabKind.AVAILABILITY ? classes.active : ""
-          } ${classes["gite__button-tab"]}`}
-          onClick={(event) => handleShelterTab(event, TabKind.AVAILABILITY)}
-        >
-          Disponibilités
-        </button>
-      </div>
-      <div className={classes["gite__content"]}>
-        {shelterStatut.tab === TabKind.BOOK && <span />}
-        {shelterStatut.tab === TabKind.RATES && <span />}
-        {shelterStatut.tab === TabKind.AVAILABILITY && <span />}
-      </div>
-      {shelterStatut.tab !== null && formContent}
-    </Card>
+    <li className={classes.gite} key={shelterId}>
+      <Card className={classes.gite__card}>
+        <div className={classes["gite__picture-container"]}>
+          <h2 className={classes.gite__title}>{title}</h2>
+          {images?.length ? (
+            <Slider title={title} data={images} />
+          ) : (
+            <div className="text-center space">
+              <ImageNotSupported sx={{ fontSize: "5rem", color: "#bbb" }} />
+            </div>
+          )}
+        </div>
+        <div className={classes["gites__details"]}>
+          <h3 className={classes["gites__capacité-titre"]}>Capacité</h3>
+          <p className={classes["gites__capacité-texte"]}>4 personnes</p>
+          <h3 className={classes["gites__surface-titre"]}>Surface</h3>
+          <p className={classes["gites__surface-texte"]}>60 m2</p>
+          <h3 className={classes["gites__animaux-titre"]}>Animaux</h3>
+          <p className={classes["gites__animaux-texte"]}>sous accord</p>
+        </div>
+        <div className={classes["gites__description"]}>
+          <h3 className={classes["gites__description-titre"]}>Description</h3>
+          <p className={classes["gites__description-texte"]}>
+            {description ? description : "Aucune description disponible."}
+          </p>
+        </div>
+        <div className={classes["gite__buttons-container"]}>
+          <button
+            type="button"
+            className={`${
+              shelterStatut.tab === TabKind.BOOK ? classes.active : ""
+            } ${classes["gite__button-tab"]}`}
+            onClick={(event) => handleShelterTab(event, TabKind.BOOK)}
+          >
+            Réserver
+          </button>
+          <button
+            type="button"
+            className={`${
+              shelterStatut.tab === TabKind.RATES ? classes.active : ""
+            } ${classes["gite__button-tab"]}`}
+            onClick={(event) => handleShelterTab(event, TabKind.RATES)}
+          >
+            Tarifs
+          </button>
+          <button
+            type="button"
+            className={`${
+              shelterStatut.tab === TabKind.AVAILABILITY ? classes.active : ""
+            } ${classes["gite__button-tab"]}`}
+            onClick={(event) => handleShelterTab(event, TabKind.AVAILABILITY)}
+          >
+            Disponibilités
+          </button>
+        </div>
+        <div className={classes["gite__content"]}>
+          {shelterStatut.tab === TabKind.BOOK && <span />}
+          {shelterStatut.tab === TabKind.RATES && <span />}
+          {shelterStatut.tab === TabKind.AVAILABILITY && <span />}
+        </div>
+        {shelterStatut.tab !== null && formContent}
+      </Card>
+    </li>
   );
 };
 

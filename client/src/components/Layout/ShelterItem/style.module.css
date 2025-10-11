@@ -1,7 +1,9 @@
 .gite {
-  margin-bottom: 4rem;
+  margin: 0 auto 4rem;
   padding: 0;
   min-height: 50vh;
+  width: 100%;
+  max-width: 1000px;
 }
 
 .gite__title {

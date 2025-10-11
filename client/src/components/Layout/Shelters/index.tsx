@@ -40,17 +40,15 @@ const Shelters: React.FC = () => {
   return (
     <section>
       {sheltersData && sheltersData.length > 0 ? (
-        <ul>
+        <ul className={classes.shelters}>
           {sheltersData.map((shelter) => {
             return (
-              <li key={shelter._id}>
-                <ShelterItem
-                  shelterId={shelter._id}
-                  title={shelter.title}
-                  description={shelter.description}
-                  images={shelter.images}
-                />
-              </li>
+              <ShelterItem
+                shelterId={shelter._id}
+                title={shelter.title}
+                description={shelter.description}
+                images={shelter.images}
+              />
             );
           })}
         </ul>

@@ -144,9 +144,9 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     <div className={classes["rates-container"]}>
       <form className={classes.form} onSubmit={handleSubmit}>
         <div className={classes["rates__grid-container"]}>
-          <p className={classes["rates__grid-items"]}>header1</p>
-          <p className={classes["rates__grid-items"]}>header2</p>
-          <p className={classes["rates__grid-items"]}>header3</p>
+          <p className={classes["rates__grid-items"]}>Basse saison</p>
+          <p className={classes["rates__grid-items"]}>Moyenne saison</p>
+          <p className={classes["rates__grid-items"]}>Haute saison</p>
           {renderInput("price1")}
           {renderInput("price2")}
           {renderInput("price3")}

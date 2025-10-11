@@ -4,7 +4,7 @@ import styles from "./style.module.css"
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "ghost";
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   icon?: React.ElementType;
   iconPosition?: "left" | "right";
   loading?: boolean;

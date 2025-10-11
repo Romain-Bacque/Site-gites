@@ -100,7 +100,6 @@ main {
 section {
   margin: 5rem auto;
   width: 90%;
-  max-width: 900px;
   display: flex;
   flex-direction: column;
   justify-content: center;

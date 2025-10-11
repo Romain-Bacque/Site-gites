@@ -6,7 +6,6 @@ import gite1_small from "../../../img/gite1_small.jpg";
 import gite1_large from "../../../img/gite1_large.jpg";
 import gite2_small from "../../../img/gite2_small.jpg";
 import gite2_large from "../../../img/gite2_large.jpg";
-import { Link } from "react-router-dom";
 import Alert from "../../UI/Alert";
 // types import
 import { AlertStatut } from "./types";
@@ -18,6 +17,7 @@ import { ArrowRightAlt } from "@mui/icons-material";
 import Button from "../../UI/Button";
 import { useAppSelector } from "../../../hooks/use-store";
 import useHTTPState from "../../../hooks/use-http-state";
+import { useHistory } from "react-router-dom";
 
 // variable & constantes
 const initialState = {
@@ -31,6 +31,7 @@ let isFirstRender = true;
 // component
 const Home: React.FC = () => {
   const handleHTTPState = useHTTPState();
+  const history = useHistory();
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const [showModal, setShowModal] = useState(false);
@@ -72,7 +73,7 @@ const Home: React.FC = () => {
       <section>
         <Card className={classes.banner}>
           <Button
-            size="lg"
+            size="xl"
             className={classes.banner__button}
             iconPosition="right"
             icon={ArrowRightAlt}
@@ -105,56 +106,62 @@ const Home: React.FC = () => {
           </p>
         </article>
       </section>
-      <section>
+      <section className={classes.gites}>
         <Card className={classes.gite}>
-          <Link to="/gites">
+          <div
+            onClick={() => history.push("/gites")}
+            className={classes["gite__picture-container"]}
+          >
             <img
               className={classes.gite__picture}
               srcSet={`${gite1_small} 573w, ${gite1_large} 2201w`}
               src={gite1_large}
               alt="Gite 1"
             />
-            <div className={classes["gite-text-container"]}>
+          </div>
+          <div className={classes["gite__text-container"]}>
+            <div>
+              <h3 className={classes.gite__name}>Gîte Jo</h3>
               <div>
-                <h3 className={classes.gite__name}>Gîte Jo</h3>
-                <div>
-                  <p className={classes.gite__places}>
-                    Nombre de places : <span className="bold">4 personnes</span>
-                  </p>
-                </div>
+                <p className={classes.gite__places}>
+                  Nombre de places : <span className="bold">4 personnes</span>
+                </p>
               </div>
-              <p className={classes.gite__price}>
-                à partir de
-                <span className={classes["gite__price--amount"]}>200€</span>par
-                nuit.
-              </p>
             </div>
-          </Link>
+            <p className={classes.gite__price}>
+              à partir de
+              <span className={classes["gite__price--amount"]}>200€</span>par
+              nuit.
+            </p>
+          </div>
         </Card>
         <Card className={classes.gite}>
-          <Link to="/gites">
+          <div
+            onClick={() => history.push("/gites")}
+            className={classes["gite__picture-container"]}
+          >
             <img
               className={classes.gite__picture}
               srcSet={`${gite2_small} 576w, ${gite2_large} 2201w`}
               src={gite2_large}
               alt="Gite 1"
             />
-            <div className={classes["gite-text-container"]}>
+          </div>
+          <div className={classes["gite__text-container"]}>
+            <div>
+              <h3 className={classes.gite__name}>Gîte Flo</h3>
               <div>
-                <h3 className={classes.gite__name}>Gîte Flo</h3>
-                <div>
-                  <p className={classes.gite__places}>
-                    Nombre de places : <span className="bold">4 personnes</span>
-                  </p>
-                </div>
+                <p className={classes.gite__places}>
+                  Nombre de places : <span className="bold">4 personnes</span>
+                </p>
               </div>
-              <p className={classes.gite__price}>
-                à partir de
-                <span className={classes["gite__price--amount"]}>200€</span>par
-                nuit.
-              </p>
             </div>
-          </Link>
+            <p className={classes.gite__price}>
+              à partir de
+              <span className={classes["gite__price--amount"]}>200€</span>par
+              nuit.
+            </p>
+          </div>
         </Card>
       </section>
     </>

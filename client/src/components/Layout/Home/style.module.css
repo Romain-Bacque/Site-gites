@@ -1,7 +1,7 @@
 .banner {
   position: relative;
   background: url("../../../img/landscape.jpg") center/cover no-repeat;
-  height: 200px;
+  height: 40vh;
 }
 
 .banner__button {
@@ -13,8 +13,7 @@
 .summary {
   line-height: 3rem;
   background-color: white;
-  padding: 3rem;
-  border: 1px solid rgb(236, 236, 236);
+  padding: 5rem 2.5rem;
 }
 
 .summary__label {
@@ -41,16 +40,43 @@
   background: var(--button-color-alt);
 }
 
+.gites {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 2rem;
+}
+
 .gite {
+  display: flex;
+  flex-direction: column;
   padding: 0;
   overflow: hidden;
+  width: 100%;
+  max-width: 700px;
+  max-height: 500px;
+}
+
+.gite__picture-container {
+  width: 100%;
+  max-width: 700px;
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .gite__picture {
-  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
-.gite-text-container {
+.gite__picture:hover {
+  transform: scale(1.05);
+}
+
+.gite__text-container {
   display: flex;
   justify-content: space-between;
   align-items: end;

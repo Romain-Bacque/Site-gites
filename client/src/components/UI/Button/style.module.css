@@ -74,6 +74,11 @@
   font-size: 1.125rem;
 }
 
+.xl {
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+}
+
 /* Icon spacing */
 .iconLeft {
   margin-right: 0.5rem;
