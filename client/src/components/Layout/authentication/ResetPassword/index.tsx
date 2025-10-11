@@ -20,7 +20,7 @@ const ResetPassword: React.FC = () => {
   const { id, token } = useParams<{ id: string; token: string }>();
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const handleHTTPState = useHTTPState();
-  const { sendHttpRequest: getCSRFttpRequest, data: CSRFData } =
+  const { sendHttpRequest: getCSRFttpRequest } =
     useHttp(getCSRF);
   const {
     sendHttpRequest: resetPasswordHttpRequest,

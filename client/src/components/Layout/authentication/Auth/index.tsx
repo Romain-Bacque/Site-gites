@@ -83,7 +83,7 @@ const Auth: React.FC = () => {
     const isCaptchaValid = await verifyCaptcha();
 
     if (!isCaptchaValid) {
-      handleHTTPState(HTTPStateKind.ERROR, "Captcha invalide.");
+      handleHTTPState(HTTPStateKind.ERROR, "Un problème est survenu lors de la vérification du captcha.");
       return;
     }
 
