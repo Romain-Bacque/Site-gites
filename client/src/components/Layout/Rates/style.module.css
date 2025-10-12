@@ -32,6 +32,12 @@
   color: #fff;
 }
 
+@media (max-width: 600px) {
+  .rates__grid-header {
+    font-size: 1rem;
+  }
+}
+
 .low {
   background: #6ba292;
 }
