@@ -43,12 +43,15 @@ const Shelters: React.FC = () => {
         <ul className={classes.shelters}>
           {sheltersData.map((shelter) => {
             return (
-              <ShelterItem
-                shelterId={shelter._id}
-                title={shelter.title}
-                description={shelter.description}
-                images={shelter.images}
-              />
+              <li className={classes.shelter} key={shelter._id}>
+                <ShelterItem
+                  key={shelter._id}
+                  shelterId={shelter._id}
+                  title={shelter.title}
+                  description={shelter.description}
+                  images={shelter.images}
+                />
+              </li>
             );
           })}
         </ul>
