@@ -20,7 +20,8 @@
   gap: 3rem;
   box-sizing: border-box;
   z-index: 5;
-  width: 32rem;
+  width: 500px;
+  max-width: 90%;
   height: 30rem;
   background-color: white;
   border-radius: 10px;
