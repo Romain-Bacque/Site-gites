@@ -59,6 +59,14 @@
   transition: background 0.2s;
 }
 
+@media (max-width: 600px) {
+  .rates__cell-input {
+    padding: 0.5rem;
+    gap: 2px;
+    font-size: 0.9rem;
+  }
+}
+
 .rates__cell-input:hover {
   background: #f8f8f8;
 }
