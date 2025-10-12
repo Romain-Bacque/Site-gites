@@ -14,7 +14,7 @@ import {
 import Availability from "../Availability";
 // other import
 import Input from "../Input";
-import { bookingRequest } from "../../../lib/api";
+import { bookingRequest, getCSRF } from "../../../lib/api";
 import classes from "./style.module.css";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
@@ -29,11 +29,9 @@ const initialState = {
 
 // component
 const Booking: React.FC<BookingProps> = ({ shelterId }) => {
-  const { sendHttpRequest: bookingHttpRequest, statut: bookingStatut } =
-    useHttp(bookingRequest);
+  const dispatch = useAppDispatch();
   const [calendarStatus, setCalendarStatus] =
     useState<CalendarStatus>(initialState);
-  const dispatch = useAppDispatch();
   const handleHTTPState = useHTTPState();
   const {
     value: nameValue,
@@ -89,6 +87,10 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
     blurHandler: infosBlurHandler,
     resetHandler: resetInfosHandler,
   } = useInput();
+
+  const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
+  const { sendHttpRequest: bookingHttpRequest, statut: bookingStatut } =
+    useHttp(bookingRequest);
 
   const isFormValid =
     nameIsValid &&
@@ -207,6 +209,10 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
     }
   }, [fromValue, toValue, fromValueHandler]);
 
+  useEffect(() => {
+    getCSRFttpRequest();
+  }, [getCSRFttpRequest]);
+
   return (
     <div className={classes["booking-container"]}>
       <form className={classes.form} onSubmit={submitHandler}>
@@ -286,7 +292,6 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
               onInputDateClick={handleCalendarDisplay.bind(null, "from")}
               label="Arrivée"
               isVisible={true}
-              required
               className={
                 !fromIsValid && fromIsTouched ? "form__input--red" : ""
               }
@@ -314,7 +319,6 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
               onInputDateClick={handleCalendarDisplay.bind(null, "to")}
               label="Départ"
               isVisible={true}
-              required
               className={!toIsValid && toIsTouched ? "form__input--red" : ""}
               readOnly={true}
               id={`to-shelter${shelterId}`}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import {
   deletePictureRequest,
+  getCSRF,
   getSheltersWithPicturesRequest,
   postPictureRequest,
 } from "../../../lib/api";
@@ -25,6 +26,7 @@ const initialMessageState = {
 
 // component
 const Gallery: React.FC = () => {
+  const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
   const {
     sendHttpRequest: getPictureHttpRequest,
     statut: getPictureStatut,
@@ -123,6 +125,10 @@ const Gallery: React.FC = () => {
   useEffect(() => {
     getPictureHttpRequest();
   }, [getPictureHttpRequest]);
+
+  useEffect(() => {
+    getCSRFttpRequest();
+  }, [getCSRFttpRequest]);
 
   return (
     <section>

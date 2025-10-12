@@ -5,7 +5,7 @@ import useHttp from "../../../../hooks/use-http";
 import Card from "../../../UI/Card";
 import Input from "../../Input";
 import classes from "../style.module.css";
-import { forgotPasswordRequest } from "../../../../lib/api";
+import { forgotPasswordRequest, getCSRF } from "../../../../lib/api";
 // types import
 import { UserData } from "./types";
 import { HTTPStateKind } from "../../../../global/types";
@@ -13,6 +13,7 @@ import useHTTPState from "../../../../hooks/use-http-state";
 
 // component
 const ForgotPassword: React.FC = () => {
+    const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
   const {
     sendHttpRequest: forgotPasswordHttpRequest,
     statut: forgotPasswordStatut,
@@ -52,6 +53,10 @@ const ForgotPassword: React.FC = () => {
       userEmailResetHandler();
     }
   }, [forgotPasswordErrorMessage, forgotPasswordStatut, handleHTTPState, userEmailResetHandler]);
+
+  useEffect(() => {
+    getCSRFttpRequest();
+  }, [getCSRFttpRequest]);
 
   return (
     <Card className={classes.auth}>

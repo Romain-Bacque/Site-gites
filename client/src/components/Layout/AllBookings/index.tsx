@@ -20,6 +20,7 @@ import {
   bookingsGetRequest,
   acceptBookingRequest,
   refuseBookingRequest,
+  getCSRF,
 } from "../../../lib/api";
 import classes from "./style.module.css";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
@@ -51,6 +52,7 @@ const AllBookings: React.FC = () => {
   const bookingRef = useRef<BookingRef>(initialBookingRefState);
   const handleHTTPState = useHTTPState();
 
+  const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
   const {
     sendHttpRequest: getBookingsHttpRequest,
     statut: fetchBookingsRequestStatut,
@@ -177,6 +179,10 @@ const AllBookings: React.FC = () => {
     getBookingsHttpRequest();
   }, [getBookingsHttpRequest]);
 
+  useEffect(() => {
+    getCSRFttpRequest();
+  }, [getCSRFttpRequest]);
+
   // refresh bookings list display on the screen
   useEffect(() => {
     fetchBookingsRequestData && setBookingsList(fetchBookingsRequestData);
@@ -203,7 +209,10 @@ const AllBookings: React.FC = () => {
   // accept booking request handling
   // handle booking request (accept or refuse)
   useEffect(() => {
-    const handleStatut = (statut: HTTPStateKind | null, error: string | null) => {
+    const handleStatut = (
+      statut: HTTPStateKind | null,
+      error: string | null
+    ) => {
       if (!statut) return;
       if (statut === HTTPStateKind.PENDING) {
         handleHTTPState(HTTPStateKind.PENDING);

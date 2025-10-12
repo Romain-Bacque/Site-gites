@@ -16,6 +16,7 @@ import {
   deleteDateRequest,
   postDateRequest,
   getDatesRequest,
+  getCSRF,
 } from "../../../lib/api";
 import classes from "./style.module.css";
 import { HTTPStateKind } from "../../../global/types";
@@ -33,6 +34,8 @@ const Availability: React.FC<AvailabilityProps> = ({
 }) => {
   const [showDoubleView, setShowDoubleView] = useState(false);
   const [disabledDates, setDisabledDates] = useState<DisabledDatesData>([]);
+
+  const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
   const handleHTTPState = useHTTPState();
   const {
     sendHttpRequest: getDisabledDatesHttpRequest,
@@ -116,7 +119,11 @@ const Availability: React.FC<AvailabilityProps> = ({
   // get all disabled dates at initialization
   useEffect(() => {
     getDisabledDatesHttpRequest(shelterId);
-  }, []);
+  }, [getDisabledDatesHttpRequest, shelterId]);
+
+  useEffect(() => {
+    getCSRFttpRequest();
+  }, [getCSRFttpRequest]);
 
   useEffect(() => {
     if (
