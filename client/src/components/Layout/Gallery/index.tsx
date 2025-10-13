@@ -165,7 +165,7 @@ const Gallery: React.FC = () => {
           ) : null}
         </>
       </Modal>
-      {sheltersData && sheltersData.length > 0 && (
+      {sheltersData && sheltersData.length > 0 ? (
         <ul>
           {sheltersData.map((data) => (
             <li key={data._id}>
@@ -180,8 +180,7 @@ const Gallery: React.FC = () => {
             </li>
           ))}
         </ul>
-      )}
-      {sheltersData && sheltersData.length === 0 && (
+      ) : (
         <p className="text-center">Aucune image à afficher.</p>
       )}
     </section>
