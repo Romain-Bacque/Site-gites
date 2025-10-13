@@ -99,6 +99,10 @@
   font-size: 1.6em;
 }
 
+.gite__price {
+  margin-bottom: 0.2rem;
+}
+
 .gite__price--amount {
   font-weight: bold;
   font-size: 1.2em;

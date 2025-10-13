@@ -47,6 +47,20 @@ const Home: React.FC = () => {
     setShowModal(true);
   };
 
+  const renderDetailsButton = () => {
+    return (
+      <Button
+        fullWidth
+        size={
+          window.innerWidth > 768 ? "lg" : window.innerWidth > 480 ? "md" : "sm"
+        }
+        onClick={() => history.push("/gites")}
+      >
+        Voir les détails
+      </Button>
+    );
+  };
+
   useEffect(() => {
     if (isAuth && isFirstRender) handleHTTPState(2, "Bienvenue !");
     if (!isAuth) isFirstRender = true;
@@ -128,11 +142,14 @@ const Home: React.FC = () => {
                 </p>
               </div>
             </div>
-            <p className={classes.gite__price}>
-              à partir de
-              <span className={classes["gite__price--amount"]}>200€</span>par
-              nuit.
-            </p>
+            <div>
+              <p className={classes.gite__price}>
+                à partir de
+                <span className={classes["gite__price--amount"]}>200€</span>par
+                nuit.
+              </p>
+              {renderDetailsButton()}
+            </div>
           </div>
         </Card>
         <Card className={classes.gite}>
@@ -156,11 +173,14 @@ const Home: React.FC = () => {
                 </p>
               </div>
             </div>
-            <p className={classes.gite__price}>
-              à partir de
-              <span className={classes["gite__price--amount"]}>200€</span>par
-              nuit.
-            </p>
+            <div>
+              <p className={classes.gite__price}>
+                à partir de
+                <span className={classes["gite__price--amount"]}>200€</span>par
+                nuit.
+              </p>
+              {renderDetailsButton()}
+            </div>
           </div>
         </Card>
       </section>

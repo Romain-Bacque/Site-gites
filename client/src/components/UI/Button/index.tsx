@@ -3,6 +3,7 @@ import clsx from "clsx"; // clsx is a tiny utility for constructing className st
 import styles from "./style.module.css"
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  fullWidth?: boolean;
   variant?: "primary" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg" | "xl";
   icon?: React.ElementType;
@@ -12,6 +13,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button: FC<ButtonProps> = ({
   type = "button",
+  fullWidth = false,
   variant = "primary",
   size = "md",
   icon: Icon,
@@ -25,6 +27,7 @@ const Button: FC<ButtonProps> = ({
   return (
     <button
       type={type}
+      style={{ width: fullWidth ? "100%" : "auto" }}
       className={clsx(
         styles.button,
         styles[variant!],
