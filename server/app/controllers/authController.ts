@@ -177,7 +177,7 @@ const authController = {
   },
 
   logout: function (_: Request, res: Response) {
-    res.clearCookie("accessToken").sendStatus(200);
+    res.clearCookie("accessToken", getCookieConfig()).sendStatus(200);
   },
 
   async handleForgotPassword(req: Request, res: Response) {
