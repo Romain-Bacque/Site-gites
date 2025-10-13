@@ -11,6 +11,7 @@ import CropContent from "../CropContent";
 import useHTTPState from "../../../hooks/use-http-state";
 import GalleryItem from "../GalleryItem";
 import { ShelterType } from "./types";
+import { HTTPStateKind } from "../../../global/types";
 
 // variable & constante
 const initialModalState = {
@@ -129,6 +130,10 @@ const Gallery: React.FC = () => {
   useEffect(() => {
     getCSRFttpRequest();
   }, [getCSRFttpRequest]);
+
+  if (getPictureStatut === HTTPStateKind.PENDING) {
+    return <p className="text-center">Chargement des images...</p>;
+  }
 
   return (
     <section>
