@@ -5,14 +5,19 @@ import Footer from "../Footer";
 import Header from "../Header";
 import LoaderAndAlert from "../../UI/LoaderAndAlert";
 import { HTTPStateKind } from "../../../global/types";
+import useHTTPState from "../../../hooks/use-http-state";
 
 // interfaces
 interface LayoutProps {
   children: JSX.Element;
 }
 
+let isFirstRender = true;
+
 // component
 const Layout: React.FC<LayoutProps> = (props) => {
+  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
+  const handleHTTPState = useHTTPState();
   const loading = useAppSelector((state) => state.loading);
   const dispatch = useAppDispatch();
   const [isMounted, setIsMounted] = useState(false);
@@ -20,6 +25,12 @@ const Layout: React.FC<LayoutProps> = (props) => {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (isAuth && isFirstRender) handleHTTPState(2, "Bienvenue !");
+    if (!isAuth) isFirstRender = true;
+    else isFirstRender = false;
+  }, [handleHTTPState, isAuth]);
 
   if (!isMounted) {
     // Show a loader while the DOM is incomplete

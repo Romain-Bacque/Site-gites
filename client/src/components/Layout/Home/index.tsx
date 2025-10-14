@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
@@ -25,8 +25,6 @@ const initialState = {
   alert: null,
   show: false,
 };
-
-let isFirstRender = true;
 
 // component
 const Home: React.FC = () => {
@@ -60,12 +58,6 @@ const Home: React.FC = () => {
       </Button>
     );
   };
-
-  useEffect(() => {
-    if (isAuth && isFirstRender) handleHTTPState(2, "Bienvenue !");
-    if (!isAuth) isFirstRender = true;
-    else isFirstRender = false;
-  }, [handleHTTPState, isAuth]);
 
   return (
     <>
