@@ -2,48 +2,48 @@
 <!--  created with Free Online Sitemap Generator www.xml-sitemaps.com  -->
  <!-- Page d'accueil -->
   <url>
-    <loc>https://www.monsite.com/home</loc>
+    <loc>https://gites-ariege-erce.fr/home</loc>
     <priority>1.0</priority>
   </url>
 
   <!-- Gîtes -->
   <url>
-    <loc>https://www.monsite.com/gites</loc>
+    <loc>https://gites-ariege-erce.fr/gites</loc>
     <priority>0.8</priority>
   </url>
 
   <!-- Galerie -->
   <url>
-    <loc>https://www.monsite.com/albums</loc>
+    <loc>https://gites-ariege-erce.fr/albums</loc>
     <priority>0.8</priority>
   </url>
 
   <!-- Authentification -->
   <url>
-    <loc>https://www.monsite.com/authentification</loc>
+    <loc>https://gites-ariege-erce.fr/authentification</loc>
     <priority>0.6</priority>
   </url>
 
   <!-- Pages admin publiques (non connecté) -->
   <url>
-    <loc>https://www.monsite.com/admin/email-confirm</loc>
+    <loc>https://gites-ariege-erce.fr/admin/email-confirm</loc>
     <priority>0.4</priority>
   </url>
 
   <url>
-    <loc>https://www.monsite.com/admin/forgot-password</loc>
+    <loc>https://gites-ariege-erce.fr/admin/forgot-password</loc>
     <priority>0.4</priority>
   </url>
 
   <!-- Exemple de page reset-password avec paramètres dynamiques -->
   <url>
-    <loc>https://www.monsite.com/admin/reset-password/ID_EXEMPLE/TOKEN_EXEMPLE</loc>
+    <loc>https://gites-ariege-erce.fr/admin/reset-password/ID_EXEMPLE/TOKEN_EXEMPLE</loc>
     <priority>0.3</priority>
   </url>
 
   <!-- Page admin réservations (accès restreint) -->
   <url>
-    <loc>https://www.monsite.com/admin/allBookings</loc>
+    <loc>https://gites-ariege-erce.fr/admin/allBookings</loc>
     <priority>0.2</priority>
   </url>
 </urlset>
