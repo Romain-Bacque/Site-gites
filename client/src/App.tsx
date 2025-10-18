@@ -15,6 +15,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { HTTPStateKind } from "./global/types";
 import EmailConfirmationPage from "./pages/EmailConfirmationPage";
+import { HelmetProvider } from "react-helmet-async";
 
 // component
 const App: React.FC = () => {
@@ -47,48 +48,50 @@ const App: React.FC = () => {
   }, [pathname, history, dispatch]);
 
   return (
-    <Layout>
-      <Switch>
-        <Route path="/" exact>
-          <Redirect to="/home" />
-        </Route>
-        <Route path="/home">
-          <HomePage />
-        </Route>
-        {isAuth && (
-          <Route path="/admin/allBookings" exact>
-            <AllBookingsPage />
+    <HelmetProvider>
+      <Layout>
+        <Switch>
+          <Route path="/" exact>
+            <Redirect to="/home" />
           </Route>
-        )}
-        {!isAuth && (
-          <Route path="/admin/email-confirm">
-            <EmailConfirmationPage />
+          <Route path="/home">
+            <HomePage />
           </Route>
-        )}
-        {!isAuth && (
-          <Route path="/admin/forgot-password" exact>
-            <ForgotPasswordPage />
+          {isAuth && (
+            <Route path="/admin/allBookings" exact>
+              <AllBookingsPage />
+            </Route>
+          )}
+          {!isAuth && (
+            <Route path="/admin/email-confirm">
+              <EmailConfirmationPage />
+            </Route>
+          )}
+          {!isAuth && (
+            <Route path="/admin/forgot-password" exact>
+              <ForgotPasswordPage />
+            </Route>
+          )}
+          {!isAuth && (
+            <Route path="/admin/reset-password/:id/:token" exact>
+              <ResetPasswordPage />
+            </Route>
+          )}
+          <Route path="/gites" exact>
+            <SheltersPage />
           </Route>
-        )}
-        {!isAuth && (
-          <Route path="/admin/reset-password/:id/:token" exact>
-            <ResetPasswordPage />
+          <Route path="/albums">
+            <GalleryPage />
           </Route>
-        )}
-        <Route path="/gites" exact>
-          <SheltersPage />
-        </Route>
-        <Route path="/albums">
-          <GalleryPage />
-        </Route>
-        <Route path="/authentification">
-          <AuthPage />
-        </Route>
-        <Route path="*">
-          <Redirect to="/home" />
-        </Route>
-      </Switch>
-    </Layout>
+          <Route path="/authentification">
+            <AuthPage />
+          </Route>
+          <Route path="*">
+            <Redirect to="/home" />
+          </Route>
+        </Switch>
+      </Layout>
+    </HelmetProvider>
   );
 };
 

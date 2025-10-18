@@ -1,1 +1,1 @@
-18:12 ForbiddenError: invalid csrf token
+18:12 ForbiddenError: invalid csrf token18:15 TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received undefined18:23 ForbiddenError: invalid csrf token
