@@ -86,7 +86,7 @@ const Header: React.FC = () => {
           <Link to="/">
             <FontAwesomeIcon icon={faHome} />
           </Link>
-          <h1 className={classes.header__title}>Gîtes.</h1>
+          <h1 className={classes.header__title}>Gîtes Du Quer.</h1>
         </div>
         {/* Toggle menu button */}
         <div

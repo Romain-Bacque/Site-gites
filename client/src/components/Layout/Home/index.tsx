@@ -90,7 +90,6 @@ const Home: React.FC = () => {
         </Card>
       </section>
       <section>
-        
         <article className={classes.summary}>
           <strong className={classes.summary__label}>
             Venez découvrir nos gîtes...
