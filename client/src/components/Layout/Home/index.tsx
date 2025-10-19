@@ -106,9 +106,9 @@ const Home: React.FC = () => {
             Saint-Girons, où vous pourrez découvrir et savourer les produits du
             terroir. <br />
             En saison, profitez aussi des châtaignes, champignons et myrtilles
-            sauvages. À 200 m, la rivière le Garbet est idéale pour la pêche à
-            la truite. Une initiation peut être proposée sur réservation avec le
-            propriétaire, moniteur guide de pêche diplômé (prestation
+            sauvages. <br />À 200 m, la rivière le Garbet est idéale pour la
+            pêche à la truite. Une initiation peut être proposée sur réservation
+            avec le propriétaire, moniteur guide de pêche diplômé (prestation
             indépendante de la location).
           </p>
         </article>
