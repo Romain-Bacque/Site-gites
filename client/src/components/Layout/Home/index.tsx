@@ -104,10 +104,11 @@ const Home: React.FC = () => {
             accrobranche, canoë-kayak, escalade, équitation, vélo… <br /> La
             région compte de nombreux marchés locaux, dont celui très typique de
             Saint-Girons, où vous pourrez découvrir et savourer les produits du
-            terroir. En saison, profitez aussi des châtaignes, champignons et
-            myrtilles sauvages. À 200 m, la rivière le Garbet est idéale pour la
-            pêche à la truite. Une initiation peut être proposée sur réservation
-            avec le propriétaire, moniteur guide de pêche diplômé (prestation
+            terroir. <br />
+            En saison, profitez aussi des châtaignes, champignons et myrtilles
+            sauvages. À 200 m, la rivière le Garbet est idéale pour la pêche à
+            la truite. Une initiation peut être proposée sur réservation avec le
+            propriétaire, moniteur guide de pêche diplômé (prestation
             indépendante de la location).
           </p>
         </article>
