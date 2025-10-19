@@ -95,10 +95,10 @@ const Home: React.FC = () => {
             Venez découvrir nos gîtes...
           </strong>
           <p className={classes.summary__paragraphe}>
-            Notre gîte est situé dans un petit hameau du Couserans, à 600 m
+            Nos gîtes sont situés dans un petit hameau du Couserans, à 600 m
             d’altitude, sur un versant exposé plein sud et en lisière de forêt.
-            Indépendant et sans vis-à-vis, il offre une belle vue sur la vallée
-            et la rivière, et se trouve au centre de nombreuses activités de
+            Indépendants et sans vis-à-vis, ils offrent une belle vue sur la vallée
+            et la rivière, et se trouvent au centre de nombreuses activités de
             montagne : randonnées tous niveaux, station de ski et luge d’été de
             Guzet à 30 min, thermes d’Aulus-les-Bains, accrobranche,
             canoë-kayak, escalade, équitation, vélo… La région compte de
