@@ -4,6 +4,36 @@
   height: 40vh;
 }
 
+.banner__site-branding {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.banner__site-title {
+  font-size: 6rem;
+  margin: 0;
+}
+
+.banner__site-title::after {
+  content: "";
+  color: var(--button-color);
+  background-color: #fff;
+  height: 1px;
+  display: block;
+  width: 20%;
+  margin: 5px auto;
+}
+
+.banner__site-description {
+  font-size: 2rem;
+  margin: 0;
+}
+
 .banner__button {
   position: absolute;
   bottom: 2rem;
@@ -14,6 +44,7 @@
   line-height: 3rem;
   background-color: white;
   padding: 5rem 2.5rem;
+  position: relative;
 }
 
 .summary__label {
@@ -22,7 +53,7 @@
 }
 
 .summary__paragraphe {
-  margin-top: 1rem;
+  padding: 2rem;
 }
 
 .button {

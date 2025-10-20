@@ -15,8 +15,6 @@ import Activities from "../Activities";
 import LoaderAndAlert from "../../UI/LoaderAndAlert";
 import { ArrowRightAlt } from "@mui/icons-material";
 import Button from "../../UI/Button";
-import { useAppSelector } from "../../../hooks/use-store";
-import useHTTPState from "../../../hooks/use-http-state";
 import { useHistory } from "react-router-dom";
 
 // variable & constantes
@@ -28,9 +26,7 @@ const initialState = {
 
 // component
 const Home: React.FC = () => {
-  const handleHTTPState = useHTTPState();
   const history = useHistory();
-  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const [showModal, setShowModal] = useState(false);
   const {
@@ -78,15 +74,12 @@ const Home: React.FC = () => {
       />
       <section>
         <Card className={classes.banner}>
-          <Button
-            size="xl"
-            className={classes.banner__button}
-            iconPosition="right"
-            icon={ArrowRightAlt}
-            onClick={handleFetchActivities}
-          >
-            Activités dans le Couserans
-          </Button>
+          <div className={classes["banner__site-branding"]}>
+            <h1 className={classes["banner__site-title"]}>Gites Du Quer</h1>
+            <h2 className={classes["banner__site-description"]}>
+              Une belle escapade dans le Couserans.
+            </h2>
+          </div>
         </Card>
       </section>
       <section>
@@ -99,7 +92,7 @@ const Home: React.FC = () => {
             d’altitude, sur un versant exposé plein sud et en lisière de forêt.
             Indépendants et sans vis-à-vis, ils offrent une belle vue sur la
             vallée et la rivière, et se trouvent au centre de nombreuses
-            activités de montagne : randonnées tous niveaux, station de ski et
+            activités de montagne: randonnées tous niveaux, station de ski et
             luge d’été de Guzet à 30 min, thermes d’Aulus-les-Bains,
             accrobranche, canoë-kayak, escalade, équitation, vélo… <br /> La
             région compte de nombreux marchés locaux, dont celui très typique de
@@ -111,6 +104,16 @@ const Home: React.FC = () => {
             avec le propriétaire, moniteur guide de pêche diplômé (prestation
             indépendante de la location).
           </p>
+          <Button
+            size="xl"
+            className={classes.banner__button}
+            iconPosition="right"
+            icon={ArrowRightAlt}
+            onClick={handleFetchActivities}
+            variant="outline"
+          >
+            Activités dans le Couserans
+          </Button>
         </article>
       </section>
       <section className={classes.gites}>

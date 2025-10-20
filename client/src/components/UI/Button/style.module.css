@@ -43,8 +43,8 @@
 
 .outline {
   background: #fff;
-  color: #2563eb;
-  border: 1px solid #2563eb;
+  color: var(--button-color);
+  border: 2px solid var(--button-color);
 }
 .outline:hover:not(:disabled) {
   background: #eff6ff;
@@ -52,7 +52,8 @@
 
 .ghost {
   background: transparent;
-  color: #2563eb;
+  color: var(--button-color);
+  border: none;
 }
 .ghost:hover:not(:disabled) {
   background: #eff6ff;
