@@ -88,21 +88,35 @@ const Home: React.FC = () => {
             Venez découvrir nos gîtes...
           </strong>
           <p className={classes.summary__paragraphe}>
-            Nos gîtes sont situés dans un petit hameau du Couserans, à 600 m
-            d’altitude, sur un versant exposé plein sud et en lisière de forêt.
-            Indépendants et sans vis-à-vis, ils offrent une belle vue sur la
-            vallée et la rivière, et se trouvent au centre de nombreuses
-            activités de montagne: randonnées tous niveaux, station de ski et
-            luge d’été de Guzet à 30 min, thermes d’Aulus-les-Bains,
-            accrobranche, canoë-kayak, escalade, équitation, vélo… <br /> La
-            région compte de nombreux marchés locaux, dont celui très typique de
-            Saint-Girons, où vous pourrez découvrir et savourer les produits du
-            terroir. <br />
-            En saison, profitez aussi des châtaignes, champignons et myrtilles
-            sauvages. <br />À 200 m, la rivière le Garbet est idéale pour la
-            pêche à la truite. Une initiation peut être proposée sur réservation
-            avec le propriétaire, moniteur guide de pêche diplômé (prestation
-            indépendante de la location).
+            Au cœur du Couserans, à 600 m d’altitude, les Gîtes du Quer vous
+            accueillent dans un petit hameau paisible exposé plein sud, en
+            lisière de forêt, avec une vue sur la vallée et la rivière. Chaque
+            gîte dispose de son espace privé, sans vis-à-vis, sur un grand
+            terrain commun propice à la détente et aux moments partagés.
+            <br />
+            Idéalement situés, ils offrent un accès privilégié à de nombreuses
+            activités de montagne : randonnées pour tous niveaux, station de ski
+            de Guzet-Neige, thermes d’Aulus-les-Bains, parcours d’accrobranche,
+            canoë-kayak, escalade, équitation ou encore balades à vélo... Les
+            amateurs de nature apprécieront la richesse des environs, où les
+            saisons se déclinent au rythme des châtaignes, champignons et
+            myrtilles sauvages.
+            <br />
+            À deux pas des gîtes, la rivière du Garbet séduira les pêcheurs de
+            truite ; sur réservation préalable, le propriétaire, moniteur guide
+            de pêche diplômé d’État, propose des initiations ou des
+            perfectionnements à la pêche de loisir (prestation indépendante de
+            la location).
+            <br />
+            La région est également réputée pour ses marchés authentiques,
+            notamment celui de Saint-Girons, haut en couleurs et en saveurs.
+            <br />À 5 km, vous trouverez tous les commerces et services
+            essentiels : bureau de poste, épicerie, boucherie,
+            boulangerie-pâtisserie, presse, restaurants, médecin et pharmacie.
+            <br />
+            Les animaux sont acceptés sur accord préalable des propriétaires,
+            afin que chacun profite pleinement du calme et du charme de ce coin
+            préservé de l’Ariège.
           </p>
           <Button
             size="xl"

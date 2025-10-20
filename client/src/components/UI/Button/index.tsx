@@ -43,7 +43,8 @@ const Button: FC<ButtonProps> = ({
             styles.spinner,
             size === "sm" && styles.spinnerSm,
             size === "md" && styles.spinnerMd,
-            size === "lg" && styles.spinnerLg
+            size === "lg" && styles.spinnerLg,
+            size === "xl" && styles.spinnerLg
           )}
           fill="none"
           viewBox="0 0 24 24"

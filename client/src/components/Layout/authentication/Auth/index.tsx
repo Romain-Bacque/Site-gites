@@ -17,6 +17,7 @@ import { HTTPStateKind } from "../../../../global/types";
 import useHTTPState from "../../../../hooks/use-http-state";
 import useRecaptcha from "../../../../hooks/use-recaptcha";
 import Captcha from "../Captcha";
+import Button from "../../../UI/Button";
 
 // component
 const Auth: React.FC = () => {
@@ -83,7 +84,10 @@ const Auth: React.FC = () => {
     const isCaptchaValid = await verifyCaptcha();
 
     if (!isCaptchaValid) {
-      handleHTTPState(HTTPStateKind.ERROR, "Un problème est survenu lors de la vérification du captcha.");
+      handleHTTPState(
+        HTTPStateKind.ERROR,
+        "Un problème est survenu lors de la vérification du captcha."
+      );
       return;
     }
 
@@ -187,7 +191,7 @@ const Auth: React.FC = () => {
             id="user-name"
             onChange={usernameChangeHandler}
             onBlur={usernameBlurHandler}
-            type="texte"
+            type="text"
             value={usernameValue}
             placeholder="Taper le pseudo ici"
           />
@@ -249,12 +253,19 @@ const Auth: React.FC = () => {
               ))}
             </ul>
           )}
-          <button
+          <Button
+            fullWidth
+            size="xl"
             disabled={!isFormValid || !captchaValue}
+            loading={
+              loginStatut === HTTPStateKind.PENDING ||
+              registerStatut === HTTPStateKind.PENDING
+            }
+            type="submit"
             className={`button ${classes["auth__button"]}`}
           >
-            Se connecter
-          </button>
+            {isNotRegistered ? "S'enregistrer" : "Se connecter"}
+          </Button>
         </div>
         <div>
           <span className={classes["auth__span"]}>

@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 import classes from "./style.module.css";
 import Booking from "../Booking";
@@ -10,6 +10,12 @@ import Availability from "../Availability";
 import { SheltersItemsProps, Tab, TabKind } from "./types";
 import { ImageNotSupported } from "@mui/icons-material";
 import Card from "../../UI/Card";
+import { useAppSelector } from "../../../hooks/use-store";
+import Button from "../../../components/UI/Button";
+import Input from "../Input";
+import useHttp from "../../../hooks/use-http";
+import useHTTPState from "../../../hooks/use-http-state";
+import { updateShelterDescriptionRequest } from "../../../lib/api";
 
 // variable & contante
 let formContent: ReactNode = null;
@@ -22,6 +28,17 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
   images,
 }) => {
   const [shelterStatut, setShelterStatut] = useState<Tab>({ tab: null });
+  const [descriptionText, setDescriptionText] = useState<string>("");
+  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
+  const handleHTTPState = useHTTPState();
+  const {
+    sendHttpRequest: updateShelterDescriptionHTTPRequest,
+    data: updateShelterDescriptionData,
+    statut: updateShelterDescriptionStatut,
+    error: updateShelterDescriptionError,
+  } = useHttp(updateShelterDescriptionRequest);
+
+  const descriptionTextToShow = descriptionText || description || "";
 
   if (shelterStatut.tab === TabKind.BOOK) {
     formContent = <Booking shelterId={shelterId} />;
@@ -47,6 +64,55 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
     });
   };
 
+  const handleDescriptionSave = (description: string) => {
+    updateShelterDescriptionHTTPRequest({ id: shelterId, description });
+  };
+
+  const renderDescriptionContent = () => {
+    if (isAuth) {
+      return (
+        <div>
+          <Input
+            type="textarea"
+            className={classes["gites__description-textarea"]}
+            defaultValue={descriptionTextToShow}
+            placeholder="Entrez la description du gîte ici..."
+            rows={7}
+            onChange={(e) => setDescriptionText(e.target.value)}
+          />
+          <Button
+            fullWidth
+            onClick={() => handleDescriptionSave(descriptionText)}
+            className={classes["gites__description-button"]}
+            loading={updateShelterDescriptionStatut === 2}
+          >
+            Enregistrer
+          </Button>
+        </div>
+      );
+    } else {
+      return description ? (
+        <p className={classes["gites__description-texte"]}>{description}</p>
+      ) : (
+        <p className={classes["gites__description-texte"]}>
+          Aucune description disponible pour le moment.
+        </p>
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (!updateShelterDescriptionError) {
+      handleHTTPState(updateShelterDescriptionStatut);
+    } else {
+      handleHTTPState(3, updateShelterDescriptionError);
+    }
+  }, [
+    updateShelterDescriptionError,
+    updateShelterDescriptionStatut,
+    handleHTTPState,
+  ]);
+
   return (
     <Card className={classes.gite__card}>
       <div className={classes["gite__picture-container"]}>
@@ -69,9 +135,7 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
       </div>
       <div className={classes["gites__description"]}>
         <h3 className={classes["gites__description-titre"]}>Description</h3>
-        <p className={classes["gites__description-texte"]}>
-          {description ? description : "Aucune description disponible."}
-        </p>
+        {renderDescriptionContent()}
       </div>
       <div className={classes["gite__buttons-container"]}>
         <button

@@ -18,7 +18,7 @@ const Shelters: React.FC = () => {
     statut: getSheltersRequestStatut,
     data: sheltersData,
     error: getSheltersRequestError,
-  } = useHttp(getSheltersWithPicturesRequest);
+  } = useHttp(getSheltersWithPicturesRequest, "shelters");
 
   useEffect(() => {
     getShelterHttpRequest();

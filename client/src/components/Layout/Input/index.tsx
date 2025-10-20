@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import classes from "./style.module.css";
-import { InputProps } from "./types";
+import { InputOrTextareaProps } from "./types";
 
-const Input: React.FC<InputProps> = ({
+const Input: React.FC<InputOrTextareaProps> = ({
+  type = "text",
   icon,
   className,
-  isVisible,
+  isVisible = true,
   name,
   label,
   forgotPassword,
@@ -33,6 +34,30 @@ const Input: React.FC<InputProps> = ({
     }
   };
 
+  const renderInput = () => {
+    if (type === "textarea") {
+      return (
+        <textarea
+          {...input}
+          className={`${classes.form__input} ${
+            error ? classes["form__input--error"] : ""
+          } ${className ? classes[className] : ""}`}
+        />
+      );
+    }
+
+    return (
+      <input
+        {...input}
+        onClick={handleInputClick}
+        onBlur={handleBlur}
+        className={`${classes.form__input} ${
+          error ? classes["form__input--error"] : ""
+        } ${className ? classes[className] : ""}`}
+      />
+    );
+  };
+
   return (
     <>
       {isVisible && (
@@ -53,14 +78,7 @@ const Input: React.FC<InputProps> = ({
       {forgotPassword && forgotPassword}
 
       <div className={classes["form__input-container"]}>
-        <input
-          {...input}
-          onClick={handleInputClick}
-          onBlur={handleBlur}
-          className={`${classes.form__input} ${
-            error ? classes["form__input--error"] : ""
-          } ${className ? classes[className] : ""}`}
-        />
+        {renderInput()}
         {icon}
         {error && <p className={classes.form__error}>{error}</p>}
       </div>

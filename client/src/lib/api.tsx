@@ -16,7 +16,7 @@ export const getCSRF = async () => {
   const response = await instance.get<CSRFRequestResponseData>("/createCSRF");
 
   if (response.status !== 200) throw new Error();
-  
+
   const csrfToken = response.data.csrfToken;
 
   instance.defaults.headers.common["x-csrf-token"] = csrfToken;
@@ -120,6 +120,23 @@ export const getShelters = async () => {
   const response = await instance.get<getSheltersResponseData>("/shelters");
 
   if (response.status !== 200) throw new Error(response.statusText);
+
+  return response.data.sheltersData;
+};
+
+export const updateShelterDescriptionRequest = async ({
+  id,
+  description,
+}: {
+  id: string;
+  description: string;
+}) => {
+  const response = await instance.put<getSheltersResponseData>(
+    `/shelters/${id}`,
+    { description }
+  );
+
+  if (response.status !== 200) throw new Error();
 
   return response.data.sheltersData;
 };
@@ -323,13 +340,14 @@ export const getSheltersWithPicturesRequest = async () => {
 
 // Add Picture
 export const postPictureRequest = async (data: FormData) => {
-  const response = await instance.post<getSheltersWithPicturesRequestResponseData>(
-    "/admin/gallery",
-    data,
-    {
-      headers: { "Content-Type": "multipart/form-data" },
-    }
-  );
+  const response =
+    await instance.post<getSheltersWithPicturesRequestResponseData>(
+      "/admin/gallery",
+      data,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
 
   if (response.status !== 200) throw new Error();
 
@@ -338,9 +356,10 @@ export const postPictureRequest = async (data: FormData) => {
 
 // Delete Picture
 export const deletePictureRequest = async (id: string) => {
-  const response = await instance.delete<getSheltersWithPicturesRequestResponseData>(
-    `/admin/gallery/${id}`
-  );
+  const response =
+    await instance.delete<getSheltersWithPicturesRequestResponseData>(
+      `/admin/gallery/${id}`
+    );
 
   if (response.status !== 200) throw new Error();
 
