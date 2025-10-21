@@ -109,7 +109,23 @@ export const loadUserInfos = async () => {
   if (response.status !== 200) throw new Error();
 };
 
-// // SHELTER
+// // SHELTERS
+
+interface getSheltersWithPicturesRequestResponseData {
+  sheltersData: {
+    _id: string;
+    title: string;
+    description: string;
+    number: number;
+    images: {
+      _id: string;
+      url: string;
+      title: string;
+      filename: string;
+      shelter_id: string;
+    }[];
+  }[];
+}
 
 // Get Shelters
 type getSheltersResponseData = {
@@ -131,10 +147,51 @@ export const updateShelterDescriptionRequest = async ({
   id: string;
   description: string;
 }) => {
-  const response = await instance.put<getSheltersResponseData>(
-    `/shelters/${id}`,
-    { description }
-  );
+  const response =
+    await instance.put<getSheltersWithPicturesRequestResponseData>(
+      `/shelters/${id}`,
+      { description }
+    );
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.sheltersData;
+};
+
+// Get shelters with Picture
+export const getSheltersWithPicturesRequest = async () => {
+  const response =
+    await instance.get<getSheltersWithPicturesRequestResponseData>(
+      `/admin/gallery`
+    );
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.sheltersData;
+};
+
+// Add Picture
+export const postPictureRequest = async (data: FormData) => {
+  const response =
+    await instance.post<getSheltersWithPicturesRequestResponseData>(
+      "/admin/gallery",
+      data,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.sheltersData;
+};
+
+// Delete Picture
+export const deletePictureRequest = async (id: string) => {
+  const response =
+    await instance.delete<getSheltersWithPicturesRequestResponseData>(
+      `/admin/gallery/${id}`
+    );
 
   if (response.status !== 200) throw new Error();
 
@@ -306,64 +363,6 @@ export const ratesPutRequest = async (data: RatesPutRequestData) => {
   );
 
   if (response.status !== 200) throw new Error();
-};
-
-// // Gallery
-
-// Get Picture
-interface getSheltersWithPicturesRequestResponseData {
-  sheltersData: {
-    _id: string;
-    title: string;
-    description: string;
-    number: number;
-    images: {
-      _id: string;
-      url: string;
-      title: string;
-      filename: string;
-      shelter_id: string;
-    }[];
-  }[];
-}
-
-export const getSheltersWithPicturesRequest = async () => {
-  const response =
-    await instance.get<getSheltersWithPicturesRequestResponseData>(
-      `/admin/gallery`
-    );
-
-  if (response.status !== 200) throw new Error();
-
-  return response.data.sheltersData;
-};
-
-// Add Picture
-export const postPictureRequest = async (data: FormData) => {
-  const response =
-    await instance.post<getSheltersWithPicturesRequestResponseData>(
-      "/admin/gallery",
-      data,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
-
-  if (response.status !== 200) throw new Error();
-
-  return response.data.sheltersData;
-};
-
-// Delete Picture
-export const deletePictureRequest = async (id: string) => {
-  const response =
-    await instance.delete<getSheltersWithPicturesRequestResponseData>(
-      `/admin/gallery/${id}`
-    );
-
-  if (response.status !== 200) throw new Error();
-
-  return response.data.sheltersData;
 };
 
 // Sightseeing

@@ -3,7 +3,6 @@ import useHttp from "../../../hooks/use-http";
 import { useEffect } from "react";
 import useHTTPState from "../../../hooks/use-http-state";
 // components import
-import Card from "../../UI/Card";
 import classes from "./style.module.css";
 import ShelterItem from "../ShelterItem";
 // types import

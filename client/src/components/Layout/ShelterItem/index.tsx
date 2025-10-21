@@ -33,7 +33,7 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
   const handleHTTPState = useHTTPState();
   const {
     sendHttpRequest: updateShelterDescriptionHTTPRequest,
-    data: updateShelterDescriptionData,
+    data: sheltersData,
     statut: updateShelterDescriptionStatut,
     error: updateShelterDescriptionError,
   } = useHttp(updateShelterDescriptionRequest);
@@ -104,6 +104,11 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
   useEffect(() => {
     if (!updateShelterDescriptionError) {
       handleHTTPState(updateShelterDescriptionStatut);
+      const shelterDescription =
+        sheltersData?.find((shelter) => shelter._id === shelterId)
+          ?.description || "";
+
+      setDescriptionText(shelterDescription);
     } else {
       handleHTTPState(3, updateShelterDescriptionError);
     }
@@ -111,6 +116,8 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
     updateShelterDescriptionError,
     updateShelterDescriptionStatut,
     handleHTTPState,
+    sheltersData,
+    shelterId,
   ]);
 
   return (
