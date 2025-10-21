@@ -49,6 +49,7 @@ const Input: React.FC<InputOrTextareaProps> = ({
     return (
       <input
         {...input}
+        type={type}
         onClick={handleInputClick}
         onBlur={handleBlur}
         className={`${classes.form__input} ${
