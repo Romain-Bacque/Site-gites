@@ -167,7 +167,7 @@ const authController = {
         "../utilities/emailTemplate/confirmEmail.ejs"
       ),
       name: user.username,
-      email: process.env.ADMIN_EMAIL as string,
+      email: user.email as string,
       link,
     });
 
@@ -204,7 +204,7 @@ const authController = {
         "../utilities/emailTemplate/resetPassword.ejs"
       ),
       name: user.username,
-      email: process.env.ADMIN_EMAIL as string,
+      email: user.email as string,
       link,
     });
 
