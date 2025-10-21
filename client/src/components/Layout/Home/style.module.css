@@ -49,7 +49,7 @@
 
 .summary__label {
   font-weight: bold;
-  font-size: 3rem;
+  font-size: clamp(2rem, 3vw + 1rem, 3rem);
 }
 
 .summary__paragraphe {
