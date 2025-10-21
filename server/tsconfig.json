@@ -48,6 +48,6 @@
     ]
   },
   // include and exclude properties specify the files to be included and excluded from compilation.
-  "include": ["app"],
+  "include": ["app/**/*"],
   "exclude": ["node_modules"]
 }
