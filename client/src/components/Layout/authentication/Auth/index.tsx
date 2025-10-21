@@ -124,6 +124,11 @@ const Auth: React.FC = () => {
     if (loginStatut === HTTPStateKind.SUCCESS && !isNotRegistered) {
       dispatch(authActions.login());
       history.replace("/");
+    } else if (loginStatut === HTTPStateKind.ERROR) {
+      handleHTTPState(
+        HTTPStateKind.ERROR,
+        "Le nom d'utilisateur ou le mot de passe est incorrect."
+      );
     }
   }, [
     dispatch,
