@@ -47,9 +47,9 @@ const emailHandler = {
     if (!emailHandler.service || !emailHandler.emailFrom) {
       throw new Error("Email handler not initialized");
     }
+    console.log("SMTP password:", process.env.APP_PASSWORD);
+    
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: Number(process.env.SMTP_PORT) || 587,
       service: emailHandler.service,
       auth: {
         user: emailHandler.emailFrom,
