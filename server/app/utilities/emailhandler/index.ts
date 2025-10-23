@@ -48,8 +48,9 @@ const emailHandler = {
       throw new Error("Email handler not initialized");
     }
     const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: Number(process.env.SMTP_PORT) || 587,
       service: emailHandler.service,
-      port: 2525,
       auth: {
         user: emailHandler.emailFrom,
         pass: process.env.APP_PASSWORD,
