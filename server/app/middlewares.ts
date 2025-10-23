@@ -6,7 +6,7 @@ export const csrfProtection = csurf({
   cookie: {
     httpOnly: false,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    sameSite: "none",
   },
 });
 
@@ -33,7 +33,7 @@ export const createCSRFToken = (req: Request, res: Response): void => {
   res.cookie("XSRF-TOKEN", req.csrfToken(), {
     secure: process.env.NODE_ENV === "production",
     httpOnly: false,
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    sameSite: "none",
   });
 
   res.status(200).json({ csrfToken });
