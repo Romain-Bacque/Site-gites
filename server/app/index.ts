@@ -2,7 +2,7 @@ import "./utilities/mongooseConnect";
 
 import routerIndex from "./router";
 import cors from "cors";
-import express, { RequestHandler } from "express";
+import express from "express";
 import cookieParser from "cookie-parser";
 
 // Define a whitelist of allowed origins

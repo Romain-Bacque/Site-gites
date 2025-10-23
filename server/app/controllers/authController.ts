@@ -153,10 +153,8 @@ const authController = {
 
     const accessToken = generateAccessToken({ id: user.id });
     const link = `http${process.env.NODE_ENV === "production" ? "s" : ""}://${
-      process.env.HOST
-    }:${process.env.PORT}/authentification/email-confirm?id=${
-      user.id
-    }&token=${accessToken}`;
+      process.env.CORS_ORIGIN
+    }/authentification/email-confirm?id=${user.id}&token=${accessToken}`;
 
     await sendEmail({
       service: "gmail",
