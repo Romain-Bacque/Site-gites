@@ -51,9 +51,19 @@ const emailHandler = {
       service: emailHandler.service,
       auth: {
         user: emailHandler.emailFrom,
-        pass: process.env.APP_PASSWORD || "",
+        pass: process.env.APP_PASSWORD,
       },
     });
+
+    // ✅ Verify transporter before sending
+    try {
+      await transporter.verify();
+      console.log("✅ Transporter verified — ready to send emails.");
+    } catch (verifyErr) {
+      console.error("❌ Transporter verification failed:", verifyErr);
+      throw new Error("SMTP transporter verification failed.");
+    }
+
     const template = await emailHandler.createTemplate(name, link);
     const response = await transporter.sendMail({
       from: emailHandler.emailFrom,
