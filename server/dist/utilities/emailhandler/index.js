@@ -19,11 +19,11 @@ const emailHandler = {
         try {
             if (!emailHandler.template)
                 throw new Error("Template path not set");
-            const result = await ejs_1.default.renderFile(emailHandler.template, {
+            const html = await ejs_1.default.renderFile(emailHandler.template, {
                 name,
                 link,
             });
-            return result;
+            return html;
         }
         catch (err) {
             console.log(err);
@@ -40,6 +40,7 @@ const emailHandler = {
         }
         const transporter = nodemailer_1.default.createTransport({
             service: emailHandler.service,
+            secure: process.env.NODE_ENV === "production",
             auth: {
                 user: emailHandler.emailFrom,
                 pass: process.env.APP_PASSWORD,

@@ -28,11 +28,11 @@ const emailHandler = {
   async createTemplate(name: string, link: string): Promise<string | null> {
     try {
       if (!emailHandler.template) throw new Error("Template path not set");
-      const result = await ejs.renderFile(emailHandler.template, {
+      const html = await ejs.renderFile(emailHandler.template, {
         name,
         link,
       });
-      return result;
+      return html;
     } catch (err) {
       console.log(err);
       return null;
@@ -47,10 +47,11 @@ const emailHandler = {
     if (!emailHandler.service || !emailHandler.emailFrom) {
       throw new Error("Email handler not initialized");
     }
-    
+
     const transporter = nodemailer.createTransport({
-      service: emailHandler.service,
-      secure: process.env.NODE_ENV === "production",
+      host: "smtp.gmail.com",
+      port: 587, // TLS port
+      secure: false,
       auth: {
         user: emailHandler.emailFrom,
         pass: process.env.APP_PASSWORD,
