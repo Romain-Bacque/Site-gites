@@ -49,6 +49,7 @@ const emailHandler = {
     }
     const transporter = nodemailer.createTransport({
       service: emailHandler.service,
+      port: 2525,
       auth: {
         user: emailHandler.emailFrom,
         pass: process.env.APP_PASSWORD,
