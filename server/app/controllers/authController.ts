@@ -4,8 +4,8 @@ import jwt from "jsonwebtoken";
 import path from "path";
 import { User } from "../models";
 import ExpressError from "../utilities/ExpressError";
-import emailHandler from "../utilities/emailhandler";
 import axios from "axios";
+import { resendEmailHandler } from "../utilities/emailhandler";
 
 const debug = debugLib("controller:auth");
 
@@ -28,7 +28,6 @@ const generateAccessToken = (user: object) => {
 
 // Email sending helper
 async function sendEmail({
-  service,
   emailFrom,
   subject,
   templatePath,
@@ -44,14 +43,13 @@ async function sendEmail({
   email: string;
   link: string;
 }) {
-  emailHandler.init({
-    service,
+  resendEmailHandler.init({
     emailFrom,
     subject,
     template: templatePath,
   });
 
-  await emailHandler.sendEmail({
+  await resendEmailHandler.sendEmail({
     name,
     email,
     link,
@@ -152,13 +150,11 @@ const authController = {
     const user = new User({ username, password, email });
 
     const accessToken = generateAccessToken({ id: user.id });
-    const link = `http${process.env.NODE_ENV === "production" ? "s" : ""}://${
-      process.env.CORS_ORIGIN
-    }/authentification/email-confirm?id=${user.id}&token=${accessToken}`;
+    const link = `${process.env.CORS_ORIGIN}/authentification/email-confirm?id=${user.id}&token=${accessToken}`;
 
     await sendEmail({
       service: "gmail",
-      emailFrom: (process.env.EMAIL_FROM as string) || "",
+      emailFrom: (process.env.RESEND_EMAIL_FROM as string) || "",
       subject: "Email de confirmation",
       templatePath: path.join(
         __dirname,
@@ -195,7 +191,7 @@ const authController = {
 
     await sendEmail({
       service: "gmail",
-      emailFrom: (process.env.EMAIL_FROM as string) || "",
+      emailFrom: (process.env.RESEND_EMAIL_FROM as string) || "",
       subject: "Réinitialisation du mot de passe",
       templatePath: path.join(
         __dirname,
