@@ -26,18 +26,18 @@
 
   <!-- Pages admin publiques (non connecté) -->
   <url>
-    <loc>https://gites-ariege-erce.fr/admin/email-confirm</loc>
+    <loc>https://gites-ariege-erce.fr/auth/email-confirm</loc>
     <priority>0.4</priority>
   </url>
 
   <url>
-    <loc>https://gites-ariege-erce.fr/admin/forgot-password</loc>
+    <loc>https://gites-ariege-erce.fr/auth/forgot-password</loc>
     <priority>0.4</priority>
   </url>
 
   <!-- Exemple de page reset-password avec paramètres dynamiques -->
   <url>
-    <loc>https://gites-ariege-erce.fr/admin/reset-password/ID_EXEMPLE/TOKEN_EXEMPLE</loc>
+    <loc>https://gites-ariege-erce.fr/auth/reset-password/ID_EXEMPLE/TOKEN_EXEMPLE</loc>
     <priority>0.3</priority>
   </url>
 

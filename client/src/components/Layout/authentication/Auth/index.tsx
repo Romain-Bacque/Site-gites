@@ -230,7 +230,7 @@ const Auth: React.FC = () => {
             label="Mot de passe"
             forgotPassword={
               <Link
-                to="/admin/forgot-password"
+                to="/auth/forgot-password"
                 className={classes["auth__link"]}
               >
                 {!isNotRegistered && "Oublié ?"}

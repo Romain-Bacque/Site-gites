@@ -12,7 +12,7 @@ const emailhandler_1 = __importDefault(require("../utilities/emailhandler"));
 const axios_1 = __importDefault(require("axios"));
 const debug = (0, debug_1.default)("controller:auth");
 const redirectFn = (isValid) => {
-    return `${process.env.CORS_ORIGIN}/admin/email-confirm?isValid=${isValid}`;
+    return `${process.env.CORS_ORIGIN}/auth/email-confirm?isValid=${isValid}`;
 };
 const getCookieConfig = () => ({
     expires: new Date(Date.now() + 86400000), // 86400000ms = 24h

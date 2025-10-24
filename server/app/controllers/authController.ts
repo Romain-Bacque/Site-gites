@@ -10,7 +10,7 @@ import { resendEmailHandler } from "../utilities/emailhandler";
 const debug = debugLib("controller:auth");
 
 const redirectFn = (isValid: boolean) => {
-  return `${process.env.CORS_ORIGIN}/admin/email-confirm?isValid=${isValid}`;
+  return `${process.env.CORS_ORIGIN}/auth/email-confirm?isValid=${isValid}`;
 };
 
 const getCookieConfig = (): CookieOptions => ({
@@ -150,7 +150,7 @@ const authController = {
     const user = new User({ username, password, email });
 
     const accessToken = generateAccessToken({ id: user.id });
-    const link = `${process.env.CORS_ORIGIN}/authentification/email-confirm?id=${user.id}&token=${accessToken}`;
+    const link = `${process.env.CORS_ORIGIN}/auth/email-confirm?id=${user.id}&token=${accessToken}`;
 
     await sendEmail({
       service: "gmail",
@@ -187,7 +187,7 @@ const authController = {
       email: user.email,
     };
     const token = jwt.sign(payload, secret, { expiresIn: "24h" });
-    const link = `${process.env.CORS_ORIGIN}/reset-password/${user.id}/${token}`;
+    const link = `${process.env.CORS_ORIGIN}/auth/reset-password/${user.id}/${token}`;
 
     await sendEmail({
       service: "gmail",
