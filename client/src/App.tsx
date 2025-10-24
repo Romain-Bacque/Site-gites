@@ -63,7 +63,7 @@ const App: React.FC = () => {
             </Route>
           )}
           {!isAuth && (
-            <Route path="/auth/email-confirm/:id/:token">
+            <Route path="/auth/email-confirm">
               <EmailConfirmationPage />
             </Route>
           )}
@@ -73,7 +73,7 @@ const App: React.FC = () => {
             </Route>
           )}
           {!isAuth && (
-            <Route path="/auth/reset-password/:id/:token" exact>
+            <Route path="/auth/reset-password" exact>
               <ResetPasswordPage />
             </Route>
           )}
