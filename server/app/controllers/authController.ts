@@ -62,11 +62,17 @@ const authController = {
 
     if (!token) return res.sendStatus(401);
 
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string, (err: any) => {
-      if (err) {
-        res.sendStatus(401);
-      } else res.sendStatus(200);
-    });
+    jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_SECRET as string,
+      (err: any, payload: any) => {
+        if (err) {
+          res.sendStatus(401);
+        } else {
+          res.status(200).json({ userData: payload });
+        }
+      }
+    );
   },
 
   emailConfirmation: async function (req: Request, res: Response) {
@@ -122,8 +128,8 @@ const authController = {
     if (!user || !user.isEmailVerified) return res.sendStatus(401);
 
     const userData = {
-      password: user.password,
       username: user.username,
+      email: user.email,
     };
     const accessToken = generateAccessToken(userData);
 
@@ -131,14 +137,9 @@ const authController = {
       throw new ExpressError("no value in accessToken const", 500);
     }
 
-    res
-      .cookie("accessToken", accessToken, getCookieConfig())
-      .status(200)
-      .json({
-        userData: {
-          username: userData.username,
-        },
-      });
+    res.cookie("accessToken", accessToken, getCookieConfig()).status(200).json({
+      userData,
+    });
   },
 
   register: async function (req: Request, res: Response) {

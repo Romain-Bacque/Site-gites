@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import useInput from "../../../../hooks/use-input";
-import useHttp from "../../../../hooks/use-http";
+import useHTTPState from "../../../../hooks/use-http-state";
+import { useMyQuery, useMyMutation } from "../../../../hooks/use-query";
 
 import Card from "../../../UI/Card";
 import Input from "../../Input";
@@ -8,17 +9,26 @@ import classes from "../style.module.css";
 import { forgotPasswordRequest, getCSRF } from "../../../../lib/api";
 // types import
 import { UserData } from "./types";
-import { HTTPStateKind } from "../../../../global/types";
-import useHTTPState from "../../../../hooks/use-http-state";
 
 // component
 const ForgotPassword: React.FC = () => {
-    const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
+  // load CSRF on mount using the custom query hook
+  useMyQuery({
+    queryFn: getCSRF,
+    queryKey: ["getCSRF"],
+  });
+
   const {
-    sendHttpRequest: forgotPasswordHttpRequest,
-    statut: forgotPasswordStatut,
-    error: forgotPasswordErrorMessage,
-  } = useHttp(forgotPasswordRequest);
+    mutate: forgotPasswordMutate,
+    status: forgotPasswordStatus,
+    error: forgotPasswordError,
+  } = useMyMutation<UserData, any>({
+    mutationFn: forgotPasswordRequest,
+    // optional handlers can be passed here if you want to run side-effects on success/error
+    // onSuccessFn: () => {},
+    // onErrorFn: () => {},
+  });
+
   const {
     value: userEmailValue,
     isValid: userEmailIsValid,
@@ -27,6 +37,7 @@ const ForgotPassword: React.FC = () => {
     blurHandler: userEmailBlurHandler,
     resetHandler: userEmailResetHandler,
   } = useInput();
+
   const handleHTTPState = useHTTPState();
 
   const submitHandler = (event: React.FormEvent) => {
@@ -38,25 +49,28 @@ const ForgotPassword: React.FC = () => {
       email: userEmailValue,
     };
 
-    forgotPasswordHttpRequest(userData);
+    forgotPasswordMutate(userData);
   };
 
-  // login request loading handling
+  // mutation loading/finished handling (map to your global HTTP state)
   useEffect(() => {
-    if (forgotPasswordStatut) {
-      handleHTTPState(
-        forgotPasswordStatut
-      );
-    }
-    // clear input
-    if (forgotPasswordStatut === HTTPStateKind.SUCCESS) {
+    // derive an error message if needed (use the same helper you used elsewhere or map statuses)
+    const errorMessage =
+      (forgotPasswordError as any)?.response?.data?.message ||
+      (forgotPasswordError as any)?.message ||
+      "";
+
+    handleHTTPState(forgotPasswordStatus, errorMessage);
+
+    if (forgotPasswordStatus === "success") {
       userEmailResetHandler();
     }
-  }, [forgotPasswordErrorMessage, forgotPasswordStatut, handleHTTPState, userEmailResetHandler]);
-
-  useEffect(() => {
-    getCSRFttpRequest();
-  }, [getCSRFttpRequest]);
+  }, [
+    forgotPasswordStatus,
+    forgotPasswordError,
+    handleHTTPState,
+    userEmailResetHandler,
+  ]);
 
   return (
     <Card className={classes.auth}>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import Card from "../../UI/Card";
 import classes from "./style.module.css";
@@ -7,15 +8,12 @@ import gite1_large from "../../../img/gite1_large.jpg";
 import gite2_small from "../../../img/gite2_small.jpg";
 import gite2_large from "../../../img/gite2_large.jpg";
 import Alert from "../../UI/Alert";
-// types import
 import { AlertStatut } from "./types";
-import useHttp from "../../../hooks/use-http";
 import { getActivities } from "../../../lib/api";
 import Activities from "../Activities";
-import LoaderAndAlert from "../../UI/LoaderAndAlert";
 import { ArrowRightAlt } from "@mui/icons-material";
 import Button from "../../UI/Button";
-import { useHistory } from "react-router-dom";
+import { useMyQuery } from "hooks/use-query";
 
 // variable & constantes
 const initialState = {
@@ -24,32 +22,33 @@ const initialState = {
   show: false,
 };
 
-// component
 const Home: React.FC = () => {
   const history = useHistory();
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const [showModal, setShowModal] = useState(false);
+
+  // ✅ Remplacement du hook useHttp
   const {
-    sendHttpRequest,
     data: activities,
-    statut,
-    error,
-  } = useHttp(getActivities, "activities");
+    status,
+    refetch: fetchActivities,
+  } = useMyQuery({
+    queryFn: getActivities,
+    queryKey: ["activities"],
+    enabled: false,
+  });
 
   const handleFetchActivities = () => {
-    sendHttpRequest();
+    fetchActivities(); // fetch des activités à la demande
     setShowModal(true);
   };
 
   const renderDetailsButton = () => {
+    const width = window.innerWidth;
+    const size = width > 768 ? "lg" : width > 480 ? "md" : "sm";
+
     return (
-      <Button
-        fullWidth
-        size={
-          window.innerWidth > 768 ? "lg" : window.innerWidth > 480 ? "md" : "sm"
-        }
-        onClick={() => history.push("/gites")}
-      >
+      <Button fullWidth size={size} onClick={() => history.push("/gites")}>
         Voir les détails
       </Button>
     );
@@ -57,13 +56,13 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <LoaderAndAlert statut={statut} message={error ?? ""} />
       <Activities
-        httpStatut={statut}
+        httpStatut={status}
         onHide={() => setShowModal(false)}
         showModal={showModal}
         activities={activities}
       />
+
       <Alert
         message={alertStatut.message}
         alert={alertStatut.alert}

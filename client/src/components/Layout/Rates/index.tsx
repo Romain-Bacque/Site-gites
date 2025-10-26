@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useHttp from "../../../hooks/use-http";
+import { useMyQuery, useMyMutation } from "../../../hooks/use-query";
 import { getCSRF, ratesGetRequest, ratesPutRequest } from "../../../lib/api";
 import classes from "./style.module.css";
 import { useAppSelector } from "../../../hooks/use-store";
@@ -14,6 +14,7 @@ import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { HTTPStateKind } from "../../../global/types";
 import useHTTPState from "../../../hooks/use-http-state";
 import Button from "../../UI/Button";
+import { QueryClient } from "@tanstack/react-query";
 
 const initialState: AlertStatut = {
   message: null,
@@ -27,24 +28,46 @@ const initialPrices: PriceValues = {
   price3: null,
 };
 
+const queryClient = new QueryClient();
+
 const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   const [alertStatut, setAlertStatut] = useState(initialState);
   const [priceValues, setPriceValues] = useState(initialPrices);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const handleHTTPState = useHTTPState();
 
-  const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
+  // fetch CSRF token (mutation-style, run once)
+  const { refetch: fetchCSRF } = useMyQuery({
+    queryKey: ["csrf"],
+    queryFn: getCSRF,
+  });
+
+  // fetch rates for shelterId
   const {
-    sendHttpRequest: getRatesHttpRequest,
-    statut: getRatesStatut,
     data: getRatesData,
+    status: getRatesStatus,
     error: getRatesError,
-  } = useHttp(ratesGetRequest);
+  } = useMyQuery({
+    queryKey: ["rates", shelterId],
+    queryFn: () => ratesGetRequest(shelterId),
+    enabled: !!shelterId,
+  });
+
+  // put rates mutation
   const {
-    sendHttpRequest: putRatesHttpRequest,
-    statut: putRatesStatut,
+    mutate: putRatesMutate,
+    status: putRatesStatus,
     error: putRatesError,
-  } = useHttp(ratesPutRequest);
+  } = useMyMutation({
+    queryKeys: ["rates", shelterId],
+    mutationFn: (data: RatesPutRequestData) => ratesPutRequest(data),
+    onSuccessFn: (data: any) => {
+      // update the rates query data in the cache
+      queryClient.setQueryData(["rates", shelterId], (old: any) => {
+        return old ? [...old, data] : [data];
+      });
+    },
+  });
 
   const formIsValid =
     priceValues.price1 !== null &&
@@ -62,7 +85,7 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
       price3: Number(priceValues.price3),
     };
 
-    putRatesHttpRequest(data);
+    putRatesMutate(data);
   };
 
   const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +97,7 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   };
 
   useEffect(() => {
-    if (getRatesData && typeof getRatesData === "object") {
+    if (getRatesData) {
       setPriceValues({
         price1: getRatesData.price1,
         price2: getRatesData.price2,
@@ -84,12 +107,9 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   }, [getRatesData]);
 
   useEffect(() => {
-    getRatesHttpRequest(shelterId);
-  }, [getRatesHttpRequest, shelterId]);
-
-  useEffect(() => {
-    getCSRFttpRequest();
-  }, [getCSRFttpRequest]);
+    // initial CSRF fetch
+    fetchCSRF();
+  }, []);
 
   useEffect(() => {
     if (alertStatut.show) {
@@ -101,18 +121,14 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   }, [alertStatut.show]);
 
   useEffect(() => {
-    if (getRatesStatut) {
-      handleHTTPState(getRatesStatut);
-    }
-  }, [getRatesError, getRatesStatut, handleHTTPState]);
+    handleHTTPState(getRatesStatus);
+  }, [getRatesStatus, getRatesError, handleHTTPState]);
 
   useEffect(() => {
-    if (putRatesStatut) {
-      handleHTTPState(putRatesStatut);
-    } 
-  }, [handleHTTPState, putRatesError, putRatesStatut]);
+    handleHTTPState(putRatesStatus);
+  }, [putRatesStatus, putRatesError, handleHTTPState]);
 
-  if (getRatesStatut === HTTPStateKind.PENDING) {
+  if (getRatesStatus === "pending") {
     return null;
   }
 

@@ -1,8 +1,6 @@
-import { HTTPStateKind } from "../../../global/types";
-
 // type aliases
 export type ActivitiesProps = {
-  httpStatut: HTTPStateKind | null;
+  httpStatut: "pending" | "success" | "error" | "idle";
   showModal: boolean;
   onHide: () => void;
   activities: { title: string; address: string; link: string }[] | null;

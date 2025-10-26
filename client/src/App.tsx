@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./hooks/use-store";
-import useHttp from "./hooks/use-http";
 
 import { Route, Redirect, Switch, useHistory } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
@@ -8,36 +7,35 @@ import HomePage from "./pages/HomePage";
 import SheltersPage from "./pages/SheltersPage";
 import GalleryPage from "./pages/GalleryPage";
 import AuthPage from "./pages/AuthPage";
-import { loadUserInfos } from "./lib/api";
+import { userVerification } from "./lib/api";
 import { authActions } from "./store/auth";
 import AllBookingsPage from "./pages/AllBookingsPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-import { HTTPStateKind } from "./global/types";
 import EmailConfirmationPage from "./pages/EmailConfirmationPage";
 import { HelmetProvider } from "react-helmet-async";
+import { useMyQuery } from "./hooks/use-query";
 
 // component
 const App: React.FC = () => {
-  const {
-    sendHttpRequest: authCheckHttpRequest,
-    statut: authCheckRequestStatut,
-  } = useHttp(loadUserInfos);
-  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const dispatch = useAppDispatch();
   const history = useHistory();
   const pathname = history.location.pathname;
+  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
 
-  useEffect(() => {
-    authCheckHttpRequest();
-  }, [authCheckHttpRequest]);
+  const { isSuccess } = useMyQuery({
+    queryKey: ["userVerification"],
+    queryFn: userVerification,
+    showLoaderAndAlert: false,
+  });
+
 
   // 'isAuthentificated' store state property is set to true if user is authenticated
   useEffect(() => {
-    if (authCheckRequestStatut === HTTPStateKind.SUCCESS) {
+    if (isSuccess) {
       dispatch(authActions.login());
     }
-  }, [authCheckRequestStatut, dispatch]);
+  }, [isSuccess, dispatch]);
 
   useEffect(() => {
     if (pathname.includes("set-admin")) {

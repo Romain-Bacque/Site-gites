@@ -1,7 +1,7 @@
 import useInput from "../../../../hooks/use-input";
 import { Link, useHistory } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import useHttp from "../../../../hooks/use-http";
+import { useMyQuery, useMyMutation } from "../../../../hooks/use-query"; // adjust path
 import { useAppDispatch } from "../../../../hooks/use-store";
 
 import Input from "../../Input";
@@ -22,19 +22,59 @@ import Button from "../../../UI/Button";
 // component
 const Auth: React.FC = () => {
   const captchaRef = React.useRef<any>(null);
-  const { sendHttpRequest: fetchCSRFttpRequest } = useHttp(getCSRF);
   const { setCaptchaValue, captchaValue, verifyCaptcha } = useRecaptcha();
+
+  const dispatch = useAppDispatch();
+  const handleHTTPState = useHTTPState();
+  const history = useHistory();
+
+  // CSRF query (fire-and-forget)
+  useMyQuery({
+    queryKey: ["csrf"],
+    queryFn: () => getCSRF(),
+  });
+
+  // login mutation
   const {
-    sendHttpRequest: loginHttpRequest,
-    statut: loginStatut,
-    data: loginData,
-    error: loginErrorMessage,
-  } = useHttp(loginRequest);
+    mutate: loginMutate,
+    status: loginStatus,
+    error: loginError,
+  } = useMyMutation<LoginData, any>({
+    mutationFn: (data) => loginRequest(data),
+    onErrorFn: (_, errMessage) => {
+      handleHTTPState(
+        "error",
+        errMessage || "Le nom d'utilisateur ou le mot de passe est incorrect."
+      );
+    },
+    onSuccessFn: () => {
+      handleHTTPState("success");
+      dispatch(authActions.login());
+      history.replace("/");
+    },
+  });
+
+  // register mutation
   const {
-    sendHttpRequest: registerHttpRequest,
-    statut: registerStatut,
-    error: registerRequestErrorMsg,
-  } = useHttp(registerRequest);
+    mutate: registerMutate,
+    status: registerStatus,
+    error: registerError,
+  } = useMyMutation<{ email: string } & LoginData, any>({
+    mutationFn: (data) => registerRequest(data),
+    onErrorFn: (_, errMessage) => {
+      handleHTTPState(
+        "error",
+        errMessage ?? "Une erreur est survenue lors de l'inscription."
+      );
+    },
+    onSuccessFn: () => {
+      handleHTTPState(
+        "success",
+        "Inscription réussie ! Veuillez vérifier votre boîte mail pour activer votre compte."
+      );
+    },
+  });
+
   const {
     value: usernameValue,
     isValid: usernameIsValid,
@@ -62,9 +102,6 @@ const Auth: React.FC = () => {
   } = useInput();
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const [isNotRegistered, setIsNotRegistered] = useState(false);
-  const dispatch = useAppDispatch();
-  const handleHTTPState = useHTTPState();
-  const history = useHistory();
 
   let isFormValid: boolean;
 
@@ -79,29 +116,27 @@ const Auth: React.FC = () => {
 
     if (!isFormValid) return;
 
-    handleHTTPState(HTTPStateKind.PENDING);
+    handleHTTPState("pending");
 
     const isCaptchaValid = await verifyCaptcha();
 
     if (!isCaptchaValid) {
       handleHTTPState(
-        HTTPStateKind.ERROR,
+        "error",
         "Un problème est survenu lors de la vérification du captcha."
       );
       return;
     }
 
-    handleHTTPState(HTTPStateKind.SUCCESS);
-
-    let userData: LoginData = {
+    const userData: LoginData = {
       username: usernameValue,
       password: userPasswordValue,
     };
 
     if (isNotRegistered) {
-      registerHttpRequest({ ...userData, email: userEmailValue });
+      registerMutate({ ...userData, email: userEmailValue });
     } else {
-      loginHttpRequest(userData);
+      loginMutate(userData);
     }
   };
 
@@ -112,72 +147,17 @@ const Auth: React.FC = () => {
     setIsNotRegistered(!isNotRegistered);
   };
 
-  // get csrf token
-  useEffect(() => {
-    fetchCSRFttpRequest();
-  }, [fetchCSRFttpRequest]);
-
-  // login request HTTPState handling
-  useEffect(() => {
-    // if user is logged successfully, then we set 'isAuthentificated' to true in store,
-    // and redirect to home page
-    if (loginStatut === HTTPStateKind.SUCCESS && !isNotRegistered) {
-      dispatch(authActions.login());
-      history.replace("/");
-    } else if (loginStatut === HTTPStateKind.ERROR) {
-      handleHTTPState(
-        HTTPStateKind.ERROR,
-        "Le nom d'utilisateur ou le mot de passe est incorrect."
-      );
-    }
-  }, [
-    dispatch,
-    handleHTTPState,
-    history,
-    isNotRegistered,
-    loginData,
-    loginErrorMessage,
-    loginStatut,
-  ]);
-
-  // register request HTTPState handling
-  useEffect(() => {
-    if (registerStatut) {
-      handleHTTPState(
-        registerStatut,
-        registerStatut === HTTPStateKind.SUCCESS
-          ? "Inscription réussie ! Veuillez vérifier votre boîte mail pour activer votre compte."
-          : registerRequestErrorMsg ?? ""
-      );
-    }
-    // if user is registered successfully, then all input are cleared
-    if (registerStatut === HTTPStateKind.SUCCESS && isNotRegistered) {
-      usernameResetHandler();
-      userEmailResetHandler();
-      userPasswordResetHandler();
-    }
-  }, [
-    handleHTTPState,
-    isNotRegistered,
-    registerRequestErrorMsg,
-    registerStatut,
-    userEmailResetHandler,
-    userPasswordResetHandler,
-    usernameResetHandler,
-  ]);
-
   // reset captcha if login or register failed
   useEffect(() => {
     const shouldResetCaptcha =
-      (loginStatut === HTTPStateKind.ERROR ||
-        registerStatut === HTTPStateKind.ERROR) &&
+      (loginStatus === "error" || registerStatus === "error") &&
       captchaRef.current;
 
     if (shouldResetCaptcha) {
       captchaRef.current.reset();
       setCaptchaValue(null);
     }
-  }, [loginStatut, registerStatut, setCaptchaValue]);
+  }, [loginStatus, registerStatus, setCaptchaValue]);
 
   return (
     <Card className={classes.auth}>
@@ -262,10 +242,7 @@ const Auth: React.FC = () => {
             fullWidth
             size="xl"
             disabled={!isFormValid || !captchaValue}
-            loading={
-              loginStatut === HTTPStateKind.PENDING ||
-              registerStatut === HTTPStateKind.PENDING
-            }
+            loading={loginStatus === "pending" || registerStatus === "pending"}
             type="submit"
             className={`button ${classes["auth__button"]}`}
           >

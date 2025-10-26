@@ -1,8 +1,8 @@
 // hooks import
 import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../../hooks/use-http";
 import useInput from "../../../hooks/use-input";
 import { useAppDispatch } from "../../../hooks/use-store";
+import { useMyQuery, useMyMutation } from "../../../hooks/use-query";
 // types import
 import {
   BookingProps,
@@ -88,9 +88,15 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
     resetHandler: resetInfosHandler,
   } = useInput();
 
-  const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
-  const { sendHttpRequest: bookingHttpRequest, statut: bookingStatut } =
-    useHttp(bookingRequest);
+  // Use your custom hooks
+  useMyQuery({
+    queryKey: ["csrf"],
+    queryFn: getCSRF,
+  });
+
+  const { mutate: bookingMutate, status: bookingStatus } = useMyMutation({
+    mutationFn: bookingRequest,
+  });
 
   const isFormValid =
     nameIsValid &&
@@ -117,7 +123,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
 
     // if user input some complementary infos
     if (infosValue) userData.informations = infosValue;
-    bookingHttpRequest(userData);
+    bookingMutate(userData);
   };
 
   const handleCalendarDisplay: HandleCalendarDisplay = (input) => {
@@ -163,13 +169,11 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
       buttonsStyling: false,
     });
 
-    // handle HTTP state
-    if (bookingStatut) {
-      handleHTTPState(bookingStatut);
-    }
+    // handle HTTP state (react-query status)
+    handleHTTPState(bookingStatus);
 
-    // popup display
-    if (bookingStatut === HTTPStateKind.SUCCESS) {
+    // popup display (react-query statuses: "success" | "error")
+    if (bookingStatus === "success") {
       swalInstance.fire({
         title: "Demande Envoyée avec succès !",
         text: "Selon mes disponibilités, je la confirmerai par mail.",
@@ -182,16 +186,16 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
       resetFromHandler();
       resetToHandler();
       resetInfosHandler();
-    } else if (bookingStatut === HTTPStateKind.ERROR) {
+    } else if (bookingStatus === "error") {
       swalInstance.fire({
         title: "Echec de l'envoi de la demande",
         text: "Il y a peut-être une erreur dans un/plusieurs champs.",
         icon: "error",
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    dispatch,
-    bookingStatut,
+    bookingStatus,
     resetNameHandler,
     resetEmailHandler,
     resetPhoneHandler,
@@ -208,10 +212,6 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
       fromValueHandler("");
     }
   }, [fromValue, toValue, fromValueHandler]);
-
-  useEffect(() => {
-    getCSRFttpRequest();
-  }, [getCSRFttpRequest]);
 
   return (
     <div className={classes["booking-container"]}>

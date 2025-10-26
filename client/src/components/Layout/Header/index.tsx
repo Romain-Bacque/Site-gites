@@ -1,46 +1,40 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/use-store";
-
-import { Link } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import classes from "./style.module.css";
 import { authActions } from "../../../store/auth";
 import { menuActions } from "../../../store/menu";
 import { logoutRequest } from "../../../lib/api";
-import useHttp from "../../../hooks/use-http";
-import { HTTPStateKind } from "../../../global/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
-import useHTTPState from "../../../hooks/use-http-state";
+import { useMyMutation } from "hooks/use-query";
+import useHTTPState from "hooks/use-http-state";
 
 // component
 const Header: React.FC = () => {
+  const handleHTTPState = useHTTPState();
   const [scrollActive, setScrollActive] = useState(false);
-  const {
-    sendHttpRequest: sendLogoutHttpRequest,
-    statut: logoutStatut,
-    error: logoutErrorMessage,
-  } = useHttp(logoutRequest);
+  const dispatch = useAppDispatch();
+
   const isAdmin = useAppSelector((state) => state.auth.isAdmin);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const isMenuOpen = useAppSelector((state) => state.menu.isOpen);
-  const dispatch = useAppDispatch();
-  const handleHTTPState = useHTTPState();
+
+  // ✅ Mutation React Query pour le logout
+  const logoutMutation = useMyMutation({
+    mutationFn: logoutRequest,
+    onSuccess: () => {
+      dispatch(authActions.logout());
+    },
+    onErrorFn: (_error, errorMessage) => {
+      handleHTTPState("error", errorMessage);
+    }
+  });
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 40) {
-        setScrollActive(true);
-      } else {
-        setScrollActive(false);
-      }
-    };
-
+    const handleScroll = () => setScrollActive(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleToggleButton: MouseEventHandler<HTMLDivElement> = (event) => {
@@ -57,21 +51,9 @@ const Header: React.FC = () => {
     dispatch(menuActions.toggleMenu());
     if (isAuth) {
       event.preventDefault();
-      sendLogoutHttpRequest();
+      logoutMutation.mutate(null);
     }
   };
-
-  // logout
-  useEffect(() => {
-    if (logoutStatut === HTTPStateKind.SUCCESS) {
-      dispatch(authActions.logout());
-    }
-  }, [logoutStatut, dispatch]);
-
-  // loading
-  useEffect(() => {
-    handleHTTPState(logoutStatut, logoutErrorMessage ?? "");
-  }, [handleHTTPState, logoutErrorMessage, logoutStatut]);
 
   return (
     <header
@@ -88,6 +70,7 @@ const Header: React.FC = () => {
           </Link>
           <h1 className={classes.header__title}>Gîtes Du Quer.</h1>
         </div>
+
         {/* Toggle menu button */}
         <div
           onClick={handleToggleButton}
@@ -99,6 +82,7 @@ const Header: React.FC = () => {
           <div className={classes["menu-button__line"]}></div>
           <div className={classes["menu-button__line"]}></div>
         </div>
+
         <nav
           onClick={(event) => event.stopPropagation()}
           className={`${classes.header__nav} ${
@@ -110,7 +94,6 @@ const Header: React.FC = () => {
               <NavLink
                 onClick={handleCloseMenu}
                 className={classes.header__link}
-                activeClassName={classes["active-link"]}
                 to="/home"
               >
                 Accueil
@@ -120,7 +103,6 @@ const Header: React.FC = () => {
               <NavLink
                 onClick={handleCloseMenu}
                 className={classes.header__link}
-                activeClassName={classes["active-link"]}
                 to="/gites"
               >
                 Gîtes
@@ -129,8 +111,7 @@ const Header: React.FC = () => {
             <li className={classes.header__list}>
               <NavLink
                 onClick={handleCloseMenu}
-                className={`${classes.header__link}`}
-                activeClassName={classes["active-link"]}
+                className={classes.header__link}
                 to="/albums"
               >
                 Albums
@@ -140,8 +121,7 @@ const Header: React.FC = () => {
               <li className={classes.header__list}>
                 <NavLink
                   onClick={handleCloseMenu}
-                  className={`${classes.header__link}`}
-                  activeClassName={classes["active-link"]}
+                  className={classes.header__link}
                   to="/admin/allBookings"
                 >
                   Demandes
@@ -158,12 +138,14 @@ const Header: React.FC = () => {
               </Link>
             )}
           </ul>
+
           {isAuth && (
             <button
               className={`button button--alt ${classes.header__auth}`}
               onClick={handleLogout}
+              disabled={logoutMutation.isPending}
             >
-              Déconnexion
+              {logoutMutation.isPending ? "Déconnexion..." : "Déconnexion"}
             </button>
           )}
         </nav>

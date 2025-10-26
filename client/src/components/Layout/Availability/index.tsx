@@ -1,6 +1,5 @@
-// hooks import
 import { useEffect, useState } from "react";
-import useHttp from "../../../hooks/use-http";
+import { useMyQuery, useMyMutation } from "../../../hooks/use-query";
 // components import
 import BookingCalendar from "../BookingCalendar";
 // types import
@@ -19,8 +18,7 @@ import {
   getCSRF,
 } from "../../../lib/api";
 import classes from "./style.module.css";
-import { HTTPStateKind } from "../../../global/types";
-import useHTTPState from "../../../hooks/use-http-state";
+import useHTTPState from "hooks/use-http-state";
 
 // variable & constante
 let timer: NodeJS.Timeout;
@@ -32,39 +30,59 @@ const Availability: React.FC<AvailabilityProps> = ({
   onDateClick,
   onDateChoice,
 }) => {
+  const handleHTTPState = useHTTPState();
   const [showDoubleView, setShowDoubleView] = useState(false);
   const [disabledDates, setDisabledDates] = useState<DisabledDatesData>([]);
 
-  const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
-  const handleHTTPState = useHTTPState();
+  // fetch CSRF once on mount
+  useMyQuery({
+    queryKey: ["csrf"],
+    queryFn: getCSRF,
+  });
+
+  // fetch disabled dates (react-query will refetch when shelterId changes)
   const {
-    sendHttpRequest: getDisabledDatesHttpRequest,
-    statut: getDisabledDatesStatut,
     data: getDisabledDatesData,
+    status: getDisabledDatesStatus,
     error: getDisabledDatesError,
-  } = useHttp(getDatesRequest);
+  } = useMyQuery<DisabledDatesData>({
+    queryKey: ["disabledDates", shelterId],
+    queryFn: () => getDatesRequest(shelterId),
+  });
+
+  // post mutation -> on success update local disabledDates
   const {
-    sendHttpRequest: deleteDisabledDateHttpRequest,
-    statut: deleteDisabledDatesStatut,
-    data: deleteDisabledDatesData,
-  } = useHttp(deleteDateRequest);
+    mutate: postDisabledDateHttpRequest,
+    status: postDisabledDatesStatus,
+  } = useMyMutation<DateRequestData, DisabledDatesData>({
+    mutationFn: postDateRequest,
+    onSuccessFn: (data) => {
+      if (data) setDisabledDates(data);
+    },
+  });
+
+  // delete mutation -> on success update local disabledDates
   const {
-    sendHttpRequest: postDisabledDateHttpRequest,
-    statut: postDisabledDatesStatut,
-    data: postDisabledDatesData,
-  } = useHttp(postDateRequest);
+    mutate: deleteDisabledDateHttpRequest,
+    status: deleteDisabledDatesStatus,
+  } = useMyMutation<DateRequestData, DisabledDatesData>({
+    mutationFn: deleteDateRequest,
+    onSuccessFn: (data) => {
+      if (data) setDisabledDates(data);
+    },
+  });
 
   const formatDate = (date: Date) => dayjs(date).format("YYYY, MM, DD");
 
-  const handleDateClick: HandleDateClick = (selectedDate, disabledDates) => {
+  const handleDateClick: HandleDateClick = (selectedDate, disabledDatesArg) => {
     if (onDateClick) return onDateClick(selectedDate);
     clearTimeout(timer);
     // timer to prevent spam click and make the server crash
     timer = setTimeout(() => {
       const disabledDatesThatMatchSelectedDate =
-        disabledDates &&
-        disabledDates.length > 0 &&
-        disabledDates.filter(
+        disabledDatesArg &&
+        disabledDatesArg.length > 0 &&
+        disabledDatesArg.filter(
           (disabledDate) =>
             formatDate(selectedDate) === formatDate(disabledDate.from) ||
             formatDate(selectedDate) === formatDate(disabledDate.to)
@@ -116,50 +134,25 @@ const Availability: React.FC<AvailabilityProps> = ({
     };
   }, []);
 
-  // get all disabled dates at initialization
+  // update local disabledDates when fetch succeeds
   useEffect(() => {
-    getDisabledDatesHttpRequest(shelterId);
-  }, [getDisabledDatesHttpRequest, shelterId]);
-
-  useEffect(() => {
-    getCSRFttpRequest();
-  }, [getCSRFttpRequest]);
-
-  useEffect(() => {
-    if (
-      getDisabledDatesStatut === HTTPStateKind.SUCCESS &&
-      getDisabledDatesData
-    ) {
+    if (getDisabledDatesStatus === "success" && getDisabledDatesData) {
       setDisabledDates(getDisabledDatesData);
     }
-  }, [getDisabledDatesData, getDisabledDatesStatut]);
-
-  useEffect(() => {
-    if (
-      postDisabledDatesStatut === HTTPStateKind.SUCCESS &&
-      postDisabledDatesData
-    ) {
-      setDisabledDates(postDisabledDatesData);
-    }
-  }, [postDisabledDatesData, postDisabledDatesStatut]);
-
-  useEffect(() => {
-    if (
-      deleteDisabledDatesStatut === HTTPStateKind.SUCCESS &&
-      deleteDisabledDatesData
-    ) {
-      setDisabledDates(deleteDisabledDatesData);
-    }
-  }, [deleteDisabledDatesData, deleteDisabledDatesStatut]);
+  }, [getDisabledDatesData, getDisabledDatesStatus]);
 
   // get disabled dates request loading handling
   useEffect(() => {
-    handleHTTPState(getDisabledDatesStatut, getDisabledDatesError ?? "");
-  }, [getDisabledDatesError, getDisabledDatesStatut, handleHTTPState]);
+    if (getDisabledDatesError) {
+      handleHTTPState("error", getDisabledDatesError?.message);
+    } else {
+      handleHTTPState(getDisabledDatesStatus);
+    }
+  }, [getDisabledDatesError, getDisabledDatesStatus, handleHTTPState]);
 
   return (
     <>
-      {getDisabledDatesStatut === HTTPStateKind.SUCCESS && (
+      {getDisabledDatesStatus === "success" && (
         <div className={`${classes.calendar} ${classes[className]}`}>
           <BookingCalendar
             disabledDates={disabledDates}
@@ -175,7 +168,7 @@ const Availability: React.FC<AvailabilityProps> = ({
           </div>
         </div>
       )}
-      {getDisabledDatesStatut === HTTPStateKind.ERROR && (
+      {getDisabledDatesStatus === "error" && (
         <p className="text-center">Le calendrier est indisponible.</p>
       )}
     </>

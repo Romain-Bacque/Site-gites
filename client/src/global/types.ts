@@ -1,14 +1,14 @@
 // enums
-export enum HTTPStateKind {
-  PENDING = 1,
-  SUCCESS,
-  ERROR,
-  IDLE,
-}
+export type HTTPStateKind =
+  | "idle"
+  | "loading"
+  | "success"
+  | "error"
+  | "pending";
 export enum Status {
-  SEND = "SEND",
-  SUCCESS = "SUCCESS",
-  ERROR = "ERROR",
+  SEND = "send",
+  SUCCESS = "success",
+  ERROR = "error",
 }
 export enum AlertKind {
   INFO = "info",

@@ -26,7 +26,7 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = ({ statut, message }) => {
     useState<StatutMessage>(initialAlertState);
 
   useEffect(() => {
-    if (statut === HTTPStateKind.SUCCESS || statut === HTTPStateKind.ERROR) {
+    if (statut === "success" || statut === "error") {
       if (!message) return setAlertStatut(initialAlertState);
       setAlertStatut({
         message,
@@ -53,10 +53,10 @@ const LoaderAndAlert: React.FC<LoaderAndAlertProps> = ({ statut, message }) => {
 
   return (
     <>
-      {statut === HTTPStateKind.PENDING && (
+      {statut === "pending" && (
         <Loader message={message} />
       )}
-      {(statut === HTTPStateKind.SUCCESS || statut === HTTPStateKind.ERROR) && (
+      {(statut === "success" || statut === "error") && (
         <Alert
           message={alertStatut.message}
           alert={alertStatut.alertKind}

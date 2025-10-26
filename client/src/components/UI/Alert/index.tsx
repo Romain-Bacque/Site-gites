@@ -23,10 +23,10 @@ const Alert: React.FC<AlertProps> = ({
   onAlertClose,
 }) => {
   switch (alert) {
-    case HTTPStateKind.SUCCESS:
+    case "success":
       backgroundColorClass = "alert--green";
       break;
-    case HTTPStateKind.ERROR:
+    case "error":
       backgroundColorClass = "alert--red";
       break;
     default:

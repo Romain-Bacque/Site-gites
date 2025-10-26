@@ -2,13 +2,23 @@ import express from "express";
 import shelterController from "../controllers/shelterController";
 import catchAsync from "../utilities/catchAsync";
 import { validate } from "../validation/validate";
-import { postBookingSchema, putRatesSchema } from "../validation/schemas";
+import {
+  postBookingSchema,
+  putRatesSchema,
+  putShelterDescriptionSchema,
+} from "../validation/schemas";
 import { csrfProtection } from "../middlewares";
 
 const router = express.Router();
 
 router.get("/activities", catchAsync(shelterController.getActivities));
 router.get("/shelters", catchAsync(shelterController.getShelters));
+router.put(
+  "/shelters/:id",
+  csrfProtection,
+  validate(putShelterDescriptionSchema),
+  catchAsync(shelterController.updateShelterDescription)
+);
 router.post(
   "/booking",
   csrfProtection,

@@ -28,6 +28,34 @@ const shelterController = {
     } else throw new ExpressError("Internal Server Error", 500);
   },
 
+  updateShelterDescription: async function (req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { description } = req.body;
+
+      if (!id || !description) {
+        throw new ExpressError("Missing required fields", 400);
+      }
+
+      const updatedShelter = await Shelter.findByIdAndUpdate(
+        id,
+        { description },
+        { new: true } // return the updated document if true
+      );
+
+      if (!updatedShelter) {
+        throw new ExpressError("Shelter not found", 404);
+      }
+
+      const shelters = await Shelter.find({});
+
+      res.status(200).json({ sheltersData: shelters });
+    } catch (error) {
+      console.error(error);
+      throw new ExpressError("Internal Server Error", 500);
+    }
+  },
+
   getActivities: async (_: Request, res: Response): Promise<void> => {
     const browser = await puppeteer.launch({
       headless: true,

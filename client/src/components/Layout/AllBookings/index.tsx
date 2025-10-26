@@ -1,12 +1,9 @@
-// hooks import
+// Note: adjust the import path for useMyQuery / useMyMutation to wherever you placed the new hooks file.
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import useHttp from "../../../hooks/use-http";
-// components import
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "../../UI/Modal";
 import { Swiper, SwiperSlide } from "swiper/react";
 import BookingCard from "./BookingCard";
-// types import
 import {
   SortKind,
   BookingRef,
@@ -15,7 +12,6 @@ import {
   ModalState,
 } from "./types";
 import { HTTPStateKind } from "../../../global/types";
-// other import
 import {
   bookingsGetRequest,
   acceptBookingRequest,
@@ -33,6 +29,9 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import useHTTPState from "../../../hooks/use-http-state";
 import Button from "../../UI/Button";
+
+// New hooks
+import { useMyQuery, useMyMutation } from "../../../hooks/use-query";
 
 dayjs().format();
 
@@ -52,25 +51,51 @@ const AllBookings: React.FC = () => {
   const bookingRef = useRef<BookingRef>(initialBookingRefState);
   const handleHTTPState = useHTTPState();
 
-  const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
+  // fetch bookings
   const {
-    sendHttpRequest: getBookingsHttpRequest,
-    statut: fetchBookingsRequestStatut,
     data: fetchBookingsRequestData,
+    status: fetchBookingsRequestStatut,
     error: fetchBookingRequestError,
-  } = useHttp(bookingsGetRequest);
+  } = useMyQuery({
+    queryKey: ["bookings"],
+    queryFn: bookingsGetRequest,
+  });
+
+  // get CSRF
+  useMyQuery({
+    queryKey: ["csrf"],
+    queryFn: getCSRF,
+  });
+
+  // accept mutation
   const {
-    sendHttpRequest: acceptBookingHttpRequest,
-    statut: acceptBookingStatut,
-    data: acceptBookingsRequestData,
-    error: acceptBookingRequestError,
-  } = useHttp(acceptBookingRequest);
+    mutate: acceptBookingMutate,
+    status: acceptBookingStatus,
+    error: acceptBookingError,
+  } = useMyMutation({
+    mutationFn: acceptBookingRequest,
+    onSuccessFn: (data) => {
+      setBookingsList(data);
+    },
+    onErrorFn: (_err: any, message: string) => {
+      handleHTTPState("error", message);
+    },
+  });
+
+  // refuse mutation
   const {
-    sendHttpRequest: refuseBookingHttpRequest,
-    statut: refuseBookingStatut,
-    data: refuseBookingsRequestData,
-    error: refuseBookingRequestError,
-  } = useHttp(refuseBookingRequest);
+    mutate: refuseBookingMutate,
+    status: refuseBookingStatus,
+    error: refuseBookingError,
+  } = useMyMutation({
+    mutationFn: refuseBookingRequest,
+    onSuccessFn: (data) => {
+      setBookingsList(data);
+    },
+    onErrorFn: (_err: any, message: string) => {
+      handleHTTPState("error", message);
+    },
+  });
 
   const handleBookingSubmit = useCallback(
     async (event: React.FormEvent) => {
@@ -78,14 +103,15 @@ const AllBookings: React.FC = () => {
       setShowModal(initialModalState);
 
       if (bookingRef.current.value) {
+        const id = bookingRef.current.value.bookingId;
         if (bookingRef.current.bookingChoice === "accept") {
-          acceptBookingHttpRequest(bookingRef.current.value.bookingId);
+          acceptBookingMutate(id);
         } else {
-          refuseBookingHttpRequest(bookingRef.current.value.bookingId);
+          refuseBookingMutate(id);
         }
       }
     },
-    [acceptBookingHttpRequest, refuseBookingHttpRequest]
+    [acceptBookingMutate, refuseBookingMutate]
   );
 
   const sendEmailToClient = useCallback(async () => {
@@ -100,19 +126,19 @@ const AllBookings: React.FC = () => {
       message: textareaValue,
     };
 
-    delete template.bookingId;
+    delete (template as any).bookingId;
 
     try {
       const response = await emailHandler.sendEmail(template);
 
       if (response.status !== 200) throw new Error();
       handleHTTPState(
-        HTTPStateKind.SUCCESS,
+        "success",
         "Modification enregistrée, un mail de confirmation vous a été envoyé."
       );
     } catch (err) {
       handleHTTPState(
-        HTTPStateKind.ERROR,
+        "error",
         "Modification enregistrée, mais echec de l'envoi du mail de confirmation."
       );
     }
@@ -126,10 +152,8 @@ const AllBookings: React.FC = () => {
   // Display the email form, then fill it out (optionnal) to send an email to the client
   const handleEmailFormDisplay: handleEmailFormDisplay = useCallback(
     (bookingChoice, data) => {
-      // Store the datas in a ref
       bookingRef.current.value = data;
       bookingRef.current.bookingChoice = bookingChoice;
-      // Show the modal
       setShowModal({
         isSorted: false,
         booking: true,
@@ -142,15 +166,14 @@ const AllBookings: React.FC = () => {
   const handleSort = useCallback(
     (sort: SortKind | null) => {
       if (sort) {
-        const arrayToSort = bookingsList;
+        const arrayToSort = [...bookingsList];
 
         arrayToSort.sort((a, b) => {
           let result = 0;
 
           switch (sort) {
             case SortKind.DATE_DECREASING:
-              // valueOf() return the actual date value in milliseconds since midnight, January 1, 1970, to fit with TS constraint
-              result = new Date(a.from).valueOf() - new Date(b.from).valueOf(); // valueOf is used to convert a Date object to a number, the number of milliseconds since January 1, 1970
+              result = new Date(a.from).valueOf() - new Date(b.from).valueOf();
               break;
             case SortKind.DATE_INCREASING:
               result = new Date(b.from).valueOf() - new Date(a.from).valueOf();
@@ -159,7 +182,7 @@ const AllBookings: React.FC = () => {
               result = new Date(a.from).valueOf() - new Date(b.from).valueOf();
               break;
             case SortKind.BOOKED:
-              result = +b.booked - +a.booked; // +true = 1, +false = 0
+              result = +b.booked - +a.booked;
               break;
             default:
               console.log("an error has occured.");
@@ -174,65 +197,52 @@ const AllBookings: React.FC = () => {
     [bookingsList]
   );
 
-  // get all bookings list
-  useEffect(() => {
-    getBookingsHttpRequest();
-  }, [getBookingsHttpRequest]);
-
-  useEffect(() => {
-    getCSRFttpRequest();
-  }, [getCSRFttpRequest]);
-
   // refresh bookings list display on the screen
   useEffect(() => {
-    fetchBookingsRequestData && setBookingsList(fetchBookingsRequestData);
+    if (fetchBookingsRequestData) setBookingsList(fetchBookingsRequestData);
   }, [fetchBookingsRequestData]);
 
+  // map react-query mutation statuses to your HTTPStateKind and trigger email sending
   useEffect(() => {
-    acceptBookingsRequestData && setBookingsList(acceptBookingsRequestData);
-  }, [acceptBookingsRequestData]);
-
-  useEffect(() => {
-    refuseBookingsRequestData && setBookingsList(refuseBookingsRequestData);
-  }, [refuseBookingsRequestData]);
-
-  // get booking request loading statut
-  useEffect(() => {
-    if (fetchBookingsRequestStatut) {
-      handleHTTPState(
-        fetchBookingsRequestStatut,
-        fetchBookingRequestError ?? ""
-      );
+    if (
+      acceptBookingStatus === "pending" ||
+      refuseBookingStatus === "pending"
+    ) {
+      handleHTTPState("pending");
+    } else if (
+      acceptBookingStatus === "success" ||
+      refuseBookingStatus === "success"
+    ) {
+      // on success, send email
+      sendEmailToClient();
+    } else if (
+      acceptBookingStatus === "error" ||
+      refuseBookingStatus === "error"
+    ) {
+      // extract messages from errors if present
+      const message = acceptBookingError ?? refuseBookingError ? "" : "";
+      handleHTTPState("error", message);
     }
-  }, [fetchBookingsRequestStatut, fetchBookingRequestError, handleHTTPState]);
-
-  // accept booking request handling
-  // handle booking request (accept or refuse)
-  useEffect(() => {
-    const handleStatut = (
-      statut: HTTPStateKind | null,
-      error: string | null
-    ) => {
-      if (!statut) return;
-      if (statut === HTTPStateKind.PENDING) {
-        handleHTTPState(HTTPStateKind.PENDING);
-      } else if (statut === HTTPStateKind.SUCCESS) {
-        sendEmailToClient();
-      } else if (statut === HTTPStateKind.ERROR) {
-        handleHTTPState(statut, error ?? "");
-      }
-    };
-
-    handleStatut(acceptBookingStatut, acceptBookingRequestError);
-    handleStatut(refuseBookingStatut, refuseBookingRequestError);
   }, [
-    acceptBookingStatut,
-    acceptBookingRequestError,
-    refuseBookingStatut,
-    refuseBookingRequestError,
+    acceptBookingStatus,
+    refuseBookingStatus,
+    acceptBookingError,
+    refuseBookingError,
     handleHTTPState,
     sendEmailToClient,
   ]);
+
+  // show fetch status messages
+  useEffect(() => {
+    const message = fetchBookingRequestError ? "" : "";
+    const mapped =
+      fetchBookingsRequestStatut === "pending"
+        ? "pending"
+        : fetchBookingsRequestStatut === "success"
+        ? "success"
+        : "error";
+    handleHTTPState(mapped, message);
+  }, [fetchBookingsRequestStatut, fetchBookingRequestError, handleHTTPState]);
 
   return (
     <>
@@ -251,6 +261,8 @@ const AllBookings: React.FC = () => {
                 className={classes["message-form__textarea"]}
                 rows={10}
                 cols={25}
+                value={textareaValue}
+                onChange={(e) => setTextareaValue(e.target.value)}
               />
               <div className="button-container">
                 <Button type="submit">Envoyer</Button>
@@ -287,7 +299,7 @@ const AllBookings: React.FC = () => {
             </Button>
           ) : null}
         </div>
-        {fetchBookingsRequestStatut === HTTPStateKind.SUCCESS &&
+        {fetchBookingsRequestStatut === "success" &&
           (bookingsList?.length > 0 ? (
             <Swiper
               modules={[Navigation, Pagination]}

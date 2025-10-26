@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 
 import classes from "./style.module.css";
 import Booking from "../Booking";
@@ -6,21 +6,18 @@ import Rates from "../Rates";
 import Slider from "../../UI/slider/Slider";
 import Availability from "../Availability";
 
-// types import
 import { SheltersItemsProps, Tab, TabKind } from "./types";
 import { ImageNotSupported } from "@mui/icons-material";
 import Card from "../../UI/Card";
 import { useAppSelector } from "../../../hooks/use-store";
 import Button from "../../../components/UI/Button";
 import Input from "../Input";
-import useHttp from "../../../hooks/use-http";
+import { useMyMutation } from "../../../hooks/use-query";
 import useHTTPState from "../../../hooks/use-http-state";
 import { updateShelterDescriptionRequest } from "../../../lib/api";
 
-// variable & contante
 let formContent: ReactNode = null;
 
-// component
 const SheltersItems: React.FC<SheltersItemsProps> = ({
   shelterId,
   title,
@@ -28,15 +25,15 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
   images,
 }) => {
   const [shelterStatut, setShelterStatut] = useState<Tab>({ tab: null });
-  const [descriptionText, setDescriptionText] = useState<string>("");
-  const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
+  const [descriptionText, setDescriptionText] = useState(description || "");
+  const isAuth = useAppSelector(({ auth }) => auth.isAuthentificated);
   const handleHTTPState = useHTTPState();
-  const {
-    sendHttpRequest: updateShelterDescriptionHTTPRequest,
-    data: sheltersData,
-    statut: updateShelterDescriptionStatut,
-    error: updateShelterDescriptionError,
-  } = useHttp(updateShelterDescriptionRequest);
+
+  // Mutation pour mettre à jour la description
+  const { mutate: updateDescription, status: updateStatus } = useMyMutation({
+    mutationFn: updateShelterDescriptionRequest,
+    statusMessage: "Mise à jour de la description...",
+  });
 
   const descriptionTextToShow = descriptionText || description || "";
 
@@ -55,23 +52,28 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
     value: TabKind
   ) => {
     event.stopPropagation();
-
-    setShelterStatut((prevState) => {
-      if (prevState.tab === value) {
-        return { tab: null };
-      }
-      return { tab: value };
-    });
+    setShelterStatut((prevState) => ({
+      tab: prevState.tab === value ? null : value,
+    }));
   };
 
-  const handleDescriptionSave = (description: string) => {
-    updateShelterDescriptionHTTPRequest({ id: shelterId, description });
+  const submitDescriptionHandler = (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    if (!isAuth) return;
+
+    const descriptionToUpdate = descriptionText.trim();
+    if (!descriptionToUpdate) return;
+
+    handleHTTPState("pending");
+    updateDescription({ id: shelterId, description: descriptionToUpdate });
   };
 
   const renderDescriptionContent = () => {
     if (isAuth) {
       return (
-        <div>
+        <form onSubmit={submitDescriptionHandler}>
           <Input
             type="textarea"
             className={classes["gites__description-textarea"]}
@@ -81,14 +83,14 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
             onChange={(e) => setDescriptionText(e.target.value)}
           />
           <Button
+            type="submit"
             fullWidth
-            onClick={() => handleDescriptionSave(descriptionText)}
             className={classes["gites__description-button"]}
-            loading={updateShelterDescriptionStatut === 2}
+            loading={updateStatus === "pending"}
           >
             Enregistrer
           </Button>
-        </div>
+        </form>
       );
     } else {
       return description ? (
@@ -100,25 +102,6 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
       );
     }
   };
-
-  useEffect(() => {
-    if (!updateShelterDescriptionError) {
-      handleHTTPState(updateShelterDescriptionStatut);
-      const shelterDescription =
-        sheltersData?.find((shelter) => shelter._id === shelterId)
-          ?.description || "";
-
-      setDescriptionText(shelterDescription);
-    } else {
-      handleHTTPState(3, updateShelterDescriptionError);
-    }
-  }, [
-    updateShelterDescriptionError,
-    updateShelterDescriptionStatut,
-    handleHTTPState,
-    sheltersData,
-    shelterId,
-  ]);
 
   return (
     <Card className={classes.gite__card}>

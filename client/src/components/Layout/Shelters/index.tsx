@@ -1,39 +1,31 @@
-// hooks import
-import useHttp from "../../../hooks/use-http";
-import { useEffect } from "react";
-import useHTTPState from "../../../hooks/use-http-state";
 // components import
 import classes from "./style.module.css";
 import ShelterItem from "../ShelterItem";
 // types import
 import { getSheltersWithPicturesRequest } from "../../../lib/api";
-import { HTTPStateKind } from "../../../global/types";
+import { useMyQuery } from "hooks/use-query";
 
 // component
 const Shelters: React.FC = () => {
-  const handleHTTPState = useHTTPState();
-  const {
-    sendHttpRequest: getShelterHttpRequest,
-    statut: getSheltersRequestStatut,
-    data: sheltersData,
-    error: getSheltersRequestError,
-  } = useHttp(getSheltersWithPicturesRequest, "shelters");
+  const { data: sheltersData, status } = useMyQuery({
+    queryFn: getSheltersWithPicturesRequest,
+    queryKey: ["shelters"],
+  });
 
-  useEffect(() => {
-    getShelterHttpRequest();
-  }, [getShelterHttpRequest]);
+  if (status === "pending") {
+    return (
+      <section>
+        <p className="text-center">Chargement des gîtes...</p>
+      </section>
+    );
+  }
 
-  // shelters request loading handling
-  useEffect(() => {
-    if (!getSheltersRequestError) {
-      handleHTTPState(getSheltersRequestStatut);
-    } else {
-      handleHTTPState(3, getSheltersRequestError);
-    }
-  }, [getSheltersRequestError, getSheltersRequestStatut, handleHTTPState]);
-
-  if (getSheltersRequestStatut === HTTPStateKind.PENDING) {
-    return <p className="text-center">Chargement des gîtes...</p>;
+  if (status === "error" || !sheltersData || sheltersData.length === 0) {
+    return (
+      <section>
+        <p className="text-center">Les gîtes sont indisponibles.</p>
+      </section>
+    );
   }
 
   return (

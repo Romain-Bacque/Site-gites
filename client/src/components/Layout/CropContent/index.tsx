@@ -1,18 +1,11 @@
-import { useAppDispatch } from "../../../hooks/use-store";
-import React, { MouseEventHandler, useCallback, useState } from "react";
-
+import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
 import Cropper, { Area } from "react-easy-crop";
 import classes from "./style.module.css";
 import getCroppedImg from "./lib/cropImage";
 // types import
 import { CropContentProps } from "./types";
-import { loadingActions } from "../../../store/loading";
-import { HTTPStateKind } from "../../../global/types";
 import useHTTPState from "../../../hooks/use-http-state";
 
-let cropDatas: [string, Area];
-
-// component
 const CropContent: React.FC<CropContentProps> = ({
   shelterId,
   url,
@@ -20,12 +13,13 @@ const CropContent: React.FC<CropContentProps> = ({
 }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const dispatch = useAppDispatch();
   const handleHTTPState = useHTTPState();
+
+  const cropDatasRef = useRef<[string, Area] | null>(null);
 
   const handleCropComplete = useCallback(
     (_: Area, croppedAreaPixels: Area) => {
-      cropDatas = [url, croppedAreaPixels];
+      cropDatasRef.current = [url, croppedAreaPixels];
     },
     [url]
   );
@@ -35,12 +29,16 @@ const CropContent: React.FC<CropContentProps> = ({
   ) => {
     event.preventDefault();
 
+    if (!cropDatasRef.current) return;
+
     try {
-      dispatch(loadingActions.setStatut(HTTPStateKind.PENDING));
+      // set pending state
+      handleHTTPState("pending");
 
-      const file = await getCroppedImg(cropDatas[0], cropDatas[1]);
-
-      dispatch(loadingActions.setStatut(HTTPStateKind.SUCCESS));
+      const file = await getCroppedImg(
+        cropDatasRef.current[0],
+        cropDatasRef.current[1]
+      );
 
       const formData = new FormData();
       formData.append("shelterId", shelterId);
@@ -48,7 +46,7 @@ const CropContent: React.FC<CropContentProps> = ({
 
       onImagePost(formData);
     } catch (err: any) {
-      handleHTTPState(HTTPStateKind.ERROR, err);
+      handleHTTPState("error", err?.message ?? "Une erreur est survenue.");
     }
   };
 

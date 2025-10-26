@@ -8,7 +8,7 @@ let instance = axios.create({
 });
 
 // // CSRF
-interface CSRFRequestResponseData {
+export interface CSRFRequestResponseData {
   csrfToken: string;
 }
 
@@ -37,11 +37,11 @@ export const recaptchaRequest = async (data: { recaptchaToken: string }) => {
 };
 
 // Login
-interface LoginRequestData {
+export interface LoginRequestData {
   password: string;
   username: string;
 }
-interface LoginRequestResponseData {
+export interface LoginRequestResponseData {
   userData: { username: string };
 }
 
@@ -57,7 +57,7 @@ export const loginRequest = async (data: LoginRequestData) => {
 };
 
 // Register
-interface RegisterRequestData extends LoginRequestData {
+export interface RegisterRequestData extends LoginRequestData {
   email: string;
 }
 
@@ -68,7 +68,7 @@ export const registerRequest = async (data: RegisterRequestData) => {
 };
 
 // forgot password
-interface ForgotPasswordRequestData {
+export interface ForgotPasswordRequestData {
   email: string;
 }
 
@@ -84,10 +84,13 @@ export const forgotPasswordRequest = async (
 };
 
 // reset password
-type ResetPasswordRequestData = Record<"id" | "token" | "password", string>;
+export type ResetPasswordRequestData = Record<
+  "id" | "token" | "password",
+  string
+>;
 
 export const resetPasswordRequest = async (data: ResetPasswordRequestData) => {
-  const response = await instance.patch(
+  const response = await instance.patch<ResetPasswordRequestData>(
     `/authentification/reset-password/${data.id}/${data.token}`,
     { password: data.password }
   );
@@ -103,15 +106,26 @@ export const logoutRequest = async () => {
 };
 
 // Token verification
-export const loadUserInfos = async () => {
-  const response = await instance.get("/authentification/userVerification");
+export interface UserData {
+  userData: {
+    name: string;
+    email: string;
+  };
+}
+
+export const userVerification = async () => {
+  const response = await instance.get<UserData>(
+    "/authentification/userVerification"
+  );
 
   if (response.status !== 200) throw new Error();
+
+  return response.data.userData;
 };
 
 // // SHELTERS
 
-interface getSheltersWithPicturesRequestResponseData {
+export interface getSheltersWithPicturesRequestResponseData {
   sheltersData: {
     _id: string;
     title: string;
@@ -128,7 +142,7 @@ interface getSheltersWithPicturesRequestResponseData {
 }
 
 // Get Shelters
-type getSheltersResponseData = {
+export type getSheltersResponseData = {
   sheltersData: { _id: string; title: string; number: number }[];
 };
 
@@ -177,7 +191,7 @@ export const postPictureRequest = async (data: FormData) => {
       "/admin/gallery",
       data,
       {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-export Type": "multipart/form-data" },
       }
     );
 
@@ -201,7 +215,7 @@ export const deletePictureRequest = async (id: string) => {
 // // BOOKING
 
 // Get Bookings
-interface BookingsRequestResponseData {
+export interface BookingsRequestResponseData {
   bookingsData: {
     _id: string;
     name: string;
@@ -231,7 +245,7 @@ export const bookingsGetRequest = async () => {
 };
 
 // Post Booking
-interface bookingRequestData {
+export interface bookingRequestData {
   shelterId: string;
   name: string;
   phone: string;
@@ -296,7 +310,7 @@ export const getDatesRequest = async (shelterId: string) => {
 };
 
 // post booked date
-interface DateRequestData {
+export interface DateRequestData {
   shelterId: string;
   selectedDate: Date;
 }
@@ -327,7 +341,7 @@ export const deleteDateRequest = async (data: DateRequestData) => {
 // // RATES
 
 // Get Rates
-interface RatesPutRequestResponseData {
+export interface RatesPutRequestResponseData {
   ratesData: {
     price1: number;
     price2: number;
@@ -347,7 +361,7 @@ export const ratesGetRequest = async (shelterId: string) => {
 };
 
 // Edit Rates
-interface RatesPutRequestData {
+export interface RatesPutRequestData {
   shelterId: string;
   price1: number;
   price2: number;
@@ -366,7 +380,7 @@ export const ratesPutRequest = async (data: RatesPutRequestData) => {
 };
 
 // Sightseeing
-type ActivitiesRequestResponseData = {
+export type ActivitiesRequestResponseData = {
   data: {
     title: string;
     address: string;

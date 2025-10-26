@@ -1,8 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { HTTPStateKind } from "../global/types";
 
-const initialState = {
-  statut: HTTPStateKind.IDLE,
+interface LoadingState {
+  statut: HTTPStateKind;
+  message: string;
+}
+
+const initialState: LoadingState = {
+  statut: "idle",
   message: "",
 };
 

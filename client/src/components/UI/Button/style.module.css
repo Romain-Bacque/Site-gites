@@ -1,5 +1,5 @@
 .button {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
@@ -9,7 +9,8 @@
   cursor: pointer;
   font-weight: 700;
   border: none;
-  max-width: 400px;
+  max-width: 400px;  
+  margin: auto;
 }
 
 .button:focus {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useHttp from "../../../hooks/use-http";
+import { useMyQuery, useMyMutation } from "../../../hooks/use-query";
 import {
   deletePictureRequest,
   getCSRF,
@@ -11,7 +11,6 @@ import CropContent from "../CropContent";
 import useHTTPState from "../../../hooks/use-http-state";
 import GalleryItem from "../GalleryItem";
 import { ShelterType } from "./types";
-import { HTTPStateKind } from "../../../global/types";
 
 // variable & constante
 const initialModalState = {
@@ -27,25 +26,54 @@ const initialMessageState = {
 
 // component
 const Gallery: React.FC = () => {
-  const { sendHttpRequest: getCSRFttpRequest } = useHttp(getCSRF);
+  const handleHTTPState = useHTTPState();
+
+  // queries
+  useMyQuery({
+    queryKey: ["csrf"],
+    queryFn: getCSRF,
+  });
+
   const {
-    sendHttpRequest: getPictureHttpRequest,
-    statut: getPictureStatut,
-    data: getPictureRequestData,
-    error: getPictureRequestError,
-  } = useHttp(getSheltersWithPicturesRequest);
+    data: sheltersQueryData,
+    status: sheltersStatus,
+    error: sheltersQueryError,
+  } = useMyQuery({
+    queryKey: ["sheltersWithPictures"],
+    queryFn: getSheltersWithPicturesRequest,
+  });
+
+  // mutations
   const {
-    sendHttpRequest: postPictureHttpRequest,
-    statut: postPictureStatut,
-    data: postPictureRequestData,
-    error: postPictureRequestError,
-  } = useHttp(postPictureRequest);
+    mutate: postPictureMutate,
+    status: postPictureStatus,
+    error: postPictureError,
+  } = useMyMutation({
+    mutationFn: postPictureRequest,
+    onSuccessFn: (data) => {
+      data && setSheltersData(data);
+      handleHTTPState("success", "Image ajoutée avec succès.");
+    },
+    onErrorFn: (_error, errorMessage) => {
+      handleHTTPState("error", errorMessage);
+    },
+  });
+
   const {
-    sendHttpRequest: deletePictureHttpRequest,
-    statut: deletePictureStatut,
-    data: deletePictureRequestData,
-    error: deletePictureRequestError,
-  } = useHttp(deletePictureRequest);
+    mutate: deletePictureMutate,
+    status: deletePictureStatus,
+    error: deletePictureError,
+  } = useMyMutation({
+    mutationFn: deletePictureRequest,
+    onSuccessFn: (data) => {
+      data && setSheltersData(data);
+      handleHTTPState("success", "Image supprimée avec succès.");
+    },
+    onErrorFn: (_error, errorMessage) => {
+      handleHTTPState("error", errorMessage);
+    },
+  });
+
   const [imageToDelete, setImageToDelete] = useState("");
   const [urlFile, setUrlFile] = useState<{ id: string; file: string } | null>(
     null
@@ -53,7 +81,6 @@ const Gallery: React.FC = () => {
   const [sheltersData, setSheltersData] = useState<ShelterType[] | null>(null);
   const [showModal, setShowModal] = useState(initialModalState);
   const [alertStatut, setAlertStatut] = useState(initialMessageState);
-  const handleHTTPState = useHTTPState();
 
   const handleDeleteAlert = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -71,12 +98,12 @@ const Gallery: React.FC = () => {
 
   const handleDeleteImage = () => {
     setShowModal(initialModalState);
-    imageToDelete && deletePictureHttpRequest(imageToDelete);
+    imageToDelete && deletePictureMutate(imageToDelete);
   };
 
   const handlePostImage = (imagesData: FormData) => {
     setShowModal(initialModalState);
-    postPictureHttpRequest(imagesData);
+    postPictureMutate(imagesData);
   };
 
   useEffect(() => {
@@ -91,48 +118,23 @@ const Gallery: React.FC = () => {
     };
   }, [alertStatut.show]);
 
-  // delete picture request handling
+  // handle HTTP state for queries/mutations (useMyQuery already calls useHTTPState for queries;
+  // keep handling for mutations and any errors from queries if needed)
   useEffect(() => {
-    if (deletePictureStatut) {
-      handleHTTPState(deletePictureStatut, deletePictureRequestError ?? "");
-    }
-  }, [deletePictureStatut, deletePictureRequestError, handleHTTPState]);
-
-  // add picture request handling
-  useEffect(() => {
-    if (postPictureStatut) {
-      handleHTTPState(postPictureStatut, postPictureRequestError ?? "");
-    }
-  }, [handleHTTPState, postPictureStatut, postPictureRequestError]);
-
-  // shelters request loading handling
-  useEffect(() => {
-    handleHTTPState(getPictureStatut, getPictureRequestError ?? "");
-  }, [getPictureStatut, getPictureRequestError, handleHTTPState]);
+    handleHTTPState(sheltersStatus, (sheltersQueryError as any) ?? "");
+  }, [sheltersStatus, sheltersQueryError, handleHTTPState]);
 
   // refresh pictures display on the screen
   useEffect(() => {
-    getPictureRequestData && setSheltersData(getPictureRequestData);
-  }, [getPictureRequestData]);
+    sheltersQueryData && setSheltersData(sheltersQueryData);
+  }, [sheltersQueryData]);
 
-  useEffect(() => {
-    deletePictureRequestData && setSheltersData(deletePictureRequestData);
-  }, [deletePictureRequestData]);
-
-  useEffect(() => {
-    postPictureRequestData && setSheltersData(postPictureRequestData);
-  }, [postPictureRequestData]);
-
-  useEffect(() => {
-    getPictureHttpRequest();
-  }, [getPictureHttpRequest]);
-
-  useEffect(() => {
-    getCSRFttpRequest();
-  }, [getCSRFttpRequest]);
-
-  if (getPictureStatut === HTTPStateKind.PENDING) {
-    return <p className="text-center">Chargement des images...</p>;
+  if (sheltersStatus === "pending") {
+    return (
+      <section>
+        <p className="text-center">Chargement des images...</p>
+      </section>
+    );
   }
 
   return (

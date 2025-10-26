@@ -4,7 +4,6 @@ import { menuActions } from "../../../store/menu";
 import Footer from "../Footer";
 import Header from "../Header";
 import LoaderAndAlert from "../../UI/LoaderAndAlert";
-import { HTTPStateKind } from "../../../global/types";
 
 // interfaces
 interface LayoutProps {
@@ -30,7 +29,7 @@ const Layout: React.FC<LayoutProps> = (props) => {
           justifyContent: "center",
         }}
       >
-        <LoaderAndAlert statut={HTTPStateKind.PENDING} />
+        <LoaderAndAlert statut="pending" />
       </div>
     );
   }

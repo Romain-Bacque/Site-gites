@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from "uuid";
 import { ActivitiesProps } from "./types";
 import classes from "./style.module.css";
 import Modal from "../../../components/UI/Modal";
-import { HTTPStateKind } from "../../../global/types";
 
 // Component
 const Activities: React.FC<ActivitiesProps> = ({
@@ -18,7 +17,7 @@ const Activities: React.FC<ActivitiesProps> = ({
     >
       <div className={classes["activities-list-container"]}>
         <h3>Activités dans le couserans</h3>
-        {httpStatut === HTTPStateKind.PENDING ? (
+        {httpStatut === "pending" ? (
           <p className="text-center">Chargement des activités...</p>
         ) : activities?.length ? (
           <ul className={classes["activities-list"]}>

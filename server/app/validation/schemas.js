@@ -31,6 +31,15 @@ const joi = baseJoi.extend(extension);
 // Schemas
 
 /**
+ * shelterDescriptionSchema monitor the shelter description request body, and return an error if any of requirements doesn't match with it
+ */
+module.exports.putShelterDescriptionSchema = joi
+  .object({
+    description: joi.string().escapeHTML().required(),
+  })
+  .required();
+
+/**
  * registerSchema monitor the register request body, and return an error if any of requirements doesn't match with it
  */
 module.exports.registerSchema = joi

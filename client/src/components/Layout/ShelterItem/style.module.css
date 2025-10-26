@@ -122,7 +122,9 @@
   margin-bottom: 1rem;
 }
 
-.gites__description p {
+.gites__description-texte {
   margin-bottom: 0.5rem;
   line-height: 1.6;
+  white-space: pre-wrap; /* conserve les sauts de ligne et espaces */
+  word-break: break-word; /* évite le débordement */
 }

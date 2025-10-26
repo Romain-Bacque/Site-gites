@@ -36,14 +36,14 @@
     // Sets up path aliases for easier imports, using "@" as a placeholder.
     "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
     "baseUrl": "src",
-    "paths": {
-      "@/*": ["./*"],
-      "@components/*": ["./components/*"],
-      "@pages/*": ["./pages/*"],
-      "@hooks/*": ["./hooks/*"],
-      "@api/*": ["./api/*"],
-      "@utils/*": ["./utils/*"]
-    }
+    // "paths": {
+    //   "@/*": ["./*"],
+    //   "@components/*": ["./components/*"],
+    //   "@pages/*": ["./pages/*"],
+    //   "@hooks/*": ["./hooks/*"],
+    //   "@api/*": ["./api/*"],
+    //   "@utils/*": ["./utils/*"]
+    // }
   },
   // include and exclude properties specify the files to be included and excluded from compilation.
   "include": ["src"],

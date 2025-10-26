@@ -1,10 +1,9 @@
 // hooks import
 import React, { useEffect, useState } from "react";
 import useInput from "../../../../hooks/use-input";
-import useHttp from "../../../../hooks/use-http";
 import { useParams } from "react-router-dom";
+import { useMyQuery, useMyMutation } from "../../../../hooks/use-query";
 // types import
-import { UserData } from "./types";
 // other import
 import Card from "../../../UI/Card";
 import Input from "../../Input";
@@ -12,7 +11,6 @@ import classes from "../style.module.css";
 import { getCSRF, resetPasswordRequest } from "../../../../lib/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { HTTPStateKind } from "../../../../global/types";
 import useHTTPState from "../../../../hooks/use-http-state";
 
 // component
@@ -20,13 +18,13 @@ const ResetPassword: React.FC = () => {
   const { id, token } = useParams<{ id: string; token: string }>();
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const handleHTTPState = useHTTPState();
-  const { sendHttpRequest: getCSRFttpRequest } =
-    useHttp(getCSRF);
-  const {
-    sendHttpRequest: resetPasswordHttpRequest,
-    statut: resetPasswordStatut,
-    error: resetPasswordErrorMessage,
-  } = useHttp(resetPasswordRequest);
+
+  // fetch CSRF token on mount (useMyQuery handles status via useHTTPState internally)
+  useMyQuery({
+    queryKey: ["getCSRF"],
+    queryFn: getCSRF,
+  });
+
   const {
     value: userPasswordValue,
     isValid: userPasswordIsValid,
@@ -37,50 +35,47 @@ const ResetPassword: React.FC = () => {
     passwordState: userPasswordState,
   } = useInput();
 
+  // mutation for resetting password
+  const { mutate: resetPasswordMutate, status: resetPasswordStatus } =
+    useMyMutation({
+      mutationFn: resetPasswordRequest,
+      onErrorFn: (_err, errorMessage) => {
+        handleHTTPState("error", errorMessage || "Une erreur est survenue.");
+      },
+      onSuccessFn: () => {
+        handleHTTPState(
+          "success",
+          "Le mot de passe a été réinitialisé avec succès."
+        );
+        userPasswordResetHandler();
+      },
+    });
+
+  // show pending state when mutation is loading
+  useEffect(() => {
+    if (resetPasswordStatus === "pending") {
+      handleHTTPState("pending");
+    }
+  }, [resetPasswordStatus, handleHTTPState]);
+
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!userPasswordIsValid) return;
 
-    const userPassword: UserData = {
+    if (!id || !token) {
+      handleHTTPState("error", "Lien de réinitialisation invalide.");
+      return;
+    }
+
+    const userPassword = {
       id,
       token,
       password: userPasswordValue,
     };
 
-    resetPasswordHttpRequest(userPassword);
+    resetPasswordMutate(userPassword);
   };
-
-  // get csrf token
-  useEffect(() => {
-    getCSRFttpRequest();
-  }, [getCSRFttpRequest]);
-
-  // reset password request loading handling
-  useEffect(() => {
-    switch (resetPasswordStatut) {
-      case HTTPStateKind.PENDING:
-        handleHTTPState(1);
-        break;
-      case HTTPStateKind.SUCCESS:
-        handleHTTPState(2, "Le mot de passe a été réinitialisé avec succès.");
-        userPasswordResetHandler();
-        break;
-      case HTTPStateKind.ERROR:
-        handleHTTPState(
-          3,
-          resetPasswordErrorMessage ?? "Une erreur est survenue."
-        );
-        break;
-      default:
-        break;
-    }
-  }, [
-    handleHTTPState,
-    resetPasswordErrorMessage,
-    resetPasswordStatut,
-    userPasswordResetHandler,
-  ]);
 
   return (
     <Card className={classes.auth}>

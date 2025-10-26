@@ -14,12 +14,12 @@ const useHTTPState = (): HandleHTTPState => {
 
   const handleHTTPState = useCallback<HandleHTTPState>(
     (statut, message = "") => {
-      if (!statut || statut === HTTPStateKind.IDLE) {
+      if (!statut || statut === "idle") {
         dispatch(loadingActions.reset());
         return;
       }
 
-      dispatch(loadingActions.setStatut(statut));      
+      dispatch(loadingActions.setStatut(statut));
       dispatch(loadingActions.setMessage(message));
     },
     [dispatch]
