@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   useMutation,
   UseMutationOptions,
@@ -7,7 +6,6 @@ import {
   useQueries,
   UseQueryResult,
 } from "@tanstack/react-query";
-import useHTTPState from "./use-http-state";
 
 // Aliases
 type HTTPRequestType<T = any, R = any> = (arg: T) => Promise<R>;
@@ -23,8 +21,6 @@ type mutationOptions<TRequest, TResponse> = UseMutationOptions<
 type UseMyQueryType<T = any> = queryOptions<T> & {
   queryFn: () => Promise<T>;
   queryKey: QueryKey;
-  statusMessage?: string;
-  showLoaderAndAlert?: boolean;
 };
 
 function getMessageFromError(error: any): string {
@@ -51,21 +47,18 @@ function getMessageFromError(error: any): string {
 export function useMyQuery<T = any>({
   queryFn,
   queryKey,
-  showLoaderAndAlert = true,
-  statusMessage = "",
   ...props
 }: UseMyQueryType<T>) {
-  const { data, status, error, isSuccess, isPending, ...rest } = useQuery<T>({
+  const { data, ...rest } = useQuery<T>({
     queryKey,
     queryFn,
     ...props,
   });
 
+  const formattedData = data ?? null;
+
   return {
-    data: data ?? null,
-    status,
-    isSuccess,
-    error,
+    data: formattedData,
     ...rest,
   };
 }
@@ -94,21 +87,7 @@ export function useMyQueries<T extends readonly UseMyQueryType<any>[]>(
     >;
   };
 
-  const handleHTTPState = useHTTPState();
-
-  useEffect(() => {
-    results.forEach((res, idx) => {
-      const errorMessage = getMessageFromError(res.error);
-      const statusMessage = queries[idx]?.statusMessage ?? "";
-      handleHTTPState(res.status, errorMessage || statusMessage);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [results, handleHTTPState, queries]);
-
-  return results.map((r, idx) => ({
-    ...r,
-    statusMessage: queries[idx]?.statusMessage,
-  })) as any;
+  return results;
 }
 
 // Custom mutation hook

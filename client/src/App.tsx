@@ -26,9 +26,7 @@ const App: React.FC = () => {
   const { isSuccess } = useMyQuery({
     queryKey: ["userVerification"],
     queryFn: userVerification,
-    showLoaderAndAlert: false,
   });
-
 
   // 'isAuthentificated' store state property is set to true if user is authenticated
   useEffect(() => {

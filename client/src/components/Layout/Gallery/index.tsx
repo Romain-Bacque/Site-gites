@@ -38,6 +38,7 @@ const Gallery: React.FC = () => {
     data: sheltersQueryData,
     status: sheltersStatus,
     error: sheltersQueryError,
+    isPending: sheltersIsPending,
   } = useMyQuery({
     queryKey: ["sheltersWithPictures"],
     queryFn: getSheltersWithPicturesRequest,
@@ -121,7 +122,10 @@ const Gallery: React.FC = () => {
   // handle HTTP state for queries/mutations (useMyQuery already calls useHTTPState for queries;
   // keep handling for mutations and any errors from queries if needed)
   useEffect(() => {
-    handleHTTPState(sheltersStatus, (sheltersQueryError as any) ?? "");
+    handleHTTPState(
+      sheltersStatus,
+      sheltersStatus === "error" ? "Erreur lors du chargement des images." : ""
+    );
   }, [sheltersStatus, sheltersQueryError, handleHTTPState]);
 
   // refresh pictures display on the screen
@@ -129,7 +133,7 @@ const Gallery: React.FC = () => {
     sheltersQueryData && setSheltersData(sheltersQueryData);
   }, [sheltersQueryData]);
 
-  if (sheltersStatus === "pending") {
+  if (sheltersIsPending) {
     return (
       <section>
         <p className="text-center">Chargement des images...</p>
@@ -188,7 +192,7 @@ const Gallery: React.FC = () => {
           ))}
         </ul>
       ) : (
-        <p className="text-center">Aucune image à afficher.</p>
+        <p className="text-center">Aucune image disponible.</p>
       )}
     </section>
   );

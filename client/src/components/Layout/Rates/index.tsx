@@ -47,6 +47,7 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     data: getRatesData,
     status: getRatesStatus,
     error: getRatesError,
+    isPending,
   } = useMyQuery({
     queryKey: ["rates", shelterId],
     queryFn: () => ratesGetRequest(shelterId),
@@ -128,8 +129,12 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     handleHTTPState(putRatesStatus);
   }, [putRatesStatus, putRatesError, handleHTTPState]);
 
-  if (getRatesStatus === "pending") {
-    return null;
+  if (isPending) {
+    return (
+      <div className={classes["rates-container"]}>
+        <p>Chargement des tarifs...</p>
+      </div>
+    );
   }
 
   const renderInput = (id: keyof PriceValues) => (

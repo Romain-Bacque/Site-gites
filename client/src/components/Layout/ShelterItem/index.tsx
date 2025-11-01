@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 import classes from "./style.module.css";
 import Booking from "../Booking";
@@ -14,7 +14,11 @@ import Button from "../../../components/UI/Button";
 import Input from "../Input";
 import { useMyMutation } from "../../../hooks/use-query";
 import useHTTPState from "../../../hooks/use-http-state";
-import { updateShelterDescriptionRequest } from "../../../lib/api";
+import {
+  GetSheltersWithPicturesRequestResponseData,
+  updateShelterDescriptionRequest,
+} from "../../../lib/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 let formContent: ReactNode = null;
 
@@ -24,18 +28,36 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
   description,
   images,
 }) => {
+  const queryClient = useQueryClient();
   const [shelterStatut, setShelterStatut] = useState<Tab>({ tab: null });
   const [descriptionText, setDescriptionText] = useState(description || "");
   const isAuth = useAppSelector(({ auth }) => auth.isAuthentificated);
   const handleHTTPState = useHTTPState();
 
   // Mutation pour mettre à jour la description
-  const { mutate: updateDescription, status: updateStatus } = useMyMutation({
+  const {
+    mutate: updateDescription,
+    status: updateStatus,
+    isPending,
+  } = useMyMutation({
+    queryKeys: ["shelters"],
     mutationFn: updateShelterDescriptionRequest,
-    statusMessage: "Mise à jour de la description...",
-  });
+    onSuccessFn: (data) => {
+      const prevData = queryClient.getQueryData<
+        GetSheltersWithPicturesRequestResponseData["sheltersData"]
+      >(["shelters"]);
 
-  const descriptionTextToShow = descriptionText || description || "";
+      if (prevData) {
+        const updatedData = prevData.map((item) =>
+          item._id === shelterId
+            ? { ...item, description: data.description }
+            : item
+        );
+
+        queryClient.setQueryData(["shelters"], updatedData);
+      }
+    },
+  });
 
   if (shelterStatut.tab === TabKind.BOOK) {
     formContent = <Booking shelterId={shelterId} />;
@@ -63,11 +85,11 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
     event.preventDefault();
     if (!isAuth) return;
 
-    const descriptionToUpdate = descriptionText.trim();
-    if (!descriptionToUpdate) return;
+    const updatedDescription = descriptionText.trim();
 
-    handleHTTPState("pending");
-    updateDescription({ id: shelterId, description: descriptionToUpdate });
+    if (!updatedDescription) return;
+
+    updateDescription({ id: shelterId, description: updatedDescription });
   };
 
   const renderDescriptionContent = () => {
@@ -77,7 +99,7 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
           <Input
             type="textarea"
             className={classes["gites__description-textarea"]}
-            defaultValue={descriptionTextToShow}
+            defaultValue={descriptionText}
             placeholder="Entrez la description du gîte ici..."
             rows={7}
             onChange={(e) => setDescriptionText(e.target.value)}
@@ -86,7 +108,8 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
             type="submit"
             fullWidth
             className={classes["gites__description-button"]}
-            loading={updateStatus === "pending"}
+            loading={isPending}
+            disabled={descriptionText.trim().length === 0}
           >
             Enregistrer
           </Button>
@@ -102,6 +125,19 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
       );
     }
   };
+
+  useEffect(() => {
+    if (updateStatus === "error") {
+      handleHTTPState(
+        "error",
+        "Erreur lors de la mise à jour de la description."
+      );
+    } else if (updateStatus === "success") {
+      handleHTTPState("success", "Description mise à jour avec succès.");
+    } else {
+      handleHTTPState(updateStatus);
+    }
+  }, [updateStatus, handleHTTPState]);
 
   return (
     <Card className={classes.gite__card}>

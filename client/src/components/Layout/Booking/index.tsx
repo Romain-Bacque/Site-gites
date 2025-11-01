@@ -1,7 +1,6 @@
 // hooks import
 import { useCallback, useEffect, useState } from "react";
 import useInput from "../../../hooks/use-input";
-import { useAppDispatch } from "../../../hooks/use-store";
 import { useMyQuery, useMyMutation } from "../../../hooks/use-query";
 // types import
 import {
@@ -18,7 +17,6 @@ import { bookingRequest, getCSRF } from "../../../lib/api";
 import classes from "./style.module.css";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
-import { HTTPStateKind } from "../../../global/types";
 import useHTTPState from "../../../hooks/use-http-state";
 
 // variable & contante
@@ -29,7 +27,6 @@ const initialState = {
 
 // component
 const Booking: React.FC<BookingProps> = ({ shelterId }) => {
-  const dispatch = useAppDispatch();
   const [calendarStatus, setCalendarStatus] =
     useState<CalendarStatus>(initialState);
   const handleHTTPState = useHTTPState();

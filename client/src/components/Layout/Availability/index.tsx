@@ -53,7 +53,6 @@ const Availability: React.FC<AvailabilityProps> = ({
   // post mutation -> on success update local disabledDates
   const {
     mutate: postDisabledDateHttpRequest,
-    status: postDisabledDatesStatus,
   } = useMyMutation<DateRequestData, DisabledDatesData>({
     mutationFn: postDateRequest,
     onSuccessFn: (data) => {
@@ -64,7 +63,6 @@ const Availability: React.FC<AvailabilityProps> = ({
   // delete mutation -> on success update local disabledDates
   const {
     mutate: deleteDisabledDateHttpRequest,
-    status: deleteDisabledDatesStatus,
   } = useMyMutation<DateRequestData, DisabledDatesData>({
     mutationFn: deleteDateRequest,
     onSuccessFn: (data) => {

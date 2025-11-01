@@ -2,7 +2,6 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface IShelter extends Document {
   title: string;
-  number: number;
   description: string;
 }
 
@@ -11,13 +10,9 @@ const shelterSchema = new Schema<IShelter>({
     type: String,
     required: [true, "title cannot be blank"],
   },
-  number: {
-    type: Number,
-    required: [true, "number cannot be blank"],
-  },
   description: {
     type: String,
-    required: [true, "description cannot be blank"],
+    required: false
   },
 });
 

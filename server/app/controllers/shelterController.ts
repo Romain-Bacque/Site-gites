@@ -31,25 +31,23 @@ const shelterController = {
   updateShelterDescription: async function (req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { description } = req.body;
+      const { description: newDescription } = req.body;
 
-      if (!id || !description) {
+      if (!id || !newDescription) {
         throw new ExpressError("Missing required fields", 400);
       }
 
       const updatedShelter = await Shelter.findByIdAndUpdate(
         id,
-        { description },
-        { new: true } // return the updated document if true
+        { description: newDescription },
+        { new: true } // to return the updated document
       );
 
       if (!updatedShelter) {
         throw new ExpressError("Shelter not found", 404);
       }
 
-      const shelters = await Shelter.find({});
-
-      res.status(200).json({ sheltersData: shelters });
+      res.status(200).json({ shelterData: updatedShelter });
     } catch (error) {
       console.error(error);
       throw new ExpressError("Internal Server Error", 500);

@@ -131,24 +131,6 @@ module.exports.postShelterImage = joi
   .required();
 
 /**
- * editBrewerySchema monitor the brewery request body, and return an error if any of requirements doesn't match with it
- */
-module.exports.editBrewerySchema = joi
-  .object({
-    title: joi.string().escapeHTML().required(),
-    image: joi.binary(),
-    phone: joiPhoneNumber
-      .string({ defaultCountry: "FR", format: "national" })
-      .phoneNumber(),
-    description: joi.string().escapeHTML().required(),
-    address: joi.string().escapeHTML().required(),
-    lat: joi.number().required(),
-    lon: joi.number().required(),
-    categories: joi.array().items(joi.number().min(1).required()),
-  })
-  .required();
-
-/**
  * postEventSchema monitor the event request body, and return an error if any of requirements doesn't match with it
  */
 module.exports.postEventSchema = joi

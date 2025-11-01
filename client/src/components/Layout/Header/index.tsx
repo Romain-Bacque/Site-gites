@@ -28,7 +28,7 @@ const Header: React.FC = () => {
     },
     onErrorFn: (_error, errorMessage) => {
       handleHTTPState("error", errorMessage);
-    }
+    },
   });
 
   useEffect(() => {
@@ -82,7 +82,6 @@ const Header: React.FC = () => {
           <div className={classes["menu-button__line"]}></div>
           <div className={classes["menu-button__line"]}></div>
         </div>
-
         <nav
           onClick={(event) => event.stopPropagation()}
           className={`${classes.header__nav} ${
@@ -94,6 +93,7 @@ const Header: React.FC = () => {
               <NavLink
                 onClick={handleCloseMenu}
                 className={classes.header__link}
+                activeClassName={classes["active-link"]}
                 to="/home"
               >
                 Accueil
@@ -103,6 +103,7 @@ const Header: React.FC = () => {
               <NavLink
                 onClick={handleCloseMenu}
                 className={classes.header__link}
+                activeClassName={classes["active-link"]}
                 to="/gites"
               >
                 Gîtes
@@ -111,7 +112,8 @@ const Header: React.FC = () => {
             <li className={classes.header__list}>
               <NavLink
                 onClick={handleCloseMenu}
-                className={classes.header__link}
+                className={`${classes.header__link}`}
+                activeClassName={classes["active-link"]}
                 to="/albums"
               >
                 Albums
@@ -121,7 +123,8 @@ const Header: React.FC = () => {
               <li className={classes.header__list}>
                 <NavLink
                   onClick={handleCloseMenu}
-                  className={classes.header__link}
+                  className={`${classes.header__link}`}
+                  activeClassName={classes["active-link"]}
                   to="/admin/allBookings"
                 >
                   Demandes
@@ -138,14 +141,12 @@ const Header: React.FC = () => {
               </Link>
             )}
           </ul>
-
           {isAuth && (
             <button
               className={`button button--alt ${classes.header__auth}`}
               onClick={handleLogout}
-              disabled={logoutMutation.isPending}
             >
-              {logoutMutation.isPending ? "Déconnexion..." : "Déconnexion"}
+              Déconnexion
             </button>
           )}
         </nav>

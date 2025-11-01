@@ -124,21 +124,27 @@ export const userVerification = async () => {
 };
 
 // // SHELTERS
+export interface ShelterData {
+  _id: string;
+  title: string;
+  description: string;
+  number: number;
+}
 
-export interface getSheltersWithPicturesRequestResponseData {
-  sheltersData: {
-    _id: string;
-    title: string;
-    description: string;
-    number: number;
-    images: {
-      _id: string;
-      url: string;
-      title: string;
-      filename: string;
-      shelter_id: string;
-    }[];
-  }[];
+export interface ShelterImage {
+  _id: string;
+  url: string;
+  title: string;
+  filename: string;
+  shelter_id: string;
+}
+
+export interface ShelterWithPictures extends ShelterData {
+  images: ShelterImage[];
+}
+
+export interface GetSheltersWithPicturesRequestResponseData {
+  sheltersData: ShelterWithPictures[];
 }
 
 // Get Shelters
@@ -161,21 +167,20 @@ export const updateShelterDescriptionRequest = async ({
   id: string;
   description: string;
 }) => {
-  const response =
-    await instance.put<getSheltersWithPicturesRequestResponseData>(
-      `/shelters/${id}`,
-      { description }
-    );
+  const response = await instance.put<{ shelterData: ShelterData }>(
+    `/shelters/${id}`,
+    { description }
+  );
 
   if (response.status !== 200) throw new Error();
 
-  return response.data.sheltersData;
+  return response.data.shelterData;
 };
 
 // Get shelters with Picture
 export const getSheltersWithPicturesRequest = async () => {
   const response =
-    await instance.get<getSheltersWithPicturesRequestResponseData>(
+    await instance.get<GetSheltersWithPicturesRequestResponseData>(
       `/admin/gallery`
     );
 
@@ -187,7 +192,7 @@ export const getSheltersWithPicturesRequest = async () => {
 // Add Picture
 export const postPictureRequest = async (data: FormData) => {
   const response =
-    await instance.post<getSheltersWithPicturesRequestResponseData>(
+    await instance.post<GetSheltersWithPicturesRequestResponseData>(
       "/admin/gallery",
       data,
       {
@@ -203,7 +208,7 @@ export const postPictureRequest = async (data: FormData) => {
 // Delete Picture
 export const deletePictureRequest = async (id: string) => {
   const response =
-    await instance.delete<getSheltersWithPicturesRequestResponseData>(
+    await instance.delete<GetSheltersWithPicturesRequestResponseData>(
       `/admin/gallery/${id}`
     );
 

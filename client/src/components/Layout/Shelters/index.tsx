@@ -4,15 +4,29 @@ import ShelterItem from "../ShelterItem";
 // types import
 import { getSheltersWithPicturesRequest } from "../../../lib/api";
 import { useMyQuery } from "hooks/use-query";
+import { useEffect } from "react";
+import useHTTPState from "hooks/use-http-state";
 
 // component
 const Shelters: React.FC = () => {
-  const { data: sheltersData, status } = useMyQuery({
+  const handleHTTPState = useHTTPState();
+  const {
+    data: sheltersData,
+    status,
+    isPending,
+  } = useMyQuery({
     queryFn: getSheltersWithPicturesRequest,
     queryKey: ["shelters"],
   });
 
-  if (status === "pending") {
+  useEffect(() => {
+    handleHTTPState(
+      status,
+      status === "error" ? "Les gîtes sont indisponibles." : ""
+    );
+  }, [status, handleHTTPState]);
+
+  if (isPending) {
     return (
       <section>
         <p className="text-center">Chargement des gîtes...</p>
