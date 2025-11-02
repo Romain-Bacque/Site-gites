@@ -7,6 +7,8 @@ import store from "./store/index";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import {ErrorBoundary} from "react-error-boundary";
+import Fallback from "components/Layout/ErrorBoundaryFallback";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -23,12 +25,16 @@ const queryClient = new QueryClient({
 });
 
 root.render(
-  <QueryClientProvider client={queryClient}>
-    <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-      <ReactQueryDevtools initialIsOpen={process.env.NODE_ENV === "development"} />
-    </Provider>
-  </QueryClientProvider>
+  <ErrorBoundary FallbackComponent={Fallback}>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+        <ReactQueryDevtools
+          initialIsOpen={process.env.NODE_ENV === "development"}
+        />
+      </Provider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
