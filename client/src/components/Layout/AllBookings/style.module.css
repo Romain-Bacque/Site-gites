@@ -42,15 +42,3 @@
   padding: 2rem 0 4rem;
   border-top: 1px solid var(--border-color-light);
 }
-
-.message-form {
-  width: 100%;
-}
-
-.message-form__textarea {
-  resize: none;
-  border: 1px solid rgb(175, 175, 175);
-  border-radius: 5px;
-  width: 100%;
-  margin-top: 1rem;
-}

@@ -1,0 +1,25 @@
+<!-- bookingEmail.ejs -->
+<div style="font-family: Arial, sans-serif; color: #222; padding: 20px; max-width: 600px;">
+  <h2 style="margin: 0 0 10px 0; font-size: 1.4em; color: #333;">Bonjour <%= name %>,</h2>
+
+  <p style="margin: 8px 0;">
+    Votre réservation du gîte <strong><%= shelter %></strong>,
+    du <strong><%= from %></strong> jusqu'au <strong><%= to %></strong>,
+    a été <strong><%= statutMessage %></strong>.
+  </p>
+
+  <% if (message) { %>
+    <div style="margin: 12px 0; padding: 10px; background: #f8f8f8; border-radius: 4px;">
+      <%= message %>
+    </div>
+  <% } %>
+
+  <p style="margin: 12px 0;">Nous restons à votre disposition pour toute question ou information complémentaire.</p>
+
+  <p style="margin: 12px 0;">Cordialement,</p>
+
+  <p style="margin: 0;">
+    <strong>Les propriétaires du gîte</strong><br />
+    <span style="font-size: 0.9em; color: #666;">Si vous n'êtes pas à l'origine de cette réservation, merci de nous contacter.</span>
+  </p>
+</div>

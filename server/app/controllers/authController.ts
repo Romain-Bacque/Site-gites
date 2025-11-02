@@ -31,17 +31,15 @@ async function sendEmail({
   emailFrom,
   subject,
   templatePath,
-  name,
   email,
-  link,
+  content,
 }: {
   service: string;
   emailFrom: string;
   subject: string;
   templatePath: string;
-  name: string;
   email: string;
-  link: string;
+  content: object;
 }) {
   resendEmailHandler.init({
     emailFrom,
@@ -50,9 +48,8 @@ async function sendEmail({
   });
 
   await resendEmailHandler.sendEmail({
-    name,
     email,
-    link,
+    content,
   });
 }
 
@@ -161,9 +158,8 @@ const authController = {
         __dirname,
         "../utilities/emailTemplate/confirmEmail.ejs"
       ),
-      name: user.username,
       email: user.email as string,
-      link,
+      content: { name: user.username, link },
     });
 
     await user.save();
@@ -198,9 +194,8 @@ const authController = {
         __dirname,
         "../utilities/emailTemplate/resetPassword.ejs"
       ),
-      name: user.username,
       email: user.email as string,
-      link,
+      content: { name: user.username, link },
     });
 
     res.sendStatus(200);

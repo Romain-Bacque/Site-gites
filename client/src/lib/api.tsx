@@ -220,23 +220,28 @@ export const deletePictureRequest = async (id: string) => {
 // // BOOKING
 
 // Get Bookings
-export interface BookingsRequestResponseData {
-  bookingsData: {
+export interface Booking {
+  _id: string;
+  name: string;
+  phone: string;
+  email: string;
+  numberOfPerson: number;
+  from: Date;
+  to: Date;
+  informations: string;
+  status: "pending" | "accepted" | "refused";
+  shelter_id: {
     _id: string;
-    name: string;
-    phone: string;
-    email: string;
-    numberOfPerson: number;
-    from: Date;
-    to: Date;
-    informations: string;
-    booked: boolean;
-    shelter_id: {
-      _id: string;
-      title: string;
-      number: number;
-    };
-  }[];
+    title: string;
+    number: number;
+  };
+}
+
+export interface BookingsRequestResponseData {
+  bookingsData: Booking[];
+}
+export interface BookingRequestResponseData {
+  bookingData: Booking;
 }
 
 export const bookingsGetRequest = async () => {
@@ -267,26 +272,48 @@ export const bookingRequest = async (data: bookingRequestData) => {
   if (response.status !== 200) throw new Error();
 };
 
-// Accept booking
-export const acceptBookingRequest = async (id: string) => {
-  const response = await instance.put<BookingsRequestResponseData>(
-    `/admin/booking/${id}`
+interface Template {
+  bookingId?: string | undefined;
+  shelter?: string | undefined;
+  name?: string | undefined;
+  from?: string | undefined;
+  to?: string | undefined;
+  emailTo?: string | undefined;
+  statutMessage: string;
+}
+interface bookingDecisionRequestData {
+  decision: "accepted" | "refused";
+  emailTemplate: Template;
+  message: string;
+}
+
+// booking decision
+export const bookingDecisionRequest = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: bookingDecisionRequestData;
+}) => {
+  const response = await instance.put<BookingRequestResponseData>(
+    `/admin/booking/${id}`,
+    { data }
   );
 
   if (response.status !== 200) throw new Error();
 
-  return response.data.bookingsData;
+  return response.data.bookingData;
 };
 
-// Refuse booking
-export const refuseBookingRequest = async (id: string) => {
-  const response = await instance.delete<BookingsRequestResponseData>(
+// delete booking
+export const deleteBookingRequest = async (id: string) => {
+  const response = await instance.delete<BookingRequestResponseData>(
     `/admin/booking/${id}`
   );
 
   if (response.status !== 200) throw new Error();
 
-  return response.data.bookingsData;
+  return response.data.bookingData;
 };
 
 // get booked dates

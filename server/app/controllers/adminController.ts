@@ -4,8 +4,52 @@ import { Booking, Shelter, Image } from "../models";
 import assert from "assert";
 import { cloudinary } from "../utilities/cloudinary";
 import ExpressError from "../utilities/ExpressError";
+import path from "path";
+import { resendEmailHandler } from "../utilities/emailhandler";
 
 const debug = debugLib("controller:admin");
+
+interface Template {
+  bookingId?: string | undefined;
+  shelter?: string | undefined;
+  name?: string | undefined;
+  from?: string | undefined;
+  to?: string | undefined;
+  emailTo?: string | undefined;
+  statutMessage: string;
+}
+interface bookingDecisionRequestData {
+  decision: "accepted" | "refused";
+  emailTemplate: Template;
+  message: string;
+}
+
+// Email sending helper
+async function sendEmail({
+  emailFrom,
+  subject,
+  templatePath,
+  email,
+  content,
+}: {
+  service: string;
+  emailFrom: string;
+  subject: string;
+  templatePath: string;
+  email: string;
+  content: object;
+}) {
+  resendEmailHandler.init({
+    emailFrom,
+    subject,
+    template: templatePath,
+  });
+
+  await resendEmailHandler.sendEmail({
+    email,
+    content,
+  });
+}
 
 const adminController = {
   getAllBooking: async function (_: Request, res: Response) {
@@ -19,18 +63,35 @@ const adminController = {
     res.status(200).json({ bookingsData: bookings });
   },
 
-  acceptBooking: async function (
+  updateBooking: async function (
     req: Request,
     res: Response,
     next: NextFunction
   ) {
     const { bookingId } = req.params;
-    const booking = await Booking.findByIdAndUpdate(bookingId, {
-      booked: true,
-    });
+    const { data }: { data: bookingDecisionRequestData } = req.body;
+    const booking = await Booking.findByIdAndUpdate(
+      bookingId,
+      { status: data.decision },
+      { new: true }
+    )
+      .populate("shelter_id")
+      .where("email")
+      .ne(null);
 
+    await sendEmail({
+      service: "gmail",
+      emailFrom: (process.env.RESEND_EMAIL_FROM as string) || "",
+      subject: "Email de confirmation",
+      templatePath: path.join(
+        __dirname,
+        "../utilities/emailTemplate/bookingEmail.ejs"
+      ),
+      email: data.emailTemplate.emailTo!,
+      content: { ...data.emailTemplate, message: data.message },
+    });
     if (booking) {
-      await adminController.getAllBooking(req, res);
+      res.status(200).json({ bookingData: booking });
     } else next();
   },
 
@@ -43,7 +104,7 @@ const adminController = {
     const booking = await Booking.findByIdAndDelete(bookingId);
 
     if (booking) {
-      await adminController.getAllBooking(req, res);
+      res.status(200).json({ bookingData: booking });
     } else next();
   },
 

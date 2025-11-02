@@ -4,6 +4,7 @@ import styles from "./style.module.css"
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
+  center?: boolean;
   variant?: "primary" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg" | "xl";
   icon?: React.ElementType;
@@ -13,6 +14,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button: FC<ButtonProps> = ({
   type = "button",
+  center = true,
   fullWidth = false,
   variant = "primary",
   size = "md",
@@ -30,6 +32,7 @@ const Button: FC<ButtonProps> = ({
       style={{ width: fullWidth ? "100%" : "auto" }}
       className={clsx(
         styles.button,
+        center && styles.center,
         styles[variant!],
         styles[size!],
         className

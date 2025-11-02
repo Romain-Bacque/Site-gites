@@ -59,10 +59,10 @@ const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
         <div>
           <button
             className={`${classes["sort__choice-button"]} ${
-              sort === SortKind.BOOKED && classes["sort__choice-button--active"]
+              sort === SortKind.STATUS && classes["sort__choice-button--active"]
             }`}
             type="button"
-            id={SortKind.BOOKED.toString()}
+            id={SortKind.STATUS.toString()}
             onClick={handleSortChoice}
           >
             Réservé

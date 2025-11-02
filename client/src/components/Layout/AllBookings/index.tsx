@@ -1,4 +1,3 @@
-// Note: adjust the import path for useMyQuery / useMyMutation to wherever you placed the new hooks file.
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "../../UI/Modal";
@@ -8,20 +7,19 @@ import {
   SortKind,
   BookingRef,
   BookingsList,
-  handleEmailFormDisplay,
+  HandleEmailModalDisplay,
   ModalState,
 } from "./types";
-import { HTTPStateKind } from "../../../global/types";
 import {
   bookingsGetRequest,
-  acceptBookingRequest,
-  refuseBookingRequest,
   getCSRF,
+  bookingDecisionRequest,
+  Booking,
+  deleteBookingRequest,
 } from "../../../lib/api";
 import classes from "./style.module.css";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
-import { emailHandler } from "../../../lib/emailjs";
 import Sort from "../Sort";
 import { Navigation, Pagination } from "swiper";
 import "swiper/css";
@@ -32,6 +30,8 @@ import Button from "../../UI/Button";
 
 // New hooks
 import { useMyQuery, useMyMutation } from "../../../hooks/use-query";
+import MessageForm from "components/UI/MessageForm";
+import { useQueryClient } from "@tanstack/react-query";
 
 dayjs().format();
 
@@ -41,14 +41,16 @@ const initialModalState = {
   booking: false,
   isSorted: false,
 };
-const initialBookingRefState = { value: null, bookingChoice: null };
+const initialBookingRefState = { emailTemplate: null, decision: null };
 
 // component
 const AllBookings: React.FC = () => {
+  const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState<ModalState>(initialModalState);
   const [bookingsList, setBookingsList] = useState<BookingsList>([]);
-  const [textareaValue, setTextareaValue] = useState("");
   const bookingRef = useRef<BookingRef>(initialBookingRefState);
+  const deleteBookingRef = useRef<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleHTTPState = useHTTPState();
 
   // fetch bookings
@@ -59,6 +61,7 @@ const AllBookings: React.FC = () => {
   } = useMyQuery({
     queryKey: ["bookings"],
     queryFn: bookingsGetRequest,
+    refetchOnMount: "always",
   });
 
   // get CSRF
@@ -67,30 +70,44 @@ const AllBookings: React.FC = () => {
     queryFn: getCSRF,
   });
 
-  // accept mutation
+  // handle booking mutation
   const {
-    mutate: acceptBookingMutate,
-    status: acceptBookingStatus,
-    error: acceptBookingError,
+    mutate: bookingMutate,
+    status: bookingStatus,
+    error: bookingError,
   } = useMyMutation({
-    mutationFn: acceptBookingRequest,
+    queryKeys: ["bookings"],
+    mutationFn: bookingDecisionRequest,
     onSuccessFn: (data) => {
-      setBookingsList(data);
+      // update the cache
+      queryClient.setQueryData(["bookings"], (oldData: Booking[]) => {
+        if (!oldData) return oldData;
+        return oldData.map((booking) => {
+          if (booking._id === data._id) {
+            return data;
+          }
+          return booking;
+        });
+      });
     },
     onErrorFn: (_err: any, message: string) => {
       handleHTTPState("error", message);
     },
   });
-
-  // refuse mutation
   const {
-    mutate: refuseBookingMutate,
-    status: refuseBookingStatus,
-    error: refuseBookingError,
+    mutate: deleteBookingMutate,
+    status: deleteBookingStatus,
+    error: deleteBookingError,
   } = useMyMutation({
-    mutationFn: refuseBookingRequest,
+    queryKeys: ["bookings"],
+    mutationFn: deleteBookingRequest,
     onSuccessFn: (data) => {
-      setBookingsList(data);
+      // update the cache
+      queryClient.setQueryData(["bookings"], (oldData: Booking[]) => {
+        if (!oldData) return oldData;
+        // if delete returns the deleted booking, remove it from the list
+        return oldData.filter((booking) => booking._id !== data._id);
+      });
     },
     onErrorFn: (_err: any, message: string) => {
       handleHTTPState("error", message);
@@ -98,62 +115,38 @@ const AllBookings: React.FC = () => {
   });
 
   const handleBookingSubmit = useCallback(
-    async (event: React.FormEvent) => {
-      event.preventDefault();
+    (message: string) => {
+      // Close modal
       setShowModal(initialModalState);
 
-      if (bookingRef.current.value) {
-        const id = bookingRef.current.value.bookingId;
-        if (bookingRef.current.bookingChoice === "accept") {
-          acceptBookingMutate(id);
-        } else {
-          refuseBookingMutate(id);
-        }
+      if (bookingRef.current.emailTemplate && bookingRef.current.decision) {
+        const id = bookingRef.current.emailTemplate.bookingId;
+        const statutMessage =
+          bookingRef.current.decision === "accepted"
+            ? "acceptée"
+            : "malheureusement refusée";
+        const data = {
+          decision: bookingRef.current.decision,
+          emailTemplate: { ...bookingRef.current.emailTemplate, statutMessage },
+          message,
+        };
+
+        bookingMutate({ id, data });
       }
     },
-    [acceptBookingMutate, refuseBookingMutate]
+    [bookingMutate]
   );
 
-  const sendEmailToClient = useCallback(async () => {
-    const statutMessage =
-      bookingRef.current.bookingChoice === "accept"
-        ? "acceptée"
-        : "malheureusement refusée";
-
-    const template = {
-      statutMessage,
-      ...bookingRef.current.value,
-      message: textareaValue,
-    };
-
-    delete (template as any).bookingId;
-
-    try {
-      const response = await emailHandler.sendEmail(template);
-
-      if (response.status !== 200) throw new Error();
-      handleHTTPState(
-        "success",
-        "Modification enregistrée, un mail de confirmation vous a été envoyé."
-      );
-    } catch (err) {
-      handleHTTPState(
-        "error",
-        "Modification enregistrée, mais echec de l'envoi du mail de confirmation."
-      );
-    }
-  }, [handleHTTPState, textareaValue]);
-
-  const handleCancel = () => {
-    setTextareaValue("");
+  // Cancel handler
+  const handleCancel = useCallback(() => {
     setShowModal(initialModalState);
-  };
+  }, []);
 
   // Display the email form, then fill it out (optionnal) to send an email to the client
-  const handleEmailFormDisplay: handleEmailFormDisplay = useCallback(
-    (bookingChoice, data) => {
-      bookingRef.current.value = data;
-      bookingRef.current.bookingChoice = bookingChoice;
+  const handleEmailModalDisplay: HandleEmailModalDisplay = useCallback(
+    (decision, emailTemplate) => {
+      bookingRef.current.emailTemplate = emailTemplate;
+      bookingRef.current.decision = decision;
       setShowModal({
         isSorted: false,
         booking: true,
@@ -181,8 +174,8 @@ const AllBookings: React.FC = () => {
             case SortKind.AWAITING:
               result = new Date(a.from).valueOf() - new Date(b.from).valueOf();
               break;
-            case SortKind.BOOKED:
-              result = +b.booked - +a.booked;
+            case SortKind.STATUS:
+              result = +b.status - +a.status;
               break;
             default:
               console.log("an error has occured.");
@@ -197,6 +190,20 @@ const AllBookings: React.FC = () => {
     [bookingsList]
   );
 
+  // Instead of mutating immediately, open a confirm-delete modal
+  const handleBookingCard = useCallback((bookingId: string) => {
+    deleteBookingRef.current = bookingId;
+    setShowDeleteModal(true);
+  }, []);
+
+  const confirmDelete = useCallback(() => {
+    const id = deleteBookingRef.current;
+    if (!id) return;
+    deleteBookingMutate(id);
+    deleteBookingRef.current = null;
+    setShowDeleteModal(false);
+  }, [deleteBookingMutate]);
+
   // refresh bookings list display on the screen
   useEffect(() => {
     if (fetchBookingsRequestData) setBookingsList(fetchBookingsRequestData);
@@ -204,33 +211,19 @@ const AllBookings: React.FC = () => {
 
   // map react-query mutation statuses to your HTTPStateKind and trigger email sending
   useEffect(() => {
-    if (
-      acceptBookingStatus === "pending" ||
-      refuseBookingStatus === "pending"
-    ) {
+    if (bookingStatus === "pending") {
       handleHTTPState("pending");
-    } else if (
-      acceptBookingStatus === "success" ||
-      refuseBookingStatus === "success"
-    ) {
-      // on success, send email
-      sendEmailToClient();
-    } else if (
-      acceptBookingStatus === "error" ||
-      refuseBookingStatus === "error"
-    ) {
+    } else if (bookingStatus === "success") {
+      handleHTTPState(
+        "success",
+        "Statut de la réservation mis à jour avec succès."
+      );
+    } else if (bookingStatus === "error") {
       // extract messages from errors if present
-      const message = acceptBookingError ?? refuseBookingError ? "" : "";
+      const message = bookingError ? "" : "";
       handleHTTPState("error", message);
     }
-  }, [
-    acceptBookingStatus,
-    refuseBookingStatus,
-    acceptBookingError,
-    refuseBookingError,
-    handleHTTPState,
-    sendEmailToClient,
-  ]);
+  }, [bookingStatus, bookingError, handleHTTPState]);
 
   // show fetch status messages
   useEffect(() => {
@@ -246,33 +239,51 @@ const AllBookings: React.FC = () => {
 
   return (
     <>
+      {/* Modal dédié au MessageForm */}
       <Modal
-        show={showModal.show}
+        show={showModal.booking}
         onHide={() => setShowModal(initialModalState)}
       >
-        <>
-          {showModal.booking ? (
-            <form
-              className={classes["message-form"]}
-              onSubmit={handleBookingSubmit}
-            >
-              <h3>Message à joindre</h3>
-              <textarea
-                className={classes["message-form__textarea"]}
-                rows={10}
-                cols={25}
-                value={textareaValue}
-                onChange={(e) => setTextareaValue(e.target.value)}
-              />
-              <div className="button-container">
-                <Button type="submit">Envoyer</Button>
-                <Button onClick={handleCancel}>Annuler</Button>
-              </div>
-            </form>
-          ) : null}
-          {showModal.isSorted ? <Sort onSortValidation={handleSort} /> : null}
-        </>
+        {showModal.booking && (
+          <MessageForm onSubmit={handleBookingSubmit} onCancel={handleCancel} />
+        )}
       </Modal>
+
+      {/* Modal dédié au tri */}
+      <Modal
+        show={showModal.isSorted}
+        onHide={() => setShowModal(initialModalState)}
+      >
+        {showModal.isSorted && <Sort onSortValidation={handleSort} />}
+      </Modal>
+
+      {/* Modal de confirmation de suppression */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <div className={classes["delete-confirm"]} style={{ padding: "1rem" }}>
+          <h3 style={{ marginBottom: "4rem", fontWeight: 600 }}>
+            Êtes-vous sûr de vouloir supprimer cette carte ?
+          </h3>
+          <div
+            style={{
+              display: "flex",
+              gap: "0.5rem",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button
+              fullWidth
+              variant="secondary"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Annuler
+            </Button>
+            <Button fullWidth onClick={confirmDelete}>
+              Supprimer
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
       <section>
         <div className={classes["bookings__title-container"]}>
           <h2 className={classes["bookings__title"]}>{`Liste demandes (${
@@ -280,6 +291,7 @@ const AllBookings: React.FC = () => {
           })`}</h2>
           {bookingsList?.length ? (
             <Button
+              center={false}
               variant="secondary"
               onClick={() => {
                 setShowModal({
@@ -315,7 +327,8 @@ const AllBookings: React.FC = () => {
                 <SwiperSlide key={booking._id}>
                   <BookingCard
                     booking={booking}
-                    onChoice={handleEmailFormDisplay}
+                    onChoice={handleEmailModalDisplay}
+                    onDelete={handleBookingCard}
                   />
                 </SwiperSlide>
               ))}

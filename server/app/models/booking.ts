@@ -8,7 +8,7 @@ export interface IBooking extends Document {
   from: Date;
   to: Date;
   informations?: string | null;
-  booked?: boolean;
+  status: "pending" | "accepted" | "refused";
   shelter_id: mongoose.Types.ObjectId;
 }
 
@@ -43,9 +43,10 @@ const bookingSchema = new Schema<IBooking>({
     type: String,
     default: null,
   },
-  booked: {
-    type: Boolean,
-    default: false,
+  status: {
+    type: String,
+    enum: ["pending", "accepted", "refused"],
+    default: "pending",
   },
   shelter_id: {
     type: Schema.Types.ObjectId,

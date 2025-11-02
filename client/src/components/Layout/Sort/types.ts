@@ -2,7 +2,7 @@
 export enum SortKind {
   DATE_DECREASING = 1,
   DATE_INCREASING,
-  BOOKED,
+  STATUS,
   AWAITING,
 }
 

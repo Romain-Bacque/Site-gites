@@ -4,13 +4,13 @@ import { HTTPStateKind } from "../../../global/types";
 export enum SortKind {
   DATE_DECREASING = 1,
   DATE_INCREASING,
-  BOOKED,
+  STATUS,
   AWAITING,
 }
 
 // type aliases
-export type handleEmailFormDisplay = (
-  bookingChoice: "accept" | "refuse",
+export type HandleEmailModalDisplay = (
+  decision: "accepted" | "refused",
   data: BookingData
 ) => void;
 export type BookingsList = {
@@ -22,7 +22,7 @@ export type BookingsList = {
   from: Date;
   to: Date;
   informations: string;
-  booked: boolean;
+  status: "pending" | "accepted" | "refused";
   shelter_id: {
     title: string;
     number: number;
@@ -46,9 +46,9 @@ export interface BookingData {
   name: string;
   from: string;
   to: string;
-  replyTo: string;
+  emailTo: string;
 }
 export interface BookingRef {
-  value: BookingData | null;
-  bookingChoice: "accept" | "refuse" | null;
+  emailTemplate: BookingData | null;
+  decision: "accepted" | "refused" | null;
 }

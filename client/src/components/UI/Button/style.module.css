@@ -9,8 +9,8 @@
   cursor: pointer;
   font-weight: 700;
   border: none;
-  max-width: 400px;  
-  margin: auto;
+  max-width: 400px;
+  text-align: center;
 }
 
 .button:focus {
@@ -39,7 +39,7 @@
 }
 
 .secondary:hover:not(:disabled) {
-  background:  var(--button-color-very-light);
+  background: var(--button-color-very-light);
 }
 
 .outline {
@@ -87,6 +87,11 @@
 }
 .iconRight {
   margin-left: 0.5rem;
+}
+
+/* Centering */
+.center {
+  margin: 0 auto;
 }
 
 /* Spinner */

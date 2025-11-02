@@ -7,8 +7,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import Card from "../../../UI/Card";
-import { handleEmailFormDisplay } from "../types";
+import { HandleEmailModalDisplay } from "../types";
 import classes from "./style.module.css";
+import Button from "components/UI/Button";
 
 // interfaces
 interface Booking {
@@ -20,7 +21,7 @@ interface Booking {
   from: Date;
   to: Date;
   informations: string;
-  booked: boolean;
+  status: "pending" | "accepted" | "refused";
   shelter_id: {
     title: string;
     number: number;
@@ -28,28 +29,48 @@ interface Booking {
 }
 interface BookingCardProps {
   booking: Booking;
-  onChoice: handleEmailFormDisplay;
+  onChoice: HandleEmailModalDisplay;
+  onDelete: (bookingId: string) => void;
 }
 
-const BookingCard: React.FC<BookingCardProps> = ({ booking, onChoice }) => {
+const BookingCard: React.FC<BookingCardProps> = ({
+  booking,
+  onChoice,
+  onDelete,
+}) => {
   const bookingFormattedData = {
     bookingId: booking._id,
     shelter: booking.shelter_id.title,
     name: booking.name,
     from: dayjs(booking.from).format("DD/MM/YYYY"),
     to: dayjs(booking.to).format("DD/MM/YYYY"),
-    replyTo: booking.email,
+    emailTo: booking.email,
   };
+  
+  const bookingStatusMsg =
+    booking.status === "pending"
+      ? "En attente"
+      : booking.status === "accepted"
+      ? "Acceptée"
+      : "Refusée";
 
-  return (
+      return (
     <Card className={classes["booking-card"]}>
       <div className={classes["booking-card__title"]}>
         <h3 className={classes["booking-card__title-text"]}>
           {booking.shelter_id.title}
         </h3>
-        <span>
-          Statut :{booking.booked === true ? " Réservé" : " En attente"}
-        </span>
+        <div className={classes["booking-card__status"]}>
+          <span>Statut : {bookingStatusMsg}</span>
+          {booking.status === "refused" && (
+            <Button
+              title="Supprimer la carte de réservation"
+              className={classes["booking-card__delete-button"]}
+              onClick={() => onDelete(booking._id)}
+              icon={() => <FontAwesomeIcon icon={faTrash} />}
+            />
+          )}
+        </div>
       </div>
       <div className={classes["booking-card__container"]}>
         <div className={classes["booking-card__user-datas"]}>
@@ -84,27 +105,27 @@ const BookingCard: React.FC<BookingCardProps> = ({ booking, onChoice }) => {
           </div>
         </div>
         <div className="button-container">
-          {booking.booked && (
+          {booking.status === "accepted" && (
             <button
               className="button button--alt"
-              onClick={() => onChoice("refuse", bookingFormattedData)}
+              onClick={() => onChoice("refused", bookingFormattedData)}
             >
               Annuler la réservation
               <FontAwesomeIcon className="button__icon" icon={faTrash} />
             </button>
           )}
-          {!booking.booked && (
+          {(booking.status === "pending" || booking.status === "refused") && (
             <button
               className="button"
-              onClick={() => onChoice("accept", bookingFormattedData)}
+              onClick={() => onChoice("accepted", bookingFormattedData)}
             >
               Accepter
             </button>
           )}
-          {!booking.booked && (
+          {booking.status === "pending" && (
             <button
               className="button button--alt"
-              onClick={() => onChoice("refuse", bookingFormattedData)}
+              onClick={() => onChoice("refused", bookingFormattedData)}
             >
               Refuser
             </button>

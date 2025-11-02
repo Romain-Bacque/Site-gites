@@ -19,7 +19,7 @@ router.get(
 
 router
   .route("/booking/:bookingId")
-  .put(csrfProtection, checkLogged, catchAsync(adminController.acceptBooking))
+  .put(csrfProtection, checkLogged, catchAsync(adminController.updateBooking))
   .delete(
     csrfProtection,
     checkLogged,

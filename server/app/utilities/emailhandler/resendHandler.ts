@@ -7,10 +7,9 @@ interface EmailHandlerInitData {
   template: string;
 }
 
-interface SendEmailData {
-  name: string;
+interface SendEmailData<T extends object> {
   email: string;
-  link: string;
+  content: T;
 }
 
 const emailHandler = {
@@ -23,13 +22,12 @@ const emailHandler = {
    * @param name - contains the receiver name
    * @param link - contains a link to put in the email body
    */
-  async createTemplate(name: string, link: string): Promise<string | null> {
+  async createTemplate<T extends object>(content: T): Promise<string | null> {
     try {
       if (!emailHandler.template) throw new Error("Template path not set");
-      const html = await ejs.renderFile(emailHandler.template, {
-        name,
-        link,
-      });
+
+      const html = await ejs.renderFile(emailHandler.template, content);
+
       return html;
     } catch (err) {
       console.error(err);
@@ -41,14 +39,17 @@ const emailHandler = {
    * Method to send an email using Resend
    * @param data - contains the receiver name, its email address and a link to put in the email body
    */
-  async sendEmail({ name, email: emailTo, link }: SendEmailData): Promise<any> {
+  async sendEmail<T extends object>({
+    email: emailTo,
+    content,
+  }: SendEmailData<T>): Promise<any> {
     if (!emailHandler.emailFrom || !process.env.RESEND_API_KEY) {
       throw new Error(
         "Email handler not initialized or RESEND_API_KEY not set"
       );
     }
 
-    const template = await emailHandler.createTemplate(name, link);
+    const template = await emailHandler.createTemplate(content);
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     try {

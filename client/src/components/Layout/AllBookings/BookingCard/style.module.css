@@ -28,6 +28,21 @@
   color: white;
 }
 
+.booking-card__status {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.booking-card__delete-button {
+  cursor: pointer;
+  outline: none;
+  border: none;
+  background: none;
+  color: white;
+  font-size: 1.4rem;
+}
+
 .booking-card__figcaption {
   display: inline-block;
   margin-left: 1.6rem;
