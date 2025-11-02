@@ -114,14 +114,14 @@ const adminController = {
       shelter_id: shelterId,
       from: selectedDate,
       to: selectedDate,
-      booked: true,
+      status: "accepted",
     });
 
     await booking.save();
 
     const disabledDates = await Booking.find({ shelter_id: shelterId })
-      .where("booked")
-      .equals(true);
+      .where("status")
+      .equals("accepted");
 
     res.status(200).json({ disabledDates });
   },
@@ -138,8 +138,8 @@ const adminController = {
 
     if (result?.deletedCount > 0) {
       const disabledDates = await Booking.find({ shelter_id: shelterId })
-        .where("booked")
-        .equals(true);
+        .where("status")
+        .equals("accepted");
 
       res.status(200).json({ disabledDates });
     }

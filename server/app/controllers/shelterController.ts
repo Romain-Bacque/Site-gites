@@ -135,8 +135,8 @@ const shelterController = {
     const disabledDates = await Booking.find({
       $or: [{ from: payload.from }, { to: payload.to }],
     })
-      .where("booked")
-      .equals(true);
+      .where("status")
+      .equals("accepted");
 
     if (disabledDates?.length > 0)
       throw new ExpressError("date(s) already booked !", 409);
@@ -179,8 +179,8 @@ const shelterController = {
   getDisabledDates: async function (req: Request, res: Response) {
     const { shelterId } = req.params;
     const disabledDates = await Booking.find({ shelter_id: shelterId })
-      .where("booked")
-      .equals(true);
+      .where("status")
+      .equals("accepted");
 
     res.status(200).json({ disabledDates });
   },
