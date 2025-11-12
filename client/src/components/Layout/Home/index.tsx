@@ -153,9 +153,8 @@ const Home: React.FC = () => {
             </div>
             <div>
               <p className={classes.gite__price}>
-                à partir de
-                <span className={classes["gite__price--amount"]}>200€</span>par
-                nuit.
+                Semaine à partir de
+                <span className={classes["gite__price--amount"]}>440€</span>
               </p>
               {renderDetailsButton()}
             </div>
@@ -184,9 +183,8 @@ const Home: React.FC = () => {
             </div>
             <div>
               <p className={classes.gite__price}>
-                à partir de
-                <span className={classes["gite__price--amount"]}>200€</span>par
-                nuit.
+                Semaine à partir de
+                <span className={classes["gite__price--amount"]}>440€</span>
               </p>
               {renderDetailsButton()}
             </div>
