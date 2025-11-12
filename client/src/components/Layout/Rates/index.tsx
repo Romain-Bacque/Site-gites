@@ -11,7 +11,6 @@ import {
 } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
-import { HTTPStateKind } from "../../../global/types";
 import useHTTPState from "../../../hooks/use-http-state";
 import Button from "../../UI/Button";
 import { QueryClient } from "@tanstack/react-query";
@@ -110,6 +109,7 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   useEffect(() => {
     // initial CSRF fetch
     fetchCSRF();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
