@@ -110,7 +110,7 @@
 .gite__text-container {
   display: flex;
   justify-content: space-between;
-  align-items: end;
+  align-items: flex-end;
   gap: 1rem;
   line-height: 3rem;
   padding: 2rem;
