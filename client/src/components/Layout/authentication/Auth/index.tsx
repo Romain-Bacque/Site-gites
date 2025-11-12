@@ -13,7 +13,6 @@ import { authActions } from "../../../../store/auth";
 import { LoginData } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { HTTPStateKind } from "../../../../global/types";
 import useHTTPState from "../../../../hooks/use-http-state";
 import useRecaptcha from "../../../../hooks/use-recaptcha";
 import Captcha from "../Captcha";
@@ -38,7 +37,6 @@ const Auth: React.FC = () => {
   const {
     mutate: loginMutate,
     status: loginStatus,
-    error: loginError,
   } = useMyMutation<LoginData, any>({
     mutationFn: (data) => loginRequest(data),
     onErrorFn: (_, errMessage) => {
@@ -58,7 +56,6 @@ const Auth: React.FC = () => {
   const {
     mutate: registerMutate,
     status: registerStatus,
-    error: registerError,
   } = useMyMutation<{ email: string } & LoginData, any>({
     mutationFn: (data) => registerRequest(data),
     onErrorFn: (_, errMessage) => {
@@ -255,6 +252,7 @@ const Auth: React.FC = () => {
               ? "Vous n'avez pas de compte ?"
               : "Vous avez un compte ?"}
           </span>
+          {/*eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a onClick={handleClick} className={classes["auth__link"]}>
             {!isNotRegistered ? "S'enregistrer." : "Se connecter."}
           </a>

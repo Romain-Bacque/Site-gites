@@ -96,8 +96,6 @@ const AllBookings: React.FC = () => {
   });
   const {
     mutate: deleteBookingMutate,
-    status: deleteBookingStatus,
-    error: deleteBookingError,
   } = useMyMutation({
     queryKeys: ["bookings"],
     mutationFn: deleteBookingRequest,

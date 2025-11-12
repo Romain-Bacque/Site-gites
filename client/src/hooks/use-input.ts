@@ -58,6 +58,7 @@ const inputReducer = (state: InputState, action: InputAction): InputState => {
         }
         break;
       case "email":
+        // eslint-disable-next-line no-useless-escape
         const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (actionValue.value.match(mailformat)) {
           return { ...state, isValid: true, enteredValue: actionValue.value };

@@ -47,8 +47,6 @@ const Gallery: React.FC = () => {
   // mutations
   const {
     mutate: postPictureMutate,
-    status: postPictureStatus,
-    error: postPictureError,
   } = useMyMutation({
     mutationFn: postPictureRequest,
     onSuccessFn: (data) => {
@@ -62,8 +60,6 @@ const Gallery: React.FC = () => {
 
   const {
     mutate: deletePictureMutate,
-    status: deletePictureStatus,
-    error: deletePictureError,
   } = useMyMutation({
     mutationFn: deletePictureRequest,
     onSuccessFn: (data) => {
