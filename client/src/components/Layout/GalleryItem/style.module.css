@@ -102,6 +102,7 @@
 
 .crop-container__input {
   -webkit-appearance: none;
+  appearance: none;
 }
 
 .crop-container__input:focus {
