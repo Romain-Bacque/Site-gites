@@ -16,7 +16,7 @@ const Shelters: React.FC = () => {
     isPending,
   } = useMyQuery({
     queryFn: getSheltersWithPicturesRequest,
-    queryKey: ["shelters"],
+    queryKey: ["sheltersWithPictures"],
   });
 
   useEffect(() => {

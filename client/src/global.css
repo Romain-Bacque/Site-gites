@@ -19,7 +19,7 @@
 
   /*-------- font and typography --------*/
   --body-font: "Open Sans", sans-serif;
-  --title-font: "Raleway", sans-serif;
+  --title-font: "Montserrat", sans-serif;
 
   /* ------- box shadow ------- */
   --box-shadow: 0 3px 15px hsl(var(--hue-color), 64%, 15%, 0.15);
@@ -164,7 +164,8 @@ section {
   color: white;
 }
 
-button:disabled, .button:disabled {
+button:disabled,
+.button:disabled {
   cursor: not-allowed;
   border-color: gray;
   color: gray;
@@ -184,6 +185,18 @@ button:disabled, .button:disabled {
 .swiper-button-prev,
 .swiper-button-next {
   color: white !important;
+}
+
+/* -- swiper classes -- */
+.swiper {
+  width: 100%;
+}
+
+.swiper__slide {
+  position: relative;
+  width: 450px !important;
+  max-width: 100%;
+  aspect-ratio: 4/3;
 }
 
 /* -- utility classes -- */

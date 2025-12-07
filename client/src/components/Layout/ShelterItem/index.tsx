@@ -40,12 +40,12 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
     status: updateStatus,
     isPending,
   } = useMyMutation({
-    queryKeys: ["shelters"],
+    queryKeys: ["sheltersWithPictures"],
     mutationFn: updateShelterDescriptionRequest,
     onSuccessFn: (data) => {
       const prevData = queryClient.getQueryData<
         GetSheltersWithPicturesRequestResponseData["sheltersData"]
-      >(["shelters"]);
+      >(["sheltersWithPictures"]);
 
       if (prevData) {
         const updatedData = prevData.map((item) =>
@@ -54,7 +54,7 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
             : item
         );
 
-        queryClient.setQueryData(["shelters"], updatedData);
+        queryClient.setQueryData(["sheltersWithPictures"], updatedData);
       }
     },
   });
@@ -141,8 +141,8 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
 
   return (
     <Card className={classes.gite__card}>
+      <h2 className={classes.gite__title}>{title}</h2>
       <div className={classes["gite__picture-container"]}>
-        <h2 className={classes.gite__title}>{title}</h2>
         {images?.length ? (
           <Slider title={title} data={images} />
         ) : (

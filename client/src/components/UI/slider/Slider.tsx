@@ -66,7 +66,7 @@ const Slider: React.FC<SliderProps> = ({ data }) => {
               className={classes.slide__img}
               src={item.url}
             />
-            <Link to="/albums" className={classes["slider__button-data"]}>
+            <Link to="/albums" className={classes["slider__button-img"]}>
               Voir tout l'album
             </Link>
           </div>

@@ -81,13 +81,13 @@ const GalleryItem: FC<GalleryItemProps> = ({
         slidesPerView="auto"
         navigation
         pagination={{ clickable: true }}
-        className={classes.swiper}
+        className="swiper"
       >
         {images?.length > 0 ? (
           images
             .sort((a) => (a._id === mainImgId ? -1 : 1))
             .map((image) => (
-              <SwiperSlide key={image._id} className={classes.swiper__slide}>
+              <SwiperSlide key={image._id} className="swiper__slide">
                 {isAuth && (
                   <button
                     data-image-id={image._id}
