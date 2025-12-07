@@ -187,15 +187,24 @@ const adminController = {
 
     if (!shelter) return next();
 
-    await Image.create({
+    const newImage = await Image.create({
       shelter_id: shelter._id,
       url: path,
       filename,
     });
 
-    const shelters = await Shelter.find({}).populate<{
-      images: ImagesFieldsType;
-    }>("images");
+    const shelters = await Shelter.updateOne(
+      { _id: shelterId },
+      {
+        main_image_id: shelter.main_image_id
+          ? shelter.main_image_id
+          : newImage._id,
+      }
+    ).then(() =>
+      Shelter.find({}).populate<{
+        images: ImagesFieldsType[];
+      }>("images")
+    );
 
     if (shelters) {
       res.status(200).json({ sheltersData: shelters });
@@ -215,6 +224,15 @@ const adminController = {
     if (!image) throw new ExpressError("Internal Server Error", 500);
 
     await cloudinary.uploader.destroy(image.filename as string);
+
+    const shelter = await Shelter.findById(image.shelter_id);
+
+    if (shelter?.main_image_id?.toString() === imageId) {
+      await Shelter.updateOne(
+        { _id: image.shelter_id },
+        { main_image_id: null }
+      );
+    }
 
     await image.deleteOne({ filename: image.filename });
 

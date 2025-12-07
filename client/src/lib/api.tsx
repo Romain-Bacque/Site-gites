@@ -150,7 +150,12 @@ export interface GetSheltersWithPicturesRequestResponseData {
 
 // Get Shelters
 export type getSheltersResponseData = {
-  sheltersData: { _id: string; title: string; number: number }[];
+  sheltersData: {
+    _id: string;
+    title: string;
+    number: number;
+    mainImage?: ShelterImage;
+  }[];
 };
 
 export const getShelters = async () => {

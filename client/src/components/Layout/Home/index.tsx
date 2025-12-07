@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import Card from "../../UI/Card";
@@ -9,11 +9,12 @@ import gite2_small from "../../../img/gite2_small.jpg";
 import gite2_large from "../../../img/gite2_large.jpg";
 import Alert from "../../UI/Alert";
 import { AlertStatut } from "./types";
-import { getActivities } from "../../../lib/api";
+import { getActivities, getShelters } from "../../../lib/api";
 import Activities from "../Activities";
-import { ArrowRightAlt } from "@mui/icons-material";
+import { ArrowRightAlt, ImageNotSupported } from "@mui/icons-material";
 import Button from "../../UI/Button";
 import { useMyQuery } from "hooks/use-query";
+import useHTTPState from "hooks/use-http-state";
 
 // variable & constantes
 const initialState = {
@@ -23,11 +24,20 @@ const initialState = {
 };
 
 const Home: React.FC = () => {
+  const handleHTTPState = useHTTPState();
   const history = useHistory();
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
   const [showModal, setShowModal] = useState(false);
 
-  // ✅ Remplacement du hook useHttp
+  const {
+    data: sheltersData,
+    error: sheltersQueryError,
+    isPending: sheltersIsPending,
+  } = useMyQuery({
+    queryKey: ["shelters"],
+    queryFn: getShelters,
+  });
+
   const {
     data: activities,
     status,
@@ -43,15 +53,80 @@ const Home: React.FC = () => {
     setShowModal(true);
   };
 
+  useEffect(() => {
+    if (sheltersQueryError) {
+      handleHTTPState("error", "Impossible de charger les gîtes.");
+    }
+  }, [status, activities, history, sheltersQueryError, handleHTTPState]);
+
   const renderDetailsButton = () => {
     const width = window.innerWidth;
     const size = width > 768 ? "lg" : width > 480 ? "md" : "sm";
 
     return (
-      <Button fullWidth size={size} onClick={() => history.push("/gites")}>
+      <Button
+        icon={ArrowRightAlt}
+        iconPosition="right"
+        size={size}
+        onClick={() => history.push("/gites")}
+      >
         Voir les détails
       </Button>
     );
+  };
+
+  const renderShelters = () => {
+    if (sheltersIsPending) {
+      return <p>Chargement des gîtes...</p>;
+    } else if (sheltersData && sheltersData.length > 0) {
+      return sheltersData && sheltersData.length > 0 ? (
+        sheltersData.map((shelter) => (
+          <Card key={shelter._id} className={classes.gite}>
+            <div
+              onClick={() => history.push(`/gites/${shelter._id}`)}
+              className={classes["gite__picture-container"]}
+            >
+              {shelter.mainImage ? (
+                <img
+                  className={classes.gite__picture}
+                  src={shelter.mainImage.url} // assuming your API returns a main image URL
+                  alt={shelter.title}
+                />
+              ) : (
+                <div className="text-center space">
+                  <ImageNotSupported sx={{ fontSize: "5rem", color: "#bbb" }} />
+                  <p>Aucune image pour le moment.</p>
+                </div>
+              )}
+            </div>
+            <div className={classes["gite__text-container"]}>
+              <div>
+                <h3 className={classes.gite__name}>{shelter.title}</h3>
+                <div>
+                  <p className={classes.gite__places}>
+                    Nombre de places : <span className="bold">4 personnes</span>
+                  </p>
+                </div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                }}
+              >
+                {renderDetailsButton()}
+              </div>
+            </div>
+          </Card>
+        ))
+      ) : (
+        <p className="text-center">Aucun gîte disponible.</p>
+      );
+    } else {
+      return <p className="text-center">Aucun gîte disponible.</p>;
+    }
   };
 
   return (
@@ -129,68 +204,7 @@ const Home: React.FC = () => {
           </Button>
         </article>
       </section>
-      <section className={classes.gites}>
-        <Card className={classes.gite}>
-          <div
-            onClick={() => history.push("/gites")}
-            className={classes["gite__picture-container"]}
-          >
-            <img
-              className={classes.gite__picture}
-              srcSet={`${gite1_small} 573w, ${gite1_large} 2201w`}
-              src={gite1_large}
-              alt="Gite 1"
-            />
-          </div>
-          <div className={classes["gite__text-container"]}>
-            <div>
-              <h3 className={classes.gite__name}>Gîte Jo</h3>
-              <div>
-                <p className={classes.gite__places}>
-                  Nombre de places : <span className="bold">4 personnes</span>
-                </p>
-              </div>
-            </div>
-            <div>
-              <p className={classes.gite__price}>
-                Semaine à partir de
-                <span className={classes["gite__price--amount"]}>440€</span>
-              </p>
-              {renderDetailsButton()}
-            </div>
-          </div>
-        </Card>
-        <Card className={classes.gite}>
-          <div
-            onClick={() => history.push("/gites")}
-            className={classes["gite__picture-container"]}
-          >
-            <img
-              className={classes.gite__picture}
-              srcSet={`${gite2_small} 576w, ${gite2_large} 2201w`}
-              src={gite2_large}
-              alt="Gite 1"
-            />
-          </div>
-          <div className={classes["gite__text-container"]}>
-            <div>
-              <h3 className={classes.gite__name}>Gîte Flo</h3>
-              <div>
-                <p className={classes.gite__places}>
-                  Nombre de places : <span className="bold">4 personnes</span>
-                </p>
-              </div>
-            </div>
-            <div>
-              <p className={classes.gite__price}>
-                Semaine à partir de
-                <span className={classes["gite__price--amount"]}>440€</span>
-              </p>
-              {renderDetailsButton()}
-            </div>
-          </div>
-        </Card>
-      </section>
+      <section className={classes.gites}>{renderShelters()}</section>
     </>
   );
 };

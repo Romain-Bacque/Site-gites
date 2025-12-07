@@ -54,6 +54,7 @@ const Gallery: React.FC = () => {
       queryKeys: ["sheltersWithPictures"],
       mutationFn: postPictureRequest,
       onSuccessFn: (newData) => {
+        queryClient.invalidateQueries({ queryKey: ["shelters"] });
         queryClient.setQueryData(["sheltersWithPictures"], newData);
 
         handleHTTPState("success", "Image ajoutée avec succès.");
@@ -68,6 +69,7 @@ const Gallery: React.FC = () => {
       queryKeys: ["sheltersWithPictures"],
       mutationFn: deletePictureRequest,
       onSuccessFn: (newData) => {
+        queryClient.invalidateQueries({ queryKey: ["shelters"] });
         queryClient.setQueryData(["sheltersWithPictures"], newData);
 
         handleHTTPState("success", "Image supprimée avec succès.");
@@ -102,6 +104,10 @@ const Gallery: React.FC = () => {
       );
 
       return { previousData };
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["shelters"] });
     },
 
     // Rollback on error

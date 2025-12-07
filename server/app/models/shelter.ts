@@ -28,6 +28,17 @@ shelterSchema.virtual("images", {
   localField: "_id",
   foreignField: "shelter_id",
 });
+shelterSchema.virtual("mainImage", {
+  ref: "Image",
+  localField: "main_image_id",
+  foreignField: "_id",
+  justOne: true,
+});
+shelterSchema.virtual("rates", {
+  ref: "Rate",
+  localField: "_id",
+  foreignField: "shelter_id",
+});
 shelterSchema.set("toObject", { virtuals: true });
 shelterSchema.set("toJSON", { virtuals: true });
 

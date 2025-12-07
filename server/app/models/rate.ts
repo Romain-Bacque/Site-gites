@@ -1,13 +1,13 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
-export interface IRates extends Document {
+export interface IRate extends Document {
   price1: number;
   price2: number;
   price3: number;
   shelter_id?: Types.ObjectId;
 }
 
-const ratesSchema = new Schema<IRates>({
+const ratesSchema = new Schema<IRate>({
   price1: {
     type: Number,
     required: [true, "price1 cannot be blank"],
@@ -32,4 +32,4 @@ const ratesSchema = new Schema<IRates>({
   },
 });
 
-export default mongoose.model<IRates>("Rates", ratesSchema);
+export default mongoose.model<IRate>("Rate", ratesSchema);

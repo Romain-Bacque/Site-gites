@@ -1,6 +1,6 @@
 import debugLib from "debug";
 import { Request, Response } from "express";
-import { Rates, Booking, Shelter } from "../models";
+import { Rate, Booking, Shelter } from "../models";
 import ExpressError from "../utilities/ExpressError";
 import puppeteer from "puppeteer-core";
 import path from "path";
@@ -22,7 +22,14 @@ interface Activity {
 
 const shelterController = {
   getShelters: async function (_: Request, res: Response) {
-    const shelters = await Shelter.find({});
+    const shelters = await Shelter.find({}).populate<{
+      images: {
+        _id: string;
+        url: string;
+        filename: string;
+        shelter_id: string;
+      }[];
+    }>(["mainImage", "rates"]);
 
     if (shelters) {
       res.status(200).json({ sheltersData: shelters });
@@ -188,7 +195,7 @@ const shelterController = {
 
   getRatesByShelterId: async function (req: Request, res: Response) {
     const { shelterId } = req.params;
-    const rates = await Rates.find({ shelter_id: shelterId });
+    const rates = await Rate.find({ shelter_id: shelterId });
 
     if (rates[0]) {
       res.status(200).json({ ratesData: rates[0] });
@@ -200,7 +207,7 @@ const shelterController = {
     const { price1, price2, price3 } = req.body;
 
     try {
-      const data = await Rates.findOneAndUpdate(
+      const data = await Rate.findOneAndUpdate(
         { shelter_id: shelterId },
         { shelterId, price1, price2, price3 },
         { upsert: true, new: true } // "upsert" means to create the document if it doesn't exist yet and "new" to return the updated document
