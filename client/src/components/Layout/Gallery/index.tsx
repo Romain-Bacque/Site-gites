@@ -249,6 +249,7 @@ const Gallery: React.FC = () => {
                 title={data.title}
                 images={data.images}
                 onSetUrlFile={setUrlFile}
+                isPending={sheltersIsPendingMutation || deletePictureIsPending}
                 onImageDelete={(event) => handleDeleteAlert(event, true)}
                 onMainImageSet={(event) => handleMainImageSet(event, data._id)}
                 setShowModal={setShowModal}

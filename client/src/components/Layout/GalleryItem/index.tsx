@@ -23,6 +23,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
   onSetUrlFile,
   onImageDelete,
   onMainImageSet,
+  isPending,
   setShowModal,
 }) => {
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
@@ -52,7 +53,11 @@ const GalleryItem: FC<GalleryItemProps> = ({
           <div>
             <label
               htmlFor={`files-shelter${title}`}
-              className="button button--alt"
+              className={`button button--alt`}
+              style={{
+                pointerEvents: isPending ? "none" : "auto",
+                opacity: isPending ? 0.6 : 1,
+              }}
             >
               Ajouter une photo
               <FontAwesomeIcon className="button__icon" icon={faAdd} />
@@ -64,6 +69,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
               name="file"
               onChange={handleFileValueChange}
               accept="image/*"
+              disabled={isPending}
             />
           </div>
         ) : null}
@@ -78,39 +84,41 @@ const GalleryItem: FC<GalleryItemProps> = ({
         className={classes.swiper}
       >
         {images?.length > 0 ? (
-          images.map((image) => (
-            <SwiperSlide key={image._id} className={classes.swiper__slide}>
-              {isAuth && (
-                <button
-                  data-image-id={image._id}
-                  onClick={onImageDelete}
-                  className={classes.swiper__icon}
-                  title="Supprimer l'image"
-                >
-                  <FontAwesomeIcon
-                    className={classes["delete-icon"]}
-                    style={{ pointerEvents: "none" }}
-                    icon={faTrash}
-                  />
-                </button>
-              )}
-              {isAuth && image._id !== mainImgId && (
-                <button
-                  data-image-id={image._id}
-                  onClick={onMainImageSet}
-                  className={classes.swiper__mainImgBtn}
-                  title="Définir comme image principale"
-                >
-                  Définir comme image principale
-                </button>
-              )}
-              <img
-                className={classes.image}
-                alt={image.filename}
-                src={image.url}
-              />
-            </SwiperSlide>
-          ))
+          images
+            .sort((a) => (a._id === mainImgId ? -1 : 1))
+            .map((image) => (
+              <SwiperSlide key={image._id} className={classes.swiper__slide}>
+                {isAuth && (
+                  <button
+                    data-image-id={image._id}
+                    onClick={onImageDelete}
+                    className={classes.swiper__icon}
+                    title="Supprimer l'image"
+                  >
+                    <FontAwesomeIcon
+                      className={classes["delete-icon"]}
+                      style={{ pointerEvents: "none" }}
+                      icon={faTrash}
+                    />
+                  </button>
+                )}
+                {isAuth && image._id !== mainImgId && (
+                  <button
+                    data-image-id={image._id}
+                    onClick={onMainImageSet}
+                    className={classes.swiper__mainImgBtn}
+                    title="Définir comme image principale"
+                  >
+                    Définir comme image principale
+                  </button>
+                )}
+                <img
+                  className={classes.image}
+                  alt={image.filename}
+                  src={image.url}
+                />
+              </SwiperSlide>
+            ))
         ) : (
           <div className="text-center space">
             <ImageNotSupported sx={{ fontSize: "5rem", color: "#bbb" }} />

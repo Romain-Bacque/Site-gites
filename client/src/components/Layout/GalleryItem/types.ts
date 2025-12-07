@@ -6,6 +6,7 @@ export interface GalleryItemProps {
   onSetUrlFile: (data: { id: string; file: string }) => void;
   onImageDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onMainImageSet: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  isPending?: boolean;
   setShowModal: React.Dispatch<
     React.SetStateAction<{
       show: boolean;
