@@ -149,7 +149,7 @@ const Home: React.FC = () => {
       <section>
         <Card className={classes.banner}>
           <div className={classes["banner__site-branding"]}>
-            <h1 className={classes["banner__site-title"]}>Gites Du Quer</h1>
+            <h1 className={classes["banner__site-title"]}>Gîtes Du Quer</h1>
             <h2 className={classes["banner__site-description"]}>
               Une belle escapade dans le Couserans.
             </h2>
