@@ -94,6 +94,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
                     onClick={onImageDelete}
                     className={classes.swiper__icon}
                     title="Supprimer l'image"
+                    disabled={isPending}
                   >
                     <FontAwesomeIcon
                       className={classes["delete-icon"]}
@@ -108,6 +109,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
                     onClick={onMainImageSet}
                     className={classes.swiper__mainImgBtn}
                     title="Définir comme image principale"
+                    disabled={isPending}
                   >
                     Définir comme image principale
                   </button>
