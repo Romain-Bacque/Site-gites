@@ -31,16 +31,15 @@ const CropContent: React.FC<CropContentProps> = ({
 
     if (!cropDatasRef.current) return;
 
+    const [imageSrc, croppedAreaPixels] = cropDatasRef.current;
+
     try {
-      // set pending state
       handleHTTPState("pending");
 
-      const file = await getCroppedImg(
-        cropDatasRef.current[0],
-        cropDatasRef.current[1]
-      );
+      const file = await getCroppedImg(imageSrc, croppedAreaPixels);
 
       const formData = new FormData();
+
       formData.append("shelterId", shelterId);
       formData.append("file", file!);
 
@@ -60,8 +59,8 @@ const CropContent: React.FC<CropContentProps> = ({
           image={url}
           crop={crop}
           zoom={zoom}
-          aspect={4 / 3}
           onCropChange={setCrop}
+          aspect={4 / 3}
           onCropComplete={handleCropComplete}
           onZoomChange={setZoom}
         />

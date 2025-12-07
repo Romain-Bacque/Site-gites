@@ -19,6 +19,11 @@ router.put(
   validate(putShelterDescriptionSchema),
   catchAsync(shelterController.updateShelterDescription)
 );
+router.put(
+  "/shelters/:id/image/:imageId",
+  csrfProtection,
+  catchAsync(shelterController.setMainImage)
+);
 router.post(
   "/booking",
   csrfProtection,

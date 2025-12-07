@@ -1,3 +1,4 @@
+import styles from "./style.module.css";
 import React, { useEffect, useState } from "react";
 import { useMyQuery, useMyMutation } from "../../../hooks/use-query";
 import {
@@ -5,12 +6,14 @@ import {
   getCSRF,
   getSheltersWithPicturesRequest,
   postPictureRequest,
+  setMainPictureRequest,
 } from "../../../lib/api";
 import Modal from "../../UI/Modal";
 import CropContent from "../CropContent";
 import useHTTPState from "../../../hooks/use-http-state";
 import GalleryItem from "../GalleryItem";
 import { ShelterType } from "./types";
+import { useQueryClient } from "@tanstack/react-query";
 
 // variable & constante
 const initialModalState = {
@@ -27,6 +30,7 @@ const initialMessageState = {
 // component
 const Gallery: React.FC = () => {
   const handleHTTPState = useHTTPState();
+  const queryClient = useQueryClient();
 
   // queries
   useMyQuery({
@@ -35,7 +39,7 @@ const Gallery: React.FC = () => {
   });
 
   const {
-    data: sheltersQueryData,
+    data: sheltersData,
     status: sheltersStatus,
     error: sheltersQueryError,
     isPending: sheltersIsPending,
@@ -45,29 +49,70 @@ const Gallery: React.FC = () => {
   });
 
   // mutations
-  const {
-    mutate: postPictureMutate,
-  } = useMyMutation({
-    mutationFn: postPictureRequest,
-    onSuccessFn: (data) => {
-      data && setSheltersData(data);
-      handleHTTPState("success", "Image ajoutée avec succès.");
-    },
-    onErrorFn: (_error, errorMessage) => {
-      handleHTTPState("error", errorMessage);
-    },
-  });
+  const { isPending: sheltersIsPendingMutation, mutate: postPictureMutate } =
+    useMyMutation({
+      queryKeys: ["sheltersWithPictures"],
+      mutationFn: postPictureRequest,
+      onSuccessFn: (newData) => {
+        queryClient.setQueryData(["sheltersWithPictures"], newData);
 
-  const {
-    mutate: deletePictureMutate,
-  } = useMyMutation({
-    mutationFn: deletePictureRequest,
-    onSuccessFn: (data) => {
-      data && setSheltersData(data);
-      handleHTTPState("success", "Image supprimée avec succès.");
+        handleHTTPState("success", "Image ajoutée avec succès.");
+      },
+      onErrorFn: (_error, errorMessage) => {
+        handleHTTPState("error", errorMessage);
+      },
+    });
+
+  const { isPending: deletePictureIsPending, mutate: deletePictureMutate } =
+    useMyMutation({
+      queryKeys: ["sheltersWithPictures"],
+      mutationFn: deletePictureRequest,
+      onSuccessFn: (newData) => {
+        queryClient.setQueryData(["sheltersWithPictures"], newData);
+
+        handleHTTPState("success", "Image supprimée avec succès.");
+      },
+      onErrorFn: (_error, errorMessage) => {
+        handleHTTPState("error", errorMessage);
+      },
+    });
+
+  const { mutate: mainPictureMutate } = useMyMutation({
+    queryKeys: ["sheltersWithPictures"],
+    mutationFn: setMainPictureRequest,
+    // Optimistic update
+    onMutate: async ({ shelterId, mainImgId }) => {
+      await queryClient.cancelQueries({ queryKey: ["sheltersWithPictures"] });
+
+      const previousData = queryClient.getQueryData<ShelterType[]>([
+        "sheltersWithPictures",
+      ]);
+
+      queryClient.setQueryData<ShelterType[]>(
+        ["sheltersWithPictures"],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          return oldData.map((item) =>
+            item._id === shelterId
+              ? { ...item, main_image_id: mainImgId }
+              : item
+          );
+        }
+      );
+
+      return { previousData };
     },
-    onErrorFn: (_error, errorMessage) => {
-      handleHTTPState("error", errorMessage);
+
+    // Rollback on error
+    onError: (_error, _variables, context: any) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          ["sheltersWithPictures"],
+          context.previousData
+        );
+      }
+      handleHTTPState("error", "Erreur lors du changement d'image principale.");
     },
   });
 
@@ -75,7 +120,6 @@ const Gallery: React.FC = () => {
   const [urlFile, setUrlFile] = useState<{ id: string; file: string } | null>(
     null
   );
-  const [sheltersData, setSheltersData] = useState<ShelterType[] | null>(null);
   const [showModal, setShowModal] = useState(initialModalState);
   const [alertStatut, setAlertStatut] = useState(initialMessageState);
 
@@ -90,6 +134,17 @@ const Gallery: React.FC = () => {
       show: value,
       crop: false,
       deleteAlert: true,
+    });
+  };
+
+  const handleMainImageSet = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    shelterId: string
+  ) => {
+    event.preventDefault();
+    mainPictureMutate({
+      shelterId,
+      mainImgId: event.currentTarget.dataset.imageId!,
     });
   };
 
@@ -124,10 +179,21 @@ const Gallery: React.FC = () => {
     );
   }, [sheltersStatus, sheltersQueryError, handleHTTPState]);
 
-  // refresh pictures display on the screen
+  // display loading message if pending
   useEffect(() => {
-    sheltersQueryData && setSheltersData(sheltersQueryData);
-  }, [sheltersQueryData]);
+    if (
+      sheltersIsPendingMutation ||
+      sheltersIsPending ||
+      deletePictureIsPending
+    ) {
+      handleHTTPState("pending");
+    }
+  }, [
+    sheltersIsPendingMutation,
+    sheltersIsPending,
+    deletePictureIsPending,
+    handleHTTPState,
+  ]);
 
   if (sheltersIsPending) {
     return (
@@ -154,7 +220,7 @@ const Gallery: React.FC = () => {
             />
           ) : null}
           {showModal.deleteAlert ? (
-            <div>
+            <div className={styles["delete-container"]}>
               <h3>Suppression de l'image</h3>
               <p>Etes-vous sûr de vouloir supprimer cette image ?</p>
               <div className="button-container">
@@ -172,16 +238,19 @@ const Gallery: React.FC = () => {
           ) : null}
         </>
       </Modal>
+      {/* TODO: get dynamic shelters data */}
       {sheltersData && sheltersData.length > 0 ? (
         <ul>
           {sheltersData.map((data) => (
             <li key={data._id}>
               <GalleryItem
                 id={data._id}
+                mainImgId={data.main_image_id}
                 title={data.title}
                 images={data.images}
                 onSetUrlFile={setUrlFile}
                 onImageDelete={(event) => handleDeleteAlert(event, true)}
+                onMainImageSet={(event) => handleMainImageSet(event, data._id)}
                 setShowModal={setShowModal}
               />
             </li>

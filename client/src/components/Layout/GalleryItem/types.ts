@@ -1,9 +1,11 @@
 export interface GalleryItemProps {
   id: string;
+  mainImgId?: string;
   title: string;
   images: ImageData[];
   onSetUrlFile: (data: { id: string; file: string }) => void;
   onImageDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onMainImageSet: (event: React.MouseEvent<HTMLButtonElement>) => void;
   setShowModal: React.Dispatch<
     React.SetStateAction<{
       show: boolean;

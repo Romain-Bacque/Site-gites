@@ -128,6 +128,7 @@ export interface ShelterData {
   _id: string;
   title: string;
   description: string;
+  main_image_id?: string;
   number: number;
 }
 
@@ -196,7 +197,7 @@ export const postPictureRequest = async (data: FormData) => {
       "/admin/gallery",
       data,
       {
-        headers: { "Content-export Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data" },
       }
     );
 
@@ -210,6 +211,26 @@ export const deletePictureRequest = async (id: string) => {
   const response =
     await instance.delete<GetSheltersWithPicturesRequestResponseData>(
       `/admin/gallery/${id}`
+    );
+
+  if (response.status !== 200) throw new Error();
+
+  return response.data.sheltersData;
+};
+
+// Update Picture
+
+// Set main picture
+export const setMainPictureRequest = async ({
+  shelterId,
+  mainImgId,
+}: {
+  shelterId: string;
+  mainImgId: string;
+}) => {
+  const response =
+    await instance.put<GetSheltersWithPicturesRequestResponseData>(
+      `/shelters/${shelterId}/image/${mainImgId}`
     );
 
   if (response.status !== 200) throw new Error();

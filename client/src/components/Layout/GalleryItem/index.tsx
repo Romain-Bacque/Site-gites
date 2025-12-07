@@ -17,10 +17,12 @@ import { GalleryItemProps } from "./types";
 
 const GalleryItem: FC<GalleryItemProps> = ({
   id,
+  mainImgId,
   title,
   images,
   onSetUrlFile,
   onImageDelete,
+  onMainImageSet,
   setShowModal,
 }) => {
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
@@ -90,6 +92,16 @@ const GalleryItem: FC<GalleryItemProps> = ({
                     style={{ pointerEvents: "none" }}
                     icon={faTrash}
                   />
+                </button>
+              )}
+              {isAuth && image._id !== mainImgId && (
+                <button
+                  data-image-id={image._id}
+                  onClick={onMainImageSet}
+                  className={classes.swiper__mainImgBtn}
+                  title="Définir comme image principale"
+                >
+                  Définir comme image principale
                 </button>
               )}
               <img

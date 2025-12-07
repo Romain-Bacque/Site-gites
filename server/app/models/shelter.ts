@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IShelter extends Document {
   title: string;
   description: string;
+  main_image_id?: mongoose.Types.ObjectId;
 }
 
 const shelterSchema = new Schema<IShelter>({
@@ -12,7 +13,12 @@ const shelterSchema = new Schema<IShelter>({
   },
   description: {
     type: String,
-    required: false
+    required: false,
+  },
+  main_image_id: {
+    type: Schema.Types.ObjectId,
+    ref: "Image",
+    required: false,
   },
 });
 

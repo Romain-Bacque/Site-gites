@@ -4,6 +4,7 @@ import { Rates, Booking, Shelter } from "../models";
 import ExpressError from "../utilities/ExpressError";
 import puppeteer from "puppeteer-core";
 import path from "path";
+import { Types } from "mongoose";
 
 const chromePath =
   process.env.PUPPETEER_EXECUTABLE_PATH ||
@@ -48,6 +49,40 @@ const shelterController = {
       }
 
       res.status(200).json({ shelterData: updatedShelter });
+    } catch (error) {
+      console.error(error);
+      throw new ExpressError("Internal Server Error", 500);
+    }
+  },
+
+  setMainImage: async function (req: Request, res: Response) {
+    try {
+      const { id, imageId } = req.params;
+
+      if (!id || !imageId) {
+        throw new ExpressError("Missing required fields", 400);
+      }
+
+      const shelter = await Shelter.findById(id);
+
+      if (!shelter) {
+        throw new ExpressError("Shelter not found", 404);
+      }
+      shelter.main_image_id = new Types.ObjectId(imageId);
+      await shelter.save();
+
+      const shelters = await Shelter.find({}).populate<{
+        images: {
+          _id: string;
+          url: string;
+          filename: string;
+          shelter_id: string;
+        }[];
+      }>("images");
+
+      if (shelters) {
+        res.status(200).json({ sheltersData: shelters });
+      } else throw new Error();
     } catch (error) {
       console.error(error);
       throw new ExpressError("Internal Server Error", 500);

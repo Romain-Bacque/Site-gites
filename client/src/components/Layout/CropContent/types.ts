@@ -1,5 +1,3 @@
-import { HTTPStateKind } from "../../../global/types";
-
 // type aliases
 export type ImagesData = {
   _id: string;

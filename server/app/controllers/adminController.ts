@@ -8,6 +8,13 @@ import path from "path";
 import { resendEmailHandler } from "../utilities/emailhandler";
 
 const debug = debugLib("controller:admin");
+type ImagesFieldsType = [
+  "_id",
+  "url",
+  "filename",
+  "main_image_id",
+  "shelter_id"
+];
 
 interface Template {
   bookingId?: string | undefined;
@@ -187,12 +194,7 @@ const adminController = {
     });
 
     const shelters = await Shelter.find({}).populate<{
-      images: {
-        _id: string;
-        url: string;
-        filename: string;
-        shelter_id: string;
-      }[];
+      images: ImagesFieldsType;
     }>("images");
 
     if (shelters) {
@@ -212,20 +214,12 @@ const adminController = {
 
     if (!image) throw new ExpressError("Internal Server Error", 500);
 
-    // @ts-ignore
-    const shelterId = image.shelter_id._id;
-
     await cloudinary.uploader.destroy(image.filename as string);
 
     await image.deleteOne({ filename: image.filename });
 
     const shelters = await Shelter.find({}).populate<{
-      images: {
-        _id: string;
-        url: string;
-        filename: string;
-        shelter_id: string;
-      }[];
+      images: ImagesFieldsType[];
     }>("images");
 
     if (shelters) {

@@ -9,26 +9,33 @@ export const createImage = (url: string) =>
     image.src = url;
   });
 
-export default async function getCroppedImg(url: string, pixelCrop: Area) {
+export default async function getCroppedImg(
+  url: string,
+  croppedAreaPixels: Area
+) {
   const image = await createImage(url);
+
   const canvas = document.createElement("canvas");
+
+  canvas.width = croppedAreaPixels.width;
+  canvas.height = croppedAreaPixels.height;
+
   const ctx = canvas.getContext("2d");
 
   if (!ctx) return null;
 
-  canvas.width = image.height;
-  canvas.height = image.height;
-
   ctx.drawImage(
     image,
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height,
-    0,
-    0,
-    image.width,
-    image.height
+    // source position
+    croppedAreaPixels.x, // top-left x
+    croppedAreaPixels.y, // top-left y
+    croppedAreaPixels.width, // source width
+    croppedAreaPixels.height, // source height
+    // destination position
+    0, // top-left x
+    0, // top-left y
+    canvas.width, // destination width
+    canvas.height // destination height
   );
 
   return new Promise<Blob | null>((resolve, _) => {
