@@ -155,7 +155,7 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
         <h3 className={classes["gites__capacité-titre"]}>Capacité</h3>
         <p className={classes["gites__capacité-texte"]}>4 personnes</p>
         <h3 className={classes["gites__surface-titre"]}>Surface</h3>
-        <p className={classes["gites__surface-texte"]}>60 m2</p>
+        <p className={classes["gites__surface-texte"]}>50 m2</p>
         <h3 className={classes["gites__animaux-titre"]}>Animaux</h3>
         <p className={classes["gites__animaux-texte"]}>sous accord</p>
       </div>
