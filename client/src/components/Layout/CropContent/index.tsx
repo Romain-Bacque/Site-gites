@@ -1,8 +1,9 @@
-import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
-import Cropper, { Area } from "react-easy-crop";
+import React, { MouseEventHandler, useRef } from "react";
+import { Cropper, CropperRef, RectangleStencil } from "react-advanced-cropper";
+
+import "react-advanced-cropper/dist/style.css";
 import classes from "./style.module.css";
-import getCroppedImg from "./lib/cropImage";
-// types import
+
 import { CropContentProps } from "./types";
 import useHTTPState from "../../../hooks/use-http-state";
 
@@ -11,37 +12,34 @@ const CropContent: React.FC<CropContentProps> = ({
   url,
   onImagePost,
 }) => {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
+  const cropperRef = useRef<CropperRef>(null);
   const handleHTTPState = useHTTPState();
-
-  const cropDatasRef = useRef<[string, Area] | null>(null);
-
-  const handleCropComplete = useCallback(
-    (_: Area, croppedAreaPixels: Area) => {
-      cropDatasRef.current = [url, croppedAreaPixels];
-    },
-    [url]
-  );
+  console.log(url);
 
   const handleCropImage: MouseEventHandler<HTMLButtonElement> = async (
     event
   ) => {
     event.preventDefault();
 
-    if (!cropDatasRef.current) return;
-
-    const [imageSrc, croppedAreaPixels] = cropDatasRef.current;
+    const cropper = cropperRef.current;
+    if (!cropper) return;
 
     try {
       handleHTTPState("pending");
 
-      const file = await getCroppedImg(imageSrc, croppedAreaPixels);
+      const canvas = cropper.getCanvas();
+      if (!canvas)
+        throw new Error("Impossible d'obtenir le canvas de recadrage.");
+
+      const blob: Blob = await new Promise((resolve) =>
+        canvas.toBlob((b) => resolve(b!), "image/jpeg")
+      );
+
+      const file = new File([blob], "cropped.jpg", { type: "image/jpeg" });
 
       const formData = new FormData();
-
       formData.append("shelterId", shelterId);
-      formData.append("file", file!);
+      formData.append("file", file);
 
       onImagePost(formData);
     } catch (err: any) {
@@ -52,35 +50,19 @@ const CropContent: React.FC<CropContentProps> = ({
   return (
     <div
       className={classes["crop-container"]}
-      onClick={(event) => event.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
     >
-      <div className={classes["crop-container__cropper"]}>
-        <Cropper
-          image={url}
-          crop={crop}
-          zoom={zoom}
-          onCropChange={setCrop}
-          aspect={4 / 3}
-          onCropComplete={handleCropComplete}
-          onZoomChange={setZoom}
-        />
-      </div>
+      <Cropper
+        className={classes["crop-container__cropper"]}
+        ref={cropperRef}
+        src={url}
+        stencilComponent={RectangleStencil}
+        stencilProps={{
+          aspectRatio: 4 / 3, // 1 = square, 16 / 9 = landscape, 4 / 3, etc.
+        }}
+      />
+
       <form className={classes["crop-container__form"]}>
-        <div>
-          <span className={classes["crop-container__span"]}>-</span>
-          <input
-            className={classes["crop-container__input"]}
-            type="range"
-            min={1}
-            max={10}
-            step={0.1}
-            value={zoom}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setZoom(+event.target.value)
-            }
-          />
-          <span className={classes["crop-container__span"]}>+</span>
-        </div>
         <button
           type="button"
           onClick={handleCropImage}

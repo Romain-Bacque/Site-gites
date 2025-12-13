@@ -101,7 +101,7 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
             className={classes["gites__description-textarea"]}
             defaultValue={descriptionText}
             placeholder="Entrez la description du gîte ici..."
-            rows={7}
+            rows={10}
             onChange={(e) => setDescriptionText(e.target.value)}
           />
           <Button
@@ -117,9 +117,9 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
       );
     } else {
       return description ? (
-        <p className={classes["gites__description-texte"]}>{description}</p>
+        <p className={classes["gites__description-text"]}>{description}</p>
       ) : (
-        <p className={classes["gites__description-texte"]}>
+        <p className={classes["gites__description-text"]}>
           Aucune description disponible pour le moment.
         </p>
       );

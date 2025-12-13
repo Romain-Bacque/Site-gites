@@ -130,9 +130,11 @@
   margin-bottom: 1rem;
 }
 
-.gites__description-texte {
+.gites__description-text {
   margin-bottom: 0.5rem;
   line-height: 1.6;
   white-space: pre-wrap; /* conserve les sauts de ligne et espaces */
   word-break: break-word; /* évite le débordement */
+  max-height: 400px;
+  overflow-y: auto;
 }
