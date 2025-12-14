@@ -117,10 +117,7 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
       );
     } else {
       return description ? (
-        <p
-          className={classes["gites__description-text"]}
-          dangerouslySetInnerHTML={{ __html: description }}
-        />
+        <p className={classes["gites__description-text"]}>{description}</p>
       ) : (
         <p className={classes["gites__description-text"]}>
           Aucune description disponible pour le moment.
