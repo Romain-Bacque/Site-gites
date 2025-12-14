@@ -16,10 +16,24 @@ const extension = (joi) => ({
       validate(value, helpers) {
         // Joi will automatically call this method for whatever value it will receive
         const clean = sanitizeHtml(value, {
-          allowedTags: [], // no tag are allowed
-          allowedAttributes: {}, // no attribute are allowed
+          allowedTags: [
+            "b",
+            "i",
+            "u",
+            "strong",
+            "em",
+            "p",
+            "br",
+            "ul",
+            "ol",
+            "li",
+            "a",
+          ],
+          allowedSchemes: ["http", "https", "mailto"],
+          allowedAttributes: {
+            a: ["href", "name", "target"],
+          },
         });
-        if (clean !== value) return helpers.error("string.escapeHTML");
         return clean;
       },
     },

@@ -45,6 +45,8 @@ const shelterController = {
         throw new ExpressError("Missing required fields", 400);
       }
 
+      console.log(newDescription)
+
       const updatedShelter = await Shelter.findByIdAndUpdate(
         id,
         { description: newDescription },
