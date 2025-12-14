@@ -34,6 +34,7 @@ const extension = (joi) => ({
             a: ["href", "name", "target"],
           },
         });
+        if (clean !== value) return helpers.error("string.escapeHTML");
         return clean;
       },
     },
@@ -49,7 +50,7 @@ const joi = baseJoi.extend(extension);
  */
 module.exports.putShelterDescriptionSchema = joi
   .object({
-    description: joi.string().escapeHTML().required(),
+    description: joi.string().required(),
   })
   .required();
 
