@@ -69,7 +69,7 @@ const App: React.FC = () => {
             </Route>
           )}
           {!isAuth && (
-            <Route path="/auth/reset-password" exact>
+            <Route path="/auth/reset-password">
               <ResetPasswordPage />
             </Route>
           )}

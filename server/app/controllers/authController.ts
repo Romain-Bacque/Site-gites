@@ -184,7 +184,7 @@ const authController = {
       email: user.email,
     };
     const token = jwt.sign(payload, secret, { expiresIn: "24h" });
-    const link = `${process.env.CORS_ORIGIN}/auth/reset-password/${user.id}/${token}`;
+    const link = `${process.env.CORS_ORIGIN}/auth/reset-password?id=${user.id}&token=${token}`;
 
     await sendEmail({
       service: "gmail",

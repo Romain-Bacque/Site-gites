@@ -15,7 +15,9 @@ import useHTTPState from "../../../../hooks/use-http-state";
 
 // component
 const ResetPassword: React.FC = () => {
-  const { id, token } = useParams<{ id: string; token: string }>();
+  const queryParams = new URLSearchParams(window.location.search);
+  const id = queryParams.get("id") || "";
+  const token = queryParams.get("token") || "";
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const handleHTTPState = useHTTPState();
 

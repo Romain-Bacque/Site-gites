@@ -63,6 +63,10 @@ const ForgotPassword: React.FC = () => {
     handleHTTPState(forgotPasswordStatus, errorMessage);
 
     if (forgotPasswordStatus === "success") {
+      handleHTTPState(
+        "success",
+        "Un email de réinitialisation a été envoyé si l'adresse existe dans notre base de données."
+      );
       userEmailResetHandler();
     }
   }, [
