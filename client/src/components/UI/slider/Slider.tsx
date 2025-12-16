@@ -57,8 +57,8 @@ const Slider: React.FC<SliderProps> = ({ data }) => {
             key={item._id}
             className={
               slideIndex === index + 1
-                ? classes["slide active-anim"]
-                : classes["slide"]
+                ? `${classes["slide--active-anim"]} ${classes.slide}`
+                : classes.slide
             }
           >
             <img

@@ -17,7 +17,7 @@
   height: 100%;
   object-fit: cover;
 }
-.active-anim {
+.slide--active-anim {
   opacity: 1;
 }
 
