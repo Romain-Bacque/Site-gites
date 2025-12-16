@@ -1,17 +1,9 @@
 import Card from "../../../components/UI/Card";
-import { FC } from "react";
+import { FC, useState } from "react";
 import classes from "./style.module.css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppSelector } from "../../../hooks/use-store";
-import { faAdd, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper";
-
-// I need to import the css here to make the swiper work correctly, because it's not imported globally in the app
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/scrollbar";
+import { faAdd, faTrash, faTimes, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { ImageNotSupported } from "@mui/icons-material";
 import { GalleryItemProps } from "./types";
 
@@ -27,6 +19,12 @@ const GalleryItem: FC<GalleryItemProps> = ({
   setShowModal,
 }) => {
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const sortedImages = images?.length > 0 
+    ? images.sort((a) => (a._id === mainImgId ? -1 : 1))
+    : [];
 
   const handleFileValueChange: React.ChangeEventHandler<HTMLInputElement> = (
     event
@@ -43,6 +41,23 @@ const GalleryItem: FC<GalleryItemProps> = ({
         deleteAlert: false,
       });
     }
+  };
+
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % sortedImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + sortedImages.length) % sortedImages.length);
   };
 
   return (
@@ -74,60 +89,70 @@ const GalleryItem: FC<GalleryItemProps> = ({
           </div>
         ) : null}
       </div>
-      <Swiper
-        modules={[Navigation, Pagination, Scrollbar, A11y]}
-        spaceBetween={50}
-        centeredSlides
-        slidesPerView="auto"
-        navigation
-        pagination={{ clickable: true }}
-        className="swiper"
-      >
-        {images?.length > 0 ? (
-          images
-            .sort((a) => (a._id === mainImgId ? -1 : 1))
-            .map((image) => (
-              <SwiperSlide key={image._id} className="swiper__slide">
-                {isAuth && (
+
+      <div className={classes["mosaic-container"]}>
+        {sortedImages.length > 0 ? (
+          sortedImages.map((image, index) => (
+            <div key={image._id} className={classes["mosaic-item"]}>
+              <img
+                className={classes["mosaic-image"]}
+                alt={image.filename}
+                src={image.url}
+                onClick={() => openLightbox(index)}
+              />
+              {isAuth && (
+                <div className={classes["image-controls"]}>
                   <button
                     data-image-id={image._id}
                     onClick={onImageDelete}
-                    className={classes.swiper__icon}
+                    className={classes["control-btn"]}
                     title="Supprimer l'image"
                     disabled={isPending}
                   >
-                    <FontAwesomeIcon
-                      className={classes["delete-icon"]}
-                      style={{ pointerEvents: "none" }}
-                      icon={faTrash}
-                    />
+                    <FontAwesomeIcon icon={faTrash} />
                   </button>
-                )}
-                {isAuth && image._id !== mainImgId && (
-                  <button
-                    data-image-id={image._id}
-                    onClick={onMainImageSet}
-                    className={classes.swiper__mainImgBtn}
-                    title="Définir comme image principale"
-                    disabled={isPending}
-                  >
-                    Définir comme image principale
-                  </button>
-                )}
-                <img
-                  className={classes.image}
-                  alt={image.filename}
-                  src={image.url}
-                />
-              </SwiperSlide>
-            ))
+                  {image._id !== mainImgId && (
+                    <button
+                      data-image-id={image._id}
+                      onClick={onMainImageSet}
+                      className={classes["control-btn"]}
+                      title="Définir comme image principale"
+                      disabled={isPending}
+                    >
+                      ⭐
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          ))
         ) : (
           <div className="text-center space">
             <ImageNotSupported sx={{ fontSize: "5rem", color: "#bbb" }} />
             <p>Aucune image pour le moment.</p>
           </div>
         )}
-      </Swiper>
+      </div>
+
+      {lightboxOpen && (
+        <div className={classes.lightbox} onClick={closeLightbox}>
+          <button className={classes["lightbox-close"]} onClick={closeLightbox}>
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+          <button className={classes["lightbox-prev"]} onClick={(e) => { e.stopPropagation(); prevImage(); }}>
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </button>
+          <button className={classes["lightbox-next"]} onClick={(e) => { e.stopPropagation(); nextImage(); }}>
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+          <img
+            src={sortedImages[currentImageIndex]?.url}
+            alt={sortedImages[currentImageIndex]?.filename}
+            className={classes["lightbox-image"]}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </Card>
   );
 };
