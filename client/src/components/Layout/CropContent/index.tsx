@@ -57,9 +57,7 @@ const CropContent: React.FC<CropContentProps> = ({
         ref={cropperRef}
         src={url}
         stencilComponent={RectangleStencil}
-        stencilProps={{
-          aspectRatio: 4 / 3, // 1 = square, 16 / 9 = landscape, 4 / 3, etc.
-        }}
+        aspectRatio={undefined}
       />
 
       <form className={classes["crop-container__form"]}>

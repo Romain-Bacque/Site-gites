@@ -184,7 +184,7 @@ button:disabled,
 
 .swiper-button-prev,
 .swiper-button-next {
-  color: white !important;
+  color: rgb(94, 25, 25) !important;
 }
 
 /* -- swiper classes -- */
@@ -194,9 +194,8 @@ button:disabled,
 
 .swiper__slide {
   position: relative;
-  width: 450px !important;
   max-width: 100%;
-  aspect-ratio: 4/3;
+  height: 50vh !important;
 }
 
 /* -- utility classes -- */

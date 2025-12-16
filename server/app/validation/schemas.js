@@ -213,7 +213,7 @@ module.exports.postBookingSchema = joi
       .required(),
     from: joi.date(),
     to: joi.date(),
-    informations: joi.string().escapeHTML(),
+    informations: joi.string().escapeHTML().allow(""),
     categories: joi.array().items(joi.number().min(1).required()),
   })
   .required();

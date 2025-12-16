@@ -116,10 +116,9 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
       email: emailValue,
       from: fromValue,
       to: toValue,
+      informations: infosValue || "",
     };
 
-    // if user input some complementary infos
-    if (infosValue) userData.informations = infosValue;
     bookingMutate(userData);
   };
 

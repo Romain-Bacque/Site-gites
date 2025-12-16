@@ -5,6 +5,7 @@ import ExpressError from "../utilities/ExpressError";
 import puppeteer from "puppeteer-core";
 import path from "path";
 import { Types } from "mongoose";
+import { resendEmailHandler } from "../utilities/emailhandler";
 
 const chromePath =
   process.env.PUPPETEER_EXECUTABLE_PATH ||
@@ -18,6 +19,33 @@ interface Activity {
   title: string;
   address: string;
   link: string;
+}
+
+// Email sending helper
+async function sendEmail({
+  emailFrom,
+  subject,
+  templatePath,
+  email,
+  content,
+}: {
+  service: string;
+  emailFrom: string;
+  subject: string;
+  templatePath: string;
+  email: string;
+  content: object;
+}) {
+  resendEmailHandler.init({
+    emailFrom,
+    subject,
+    template: templatePath,
+  });
+
+  await resendEmailHandler.sendEmail({
+    email,
+    content,
+  });
 }
 
 const shelterController = {
@@ -44,8 +72,6 @@ const shelterController = {
       if (!id || !newDescription) {
         throw new ExpressError("Missing required fields", 400);
       }
-
-      console.log(newDescription)
 
       const updatedShelter = await Shelter.findByIdAndUpdate(
         id,
@@ -191,6 +217,20 @@ const shelterController = {
     });
 
     await booking.save();
+
+    const shelter = await Shelter.findById(shelterId);
+
+    await sendEmail({
+      service: "gmail",
+      emailFrom: (process.env.RESEND_EMAIL_FROM as string) || "",
+      subject: "Nouvelle demande de réservation",
+      templatePath: path.join(
+        __dirname,
+        "../utilities/emailTemplate/bookingRequest.ejs"
+      ),
+      email: process.env.RESEND_ADMIN_EMAIL as string,
+      content: { ...payload, shelter: shelter?.title || "N/A" },
+    });
 
     res.sendStatus(200);
   },

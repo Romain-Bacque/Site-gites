@@ -1,0 +1,58 @@
+<!-- bookingRequest.ejs -->
+<div
+  style="
+    font-family: Arial, sans-serif;
+    color: #222;
+    padding: 20px;
+    max-width: 600px;
+  "
+>
+  <h2 style="margin: 0 0 10px 0; font-size: 1.4em; color: #333">
+    Nouvelle demande de réservation
+  </h2>
+
+  <p style="margin: 8px 0">
+    Vous avez reçu une nouvelle demande de réservation pour le gîte
+    <strong><%= shelter %></strong>.
+  </p>
+
+  <p style="margin: 8px 0">
+    <strong>Détails de la réservation :</strong><br />
+    Nom du client : <%= name %><br />
+    Email : <%= email %><br />
+    Téléphone : <%= phone %><br />
+    Nombre de personnes : <%= numberOfPerson %><br />
+    Dates : du <strong><%= from %></strong> au <strong><%= to %></strong><br />
+    Message du client :
+  </p>
+
+  <% if (informations) { %>
+  <div
+    style="
+      margin: 12px 0;
+      padding: 10px;
+      background: #f8f8f8;
+      border-radius: 4px;
+    "
+  >
+    <%= informations %>
+  </div>
+  <% } else { %>
+  <p style="margin: 12px 0; font-style: italic">
+    Aucun message supplémentaire.
+  </p>
+  <% } %>
+
+  <p style="margin: 12px 0">
+    Veuillez répondre à cette demande dans les plus brefs délais.
+  </p>
+
+  <p style="margin: 12px 0">Cordialement,</p>
+
+  <p style="margin: 0">
+    <strong>Le système de réservation du gîte</strong><br />
+    <span style="font-size: 0.9em; color: #666"
+      >Merci de ne pas répondre directement à cet e-mail.</span
+    >
+  </p>
+</div>
