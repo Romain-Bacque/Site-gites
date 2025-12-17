@@ -220,6 +220,17 @@ const shelterController = {
 
     const shelter = await Shelter.findById(shelterId);
 
+    const formattedFrom = new Date(payload.from).toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const formattedTo = new Date(payload.to).toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
     await sendEmail({
       service: "gmail",
       emailFrom: (process.env.RESEND_EMAIL_FROM as string) || "",
@@ -229,7 +240,12 @@ const shelterController = {
         "../utilities/emailTemplate/bookingRequest.ejs"
       ),
       email: process.env.RESEND_ADMIN_EMAIL as string,
-      content: { ...payload, shelter: shelter?.title || "N/A" },
+      content: {
+        ...payload,
+        shelter: shelter?.title || "N/A",
+        from: formattedFrom,
+        to: formattedTo,
+      },
     });
 
     res.sendStatus(200);

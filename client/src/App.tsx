@@ -73,7 +73,7 @@ const App: React.FC = () => {
               <ResetPasswordPage />
             </Route>
           )}
-          <Route path="/gites" exact>
+          <Route path="/gites">
             <SheltersPage />
           </Route>
           <Route path="/albums">

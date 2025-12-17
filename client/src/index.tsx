@@ -7,8 +7,9 @@ import store from "./store/index";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import {ErrorBoundary} from "react-error-boundary";
+import { ErrorBoundary } from "react-error-boundary";
 import Fallback from "components/Layout/ErrorBoundaryFallback";
+import "./lib/i18n";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

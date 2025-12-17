@@ -1,7 +1,6 @@
 // hooks import
 import React, { useEffect, useState } from "react";
 import useInput from "../../../../hooks/use-input";
-import { useParams } from "react-router-dom";
 import { useMyQuery, useMyMutation } from "../../../../hooks/use-query";
 // types import
 // other import

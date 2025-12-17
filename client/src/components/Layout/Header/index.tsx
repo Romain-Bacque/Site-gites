@@ -9,12 +9,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { useMyMutation } from "hooks/use-query";
 import useHTTPState from "hooks/use-http-state";
+import LanguageSwitcher from "components/UI/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 // component
 const Header: React.FC = () => {
   const handleHTTPState = useHTTPState();
   const [scrollActive, setScrollActive] = useState(false);
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
 
   const isAdmin = useAppSelector((state) => state.auth.isAdmin);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
@@ -127,7 +130,7 @@ const Header: React.FC = () => {
                   activeClassName={classes["active-link"]}
                   to="/admin/allBookings"
                 >
-                  Demandes
+                  {t("header.requests")}
                 </NavLink>
               </li>
             )}
@@ -149,6 +152,7 @@ const Header: React.FC = () => {
               Déconnexion
             </button>
           )}
+          <LanguageSwitcher />
         </nav>
       </div>
     </header>

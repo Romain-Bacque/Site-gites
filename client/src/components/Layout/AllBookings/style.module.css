@@ -36,9 +36,3 @@
     transform: scale(0.9);
   }
 }
-
-.bookings__list {
-  width: 100%;
-  padding: 2rem 0 4rem;
-  border-top: 1px solid var(--border-color-light);
-}

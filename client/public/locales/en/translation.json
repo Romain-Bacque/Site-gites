@@ -1,0 +1,201 @@
+{
+  "shelters": {
+    "title": "List of Lodgings",
+    "description": "Browse the available lodgings",
+    "loading": "Loading lodgings...",
+    "error": "Lodgings are unavailable."
+  },
+  "sheltersItems": {
+    "descriptionPlaceholder": "Enter the lodging description here...",
+    "noDescription": "No description available at the moment.",
+    "updateError": "Error updating the description.",
+    "updateSuccess": "Description updated successfully.",
+    "capacity": "Capacity",
+    "surface": "Surface",
+    "pets": "Pets",
+    "petsCondition": "upon agreement",
+    "description": "Description",
+    "book": "Book",
+    "rates": "Rates",
+    "availability": "Availability"
+  },
+  "booking": {
+    "status": "Status",
+    "from": "From",
+    "to": "To",
+    "informations": "Information",
+    "noInformations": "No additional information.",
+    "accept": "Accept",
+    "refuse": "Decline",
+    "cancel": "Cancel booking",
+    "deleteTitle": "Delete booking card",
+    "nameLabel": "Full Name",
+    "namePlaceholder": "Full Name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Email Address",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "Phone Number",
+    "personsLabel": "Number of Persons",
+    "personsPlaceholder": "Max 4 persons",
+    "fromLabel": "Arrival",
+    "toLabel": "Departure",
+    "infosPlaceholder": "Additional Information",
+    "sendButton": "Send",
+    "successTitle": "Request sent successfully!",
+    "successText": "I will confirm it by email according to my availability.",
+    "errorTitle": "Failed to send the request",
+    "errorText": "There might be an error in one or more fields."
+  },
+  "availability": {
+    "notAvailable": "Not available / booked",
+    "calendarUnavailable": "The calendar is unavailable."
+  },
+  "rates": {
+    "loading": "Loading rates...",
+    "lowSeason": "Low season (week)",
+    "midSeason": "Mid season (week)",
+    "highSeason": "High season (week)",
+    "saveChanges": "Save changes"
+  },
+  "resetPassword": {
+    "title": "Password Reset",
+    "description": "Reset your password",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password here",
+    "passwordRequirements": "Password must contain:",
+    "success": "Password has been successfully reset.",
+    "error": "An error occurred.",
+    "invalidLink": "Invalid reset link."
+  },
+  "forgotPassword": {
+    "title": "Password Reset",
+    "description": "Request a password reset for your account.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email here",
+    "submitButton": "Send reset email",
+    "successMessage": "A reset email has been sent if the address exists in our database."
+  },
+  "home": {
+    "title": "Home - Lodgings Site",
+    "description": "Welcome to the lodgings website"
+  },
+  "gallery": {
+    "title": "Gallery - Ariege Lodgings Site ",
+    "description": "Photo gallery of the lodgings",
+    "addPhoto": "Add photo",
+    "deleteImage": "Delete image",
+    "setMainImage": "Set as main image",
+    "noImage": "No image available yet.",
+    "close": "Close",
+    "previous": "Previous image",
+    "next": "Next image",
+    "loadingImages": "Loading images...",
+    "imageAdded": "Image added successfully.",
+    "imageDeleted": "Image deleted successfully.",
+    "loadError": "Error while loading images.",
+    "mainImageError": "Error while changing the main image.",
+    "deleteTitle": "Delete image",
+    "deleteConfirm": "Are you sure you want to delete this image?"
+  },
+  "emailConfirmation": {
+    "title": "Email Confirmation",
+    "description": "Email confirmation page for users."
+  },
+  "auth": {
+    "title": "Authentication",
+    "description": "User authentication page.",
+    "login": "Login",
+    "register": "Register",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "usernamePlaceholder": "Enter your username",
+    "emailPlaceholder": "Enter your email address",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPassword": "Forgot?",
+    "passwordRequirements": "Password must contain:",
+    "loginAction": "Login",
+    "registerAction": "Register",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "loginError": "Incorrect username or password.",
+    "registerError": "An error occurred during registration.",
+    "registerSuccess": "Registration successful! Please check your inbox to activate your account.",
+    "captchaError": "There was an issue verifying the captcha."
+  },
+  "allBookings": {
+    "title": "All Bookings",
+    "description": "Page displaying all bookings."
+  },
+  "bookings": {
+    "title": "Requests list ({{count}})",
+    "sort": "Sort",
+    "empty": "There are currently no bookings.",
+    "deleteConfirm": "Are you sure you want to delete this booking?",
+    "updateSuccess": "Booking status updated successfully.",
+    "accepted": "accepted",
+    "refused": "unfortunately declined"
+  },
+  "bookingStatus": {
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "refused": "Declined"
+  },
+  "activities": {
+    "title": "Activities in the Couserans area",
+    "loading": "Loading activities...",
+    "city": "Town",
+    "sourceLink": "Link to the source",
+    "empty": "No activities to display."
+  },
+  "emailConfirm": {
+    "accountValid": "Your account has been validated!",
+    "accountInvalid": "Your account could not be validated.",
+    "login": "Login"
+  },
+  "sort": {
+    "title": "Sort",
+    "byDate": "By date",
+    "ascending": "Ascending",
+    "descending": "Descending",
+    "byStatus": "By status",
+    "booked": "Booked",
+    "awaiting": "Pending"
+  },
+  "slider": {
+    "link": "View full album"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "Submit": "Submit",
+    "Send": "Send",
+    "validate": "Validate",
+    "save": "Save",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "form": {
+    "requiredError": "This field is required",
+    "requiredAria": "required field",
+    "requiredTitle": "Required field"
+  },
+  "header": {
+    "siteTitle": "Gîtes Du Quer",
+    "home": "Home",
+    "shelters": "Lodgings",
+    "albums": "Albums",
+    "requests": "Requests",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "contact": "Contact:"
+  },
+  "errorBoundaryfallback": {
+    "title": "Oops! Something went wrong!",
+    "errorLabel": "Error:",
+    "retry": "Try again"
+  }
+}

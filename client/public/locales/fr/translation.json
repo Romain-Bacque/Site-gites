@@ -1,0 +1,201 @@
+{
+  "shelters": {
+    "title": "Liste des gîtes",
+    "description": "Liste des gîtes disponibles",
+    "loading": "Chargement des gîtes...",
+    "error": "Les gîtes sont indisponibles."
+  },
+  "sheltersItems": {
+    "descriptionPlaceholder": "Entrez la description du gîte ici...",
+    "noDescription": "Aucune description disponible pour le moment.",
+    "updateError": "Erreur lors de la mise à jour de la description.",
+    "updateSuccess": "Description mise à jour avec succès.",
+    "capacity": "Capacité",
+    "surface": "Surface",
+    "pets": "Animaux",
+    "petsCondition": "sous accord",
+    "description": "Description",
+    "book": "Réserver",
+    "rates": "Tarifs",
+    "availability": "Disponibilités"
+  },
+  "booking": {
+    "status": "Statut",
+    "from": "Du",
+    "to": "Au",
+    "informations": "Informations",
+    "noInformations": "Aucune information complémentaire.",
+    "accept": "Accepter",
+    "refuse": "Refuser",
+    "cancel": "Annuler la réservation",
+    "deleteTitle": "Supprimer la carte de réservation",
+    "nameLabel": "Prénom et Nom",
+    "namePlaceholder": "Prénom et Nom",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Adresse mail",
+    "phoneLabel": "Téléphone",
+    "phonePlaceholder": "Numéro de téléphone",
+    "personsLabel": "Nombre de personnes",
+    "personsPlaceholder": "4 personnes max",
+    "fromLabel": "Arrivée",
+    "toLabel": "Départ",
+    "infosPlaceholder": "Information(s) complémentaire",
+    "sendButton": "Envoyer",
+    "successTitle": "Demande envoyée avec succès !",
+    "successText": "Selon mes disponibilités, je la confirmerai par mail.",
+    "errorTitle": "Échec de l'envoi de la demande",
+    "errorText": "Il y a peut-être une erreur dans un/plusieurs champs."
+  },
+  "availability": {
+    "notAvailable": "Non disponible/réservé",
+    "calendarUnavailable": "Le calendrier est indisponible."
+  },
+  "rates": {
+    "loading": "Chargement des tarifs...",
+    "lowSeason": "Basse saison (semaine)",
+    "midSeason": "Moyenne saison (semaine)",
+    "highSeason": "Haute saison (semaine)",
+    "saveChanges": "Enregistrer les modifications"
+  },
+  "resetPassword": {
+    "title": "Réinitialiser le mot de passe",
+    "description": "Réinitialiser votre mot de passe",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "Taper le mot de passe ici",
+    "passwordRequirements": "Le mot de passe doit comporter :",
+    "success": "Le mot de passe a été réinitialisé avec succès.",
+    "error": "Une erreur est survenue.",
+    "invalidLink": "Lien de réinitialisation invalide."
+  },
+  "forgotPassword": {
+    "title": "Réinitialisation Du Mot De Passe",
+    "description": "Demandez la réinitialisation de votre mot de passe pour votre compte.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Taper l'adresse email ici",
+    "submitButton": "Envoyer un mail de réinitialisation",
+    "successMessage": "Un email de réinitialisation a été envoyé si l'adresse existe dans notre base de données."
+  },
+  "home": {
+    "title": "Accueil - Site Gîtes Ariège",
+    "description": "Bienvenue sur le site des gîtes"
+  },
+  "gallery": {
+    "title": "Galerie - Site Gîtes",
+    "description": "Galerie photos des gîtes",
+    "addPhoto": "Ajouter une photo",
+    "deleteImage": "Supprimer l'image",
+    "setMainImage": "Définir comme image principale",
+    "noImage": "Aucune image pour le moment.",
+    "close": "Fermer",
+    "previous": "Image précédente",
+    "next": "Image suivante",
+    "loadingImages": "Chargement des images...",
+    "imageAdded": "Image ajoutée avec succès.",
+    "imageDeleted": "Image supprimée avec succès.",
+    "loadError": "Erreur lors du chargement des images.",
+    "mainImageError": "Erreur lors du changement d'image principale.",
+    "deleteTitle": "Suppression de l'image",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette image ?"
+  },
+  "emailConfirmation": {
+    "title": "Confirmation d'email",
+    "description": "Page de confirmation d'email pour les utilisateurs."
+  },
+  "auth": {
+    "title": "Authentification",
+    "description": "Page d'authentification pour les utilisateurs.",
+    "login": "Connexion",
+    "register": "Enregistrement",
+    "username": "Pseudo",
+    "email": "Email",
+    "password": "Mot de passe",
+    "usernamePlaceholder": "Taper le pseudo ici",
+    "emailPlaceholder": "Taper l'adresse email ici",
+    "passwordPlaceholder": "Taper le mot de passe ici",
+    "forgotPassword": "Oublié ?",
+    "passwordRequirements": "Le mot de passe doit comporter :",
+    "loginAction": "Se connecter",
+    "registerAction": "S'enregistrer",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "haveAccount": "Vous avez un compte ?",
+    "loginError": "Le nom d'utilisateur ou le mot de passe est incorrect.",
+    "registerError": "Une erreur est survenue lors de l'inscription.",
+    "registerSuccess": "Inscription réussie ! Veuillez vérifier votre boîte mail pour activer votre compte.",
+    "captchaError": "Un problème est survenu lors de la vérification du captcha."
+  },
+  "allBookings": {
+    "title": "Toutes les réservations",
+    "description": "Page affichant toutes les réservations."
+  },
+  "bookings": {
+    "title": "Liste des demandes ({{count}})",
+    "sort": "Trier",
+    "empty": "Il n'y a actuellement aucune réservation.",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette réservation ?",
+    "updateSuccess": "Statut de la réservation mis à jour avec succès.",
+    "accepted": "acceptée",
+    "refused": "malheureusement refusée"
+  },
+  "bookingStatus": {
+    "pending": "En attente",
+    "accepted": "Acceptée",
+    "refused": "Refusée"
+  },
+  "activities": {
+    "title": "Activités dans le Couserans",
+    "loading": "Chargement des activités...",
+    "city": "Commune",
+    "sourceLink": "Lien vers la source",
+    "empty": "Aucune activité à afficher."
+  },
+  "emailConfirm": {
+    "accountValid": "Votre compte a été validé !",
+    "accountInvalid": "Votre compte n'a pas pu être validé.",
+    "login": "Se connecter"
+  },
+  "sort": {
+    "title": "Trier",
+    "byDate": "Par dates",
+    "ascending": "Croissant",
+    "descending": "Décroissant",
+    "byStatus": "Par statut",
+    "booked": "Réservé",
+    "awaiting": "En attente"
+  },
+  "slider": {
+    "link": "Voir Tout L'album"
+  },
+  "common": {
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "Submit": "Soumettre",
+    "Send": "Envoyer",
+    "validate": "Validate",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "form": {
+    "requiredError": "Ce champ est requis",
+    "requiredAria": "champ requis",
+    "requiredTitle": "Champ requis"
+  },
+  "header": {
+    "siteTitle": "Gîtes Du Quer",
+    "home": "Accueil",
+    "shelters": "Gîtes",
+    "albums": "Albums",
+    "requests": "Demandes",
+    "login": "Connexion",
+    "logout": "Déconnexion"
+  },
+  "footer": {
+    "rights": "Tous droits réservés.",
+    "contact": "Contact :"
+  },
+  "errorBoundaryfallback": {
+    "title": "Oups ! Une erreur est survenue !",
+    "errorLabel": "Erreur :",
+    "retry": "Réessayer"
+  }
+}
