@@ -1,9 +1,8 @@
-// hooks import
 import React, { useEffect, useState } from "react";
 import useInput from "../../../../hooks/use-input";
 import { useMyQuery, useMyMutation } from "../../../../hooks/use-query";
-// types import
-// other import
+import { useTranslation } from "react-i18next";
+
 import Card from "../../../UI/Card";
 import Input from "../../Input";
 import classes from "../style.module.css";
@@ -12,15 +11,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import useHTTPState from "../../../../hooks/use-http-state";
 
-// component
 const ResetPassword: React.FC = () => {
+  const { t } = useTranslation();
   const queryParams = new URLSearchParams(window.location.search);
   const id = queryParams.get("id") || "";
   const token = queryParams.get("token") || "";
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const handleHTTPState = useHTTPState();
 
-  // fetch CSRF token on mount (useMyQuery handles status via useHTTPState internally)
+  // fetch CSRF token on mount
   useMyQuery({
     queryKey: ["getCSRF"],
     queryFn: getCSRF,
@@ -36,23 +35,18 @@ const ResetPassword: React.FC = () => {
     passwordState: userPasswordState,
   } = useInput();
 
-  // mutation for resetting password
   const { mutate: resetPasswordMutate, status: resetPasswordStatus } =
     useMyMutation({
       mutationFn: resetPasswordRequest,
       onErrorFn: (_err, errorMessage) => {
-        handleHTTPState("error", errorMessage || "Une erreur est survenue.");
+        handleHTTPState("error", errorMessage || t("resetPassword.error"));
       },
       onSuccessFn: () => {
-        handleHTTPState(
-          "success",
-          "Le mot de passe a été réinitialisé avec succès."
-        );
+        handleHTTPState("success", t("resetPassword.success"));
         userPasswordResetHandler();
       },
     });
 
-  // show pending state when mutation is loading
   useEffect(() => {
     if (resetPasswordStatus === "pending") {
       handleHTTPState("pending");
@@ -65,35 +59,28 @@ const ResetPassword: React.FC = () => {
     if (!userPasswordIsValid) return;
 
     if (!id || !token) {
-      handleHTTPState("error", "Lien de réinitialisation invalide.");
+      handleHTTPState("error", t("resetPassword.invalidLink"));
       return;
     }
 
-    const userPassword = {
-      id,
-      token,
-      password: userPasswordValue,
-    };
-
+    const userPassword = { id, token, password: userPasswordValue };
     resetPasswordMutate(userPassword);
   };
 
   return (
     <Card className={classes.auth}>
       <form onSubmit={submitHandler} className={classes["auth__form"]}>
-        <h3 className={classes["auth__title"]}>
-          Réinitialiser Le Mot De Passe
-        </h3>
+        <h3 className={classes["auth__title"]}>{t("resetPassword.title")}</h3>
         <div>
           <Input
             icon={
               <FontAwesomeIcon
                 className={classes.form__icon}
-                onClick={() => setIsPasswordMasked((prevState) => !prevState)}
+                onClick={() => setIsPasswordMasked((prev) => !prev)}
                 icon={isPasswordMasked ? faEyeSlash : faEye}
               />
             }
-            label="Mot de passe"
+            label={t("resetPassword.passwordLabel")}
             isVisible={true}
             className={
               !userPasswordIsValid && userPasswordIsTouched
@@ -106,11 +93,11 @@ const ResetPassword: React.FC = () => {
             onBlur={userPasswordBlurHandler}
             type={isPasswordMasked ? "password" : "text"}
             value={userPasswordValue}
-            placeholder="Taper le mot de passe ici"
+            placeholder={t("resetPassword.passwordPlaceholder")}
           />
           {userPasswordState.length > 0 && (
             <ul className={classes["auth__password-error-list"]}>
-              <span>Le mot de passe doit comporter :</span>
+              <span>{t("resetPassword.passwordRequirements")}</span>
               {userPasswordState.map((item) => (
                 <li key={item.toString()}>{item}</li>
               ))}
@@ -120,7 +107,7 @@ const ResetPassword: React.FC = () => {
             disabled={!userPasswordIsValid}
             className={`button ${classes["auth__button"]}`}
           >
-            Enregistrer
+            {t("common.save")}
           </button>
         </div>
       </form>

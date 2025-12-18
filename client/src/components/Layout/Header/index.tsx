@@ -12,7 +12,6 @@ import useHTTPState from "hooks/use-http-state";
 import LanguageSwitcher from "components/UI/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 
-// component
 const Header: React.FC = () => {
   const handleHTTPState = useHTTPState();
   const [scrollActive, setScrollActive] = useState(false);
@@ -23,7 +22,6 @@ const Header: React.FC = () => {
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const isMenuOpen = useAppSelector((state) => state.menu.isOpen);
 
-  // ✅ Mutation React Query pour le logout
   const logoutMutation = useMyMutation({
     mutationFn: logoutRequest,
     onSuccess: () => {
@@ -74,7 +72,6 @@ const Header: React.FC = () => {
           <h1 className={classes.header__title}>Gîtes Du Quer.</h1>
         </div>
 
-        {/* Toggle menu button */}
         <div
           onClick={handleToggleButton}
           className={`${classes["menu-button"]} ${
@@ -85,6 +82,7 @@ const Header: React.FC = () => {
           <div className={classes["menu-button__line"]}></div>
           <div className={classes["menu-button__line"]}></div>
         </div>
+
         <nav
           onClick={(event) => event.stopPropagation()}
           className={`${classes.header__nav} ${
@@ -99,7 +97,7 @@ const Header: React.FC = () => {
                 activeClassName={classes["active-link"]}
                 to="/home"
               >
-                Accueil
+                {t("header.home")}
               </NavLink>
             </li>
             <li className={classes.header__list}>
@@ -109,24 +107,24 @@ const Header: React.FC = () => {
                 activeClassName={classes["active-link"]}
                 to="/gites"
               >
-                Gîtes
+                {t("header.shelters")}
               </NavLink>
             </li>
             <li className={classes.header__list}>
               <NavLink
                 onClick={handleCloseMenu}
-                className={`${classes.header__link}`}
+                className={classes.header__link}
                 activeClassName={classes["active-link"]}
                 to="/albums"
               >
-                Albums
+                {t("header.albums")}
               </NavLink>
             </li>
             {isAuth && (
               <li className={classes.header__list}>
                 <NavLink
                   onClick={handleCloseMenu}
-                  className={`${classes.header__link}`}
+                  className={classes.header__link}
                   activeClassName={classes["active-link"]}
                   to="/admin/allBookings"
                 >
@@ -140,7 +138,7 @@ const Header: React.FC = () => {
                 className={`button button--alt ${classes.header__auth}`}
                 to="/authentification"
               >
-                Connexion
+                {t("header.login")}
               </Link>
             )}
           </ul>
@@ -149,7 +147,7 @@ const Header: React.FC = () => {
               className={`button button--alt ${classes.header__auth}`}
               onClick={handleLogout}
             >
-              Déconnexion
+              {t("header.logout")}
             </button>
           )}
           <LanguageSwitcher />

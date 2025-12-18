@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import classes from "./style.module.css";
 // types import
 import { SortKind, SortProps } from "./types";
@@ -6,6 +8,7 @@ import { SortKind, SortProps } from "./types";
 // component
 const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
   const [sort, setSort] = useState<SortKind | null>(null);
+  const { t } = useTranslation();
 
   const handleSortChoice = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -17,6 +20,7 @@ const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
 
     setSort(chosenFilter);
   };
+
   const handleSortValidation = (event: React.MouseEvent) => {
     event.stopPropagation();
     onSortValidation(sort);
@@ -28,9 +32,11 @@ const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
 
   return (
     <div className={classes.sort}>
-      <h2 className={classes.sort__title}>Trier</h2>
+      <h2 className={classes.sort__title}>{t("sort.title")}</h2>
+
       <div>
-        <h3 className={classes.sort__subtitle}>Par Dates</h3>
+        <h3 className={classes.sort__subtitle}>{t("sort.byDate")}</h3>
+
         <div>
           <button
             className={`${classes["sort__choice-button"]} ${
@@ -41,8 +47,9 @@ const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
             id={SortKind.DATE_INCREASING.toString()}
             onClick={handleSortChoice}
           >
-            Croissant
+            {t("sort.ascending")}
           </button>
+
           <button
             className={`${classes["sort__choice-button"]} ${
               sort === SortKind.DATE_DECREASING &&
@@ -52,10 +59,12 @@ const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
             id={SortKind.DATE_DECREASING.toString()}
             onClick={handleSortChoice}
           >
-            Décroissant
+            {t("sort.descending")}
           </button>
         </div>
-        <h3 className={classes.sort__subtitle}>Par Statut</h3>
+
+        <h3 className={classes.sort__subtitle}>{t("sort.byStatus")}</h3>
+
         <div>
           <button
             className={`${classes["sort__choice-button"]} ${
@@ -65,8 +74,9 @@ const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
             id={SortKind.STATUS.toString()}
             onClick={handleSortChoice}
           >
-            Réservé
+            {t("sort.booked")}
           </button>
+
           <button
             className={`${classes["sort__choice-button"]} ${
               sort === SortKind.AWAITING &&
@@ -76,16 +86,17 @@ const Sort: React.FC<SortProps> = ({ onSortValidation }) => {
             id={SortKind.AWAITING.toString()}
             onClick={handleSortChoice}
           >
-            En attente
+            {t("sort.awaiting")}
           </button>
         </div>
       </div>
+
       <button
         className={classes["sort__validation-button"]}
         type="button"
         onClick={handleSortValidation}
       >
-        Valider
+        {t("common.validate")}
       </button>
     </div>
   );

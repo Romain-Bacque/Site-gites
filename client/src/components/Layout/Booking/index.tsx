@@ -18,8 +18,9 @@ import classes from "./style.module.css";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import useHTTPState from "../../../hooks/use-http-state";
+import { useTranslation } from "react-i18next";
 
-// variable & contante
+// variable & const
 const initialState = {
   show: false,
   input: null,
@@ -27,9 +28,12 @@ const initialState = {
 
 // component
 const Booking: React.FC<BookingProps> = ({ shelterId }) => {
+  const { t } = useTranslation();
   const [calendarStatus, setCalendarStatus] =
     useState<CalendarStatus>(initialState);
   const handleHTTPState = useHTTPState();
+
+  // useInput hooks
   const {
     value: nameValue,
     isValid: nameIsValid,
@@ -165,14 +169,12 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
       buttonsStyling: false,
     });
 
-    // handle HTTP state (react-query status)
     handleHTTPState(bookingStatus);
 
-    // popup display (react-query statuses: "success" | "error")
     if (bookingStatus === "success") {
       swalInstance.fire({
-        title: "Demande Envoyée avec succès !",
-        text: "Selon mes disponibilités, je la confirmerai par mail.",
+        title: t("booking.successTitle"),
+        text: t("booking.successText"),
         icon: "success",
       });
       resetNameHandler();
@@ -184,8 +186,8 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
       resetInfosHandler();
     } else if (bookingStatus === "error") {
       swalInstance.fire({
-        title: "Echec de l'envoi de la demande",
-        text: "Il y a peut-être une erreur dans un/plusieurs champs.",
+        title: t("booking.errorTitle"),
+        text: t("booking.errorText"),
         icon: "error",
       });
     }
@@ -200,9 +202,10 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
     resetToHandler,
     resetInfosHandler,
     handleHTTPState,
+    t,
   ]);
 
-  // prevent to set an arrive date > depart date
+  // prevent to set an arrival date > departure date
   useEffect(() => {
     if (new Date(toValue).valueOf() <= new Date(fromValue).valueOf()) {
       fromValueHandler("");
@@ -214,7 +217,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
       <form className={classes.form} onSubmit={submitHandler}>
         <div className={classes["form__input-container"]}>
           <Input
-            label="Prénom et Nom"
+            label={t("booking.nameLabel")}
             isVisible={true}
             required
             className={!nameIsValid && nameIsTouched ? "form__input--red" : ""}
@@ -223,10 +226,10 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
             onBlur={nameBlurHandler}
             type="text"
             value={nameValue}
-            placeholder="Prénom et Nom"
+            placeholder={t("booking.namePlaceholder")}
           />
           <Input
-            label="Email"
+            label={t("booking.emailLabel")}
             isVisible={true}
             required
             className={
@@ -237,10 +240,10 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
             onBlur={emailBlurHandler}
             type="email"
             value={emailValue}
-            placeholder="Adresse mail"
+            placeholder={t("booking.emailPlaceholder")}
           />
           <Input
-            label="Téléphone"
+            label={t("booking.phoneLabel")}
             isVisible={true}
             required
             className={
@@ -251,10 +254,10 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
             onBlur={phoneBlurHandler}
             type="tel"
             value={phoneValue}
-            placeholder="Numéro de téléphone"
+            placeholder={t("booking.phonePlaceholder")}
           />
           <Input
-            label="Nombre de personnes"
+            label={t("booking.personsLabel")}
             isVisible={true}
             required
             className={
@@ -267,7 +270,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
             max="4"
             type="number"
             value={personsValue}
-            placeholder="4 personnes max"
+            placeholder={t("booking.personsPlaceholder")}
           />
         </div>
         <div className={classes["form__input-container"]}>
@@ -286,7 +289,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
             )}
             <Input
               onInputDateClick={handleCalendarDisplay.bind(null, "from")}
-              label="Arrivée"
+              label={t("booking.fromLabel")}
               isVisible={true}
               className={
                 !fromIsValid && fromIsTouched ? "form__input--red" : ""
@@ -313,7 +316,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
             )}
             <Input
               onInputDateClick={handleCalendarDisplay.bind(null, "to")}
-              label="Départ"
+              label={t("booking.toLabel")}
               isVisible={true}
               className={!toIsValid && toIsTouched ? "form__input--red" : ""}
               readOnly={true}
@@ -332,7 +335,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
             rows={7}
             cols={19}
             maxLength={150}
-            placeholder="Information(s) complémentaire"
+            placeholder={t("booking.infosPlaceholder")}
           />
         </div>
         <button
@@ -340,7 +343,7 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
           disabled={!isFormValid}
           type="submit"
         >
-          Envoyer
+          {t("booking.sendButton")}
         </button>
       </form>
     </div>

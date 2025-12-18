@@ -1,11 +1,10 @@
 import React, { MouseEventHandler, useRef } from "react";
 import { Cropper, CropperRef, RectangleStencil } from "react-advanced-cropper";
-
 import "react-advanced-cropper/dist/style.css";
 import classes from "./style.module.css";
-
 import { CropContentProps } from "./types";
 import useHTTPState from "../../../hooks/use-http-state";
+import { useTranslation } from "react-i18next";
 
 const CropContent: React.FC<CropContentProps> = ({
   shelterId,
@@ -14,7 +13,7 @@ const CropContent: React.FC<CropContentProps> = ({
 }) => {
   const cropperRef = useRef<CropperRef>(null);
   const handleHTTPState = useHTTPState();
-  console.log(url);
+  const { t } = useTranslation();
 
   const handleCropImage: MouseEventHandler<HTMLButtonElement> = async (
     event
@@ -28,8 +27,7 @@ const CropContent: React.FC<CropContentProps> = ({
       handleHTTPState("pending");
 
       const canvas = cropper.getCanvas();
-      if (!canvas)
-        throw new Error("Impossible d'obtenir le canvas de recadrage.");
+      if (!canvas) throw new Error(t("cropImage.canvasError"));
 
       const blob: Blob = await new Promise((resolve) =>
         canvas.toBlob((b) => resolve(b!), "image/jpeg")
@@ -43,7 +41,7 @@ const CropContent: React.FC<CropContentProps> = ({
 
       onImagePost(formData);
     } catch (err: any) {
-      handleHTTPState("error", err?.message ?? "Une erreur est survenue.");
+      handleHTTPState("error", err?.message ?? t("cropImage.error"));
     }
   };
 
@@ -66,7 +64,7 @@ const CropContent: React.FC<CropContentProps> = ({
           onClick={handleCropImage}
           className={classes["crop-container__button"]}
         >
-          Enregistrer
+          {t("cropImage.save")}
         </button>
       </form>
     </div>

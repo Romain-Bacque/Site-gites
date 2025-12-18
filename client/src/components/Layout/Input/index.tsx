@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import classes from "./style.module.css";
 import { InputOrTextareaProps } from "./types";
 
@@ -13,6 +15,7 @@ const Input: React.FC<InputOrTextareaProps> = ({
   onInputDateClick,
   ...input
 }) => {
+  const { t } = useTranslation();
   const [error, setError] = useState<string>("");
 
   const handleInputClick: React.MouseEventHandler<HTMLInputElement> = (
@@ -26,9 +29,8 @@ const Input: React.FC<InputOrTextareaProps> = ({
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    // si le champ est requis et vide
     if (input.required && !e.target.value.trim()) {
-      setError("Ce champ est requis");
+      setError(t("form.requiredError"));
     } else {
       setError("");
     }
@@ -67,8 +69,8 @@ const Input: React.FC<InputOrTextareaProps> = ({
           {input.required && (
             <span
               className={classes.form__required}
-              aria-label="champ requis"
-              title="Champ requis"
+              aria-label={t("form.requiredAria")}
+              title={t("form.requiredTitle")}
             >
               *
             </span>

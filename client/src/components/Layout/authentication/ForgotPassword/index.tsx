@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import useInput from "../../../../hooks/use-input";
 import useHTTPState from "../../../../hooks/use-http-state";
 import { useMyQuery, useMyMutation } from "../../../../hooks/use-query";
+import { useTranslation } from "react-i18next";
 
 import Card from "../../../UI/Card";
 import Input from "../../Input";
@@ -12,7 +13,9 @@ import { UserData } from "./types";
 
 // component
 const ForgotPassword: React.FC = () => {
-  // load CSRF on mount using the custom query hook
+  const { t } = useTranslation();
+
+  // load CSRF on mount
   useMyQuery({
     queryFn: getCSRF,
     queryKey: ["getCSRF"],
@@ -24,9 +27,6 @@ const ForgotPassword: React.FC = () => {
     error: forgotPasswordError,
   } = useMyMutation<UserData, any>({
     mutationFn: forgotPasswordRequest,
-    // optional handlers can be passed here if you want to run side-effects on success/error
-    // onSuccessFn: () => {},
-    // onErrorFn: () => {},
   });
 
   const {
@@ -42,19 +42,13 @@ const ForgotPassword: React.FC = () => {
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-
     if (!userEmailIsValid) return;
 
-    const userData: UserData = {
-      email: userEmailValue,
-    };
-
+    const userData: UserData = { email: userEmailValue };
     forgotPasswordMutate(userData);
   };
 
-  // mutation loading/finished handling (map to your global HTTP state)
   useEffect(() => {
-    // derive an error message if needed (use the same helper you used elsewhere or map statuses)
     const errorMessage =
       (forgotPasswordError as any)?.response?.data?.message ||
       (forgotPasswordError as any)?.message ||
@@ -63,10 +57,7 @@ const ForgotPassword: React.FC = () => {
     handleHTTPState(forgotPasswordStatus, errorMessage);
 
     if (forgotPasswordStatus === "success") {
-      handleHTTPState(
-        "success",
-        "Un email de réinitialisation a été envoyé si l'adresse existe dans notre base de données."
-      );
+      handleHTTPState("success", t("forgotPassword.successMessage"));
       userEmailResetHandler();
     }
   }, [
@@ -74,17 +65,16 @@ const ForgotPassword: React.FC = () => {
     forgotPasswordError,
     handleHTTPState,
     userEmailResetHandler,
+    t,
   ]);
 
   return (
     <Card className={classes.auth}>
       <form onSubmit={submitHandler} className={classes["auth__form"]}>
-        <h3 className={classes["auth__title"]}>
-          Réinitialisation Du Mot De Passe
-        </h3>
+        <h3 className={classes["auth__title"]}>{t("forgotPassword.title")}</h3>
         <div>
           <Input
-            label="Email"
+            label={t("forgotPassword.emailLabel")}
             isVisible={true}
             className={
               !userEmailIsValid && userEmailIsTouched ? "form__input--red" : ""
@@ -94,13 +84,13 @@ const ForgotPassword: React.FC = () => {
             onBlur={userEmailBlurHandler}
             type="email"
             value={userEmailValue}
-            placeholder="Taper l'adresse email ici"
+            placeholder={t("forgotPassword.emailPlaceholder")}
           />
           <button
             disabled={!userEmailIsValid}
             className={`button ${classes["auth__button"]}`}
           >
-            Envoyer un mail de réinitialisation
+            {t("forgotPassword.submitButton")}
           </button>
         </div>
       </form>

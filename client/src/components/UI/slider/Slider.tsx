@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import classes from "./Slider.module.css";
 import BtnSlider from "./BtnSlider";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface SliderProps {
   title: string;
@@ -19,6 +20,7 @@ interface SliderProps {
 
 const Slider: React.FC<SliderProps> = ({ data }) => {
   const [slideIndex, setSlideIndex] = useState(1);
+  const { t } = useTranslation();
 
   // Navigate to the next image of the slider
   const handleNextSlide = () => {
@@ -67,7 +69,7 @@ const Slider: React.FC<SliderProps> = ({ data }) => {
               src={item.url}
             />
             <Link to="/albums" className={classes["slider__button-img"]}>
-              Voir tout l'album
+              {t("slider.link")}
             </Link>
           </div>
         );

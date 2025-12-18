@@ -11,6 +11,7 @@
     "updateError": "Error updating the description.",
     "updateSuccess": "Description updated successfully.",
     "capacity": "Capacity",
+    "people": "{{number}} people",
     "surface": "Surface",
     "pets": "Pets",
     "petsCondition": "upon agreement",
@@ -77,7 +78,19 @@
   },
   "home": {
     "title": "Home - Lodgings Site",
-    "description": "Welcome to the lodgings website"
+    "description": "Welcome to the lodgings website",
+    "loading": "Loading lodgings...",
+    "noShelters": "No lodgings available.",
+    "noImage": "No image available at the moment.",
+    "capacity": "Number of places:",
+    "people": "4 people",
+    "seeDetails": "View details",
+    "bannerTitle": "Gîtes Du Quer",
+    "bannerSubtitle": "A beautiful getaway in Couserans.",
+    "summaryLabel": "Come discover our lodgings...",
+    "summaryText": "In the heart of Couserans, at 600 m altitude, Gîtes du Quer welcome you\n            to a small peaceful hamlet facing south, on the edge of the forest, with a view of the valley and the river. Each lodging has its private space, with no overlooking, on a large shared property ideal for relaxation and shared moments.\n            <br />\n            Ideally located, they offer privileged access to numerous mountain activities: hikes for all levels, Guzet-Neige ski resort, Aulus-les-Bains thermal baths, tree climbing courses, canoeing, climbing, horseback riding, or cycling... Nature lovers will enjoy the richness of the surroundings, where the seasons unfold with chestnuts, mushrooms, and wild blueberries.\n            <br />\n            Just steps from the lodgings, the Garbet River will appeal to trout fishermen; by prior reservation, the owner, a state-certified fishing guide instructor, offers introductions or improvements to recreational fishing (service independent of the rental).\n            <br />\n            The region is also known for its authentic markets, notably Saint-Girons, full of colors and flavors.\n            <br />5 km away, you will find all essential shops and services: post office, grocery store, butcher, bakery-pastry shop, newsstand, restaurants, doctor, and pharmacy.\n            <br />\n            Animals are accepted with prior agreement from the owners, so that everyone can fully enjoy the peace and charm of this preserved corner of Ariège.",
+    "activitiesButton": "Activities in Couserans",
+    "loadError": "Unable to load lodgings."
   },
   "gallery": {
     "title": "Gallery - Ariege Lodgings Site ",
@@ -99,7 +112,10 @@
   },
   "emailConfirmation": {
     "title": "Email Confirmation",
-    "description": "Email confirmation page for users."
+    "description": "Email confirmation page for users.",
+    "accountValid": "Your account has been validated!",
+    "accountInvalid": "Your account could not be validated.",
+    "login": "Login"
   },
   "auth": {
     "title": "Authentication",
@@ -136,6 +152,19 @@
     "accepted": "accepted",
     "refused": "unfortunately declined"
   },
+  "bookingCard": {
+    "from": "From",
+    "to": "To",
+    "informationsTitle": "Informations",
+    "noInformations": "No additional information.",
+    "status": "Status",
+    "deleteButton": "Delete booking card",
+    "cancelBooking": "Cancel booking"
+  },
+  "messageForm": {
+    "label": " Message to attach (optional)",
+    "placeholder": "Type your message here..."
+  },
   "bookingStatus": {
     "pending": "Pending",
     "accepted": "Accepted",
@@ -148,11 +177,6 @@
     "sourceLink": "Link to the source",
     "empty": "No activities to display."
   },
-  "emailConfirm": {
-    "accountValid": "Your account has been validated!",
-    "accountInvalid": "Your account could not be validated.",
-    "login": "Login"
-  },
   "sort": {
     "title": "Sort",
     "byDate": "By date",
@@ -162,18 +186,30 @@
     "booked": "Booked",
     "awaiting": "Pending"
   },
+  "cropImage": {
+    "save": "Save",
+    "canvasError": "Unable to get the cropping canvas.",
+    "error": "An error occurred."
+  },
   "slider": {
     "link": "View full album"
   },
   "common": {
+    "accept": "Accept",
+    "refuse": "Decline",
     "cancel": "Cancel",
     "delete": "Delete",
-    "Submit": "Submit",
-    "Send": "Send",
+    "submit": "Submit",
+    "send": "Send",
     "validate": "Validate",
     "save": "Save",
     "yes": "Yes",
     "no": "No"
+  },
+  "alert": {
+    "deleteSuccess": "Deleted successfully.",
+    "updateSuccess": "Updated successfully.",
+    "error": "An error occurred."
   },
   "form": {
     "requiredError": "This field is required",

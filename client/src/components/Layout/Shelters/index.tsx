@@ -1,15 +1,19 @@
 // components import
 import classes from "./style.module.css";
 import ShelterItem from "../ShelterItem";
-// types import
+
+// types / hooks
 import { getSheltersWithPicturesRequest } from "../../../lib/api";
 import { useMyQuery } from "hooks/use-query";
 import { useEffect } from "react";
 import useHTTPState from "hooks/use-http-state";
+import { useTranslation } from "react-i18next";
 
 // component
 const Shelters: React.FC = () => {
   const handleHTTPState = useHTTPState();
+  const { t } = useTranslation();
+
   const {
     data: sheltersData,
     status,
@@ -20,16 +24,13 @@ const Shelters: React.FC = () => {
   });
 
   useEffect(() => {
-    handleHTTPState(
-      status,
-      status === "error" ? "Les gîtes sont indisponibles." : ""
-    );
-  }, [status, handleHTTPState]);
+    handleHTTPState(status, status === "error" ? t("shelters.error") : "");
+  }, [status, handleHTTPState, t]);
 
   if (isPending) {
     return (
       <section>
-        <p className="text-center">Chargement des gîtes...</p>
+        <p className="text-center">{t("shelters.loading")}</p>
       </section>
     );
   }
@@ -37,31 +38,28 @@ const Shelters: React.FC = () => {
   if (status === "error" || !sheltersData || sheltersData.length === 0) {
     return (
       <section>
-        <p className="text-center">Les gîtes sont indisponibles.</p>
+        <p className="text-center">{t("shelters.error")}</p>
       </section>
     );
   }
 
   return (
     <section>
-      {sheltersData && sheltersData.length > 0 ? (
+      {sheltersData.length > 0 ? (
         <ul className={classes.shelters}>
-          {sheltersData.map((shelter) => {
-            return (
-              <li className={classes.shelter} key={shelter._id}>
-                <ShelterItem
-                  key={shelter._id}
-                  shelterId={shelter._id}
-                  title={shelter.title}
-                  description={shelter.description}
-                  images={shelter.images}
-                />
-              </li>
-            );
-          })}
+          {sheltersData.map((shelter) => (
+            <li className={classes.shelter} key={shelter._id}>
+              <ShelterItem
+                shelterId={shelter._id}
+                title={shelter.title}
+                description={shelter.description}
+                images={shelter.images}
+              />
+            </li>
+          ))}
         </ul>
       ) : (
-        <p className="text-center">Les gîtes sont indisponibles.</p>
+        <p className="text-center">{t("shelters.error")}</p>
       )}
     </section>
   );

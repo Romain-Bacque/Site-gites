@@ -1,15 +1,14 @@
 import useInput from "../../../../hooks/use-input";
 import { Link, useHistory } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { useMyQuery, useMyMutation } from "../../../../hooks/use-query"; // adjust path
+import { useMyQuery, useMyMutation } from "../../../../hooks/use-query";
 import { useAppDispatch } from "../../../../hooks/use-store";
-
+import { useTranslation } from "react-i18next"; // ✅ import
 import Input from "../../Input";
 import Card from "../../../UI/Card";
 import classes from "../style.module.css";
 import { registerRequest, loginRequest, getCSRF } from "../../../../lib/api";
 import { authActions } from "../../../../store/auth";
-// types import
 import { LoginData } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -18,32 +17,26 @@ import useRecaptcha from "../../../../hooks/use-recaptcha";
 import Captcha from "../Captcha";
 import Button from "../../../UI/Button";
 
-// component
 const Auth: React.FC = () => {
+  const { t } = useTranslation(); // ✅ hook i18next
   const captchaRef = React.useRef<any>(null);
   const { setCaptchaValue, captchaValue, verifyCaptcha } = useRecaptcha();
-
   const dispatch = useAppDispatch();
   const handleHTTPState = useHTTPState();
   const history = useHistory();
 
-  // CSRF query (fire-and-forget)
   useMyQuery({
     queryKey: ["csrf"],
     queryFn: () => getCSRF(),
   });
 
-  // login mutation
-  const {
-    mutate: loginMutate,
-    status: loginStatus,
-  } = useMyMutation<LoginData, any>({
+  const { mutate: loginMutate, status: loginStatus } = useMyMutation<
+    LoginData,
+    any
+  >({
     mutationFn: (data) => loginRequest(data),
     onErrorFn: (_, errMessage) => {
-      handleHTTPState(
-        "error",
-        errMessage || "Le nom d'utilisateur ou le mot de passe est incorrect."
-      );
+      handleHTTPState("error", errMessage || t("auth.loginError"));
     },
     onSuccessFn: () => {
       handleHTTPState("success");
@@ -52,23 +45,16 @@ const Auth: React.FC = () => {
     },
   });
 
-  // register mutation
-  const {
-    mutate: registerMutate,
-    status: registerStatus,
-  } = useMyMutation<{ email: string } & LoginData, any>({
+  const { mutate: registerMutate, status: registerStatus } = useMyMutation<
+    { email: string } & LoginData,
+    any
+  >({
     mutationFn: (data) => registerRequest(data),
     onErrorFn: (_, errMessage) => {
-      handleHTTPState(
-        "error",
-        errMessage ?? "Une erreur est survenue lors de l'inscription."
-      );
+      handleHTTPState("error", errMessage ?? t("auth.registerError"));
     },
     onSuccessFn: () => {
-      handleHTTPState(
-        "success",
-        "Inscription réussie ! Veuillez vérifier votre boîte mail pour activer votre compte."
-      );
+      handleHTTPState("success", t("auth.registerSuccess"));
     },
   });
 
@@ -97,31 +83,23 @@ const Auth: React.FC = () => {
     resetHandler: userPasswordResetHandler,
     passwordState: userPasswordState,
   } = useInput();
+
   const [isPasswordMasked, setIsPasswordMasked] = useState(true);
   const [isNotRegistered, setIsNotRegistered] = useState(false);
 
-  let isFormValid: boolean;
-
-  if (isNotRegistered) {
-    isFormValid = usernameIsValid && userEmailIsValid && userPasswordIsValid;
-  } else {
-    isFormValid = usernameIsValid && userPasswordIsValid;
-  }
+  const isFormValid = isNotRegistered
+    ? usernameIsValid && userEmailIsValid && userPasswordIsValid
+    : usernameIsValid && userPasswordIsValid;
 
   const submitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-
     if (!isFormValid) return;
 
     handleHTTPState("pending");
 
     const isCaptchaValid = await verifyCaptcha();
-
     if (!isCaptchaValid) {
-      handleHTTPState(
-        "error",
-        "Un problème est survenu lors de la vérification du captcha."
-      );
+      handleHTTPState("error", t("auth.captchaError"));
       return;
     }
 
@@ -144,13 +122,11 @@ const Auth: React.FC = () => {
     setIsNotRegistered(!isNotRegistered);
   };
 
-  // reset captcha if login or register failed
   useEffect(() => {
-    const shouldResetCaptcha =
+    if (
       (loginStatus === "error" || registerStatus === "error") &&
-      captchaRef.current;
-
-    if (shouldResetCaptcha) {
+      captchaRef.current
+    ) {
       captchaRef.current.reset();
       setCaptchaValue(null);
     }
@@ -160,12 +136,12 @@ const Auth: React.FC = () => {
     <Card className={classes.auth}>
       <form onSubmit={submitHandler} className={classes["auth__form"]}>
         <h3 className={classes["auth__title"]}>
-          {isNotRegistered ? "Enregistrement" : "Connexion"}
+          {isNotRegistered ? t("auth.register") : t("auth.login")}
         </h3>
         <div>
           <Input
             tabIndex={1}
-            label="Pseudo"
+            label={t("auth.username")}
             isVisible={true}
             className={
               !usernameIsValid && usernameIsTouched ? "form__input--red" : ""
@@ -175,12 +151,12 @@ const Auth: React.FC = () => {
             onBlur={usernameBlurHandler}
             type="text"
             value={usernameValue}
-            placeholder="Taper le pseudo ici"
+            placeholder={t("auth.usernamePlaceholder")}
           />
           {isNotRegistered && (
             <Input
               tabIndex={1}
-              label="Email"
+              label={t("auth.email")}
               isVisible={true}
               className={
                 !userEmailIsValid && userEmailIsTouched
@@ -192,7 +168,7 @@ const Auth: React.FC = () => {
               onBlur={userEmailBlurHandler}
               type="email"
               value={userEmailValue}
-              placeholder="Taper l'adresse email ici"
+              placeholder={t("auth.emailPlaceholder")}
             />
           )}
           <Input
@@ -200,17 +176,17 @@ const Auth: React.FC = () => {
             icon={
               <FontAwesomeIcon
                 className={classes.form__icon}
-                onClick={() => setIsPasswordMasked((prevState) => !prevState)}
+                onClick={() => setIsPasswordMasked((prev) => !prev)}
                 icon={isPasswordMasked ? faEyeSlash : faEye}
               />
             }
-            label="Mot de passe"
+            label={t("auth.password")}
             forgotPassword={
               <Link
                 to="/auth/forgot-password"
                 className={classes["auth__link"]}
               >
-                {!isNotRegistered && "Oublié ?"}
+                {!isNotRegistered && t("auth.forgotPassword")}
               </Link>
             }
             isVisible={true}
@@ -225,11 +201,11 @@ const Auth: React.FC = () => {
             onBlur={userPasswordBlurHandler}
             type={isPasswordMasked ? "password" : "text"}
             value={userPasswordValue}
-            placeholder="Taper le mot de passe ici"
+            placeholder={t("auth.passwordPlaceholder")}
           />
           {userPasswordState.length > 0 && (
             <ul className={classes["auth__password-error-list"]}>
-              <span>Le mot de passe doit comporter :</span>
+              <span>{t("auth.passwordRequirements")}</span>
               {userPasswordState.map((item) => (
                 <li key={item.toString()}>{item}</li>
               ))}
@@ -243,18 +219,17 @@ const Auth: React.FC = () => {
             type="submit"
             className={`button ${classes["auth__button"]}`}
           >
-            {isNotRegistered ? "S'enregistrer" : "Se connecter"}
+            {isNotRegistered ? t("auth.registerAction") : t("auth.loginAction")}
           </Button>
         </div>
         <div>
           <span className={classes["auth__span"]}>
-            {!isNotRegistered
-              ? "Vous n'avez pas de compte ?"
-              : "Vous avez un compte ?"}
+            {!isNotRegistered ? t("auth.noAccount") : t("auth.haveAccount")}
           </span>
-          {/*eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a onClick={handleClick} className={classes["auth__link"]}>
-            {!isNotRegistered ? "S'enregistrer." : "Se connecter."}
+            {!isNotRegistered
+              ? t("auth.registerAction")
+              : t("auth.loginAction")}
           </a>
         </div>
         <Captcha onChange={setCaptchaValue} ref={captchaRef} />

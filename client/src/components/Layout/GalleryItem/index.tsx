@@ -3,9 +3,16 @@ import { FC, useState } from "react";
 import classes from "./style.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppSelector } from "../../../hooks/use-store";
-import { faAdd, faTrash, faTimes, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAdd,
+  faTrash,
+  faTimes,
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 import { ImageNotSupported } from "@mui/icons-material";
 import { GalleryItemProps } from "./types";
+import { useTranslation } from "react-i18next";
 
 const GalleryItem: FC<GalleryItemProps> = ({
   id,
@@ -21,10 +28,12 @@ const GalleryItem: FC<GalleryItemProps> = ({
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { t } = useTranslation();
 
-  const sortedImages = images?.length > 0 
-    ? images.sort((a) => (a._id === mainImgId ? -1 : 1))
-    : [];
+  const sortedImages =
+    images?.length > 0
+      ? images.sort((a) => (a._id === mainImgId ? -1 : 1))
+      : [];
 
   const handleFileValueChange: React.ChangeEventHandler<HTMLInputElement> = (
     event
@@ -57,7 +66,9 @@ const GalleryItem: FC<GalleryItemProps> = ({
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + sortedImages.length) % sortedImages.length);
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + sortedImages.length) % sortedImages.length
+    );
   };
 
   return (
@@ -74,7 +85,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
                 opacity: isPending ? 0.6 : 1,
               }}
             >
-              Ajouter une photo
+              {t("gallery.addPhoto")}
               <FontAwesomeIcon className="button__icon" icon={faAdd} />
             </label>
             <input
@@ -106,7 +117,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
                     data-image-id={image._id}
                     onClick={onImageDelete}
                     className={classes["control-btn"]}
-                    title="Supprimer l'image"
+                    title={t("gallery.deleteImage")}
                     disabled={isPending}
                   >
                     <FontAwesomeIcon icon={faTrash} />
@@ -116,7 +127,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
                       data-image-id={image._id}
                       onClick={onMainImageSet}
                       className={classes["control-btn"]}
-                      title="Définir comme image principale"
+                      title={t("gallery.setMainImage")}
                       disabled={isPending}
                     >
                       ⭐
@@ -129,7 +140,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
         ) : (
           <div className="text-center space">
             <ImageNotSupported sx={{ fontSize: "5rem", color: "#bbb" }} />
-            <p>Aucune image pour le moment.</p>
+            <p>{t("gallery.noImage")}</p>
           </div>
         )}
       </div>
@@ -139,10 +150,22 @@ const GalleryItem: FC<GalleryItemProps> = ({
           <button className={classes["lightbox-close"]} onClick={closeLightbox}>
             <FontAwesomeIcon icon={faTimes} />
           </button>
-          <button className={classes["lightbox-prev"]} onClick={(e) => { e.stopPropagation(); prevImage(); }}>
+          <button
+            className={classes["lightbox-prev"]}
+            onClick={(e) => {
+              e.stopPropagation();
+              prevImage();
+            }}
+          >
             <FontAwesomeIcon icon={faChevronLeft} />
           </button>
-          <button className={classes["lightbox-next"]} onClick={(e) => { e.stopPropagation(); nextImage(); }}>
+          <button
+            className={classes["lightbox-next"]}
+            onClick={(e) => {
+              e.stopPropagation();
+              nextImage();
+            }}
+          >
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
           <img

@@ -22,11 +22,11 @@ const LanguageSwitcher = () => {
     return (
         <div className={styles.languageSwitcher}>
             {/* Bouton principal */}
-            <button
-                onClick={() => setOpen(!open)}
-                className={styles.button}
-            >
+            <button onClick={() => setOpen(!open)} className={styles.button}>
                 <span className={styles.flag}>{currentLang.flag}</span>
+                <span className={`${styles.arrow} ${open ? styles.arrowUp : ""}`}>
+                    ▼
+                </span>
             </button>
 
             {/* Menu déroulant */}

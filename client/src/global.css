@@ -9,7 +9,7 @@
   --border-color-light: hsl(var(--hue-color), 8%, 80%);
   --border-color-very-light: hsl(var(--hue-color), 8%, 92%);
   --bg-color: hsl(var(--hue-color), 20%, 30%);
-  --bg-color-alt: hsl(var(--hue-color), 44%, 71%);
+  --bg-color-alt: hsl(var(--hue-color), 44%, 85%);
   --text-color: hsl(var(--hue-color), 20%, 24%);
   --text-color-light: hsl(var(--hue-color), 8%, 60%);
   --button-color: hsl(var(--hue-color), 40%, 32%);

@@ -11,6 +11,7 @@
     "updateError": "Erreur lors de la mise à jour de la description.",
     "updateSuccess": "Description mise à jour avec succès.",
     "capacity": "Capacité",
+    "people": "{{number}} personnes",
     "surface": "Surface",
     "pets": "Animaux",
     "petsCondition": "sous accord",
@@ -76,8 +77,20 @@
     "successMessage": "Un email de réinitialisation a été envoyé si l'adresse existe dans notre base de données."
   },
   "home": {
-    "title": "Accueil - Site Gîtes Ariège",
-    "description": "Bienvenue sur le site des gîtes"
+    "title": "Accueil - Site des Gîtes",
+    "description": "Bienvenue sur le site des gîtes",
+    "loading": "Chargement des gîtes...",
+    "noShelters": "Aucun gîte disponible.",
+    "noImage": "Aucune image disponible pour le moment.",
+    "capacity": "Nombre de places :",
+    "people": "4 personnes",
+    "seeDetails": "Voir les détails",
+    "bannerTitle": "Gîtes Du Quer",
+    "bannerSubtitle": "Une belle escapade en Couserans.",
+    "summaryLabel": "Venez découvrir nos gîtes...",
+    "summaryText": "Au cœur du Couserans, à 600 m d’altitude, les Gîtes du Quer vous\n            accueillent dans un petit hameau paisible exposé plein sud, en\n            lisière de forêt, avec une vue sur la vallée et la rivière. Chaque\n            gîte dispose de son espace privé, sans vis-à-vis, sur un grand\n            terrain commun propice à la détente et aux moments partagés.\n            <br />\n            Idéalement situés, ils offrent un accès privilégié à de nombreuses\n            activités de montagne : randonnées pour tous niveaux, station de ski\n            de Guzet-Neige, thermes d’Aulus-les-Bains, parcours d’accrobranche,\n            canoë-kayak, escalade, équitation ou encore balades à vélo... Les\n            amateurs de nature apprécieront la richesse des environs, où les\n            saisons se déclinent au rythme des châtaignes, champignons et\n            myrtilles sauvages.\n            <br />\n            À deux pas des gîtes, la rivière du Garbet séduira les pêcheurs de\n            truite ; sur réservation préalable, le propriétaire, moniteur guide\n            de pêche diplômé d’État, propose des initiations ou des\n            perfectionnements à la pêche de loisir (prestation indépendante de\n            la location).\n            <br />\n            La région est également réputée pour ses marchés authentiques,\n            notamment celui de Saint-Girons, haut en couleurs et en saveurs.\n            <br />À 5 km, vous trouverez tous les commerces et services\n            essentiels : bureau de poste, épicerie, boucherie,\n            boulangerie-pâtisserie, presse, restaurants, médecin et pharmacie.\n            <br />\n            Les animaux sont acceptés sur accord préalable des propriétaires,\n            afin que chacun profite pleinement du calme et du charme de ce coin\n            préservé de l’Ariège.",
+    "activitiesButton": "Activités en Couserans",
+    "loadError": "Impossible de charger les gîtes."
   },
   "gallery": {
     "title": "Galerie - Site Gîtes",
@@ -99,7 +112,10 @@
   },
   "emailConfirmation": {
     "title": "Confirmation d'email",
-    "description": "Page de confirmation d'email pour les utilisateurs."
+    "description": "Page de confirmation d'email pour les utilisateurs.",
+    "accountValid": "Votre compte a été validé !",
+    "accountInvalid": "Votre compte n'a pas pu être validé.",
+    "login": "Se connecter"
   },
   "auth": {
     "title": "Authentification",
@@ -136,6 +152,19 @@
     "accepted": "acceptée",
     "refused": "malheureusement refusée"
   },
+  "bookingCard": {
+    "from": "Du",
+    "to": "Au",
+    "informationsTitle": "Informations",
+    "noInformations": "Aucune information complémentaire.",
+    "status": "Statut",
+    "deleteButton": "Supprimer la carte de réservation",
+    "cancelBooking": "Annuler la réservation"
+  },
+  "messageForm": {
+    "label": " Message à joindre (optionnel)",
+    "placeholder": "Tapez votre message ici..."
+  },
   "bookingStatus": {
     "pending": "En attente",
     "accepted": "Acceptée",
@@ -148,11 +177,6 @@
     "sourceLink": "Lien vers la source",
     "empty": "Aucune activité à afficher."
   },
-  "emailConfirm": {
-    "accountValid": "Votre compte a été validé !",
-    "accountInvalid": "Votre compte n'a pas pu être validé.",
-    "login": "Se connecter"
-  },
   "sort": {
     "title": "Trier",
     "byDate": "Par dates",
@@ -162,18 +186,30 @@
     "booked": "Réservé",
     "awaiting": "En attente"
   },
+  "cropImage": {
+    "save": "Enregistrer",
+    "canvasError": "Impossible d'obtenir le canvas de recadrage.",
+    "error": "Une erreur est survenue."
+  },
   "slider": {
     "link": "Voir Tout L'album"
   },
   "common": {
+    "accept": "Accepter",
+    "refuse": "Refuser",
     "cancel": "Annuler",
     "delete": "Supprimer",
     "save": "Enregistrer",
-    "Submit": "Soumettre",
-    "Send": "Envoyer",
-    "validate": "Validate",
+    "submit": "Soumettre",
+    "send": "Envoyer",
+    "validate": "Valider",
     "yes": "Oui",
     "no": "Non"
+  },
+  "alert": {
+    "deleteSuccess": "Supprimé avec succès.",
+    "updateSuccess": "Mis à jour avec succès.",
+    "error": "Une erreur est survenue."
   },
   "form": {
     "requiredError": "Ce champ est requis",

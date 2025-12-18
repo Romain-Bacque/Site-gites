@@ -9,6 +9,7 @@ import { PlanningProps } from "./types";
 import classes from "./style.module.css";
 import "react-calendar/dist/Calendar.css";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 
 dayjs().format();
 
@@ -17,8 +18,9 @@ const Planning: React.FC<PlanningProps> = ({
   onDateChoice,
   onDateClick,
   isDoubleView,
-  disabledDates
+  disabledDates,
 }) => {
+  const { i18n } = useTranslation();
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
 
   const formatDate = (date: Date) => dayjs(date).format("YYYY, MM, DD");
@@ -41,8 +43,8 @@ const Planning: React.FC<PlanningProps> = ({
     },
     [disabledDates]
   );
-  
-    // this function handle disabled attribute (true or false) of each date button on the calendar
+
+  // this function handle disabled attribute (true or false) of each date button on the calendar
   const hasDisabledDates = ({ date }: { date: Date }) => {
     if (disabledDates && typeof disabledDates === "object") {
       return disabledDates.some((disabledDate) => {
@@ -63,7 +65,7 @@ const Planning: React.FC<PlanningProps> = ({
     if (isAuth && onDateClick && !onDateChoice) {
       onDateClick(date, disabledDates);
     }
-  }
+  };
 
   // this function handle date chosen on the calendar, to be set in the input element
   const handleDateChange = useCallback(
@@ -74,18 +76,18 @@ const Planning: React.FC<PlanningProps> = ({
   );
 
   return (
-      <Calendar
-        showDoubleView={isDoubleView}
-        className={classes["react-calendar"]}
-        tileClassName={handleDisabledDateStyle}
-        tileDisabled={hasDisabledDates}
-        onClickDay={handleDateClick}
-        onChange={handleDateChange}
-        minDate={new Date()}
-        value={new Date()}
-      />     
-  )
-
+    <Calendar
+      locale={i18n.language}
+      showDoubleView={isDoubleView}
+      className={classes["react-calendar"]}
+      tileClassName={handleDisabledDateStyle}
+      tileDisabled={hasDisabledDates}
+      onClickDay={handleDateClick}
+      onChange={handleDateChange}
+      minDate={new Date()}
+      value={new Date()}
+    />
+  );
 };
 
 export default Planning;

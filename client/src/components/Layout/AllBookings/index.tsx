@@ -27,15 +27,13 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import useHTTPState from "../../../hooks/use-http-state";
 import Button from "../../UI/Button";
-
-// New hooks
 import { useMyQuery, useMyMutation } from "../../../hooks/use-query";
 import MessageForm from "components/UI/MessageForm";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 dayjs().format();
 
-// variables & constantes
 const initialModalState = {
   show: false,
   booking: false,
@@ -43,8 +41,8 @@ const initialModalState = {
 };
 const initialBookingRefState = { emailTemplate: null, decision: null };
 
-// component
 const AllBookings: React.FC = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState<ModalState>(initialModalState);
   const [bookingsList, setBookingsList] = useState<BookingsList>([]);
@@ -53,7 +51,6 @@ const AllBookings: React.FC = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleHTTPState = useHTTPState();
 
-  // fetch bookings
   const {
     data: fetchBookingsRequestData,
     status: fetchBookingsRequestStatut,
@@ -64,13 +61,11 @@ const AllBookings: React.FC = () => {
     refetchOnMount: "always",
   });
 
-  // get CSRF
   useMyQuery({
     queryKey: ["csrf"],
     queryFn: getCSRF,
   });
 
-  // handle booking mutation
   const {
     mutate: bookingMutate,
     status: bookingStatus,
@@ -79,31 +74,24 @@ const AllBookings: React.FC = () => {
     queryKeys: ["bookings"],
     mutationFn: bookingDecisionRequest,
     onSuccessFn: (data) => {
-      // update the cache
       queryClient.setQueryData(["bookings"], (oldData: Booking[]) => {
         if (!oldData) return oldData;
-        return oldData.map((booking) => {
-          if (booking._id === data._id) {
-            return data;
-          }
-          return booking;
-        });
+        return oldData.map((booking) =>
+          booking._id === data._id ? data : booking
+        );
       });
     },
     onErrorFn: (_err: any, message: string) => {
       handleHTTPState("error", message);
     },
   });
-  const {
-    mutate: deleteBookingMutate,
-  } = useMyMutation({
+
+  const { mutate: deleteBookingMutate } = useMyMutation({
     queryKeys: ["bookings"],
     mutationFn: deleteBookingRequest,
     onSuccessFn: (data) => {
-      // update the cache
       queryClient.setQueryData(["bookings"], (oldData: Booking[]) => {
         if (!oldData) return oldData;
-        // if delete returns the deleted booking, remove it from the list
         return oldData.filter((booking) => booking._id !== data._id);
       });
     },
@@ -114,15 +102,14 @@ const AllBookings: React.FC = () => {
 
   const handleBookingSubmit = useCallback(
     (message: string) => {
-      // Close modal
       setShowModal(initialModalState);
 
       if (bookingRef.current.emailTemplate && bookingRef.current.decision) {
         const id = bookingRef.current.emailTemplate.bookingId;
         const statutMessage =
           bookingRef.current.decision === "accepted"
-            ? "acceptée"
-            : "malheureusement refusée";
+            ? t("bookings.accepted")
+            : t("bookings.refused");
         const data = {
           decision: bookingRef.current.decision,
           emailTemplate: { ...bookingRef.current.emailTemplate, statutMessage },
@@ -132,15 +119,13 @@ const AllBookings: React.FC = () => {
         bookingMutate({ id, data });
       }
     },
-    [bookingMutate]
+    [bookingMutate, t]
   );
 
-  // Cancel handler
   const handleCancel = useCallback(() => {
     setShowModal(initialModalState);
   }, []);
 
-  // Display the email form, then fill it out (optionnal) to send an email to the client
   const handleEmailModalDisplay: HandleEmailModalDisplay = useCallback(
     (decision, emailTemplate) => {
       bookingRef.current.emailTemplate = emailTemplate;
@@ -151,7 +136,7 @@ const AllBookings: React.FC = () => {
         show: true,
       });
     },
-    [bookingRef]
+    []
   );
 
   const handleSort = useCallback(
@@ -161,7 +146,6 @@ const AllBookings: React.FC = () => {
 
         arrayToSort.sort((a, b) => {
           let result = 0;
-
           switch (sort) {
             case SortKind.DATE_DECREASING:
               result = new Date(a.from).valueOf() - new Date(b.from).valueOf();
@@ -175,8 +159,6 @@ const AllBookings: React.FC = () => {
             case SortKind.STATUS:
               result = +b.status - +a.status;
               break;
-            default:
-              console.log("an error has occured.");
           }
           return result;
         });
@@ -188,7 +170,6 @@ const AllBookings: React.FC = () => {
     [bookingsList]
   );
 
-  // Instead of mutating immediately, open a confirm-delete modal
   const handleBookingCard = useCallback((bookingId: string) => {
     deleteBookingRef.current = bookingId;
     setShowDeleteModal(true);
@@ -202,28 +183,17 @@ const AllBookings: React.FC = () => {
     setShowDeleteModal(false);
   }, [deleteBookingMutate]);
 
-  // refresh bookings list display on the screen
   useEffect(() => {
     if (fetchBookingsRequestData) setBookingsList(fetchBookingsRequestData);
   }, [fetchBookingsRequestData]);
 
-  // map react-query mutation statuses to your HTTPStateKind and trigger email sending
   useEffect(() => {
-    if (bookingStatus === "pending") {
-      handleHTTPState("pending");
-    } else if (bookingStatus === "success") {
-      handleHTTPState(
-        "success",
-        "Statut de la réservation mis à jour avec succès."
-      );
-    } else if (bookingStatus === "error") {
-      // extract messages from errors if present
-      const message = bookingError ? "" : "";
-      handleHTTPState("error", message);
-    }
-  }, [bookingStatus, bookingError, handleHTTPState]);
+    if (bookingStatus === "pending") handleHTTPState("pending");
+    else if (bookingStatus === "success")
+      handleHTTPState("success", t("bookings.updateSuccess"));
+    else if (bookingStatus === "error") handleHTTPState("error", "");
+  }, [bookingStatus, bookingError, handleHTTPState, t]);
 
-  // show fetch status messages
   useEffect(() => {
     const message = fetchBookingRequestError ? "" : "";
     const mapped =
@@ -237,7 +207,6 @@ const AllBookings: React.FC = () => {
 
   return (
     <>
-      {/* Modal dédié au MessageForm */}
       <Modal
         show={showModal.booking}
         onHide={() => setShowModal(initialModalState)}
@@ -247,7 +216,6 @@ const AllBookings: React.FC = () => {
         )}
       </Modal>
 
-      {/* Modal dédié au tri */}
       <Modal
         show={showModal.isSorted}
         onHide={() => setShowModal(initialModalState)}
@@ -255,11 +223,10 @@ const AllBookings: React.FC = () => {
         {showModal.isSorted && <Sort onSortValidation={handleSort} />}
       </Modal>
 
-      {/* Modal de confirmation de suppression */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <div className={classes["delete-confirm"]} style={{ padding: "1rem" }}>
           <h3 style={{ marginBottom: "4rem", fontWeight: 600 }}>
-            Êtes-vous sûr de vouloir supprimer cette carte ?
+            {t("bookings.deleteConfirm")}
           </h3>
           <div
             style={{
@@ -273,10 +240,10 @@ const AllBookings: React.FC = () => {
               variant="secondary"
               onClick={() => setShowDeleteModal(false)}
             >
-              Annuler
+              {t("common.cancel")}
             </Button>
             <Button fullWidth onClick={confirmDelete}>
-              Supprimer
+              {t("common.delete")}
             </Button>
           </div>
         </div>
@@ -284,9 +251,11 @@ const AllBookings: React.FC = () => {
 
       <section>
         <div className={classes["bookings__title-container"]}>
-          <h2 className={classes["bookings__title"]}>{`Liste demandes (${
-            bookingsList ? bookingsList.length : "0"
-          })`}</h2>
+          <h2 className={classes["bookings__title"]}>
+            {t("bookings.title", {
+              count: bookingsList ? bookingsList.length : 0,
+            })}
+          </h2>
           {bookingsList?.length ? (
             <Button
               center={false}
@@ -305,7 +274,7 @@ const AllBookings: React.FC = () => {
                 />
               )}
             >
-              Trier
+              {t("bookings.sort")}
             </Button>
           ) : null}
         </div>
@@ -332,9 +301,7 @@ const AllBookings: React.FC = () => {
               ))}
             </Swiper>
           ) : (
-            <p className="text-center">
-              Il n'y a actuellement aucune réservation.
-            </p>
+            <p className="text-center">{t("bookings.empty")}</p>
           ))}
       </section>
     </>

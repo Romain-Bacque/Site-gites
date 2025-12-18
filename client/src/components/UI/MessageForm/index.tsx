@@ -1,11 +1,13 @@
 import { useState } from "react";
 import classes from "./style.module.css";
 import Button from "../Button";
+import { useTranslation } from "react-i18next";
 
 const MessageForm: React.FC<{
   onSubmit: (message: string) => void;
   onCancel: () => void;
 }> = ({ onSubmit, onCancel }) => {
+  const { t } = useTranslation();
   const [message, setMessage] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -22,10 +24,10 @@ const MessageForm: React.FC<{
   return (
     <form className={classes["message-form"]} onSubmit={handleSubmit}>
       <label style={{ fontWeight: 600 }} htmlFor="message-textarea">
-        Message à joindre (optionnel)
+        {t("messageForm.label")}
       </label>
       <textarea
-        placeholder="Taper le message ici."
+        placeholder={t("messageForm.placeholder")}
         className={classes["message-form__textarea"]}
         rows={10}
         cols={25}
@@ -35,10 +37,10 @@ const MessageForm: React.FC<{
       />
       <div className="button-container">
         <Button fullWidth type="submit">
-          Envoyer
+          {t("common.send")}
         </Button>
         <Button variant="secondary" fullWidth onClick={handleCancel}>
-          Annuler
+          {t("common.cancel")}
         </Button>
       </div>
     </form>

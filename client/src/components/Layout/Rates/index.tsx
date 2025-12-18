@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import { useMyQuery, useMyMutation } from "../../../hooks/use-query";
 import { getCSRF, ratesGetRequest, ratesPutRequest } from "../../../lib/api";
 import classes from "./style.module.css";
@@ -30,18 +32,17 @@ const initialPrices: PriceValues = {
 const queryClient = new QueryClient();
 
 const Rates: React.FC<RatesProps> = ({ shelterId }) => {
+  const { t } = useTranslation();
   const [alertStatut, setAlertStatut] = useState(initialState);
   const [priceValues, setPriceValues] = useState(initialPrices);
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const handleHTTPState = useHTTPState();
 
-  // fetch CSRF token (mutation-style, run once)
   const { refetch: fetchCSRF } = useMyQuery({
     queryKey: ["csrf"],
     queryFn: getCSRF,
   });
 
-  // fetch rates for shelterId
   const {
     data: getRatesData,
     status: getRatesStatus,
@@ -53,7 +54,6 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     enabled: !!shelterId,
   });
 
-  // put rates mutation
   const {
     mutate: putRatesMutate,
     status: putRatesStatus,
@@ -62,7 +62,6 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     queryKeys: ["rates", shelterId],
     mutationFn: (data: RatesPutRequestData) => ratesPutRequest(data),
     onSuccessFn: (data: any) => {
-      // update the rates query data in the cache
       queryClient.setQueryData(["rates", shelterId], (old: any) => {
         return old ? [...old, data] : [data];
       });
@@ -107,9 +106,8 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   }, [getRatesData]);
 
   useEffect(() => {
-    // initial CSRF fetch
     fetchCSRF();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -132,7 +130,7 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
   if (isPending) {
     return (
       <div className={classes["rates-container"]}>
-        <p>Chargement des tarifs...</p>
+        <p>{t("rates.loading")}</p>
       </div>
     );
   }
@@ -161,13 +159,13 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
       <form className={classes.form} onSubmit={handleSubmit}>
         <div className={classes["rates__grid-container"]}>
           <p className={`${classes["rates__grid-header"]} ${classes["low"]}`}>
-            Basse saison (semaine)
+            {t("rates.lowSeason")}
           </p>
           <p className={`${classes["rates__grid-header"]} ${classes["mid"]}`}>
-            Moyenne saison (semaine)
+            {t("rates.midSeason")}
           </p>
           <p className={`${classes["rates__grid-header"]} ${classes["high"]}`}>
-            Haute saison (semaine)
+            {t("rates.highSeason")}
           </p>
 
           {renderInput("price1")}
@@ -184,7 +182,7 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
             className={classes["rates__button"]}
             type="submit"
           >
-            Enregistrer les modifications
+            {t("rates.saveChanges")}
           </Button>
         )}
       </form>

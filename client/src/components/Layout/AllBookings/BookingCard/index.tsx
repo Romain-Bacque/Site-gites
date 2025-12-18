@@ -10,6 +10,7 @@ import Card from "../../../UI/Card";
 import { HandleEmailModalDisplay } from "../types";
 import classes from "./style.module.css";
 import Button from "components/UI/Button";
+import { useTranslation } from "react-i18next";
 
 // interfaces
 interface Booking {
@@ -38,6 +39,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
   onChoice,
   onDelete,
 }) => {
+  const { t } = useTranslation();
   const bookingFormattedData = {
     bookingId: booking._id,
     shelter: booking.shelter_id.title,
@@ -46,7 +48,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
     to: dayjs(booking.to).format("DD/MM/YYYY"),
     emailTo: booking.email,
   };
-  
+
   const bookingStatusMsg =
     booking.status === "pending"
       ? "En attente"
@@ -54,17 +56,17 @@ const BookingCard: React.FC<BookingCardProps> = ({
       ? "Acceptée"
       : "Refusée";
 
-      return (
+  return (
     <Card className={classes["booking-card"]}>
       <div className={classes["booking-card__title"]}>
         <h3 className={classes["booking-card__title-text"]}>
           {booking.shelter_id.title}
         </h3>
         <div className={classes["booking-card__status"]}>
-          <span>Statut : {bookingStatusMsg}</span>
+          <span>{t(`bookingStatus.${booking.status}`)}</span>
           {booking.status === "refused" && (
             <Button
-              title="Supprimer la carte de réservation"
+              title={t("bookingCard.deleteButton")}
               className={classes["booking-card__delete-button"]}
               onClick={() => onDelete(booking._id)}
               icon={() => <FontAwesomeIcon icon={faTrash} />}
@@ -88,19 +90,19 @@ const BookingCard: React.FC<BookingCardProps> = ({
             <div>{booking.numberOfPerson}</div>
           </div>
           <div className={classes["booking-card__date"]}>
-            Du {dayjs(booking.from).format("DD/MM/YYYY")}
+            {t("bookingCard.from")} {dayjs(booking.from).format("DD/MM/YYYY")}
           </div>
           <div className={classes["booking-card__date"]}>
-            Au {dayjs(booking.to).format("DD/MM/YYYY")}
+            {t("bookingCard.to")} {dayjs(booking.to).format("DD/MM/YYYY")}
           </div>
           <div>
             <div className={classes["booking-card__informations-title"]}>
-              Informations:
+              {t("bookingCard.informationsTitle")}
             </div>
             <div className={classes["booking-card__informations-text"]}>
               {booking.informations
                 ? booking.informations
-                : "Aucune information complémentaire."}
+                : t("bookingCard.noInformations")}
             </div>
           </div>
         </div>
@@ -110,7 +112,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
               className="button button--alt"
               onClick={() => onChoice("refused", bookingFormattedData)}
             >
-              Annuler la réservation
+              {t("bookingCard.cancelBooking")}
               <FontAwesomeIcon className="button__icon" icon={faTrash} />
             </button>
           )}
@@ -119,7 +121,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
               className="button"
               onClick={() => onChoice("accepted", bookingFormattedData)}
             >
-              Accepter
+              {t("common.accept")}
             </button>
           )}
           {booking.status === "pending" && (
@@ -127,7 +129,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
               className="button button--alt"
               onClick={() => onChoice("refused", bookingFormattedData)}
             >
-              Refuser
+              {t("common.refuse")}
             </button>
           )}
         </div>

@@ -14,8 +14,8 @@ import useHTTPState from "../../../hooks/use-http-state";
 import GalleryItem from "../GalleryItem";
 import { ShelterType } from "./types";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next"; // <-- import i18n
 
-// variable & constante
 const initialModalState = {
   show: false,
   crop: false,
@@ -27,12 +27,11 @@ const initialMessageState = {
   show: false,
 };
 
-// component
 const Gallery: React.FC = () => {
   const handleHTTPState = useHTTPState();
   const queryClient = useQueryClient();
+  const { t } = useTranslation(); // <-- hook i18n
 
-  // queries
   useMyQuery({
     queryKey: ["csrf"],
     queryFn: getCSRF,
@@ -48,7 +47,6 @@ const Gallery: React.FC = () => {
     queryFn: getSheltersWithPicturesRequest,
   });
 
-  // mutations
   const { isPending: sheltersIsPendingMutation, mutate: postPictureMutate } =
     useMyMutation({
       queryKeys: ["sheltersWithPictures"],
@@ -56,8 +54,7 @@ const Gallery: React.FC = () => {
       onSuccessFn: (newData) => {
         queryClient.invalidateQueries({ queryKey: ["shelters"] });
         queryClient.setQueryData(["sheltersWithPictures"], newData);
-
-        handleHTTPState("success", "Image ajoutée avec succès.");
+        handleHTTPState("success", t("gallery.imageAdded"));
       },
       onErrorFn: (_error, errorMessage) => {
         handleHTTPState("error", errorMessage);
@@ -71,8 +68,7 @@ const Gallery: React.FC = () => {
       onSuccessFn: (newData) => {
         queryClient.invalidateQueries({ queryKey: ["shelters"] });
         queryClient.setQueryData(["sheltersWithPictures"], newData);
-
-        handleHTTPState("success", "Image supprimée avec succès.");
+        handleHTTPState("success", t("gallery.imageDeleted"));
       },
       onErrorFn: (_error, errorMessage) => {
         handleHTTPState("error", errorMessage);
@@ -82,19 +78,15 @@ const Gallery: React.FC = () => {
   const { mutate: mainPictureMutate } = useMyMutation({
     queryKeys: ["sheltersWithPictures"],
     mutationFn: setMainPictureRequest,
-    // Optimistic update
     onMutate: async ({ shelterId, mainImgId }) => {
       await queryClient.cancelQueries({ queryKey: ["sheltersWithPictures"] });
-
       const previousData = queryClient.getQueryData<ShelterType[]>([
         "sheltersWithPictures",
       ]);
-
       queryClient.setQueryData<ShelterType[]>(
         ["sheltersWithPictures"],
         (oldData) => {
           if (!oldData) return oldData;
-
           return oldData.map((item) =>
             item._id === shelterId
               ? { ...item, main_image_id: mainImgId }
@@ -102,15 +94,11 @@ const Gallery: React.FC = () => {
           );
         }
       );
-
       return { previousData };
     },
-
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shelters"] });
     },
-
-    // Rollback on error
     onError: (_error, _variables, context: any) => {
       if (context?.previousData) {
         queryClient.setQueryData(
@@ -118,7 +106,7 @@ const Gallery: React.FC = () => {
           context.previousData
         );
       }
-      handleHTTPState("error", "Erreur lors du changement d'image principale.");
+      handleHTTPState("error", t("gallery.mainImageError"));
     },
   });
 
@@ -176,16 +164,13 @@ const Gallery: React.FC = () => {
     };
   }, [alertStatut.show]);
 
-  // handle HTTP state for queries/mutations (useMyQuery already calls useHTTPState for queries;
-  // keep handling for mutations and any errors from queries if needed)
   useEffect(() => {
     handleHTTPState(
       sheltersStatus,
-      sheltersStatus === "error" ? "Erreur lors du chargement des images." : ""
+      sheltersStatus === "error" ? t("gallery.loadError") : ""
     );
-  }, [sheltersStatus, sheltersQueryError, handleHTTPState]);
+  }, [sheltersStatus, sheltersQueryError, handleHTTPState, t]);
 
-  // display loading message if pending
   useEffect(() => {
     if (
       sheltersIsPendingMutation ||
@@ -204,7 +189,7 @@ const Gallery: React.FC = () => {
   if (sheltersIsPending) {
     return (
       <section>
-        <p className="text-center">Chargement des images...</p>
+        <p className="text-center">{t("gallery.loading")}</p>
       </section>
     );
   }
@@ -227,24 +212,23 @@ const Gallery: React.FC = () => {
           ) : null}
           {showModal.deleteAlert ? (
             <div className={styles["delete-container"]}>
-              <h3>Suppression de l'image</h3>
-              <p>Etes-vous sûr de vouloir supprimer cette image ?</p>
+              <h3>{t("gallery.deleteTitle")}</h3>
+              <p>{t("gallery.deleteMessage")}</p>
               <div className="button-container">
                 <button className="button" onClick={handleDeleteImage}>
-                  Oui
+                  {t("gallery.yes")}
                 </button>
                 <button
                   className="button button--alt"
                   onClick={(event) => handleDeleteAlert(event, false)}
                 >
-                  Non
+                  {t("gallery.no")}
                 </button>
               </div>
             </div>
           ) : null}
         </>
       </Modal>
-      {/* TODO: get dynamic shelters data */}
       {sheltersData && sheltersData.length > 0 ? (
         <ul>
           {sheltersData.map((data) => (
@@ -264,7 +248,7 @@ const Gallery: React.FC = () => {
           ))}
         </ul>
       ) : (
-        <p className="text-center">Aucune image disponible.</p>
+        <p className="text-center">{t("gallery.noImage")}</p>
       )}
     </section>
   );
