@@ -26,13 +26,15 @@ let formContent: ReactNode = null;
 const SheltersItems: React.FC<SheltersItemsProps> = ({
   shelterId,
   title,
-  description,
+  initialDescriptionText,
   images,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const [shelterStatut, setShelterStatut] = useState<Tab>({ tab: null });
-  const [descriptionText, setDescriptionText] = useState(description || "");
+  const [descriptionText, setDescriptionText] = useState(
+    initialDescriptionText || ""
+  );
   const isAuth = useAppSelector(({ auth }) => auth.isAuthentificated);
   const handleHTTPState = useHTTPState();
 
@@ -89,7 +91,13 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
     const updatedDescription = descriptionText.trim();
     if (!updatedDescription) return;
 
-    updateDescription({ id: shelterId, description: updatedDescription });
+    updateDescription({
+      id: shelterId,
+      description: {
+        text: updatedDescription,
+        lang: i18n.language,
+      },
+    });
   };
 
   const renderDescriptionContent = () => {
@@ -116,8 +124,10 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
         </form>
       );
     } else {
-      return description ? (
-        <p className={classes["gites__description-text"]}>{description}</p>
+      return initialDescriptionText ? (
+        <p className={classes["gites__description-text"]}>
+          {initialDescriptionText}
+        </p>
       ) : (
         <p className={classes["gites__description-text"]}>
           {t("sheltersItems.noDescription")}

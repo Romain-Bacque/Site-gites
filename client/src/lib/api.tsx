@@ -127,7 +127,10 @@ export const userVerification = async () => {
 export interface ShelterData {
   _id: string;
   title: string;
-  description: string;
+  description: {
+    text: string;
+    lang: string;
+  }[];
   main_image_id?: string;
   number: number;
 }
@@ -171,7 +174,7 @@ export const updateShelterDescriptionRequest = async ({
   description,
 }: {
   id: string;
-  description: string;
+  description: Record<"text" | "lang", string>;
 }) => {
   const response = await instance.put<{ shelterData: ShelterData }>(
     `/shelters/${id}`,

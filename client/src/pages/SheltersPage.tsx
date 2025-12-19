@@ -7,7 +7,7 @@ const SheltersPage: React.FC = () => {
     <>
       <Helmet>
         <title>Liste des gîtes</title>
-        <meta name="description" content="Liste des gites" />
+        <meta name="description" content="Liste des gites à Erce en Ariège (09), au cœur du Couserans. Gîtes tout confort, nature, randonnées et calme." />
       </Helmet>
       <Shelters />
     </>

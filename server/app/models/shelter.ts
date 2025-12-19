@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface IShelter extends Document {
   title: string;
-  description: string;
+  description: { text: string; lang: string }[];
   main_image_id?: mongoose.Types.ObjectId;
 }
 
@@ -11,10 +11,20 @@ const shelterSchema = new Schema<IShelter>({
     type: String,
     required: [true, "title cannot be blank"],
   },
-  description: {
-    type: String,
-    required: false,
-  },
+  description: [
+    {
+      text: {
+        type: String,
+        required: true,
+      },
+      lang: {
+        type: String,
+        enum: ["en", "fr"],
+        default: "fr",
+        required: [true, "Language is required"],
+      },
+    },
+  ],
   main_image_id: {
     type: Schema.Types.ObjectId,
     ref: "Image",
