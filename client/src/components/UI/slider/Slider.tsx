@@ -68,7 +68,10 @@ const Slider: React.FC<SliderProps> = ({ data }) => {
               className={classes.slide__img}
               src={item.url}
             />
-            <Link to="/albums" className={classes["slider__button-img"]}>
+            <Link
+              to={`/albums/${item.shelter_id}`}
+              className={classes["slider__button-img"]}
+            >
               {t("slider.link")}
             </Link>
           </div>

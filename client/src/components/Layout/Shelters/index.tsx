@@ -5,14 +5,17 @@ import ShelterItem from "../ShelterItem";
 // types / hooks
 import { getSheltersWithPicturesRequest } from "../../../lib/api";
 import { useMyQuery } from "hooks/use-query";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import useHTTPState from "hooks/use-http-state";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 
 // component
 const Shelters: React.FC = () => {
-  const handleHTTPState = useHTTPState();
+  const { shelterId } = useParams<{ shelterId: string }>();
+  const shelterRefs = useRef<{ [key: string]: HTMLLIElement | null }>({});
   const { t, i18n } = useTranslation();
+  const handleHTTPState = useHTTPState();
 
   const {
     data: sheltersData,
@@ -26,6 +29,12 @@ const Shelters: React.FC = () => {
   useEffect(() => {
     handleHTTPState(status, status === "error" ? t("shelters.error") : "");
   }, [status, handleHTTPState, t]);
+
+  useEffect(() => {
+    if (shelterId && shelterRefs.current[shelterId]) {
+      shelterRefs.current[shelterId]?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [shelterId, sheltersData]);
 
   if (isPending) {
     return (
@@ -48,7 +57,11 @@ const Shelters: React.FC = () => {
       {sheltersData.length > 0 ? (
         <ul className={classes.shelters}>
           {sheltersData.map((shelter) => (
-            <li className={classes.shelter} key={shelter._id}>
+            <li
+              className={classes.shelter}
+              key={shelter._id}
+              ref={(el) => (shelterRefs.current[shelter._id] = el)}
+            >
               <ShelterItem
                 shelterId={shelter._id}
                 title={shelter.title}

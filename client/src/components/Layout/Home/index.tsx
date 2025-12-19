@@ -56,7 +56,7 @@ const Home: React.FC = () => {
     }
   }, [status, activities, history, sheltersQueryError, handleHTTPState, t]);
 
-  const renderDetailsButton = () => {
+  const renderDetailsButton = (shelterId: string) => {
     const width = window.innerWidth;
     const size = width > 768 ? "lg" : width > 480 ? "md" : "sm";
 
@@ -65,7 +65,7 @@ const Home: React.FC = () => {
         icon={ArrowRightAlt}
         iconPosition="right"
         size={size}
-        onClick={() => history.push("/gites")}
+        onClick={() => history.push(`/gites/${shelterId}`)}
       >
         {t("home.seeDetails")}
       </Button>
@@ -113,7 +113,7 @@ const Home: React.FC = () => {
                 justifyContent: "space-between",
               }}
             >
-              {renderDetailsButton()}
+              {renderDetailsButton(shelter._id)}
             </div>
           </div>
         </Card>

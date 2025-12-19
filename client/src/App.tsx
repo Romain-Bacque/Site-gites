@@ -73,10 +73,10 @@ const App: React.FC = () => {
               <ResetPasswordPage />
             </Route>
           )}
-          <Route path="/gites">
+          <Route path="/gites/:shelterId?">
             <SheltersPage />
           </Route>
-          <Route path="/albums">
+          <Route path="/albums/:shelterId?">
             <GalleryPage />
           </Route>
           <Route path="/authentification">

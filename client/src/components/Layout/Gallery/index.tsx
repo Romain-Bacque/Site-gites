@@ -1,5 +1,5 @@
 import styles from "./style.module.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useMyQuery, useMyMutation } from "../../../hooks/use-query";
 import {
   deletePictureRequest,
@@ -15,6 +15,7 @@ import GalleryItem from "../GalleryItem";
 import { ShelterType } from "./types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next"; // <-- import i18n
+import { useParams } from "react-router-dom";
 
 const initialModalState = {
   show: false,
@@ -28,6 +29,8 @@ const initialMessageState = {
 };
 
 const Gallery: React.FC = () => {
+  const { shelterId } = useParams<{ shelterId: string }>();
+  const shelterRefs = useRef<{ [key: string]: HTMLLIElement | null }>({});
   const handleHTTPState = useHTTPState();
   const queryClient = useQueryClient();
   const { t } = useTranslation(); // <-- hook i18n
@@ -186,6 +189,12 @@ const Gallery: React.FC = () => {
     handleHTTPState,
   ]);
 
+  useEffect(() => {
+    if (shelterId && shelterRefs.current[shelterId]) {
+      shelterRefs.current[shelterId]?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [shelterId, sheltersData]);
+
   if (sheltersIsPending) {
     return (
       <section>
@@ -232,7 +241,10 @@ const Gallery: React.FC = () => {
       {sheltersData && sheltersData.length > 0 ? (
         <ul>
           {sheltersData.map((data) => (
-            <li key={data._id}>
+            <li
+              key={data._id}
+              ref={(el) => (shelterRefs.current[data._id] = el)}
+            >
               <GalleryItem
                 id={data._id}
                 mainImgId={data.main_image_id}
