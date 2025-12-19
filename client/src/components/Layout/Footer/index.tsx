@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
         {t("footer.rights")}
       </p>
       <div>
-        <span>{t("footer.contact")}: </span>
+        <span>{t("footer.contact")} </span>
         <a href="mailto:bacqueflorence@wanadoo.fr">jf.gite.09@orange.fr</a>
       </div>
     </footer>
