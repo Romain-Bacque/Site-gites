@@ -213,16 +213,16 @@ const Gallery: React.FC = () => {
           {showModal.deleteAlert ? (
             <div className={styles["delete-container"]}>
               <h3>{t("gallery.deleteTitle")}</h3>
-              <p>{t("gallery.deleteMessage")}</p>
+              <p>{t("gallery.deleteConfirm")}</p>
               <div className="button-container">
                 <button className="button" onClick={handleDeleteImage}>
-                  {t("gallery.yes")}
+                  {t("common.yes")}
                 </button>
                 <button
                   className="button button--alt"
                   onClick={(event) => handleDeleteAlert(event, false)}
                 >
-                  {t("gallery.no")}
+                  {t("common.no")}
                 </button>
               </div>
             </div>
