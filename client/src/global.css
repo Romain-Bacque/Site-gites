@@ -88,7 +88,7 @@ main {
   flex-direction: column;
   justify-content: space-between;
   min-height: calc(100vh - 100px);
-  padding-top: 7rem;
+  padding-top: 10rem;
 }
 
 .message.error {
