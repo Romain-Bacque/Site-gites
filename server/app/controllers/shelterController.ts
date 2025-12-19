@@ -67,21 +67,32 @@ const shelterController = {
   updateShelterDescription: async function (req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { description: newDescription } = req.body;
+      const { description } = req.body;
 
-      if (!id || !newDescription) {
+      if (!id || !description?.text || !description?.lang) {
         throw new ExpressError("Missing required fields", 400);
       }
 
-      const updatedShelter = await Shelter.findByIdAndUpdate(
-        id,
-        { description: newDescription },
-        { new: true } // to return the updated document
-      );
+      const shelter = await Shelter.findById(id);
 
-      if (!updatedShelter) {
+      if (!shelter) {
         throw new ExpressError("Shelter not found", 404);
       }
+
+      const existingDescIndex = shelter.description.findIndex(
+        (desc: any) => desc.lang === description.lang
+      );
+
+      if (existingDescIndex !== -1) {
+        shelter.description[existingDescIndex].text = description.text;
+      } else {
+        shelter.description.push({
+          text: description.text,
+          lang: description.lang,
+        });
+      }
+
+      const updatedShelter = await shelter.save();
 
       res.status(200).json({ shelterData: updatedShelter });
     } catch (error) {

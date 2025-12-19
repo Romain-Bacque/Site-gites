@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 // component
 const Shelters: React.FC = () => {
   const handleHTTPState = useHTTPState();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const {
     data: sheltersData,
@@ -52,7 +52,11 @@ const Shelters: React.FC = () => {
               <ShelterItem
                 shelterId={shelter._id}
                 title={shelter.title}
-                description={shelter.description}
+                initialDescriptionText={
+                  shelter.description.find(
+                    (desc) => desc.lang === i18n.language
+                  )?.text || ""
+                }
                 images={shelter.images}
               />
             </li>
