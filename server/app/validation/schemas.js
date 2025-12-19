@@ -46,15 +46,6 @@ const joi = baseJoi.extend(extension);
 // Schemas
 
 /**
- * shelterDescriptionSchema monitor the shelter description request body, and return an error if any of requirements doesn't match with it
- */
-module.exports.putShelterDescriptionSchema = joi
-  .object({
-    description: joi.string().required(),
-  })
-  .required();
-
-/**
  * registerSchema monitor the register request body, and return an error if any of requirements doesn't match with it
  */
 module.exports.registerSchema = joi
@@ -128,7 +119,7 @@ module.exports.editProfileSchema = joi
   .required();
 
 /**
- * postBrewerySchema monitor the brewery request body, and return an error if any of requirements doesn't match with it
+ * postShelterSchema monitor the shelter request body, and return an error if any of requirements doesn't match with it
  */
 module.exports.postShelterImage = joi
   .object({
@@ -137,11 +128,26 @@ module.exports.postShelterImage = joi
     phone: joiPhoneNumber
       .string({ defaultCountry: "FR", format: "national" })
       .phoneNumber(),
-    description: joi.string().escapeHTML().required(),
+    description: joi.object({
+      text: joi.string().required(),
+      lang: joi.string().escapeHTML().required(),
+    }),
     address: joi.string().escapeHTML().required(),
     lat: joi.number().required(),
     lon: joi.number().required(),
     categories: joi.array().items(joi.number().min(1).required()),
+  })
+  .required();
+
+/**
+ * shelterDescriptionSchema monitor the shelter description request body, and return an error if any of requirements doesn't match with it
+ */
+module.exports.putShelterDescriptionSchema = joi
+  .object({
+    description: joi.object({
+      text: joi.string().required(),
+      lang: joi.string().escapeHTML().required(),
+    }),
   })
   .required();
 
