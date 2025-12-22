@@ -18,7 +18,7 @@ import Captcha from "../Captcha";
 import Button from "../../../UI/Button";
 
 const Auth: React.FC = () => {
-  const { t } = useTranslation(); // ✅ hook i18next
+  const { t } = useTranslation();
   const captchaRef = React.useRef<any>(null);
   const { setCaptchaValue, captchaValue, verifyCaptcha } = useRecaptcha();
   const dispatch = useAppDispatch();

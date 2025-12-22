@@ -135,36 +135,36 @@ const shelterController = {
     }
   },
 
-  getActivities: async (_: Request, res: Response): Promise<void> => {
-    const browser = await puppeteer.launch({
-      headless: true,
-      executablePath:
-        process.env.NODE_ENV === "production"
-          ? chromePath
-          : puppeteer.executablePath(),
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--single-process",
-        "--no-zygote",
-      ],
-    });
-    const page = await browser.newPage();
-    const baseUrl =
-      "https://www.tourisme-couserans-pyrenees.com/carnet-dadresses/quoi-faire-sur-place/activites-sportives-et-de-loisirs/activites-sportives-et-loisirs";
-    let pageNumber = 2;
-    let hasNextPage = true;
+  getActivities: async (_: Request, res: Response) => {
+    let browser;
 
-    const getActivitiesList = async (): Promise<Activity[] | null> => {
-      return await page.evaluate(() => {
-        const list: Activity[] = [];
-        const activities = document.querySelectorAll(".wpetOffer");
+    try {
+      browser = await puppeteer.launch({
+        headless: true,
+        executablePath:
+          process.env.NODE_ENV === "production"
+            ? chromePath
+            : puppeteer.executablePath(),
+        args: [
+          "--no-sandbox", // Required for running Puppeteer in some environments
+          "--disable-setuid-sandbox", // Security-related flag
+          "--disable-dev-shm-usage", // Overcome limited resource problems
+        ],
+      });
 
-        if (activities.length === 0) return null;
+      const page = await browser.newPage();
+      const baseUrl =
+        "https://www.tourisme-couserans-pyrenees.com/carnet-dadresses/quoi-faire-sur-place/activites-sportives-et-de-loisirs/activites-sportives-et-loisirs";
 
-        for (const activity of activities) {
-          list.push({
+      const list: Activity[] = [];
+      let pageNumber = 1;
+
+      const getActivitiesList = async (): Promise<Activity[] | null> => {
+        return await page.evaluate(() => {
+          const activitiesNodeList = document.querySelectorAll(".wpetOffer");
+          if (activitiesNodeList.length === 0) return null;
+
+          return Array.from(activitiesNodeList).map((activity) => ({
             title:
               (
                 activity.querySelector(
@@ -183,31 +183,34 @@ const shelterController = {
                   ".wpetOfferContainerContent > h3 > a"
                 ) as HTMLAnchorElement
               )?.href ?? "",
+          }));
+        });
+      };
+
+      while (true) {
+        try {
+          await page.goto(`${baseUrl}/page/${pageNumber}/`, {
+            waitUntil: "networkidle2",
+            timeout: 15000,
           });
+          const activitiesOnPage = await getActivitiesList();
+          if (!activitiesOnPage || activitiesOnPage.length === 0) break;
+
+          list.push(...activitiesOnPage);
+          pageNumber++;
+        } catch (err) {
+          console.error("Error loading page", pageNumber, err);
+          break;
         }
-        return list;
-      });
-    };
-
-    const list: Activity[] = [];
-
-    while (hasNextPage) {
-      await page.goto(`${baseUrl}/page/${String(pageNumber)}/`);
-
-      const activitiesOnPage = await getActivitiesList();
-
-      if (!activitiesOnPage || activitiesOnPage.length === 0) {
-        hasNextPage = false;
-      } else {
-        list.push(...activitiesOnPage);
-
-        pageNumber++;
       }
+
+      res.status(200).json({ data: list });
+    } catch (error) {
+      console.error(error);
+      throw new ExpressError("Internal Server Error", 500);
+    } finally {
+      if (browser) await browser.close();
     }
-
-    await browser.close();
-
-    res.status(200).json({ data: list });
   },
 
   postBooking: async function (req: Request, res: Response) {

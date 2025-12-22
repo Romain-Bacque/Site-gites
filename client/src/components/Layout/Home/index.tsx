@@ -12,6 +12,7 @@ import Button from "../../UI/Button";
 import { useMyQuery } from "hooks/use-query";
 import useHTTPState from "hooks/use-http-state";
 import { useTranslation } from "react-i18next"; // <-- import i18n
+import CardSkeleton from "components/UI/Skeletons/CardSkeleton";
 
 const initialState = {
   message: null,
@@ -74,7 +75,9 @@ const Home: React.FC = () => {
 
   const renderShelters = () => {
     if (sheltersIsPending) {
-      return <p>{t("home.loading")}</p>;
+      return [...Array(2)].map((_, index) => (
+        <CardSkeleton className={classes.gite} key={index} />
+      ));
     } else if (sheltersData && sheltersData.length > 0) {
       return sheltersData.map((shelter) => (
         <Card key={shelter._id} className={classes.gite}>
