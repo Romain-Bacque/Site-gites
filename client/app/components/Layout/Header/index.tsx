@@ -72,7 +72,8 @@ const Header: React.FC = () => {
 
     const pressDuration = Date.now() - touchStart;
 
-    if (pressDuration > 800) {
+    // press for more than 3 seconds to show the login button
+    if (pressDuration > 3000) {
       setShowLogin(true);
     }
 
