@@ -19,6 +19,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/use-store";
 
 const Header: React.FC = () => {
+  const [touchStart, setTouchStart] = useState<number | null>(null);
   const [showLogin, setShowLogin] = useState(false);
   const locale = useLocale();
   const pathname = usePathname();
@@ -62,6 +63,22 @@ const Header: React.FC = () => {
   const isActive = (href: string) =>
     pathname === href ? classes["active-link"] : "";
 
+  const handleTouchStart = () => {
+    setTouchStart(Date.now());
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart) return;
+
+    const pressDuration = Date.now() - touchStart;
+
+    if (pressDuration > 800) {
+      setShowLogin(true);
+    }
+
+    setTouchStart(null);
+  };
+
   useEffect(() => {
     const handleScroll = () => setScrollActive(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);
@@ -82,6 +99,8 @@ const Header: React.FC = () => {
   return (
     <header
       className={`${classes.header} ${isMenuOpen ? classes["active-nav"] : ""}`}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <div
         className={`${scrollActive ? classes["background-active"] : ""} ${
