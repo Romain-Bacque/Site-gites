@@ -1,0 +1,31 @@
+.activities {
+  height: 400px;
+  width: 100%;
+}
+
+.activities-list-wrapper {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.activities-list {
+  color: white;
+}
+
+.activities-list__item {
+  border-radius: 5px;
+  background: var(--bg-color-alt);
+  padding: 1rem;
+  margin: 1rem 0;
+  line-height: 2rem;
+}
+
+.activities-list__title {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.activities-list__link {
+  text-decoration: underline;
+}

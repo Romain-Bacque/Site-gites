@@ -1,0 +1,52 @@
+.sort {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  margin: auto;
+  color: rgb(67, 67, 67);
+}
+
+.sort__title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.sort__subtitle {
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.sort__choice-button {
+  background: none;
+  border: 1px solid rgb(200, 200, 200);
+  border-radius: 20px;
+  margin: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.sort__choice-button:hover, .sort__choice-button:active {
+  background-color: rgb(200, 200, 200);
+}
+
+.sort__validation-button {
+  background: none;
+  font-weight: bold;
+  border: 2px solid rgb(93, 93, 93);
+  border-radius: 20px;
+  margin: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.sort__choice-button.sort__choice-button--active {
+  background: rgb(93, 93, 93);
+  border: 2px solid rgb(93, 93, 93);
+  color: white;
+}
+
+.sort__validation-button:hover {
+  background: rgb(93, 93, 93);
+  border: 2px solid rgb(93, 93, 93);
+  color: white;
+}

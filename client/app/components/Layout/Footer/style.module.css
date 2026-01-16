@@ -1,0 +1,18 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  background-color: white;
+  padding: 2rem;
+  color: var(--text-color-light);
+  border-top: 1px solid var(--border-color-light);
+}
+
+/* --- media queries --- */
+@media screen and (max-width: 655px) {
+  .footer {
+    flex-direction: column;
+  }
+}

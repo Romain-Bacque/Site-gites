@@ -1,0 +1,40 @@
+.booking-container {
+  padding: 1rem;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  gap: 0.6rem;
+  max-width: 100rem;
+  transition: all 0.3s ease-out;
+}
+
+.form__input-container {
+  width: 48%;
+}
+
+.form__date-container {
+  position: relative;
+}
+
+.form__textarea {
+  outline: none;
+  box-sizing: border-box;
+  border: 2px solid gray;
+  border-radius: 5px;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  width: 100%;
+  resize: none;
+}
+
+.form__textarea--red {
+  border-color: rgb(153, 1, 1);
+}
+
+.form__textarea--red::placeholder {
+  color: rgb(153, 1, 1);
+}

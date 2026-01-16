@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    // Sets the target ECMAScript version to ESNext, the latest version.
+    "target": "ESNext",
+    // Specifies the standard library files to be included.
+    "lib": ["dom", "dom.iterable", "esnext"],
+    // Allows JavaScript files to be included and compiled alongside TypeScript.
+    "allowJs": true,
+    // Skips type checking of declaration files (.d.ts files) .
+    "skipLibCheck": true,
+    // Enforces strict type checking rules.
+    "strict": true,
+    // Enables strict null checks, which force you to check for null values.
+    "noUnusedParameters": true /* Report errors on unused parameters. */,
+    // Requires consistent casing in filenames to avoid issues on case-insensitive file systems.
+    // When it's set to true, TypeScript enforces that the casing (capitalization) of filenames matches exactly how they are imported or referenced in your code.
+    "forceConsistentCasingInFileNames": true,
+    // Prevents TypeScript from emitting output files during compilation.
+    "noEmit": false,
+    // Enables interoperability between CommonJS and ES Modules (used with packages like Babel).
+    "esModuleInterop": true,
+    // Sets the module system to ES Modules (ESNext) for output files.
+    "module": "nodenext",
+    // Specifies how module resolution should work.
+    "moduleResolution": "nodenext",
+    // Allows importing JSON files as modules.
+    "resolveJsonModule": true,
+    // Enables the transpiler to work in isolation (incremental builds).
+    "isolatedModules": true,
+    // Specifies how JSX should be handled.
+    "jsx": "preserve",
+    // Enables incremental builds, where only modified files are recompiled.
+    // Incremental builds are a feature that allows TypeScript to compile only the files that have changed since the last compilation, resulting in faster build times.
+    "incremental": true,
+    "noImplicitAny": true, // Disables the error that occurs when TypeScript can't infer the type of a variable.
+    // Sets up path aliases for easier imports, using "@" as a placeholder.
+    "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
+    "rootDir": "app",
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  // include and exclude properties specify the files to be included and excluded from compilation.
+  "include": ["app/**/*"],
+  "exclude": ["node_modules"]
+}

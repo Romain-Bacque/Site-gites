@@ -1,0 +1,35 @@
+.fallback {
+  border: 1px solid red;
+  border-radius: 4px;
+  padding: 16px;
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.fallback__header {
+  margin-bottom: 12px;
+}
+
+.fallback__title {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.fallback__body {
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+.fallback__body p {
+  margin: 8px 0;
+}
+
+.fallback__button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background-color: #721c24;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

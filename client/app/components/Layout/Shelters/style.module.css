@@ -1,0 +1,12 @@
+.shelters {
+  padding: 0;
+  overflow: visible;
+}
+
+.shelter {
+  margin: 0 auto 4rem;
+  padding: 0;
+  min-height: 50vh;
+  width: 100%;
+  max-width: 1000px;
+}

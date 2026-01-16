@@ -1,0 +1,102 @@
+/* --- Tarifs --- */
+
+.rates-container {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 700px;
+}
+
+.rates__grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--background-light, #fafafa);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 100%;
+}
+
+.rates__grid-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 1rem;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .rates__grid-header {
+    font-size: 1rem;
+  }
+}
+
+.low {
+  background: #6ba292;
+}
+.mid {
+  background: #4e80b0;
+}
+.high {
+  background: #b05b4e;
+}
+
+.rates__cell-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 1rem;
+  background: #fff;
+  border-top: 1px solid #eee;
+  transition: background 0.2s;
+}
+
+@media (max-width: 600px) {
+  .rates__cell-input {
+    padding: 0.5rem;
+    gap: 2px;
+    font-size: 0.9rem;
+  }
+}
+
+.rates__cell-input:hover {
+  background: #f8f8f8;
+}
+
+.rates__input {
+  text-align: right;
+  font-size: 1.1rem;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  background: transparent;
+  transition: border-color 0.2s;
+}
+
+.rates__input:focus {
+  outline: none;
+  border-color: #4e80b0;
+}
+
+.rates__euro {
+  color: #666;
+  font-size: 1rem;
+}
+
+.rates__button {
+  margin-top: 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.rates__button:hover {
+  transform: translateY(-2px);
+}

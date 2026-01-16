@@ -1,0 +1,52 @@
+/* CONTENEUR GLOBAL (dans la modale) */
+.crop-container {
+  width: 100%;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* WRAPPER DU CROPPER */
+.crop-container__cropper-wrapper {
+  flex-grow: 1;
+  width: 100%;
+  position: relative;
+}
+
+/* CROPPER */
+.crop-container__cropper-background {
+  background-color: black;
+}
+.crop-container__cropper {
+  width: 100%;
+  height: 100%;
+}
+
+/* FORMULAIRE */
+.crop-container__form {
+  height: 80px;
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+
+  border-top: 1px solid #ccc;
+}
+
+/* BOUTON */
+.crop-container__button {
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  background-color: rgb(70, 70, 140);
+  padding: 0.6rem 2rem;
+}
+
+.crop-container__button:hover {
+  background-color: rgb(50, 50, 100);
+}

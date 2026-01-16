@@ -1,0 +1,27 @@
+import express from "express";
+import adminRouter from "./adminRouter";
+import authRouter from "./authRouter";
+import shelterRouter from "./shelterRouter";
+import errorHandler from "../utilities/errorHandler";
+import { createCSRFToken, csrfProtection } from "../middlewares";
+
+const router = express.Router();
+
+router.get("/createCSRF", csrfProtection, createCSRFToken);
+
+router.use("/favicon.ico", (_, res) => res.sendStatus(200)); // Ignore favicon requests
+router.use("/", shelterRouter);
+router.use("/authentification", authRouter);
+router.use("/admin", adminRouter);
+
+/**
+ * gestion de la 404
+ */
+router.use(errorHandler.notFound);
+
+/**
+ * gestion des erreurs
+ */
+router.use(errorHandler.manage);
+
+export default router;
