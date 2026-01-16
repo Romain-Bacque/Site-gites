@@ -5,17 +5,20 @@ import useQueryParams from "../../../../hooks/use-query-params";
 import { useTranslations } from "next-intl";
 import styles from "./style.module.css";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const EmailConfirm: React.FC = () => {
   const router = useRouter();
   const query = useQueryParams();
   const t = useTranslations();
 
-  if (!("isValid" in query) || query.isValid === undefined) {
-    router.push("/");
-  }
-
   const isValidAccount = query.isValid === "true";
+
+  useEffect(() => {
+    if (!("isValid" in query) || query.isValid === undefined) {
+      router.push("/");
+    }
+  }, [query, router]);
 
   return (
     <section>

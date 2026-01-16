@@ -1,11 +1,9 @@
-import { useLocation } from "react-router";
+"use client";
 
-function useQueryParams() {
-  const search = useLocation().search; // returns the URL query String (e.g. ?q=abc&page=2)
-  const urlSearchParams = new URLSearchParams(search); // creates a URLSearchParams object from the query string
-  const params = Object.fromEntries(urlSearchParams.entries()); // creates a regular object (e.g. { q: 'abc', page: '2' })
+import { useSearchParams } from "next/navigation";
 
-  return params;
+export default function useQueryParams() {
+  const searchParams = useSearchParams();
+
+  return Object.fromEntries(searchParams.entries()) as Record<string, string>;
 }
-
-export default useQueryParams;
