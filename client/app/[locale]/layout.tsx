@@ -11,6 +11,7 @@ import EmotionCacheProvider from "../emotion-cache";
 import { NextIntlClientProvider } from "next-intl";
 import ClientProviders from "../providers";
 import AuthWatcher from "../AuthWatcher";
+import ScrollToTop from "../components/UI/ScrollToTop";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,6 +55,7 @@ export default async function LocaleLayout({
               <Header />
               <main>{children}</main>
               <Footer />
+              <ScrollToTop />
             </ClientProviders>
           </NextIntlClientProvider>
         </EmotionCacheProvider>
