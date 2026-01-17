@@ -7,7 +7,7 @@ import {
   putRatesSchema,
   putShelterDescriptionSchema,
 } from "../validation/schemas";
-import { csrfProtection } from "../middlewares";
+import { csrfProtection, checkLogged } from "../middlewares";
 
 const router = express.Router();
 
@@ -16,12 +16,14 @@ router.get("/shelters", catchAsync(shelterController.getShelters));
 router.put(
   "/shelters/:id",
   csrfProtection,
+  checkLogged,
   validate(putShelterDescriptionSchema),
   catchAsync(shelterController.updateShelterDescription)
 );
 router.put(
   "/shelters/:id/image/:imageId",
   csrfProtection,
+  checkLogged,
   catchAsync(shelterController.setMainImage)
 );
 router.post(
@@ -35,6 +37,7 @@ router
   .get(catchAsync(shelterController.getRatesByShelterId))
   .put(
     csrfProtection,
+    checkLogged,
     validate(putRatesSchema),
     catchAsync(shelterController.editRates)
   );
