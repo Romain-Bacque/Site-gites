@@ -37,7 +37,7 @@ const Home: React.FC<HomePageProps> = ({ shelters }) => {
     queryKey: ["shelters"],
     queryFn: getShelters,
     initialData: shelters,
-    staleTime: 30 * 1000, // ISR: 30 seconds
+    staleTime: 3600 * 1000, // 1 hour
     enabled: false,
   });
 

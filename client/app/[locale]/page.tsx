@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 30; // Revalidate this page every 30 seconds
+export const revalidate = 3600; // Revalidate every hour
 
 export default async function Page() {
   let shelters: HomePageProps["shelters"] = [];
