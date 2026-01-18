@@ -13,6 +13,7 @@ import {
 import { ImageNotSupported } from "@mui/icons-material";
 import { GalleryItemProps } from "./types";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 const GalleryItem: FC<GalleryItemProps> = ({
   id,
@@ -28,15 +29,15 @@ const GalleryItem: FC<GalleryItemProps> = ({
   const isAuth = useAppSelector((state) => state.auth.isAuthentificated);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
- const t = useTranslations();
+  const t = useTranslations();
 
   const sortedImages =
     images?.length > 0
-      ? images.sort((a) => (a._id === mainImgId ? -1 : 1))
+      ? [...images].sort((a) => (a._id === mainImgId ? -1 : 1))
       : [];
 
   const handleFileValueChange: React.ChangeEventHandler<HTMLInputElement> = (
-    event
+    event,
   ) => {
     if (event.target.files && event.target.files[0]) {
       onSetUrlFile({
@@ -67,7 +68,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
 
   const prevImage = () => {
     setCurrentImageIndex(
-      (prev) => (prev - 1 + sortedImages.length) % sortedImages.length
+      (prev) => (prev - 1 + sortedImages.length) % sortedImages.length,
     );
   };
 
@@ -75,7 +76,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
     <Card className={classes.album}>
       <div className="button-container button-container--alt">
         <h3 className={classes["album-title"]}>{title}</h3>
-        {isAuth ? (
+        {isAuth && (
           <div>
             <label
               htmlFor={`files-shelter${title}`}
@@ -98,19 +99,25 @@ const GalleryItem: FC<GalleryItemProps> = ({
               disabled={isPending}
             />
           </div>
-        ) : null}
+        )}
       </div>
 
       <div className={classes["mosaic-container"]}>
         {sortedImages.length > 0 ? (
           sortedImages.map((image, index) => (
             <div key={image._id} className={classes["mosaic-item"]}>
-              <img
-                className={classes["mosaic-image"]}
-                alt={image.filename}
-                src={image.url}
-                onClick={() => openLightbox(index)}
-              />
+              <div className={classes["image-wrapper"]}>
+                <Image
+                  src={image.url}
+                  alt={image.filename}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 200px"
+                  className={classes["mosaic-image"]}
+                  onClick={() => openLightbox(index)}
+                  priority={image._id === mainImgId}
+                />
+              </div>
+
               {isAuth && (
                 <div className={classes["image-controls"]}>
                   <button
@@ -122,6 +129,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
                   >
                     <FontAwesomeIcon icon={faTrash} />
                   </button>
+
                   {image._id !== mainImgId && (
                     <button
                       data-image-id={image._id}
@@ -150,6 +158,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
           <button className={classes["lightbox-close"]} onClick={closeLightbox}>
             <FontAwesomeIcon icon={faTimes} />
           </button>
+
           <button
             className={classes["lightbox-prev"]}
             onClick={(e) => {
@@ -159,6 +168,7 @@ const GalleryItem: FC<GalleryItemProps> = ({
           >
             <FontAwesomeIcon icon={faChevronLeft} />
           </button>
+
           <button
             className={classes["lightbox-next"]}
             onClick={(e) => {
@@ -168,12 +178,20 @@ const GalleryItem: FC<GalleryItemProps> = ({
           >
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
-          <img
-            src={sortedImages[currentImageIndex]?.url}
-            alt={sortedImages[currentImageIndex]?.filename}
-            className={classes["lightbox-image"]}
+
+          <div
+            className={classes["lightbox-image-wrapper"]}
             onClick={(e) => e.stopPropagation()}
-          />
+          >
+            <Image
+              src={sortedImages[currentImageIndex]?.url || ""}
+              alt={sortedImages[currentImageIndex]?.filename || ""}
+              fill
+              sizes="90vw"
+              priority
+              className={classes["lightbox-image"]}
+            />
+          </div>
         </div>
       )}
     </Card>
