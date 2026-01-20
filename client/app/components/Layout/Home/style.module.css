@@ -6,7 +6,7 @@
 
 .banner__parallax {
   position: absolute;
-  inset: -10%;
+  inset: -15%; /* means top: -15%; right: -15%; bottom: -15%; left: -15%; */
   will-change: transform;
 }
 
@@ -18,7 +18,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
   z-index: 1;
 }
 

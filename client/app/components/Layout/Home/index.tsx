@@ -28,6 +28,7 @@ const Home: React.FC<HomePageProps> = ({ shelters }) => {
   const router = useRouter();
   const locale = useLocale();
   const [alertStatut, setAlertStatut] = useState<AlertStatut>(initialState);
+  const [bannerOffsetY, setBannerOffsetY] = useState(0);
 
   const {
     data: sheltersData,
@@ -46,6 +47,16 @@ const Home: React.FC<HomePageProps> = ({ shelters }) => {
       handleHTTPState("error", t("home.loadError"));
     }
   }, [router, sheltersQueryError, handleHTTPState, t]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (typeof window === "undefined") return;
+      setBannerOffsetY(window.scrollY * 0.3);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const renderDetailsButton = (shelterId: string) => {
     const width = typeof window !== "undefined" ? window.innerWidth : 1024;
@@ -132,14 +143,17 @@ const Home: React.FC<HomePageProps> = ({ shelters }) => {
       />
       <section>
         <Card className={classes.banner}>
-          <Image
-            src="/img/landscape.jpg"
-            alt="Paysage du site"
-            fill
-            priority
-            className={classes.banner__image}
-            sizes="100vw"
-          />
+          <div className={classes.banner__parallax}>
+            <Image
+              src="/img/landscape.jpg"
+              alt="Paysage du site"
+              fill
+              priority
+              className={classes.banner__image}
+              style={{ transform: `translateY(${bannerOffsetY}px)` }}
+              sizes="100vw"
+            />
+          </div>
           <div className={classes["banner__site-branding"]}>
             <h1 className={classes["banner__site-title"]}>
               {t("home.bannerTitle")}
