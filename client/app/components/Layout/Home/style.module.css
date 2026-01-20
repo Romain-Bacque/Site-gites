@@ -6,7 +6,7 @@
 
 .banner__parallax {
   position: absolute;
-  inset: -15%; /* means top: -15%; right: -15%; bottom: -15%; left: -15%; */
+  inset: -10%; /* means top: -10%; right: -10%; bottom: -10%; left: -10%; */
   will-change: transform;
 }
 
