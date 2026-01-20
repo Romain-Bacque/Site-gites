@@ -4,11 +4,11 @@ import { getShelters } from "../lib/api";
 import { HomePageProps } from "../components/Layout/Home/types";
 
 export const metadata: Metadata = {
-  title: "Accueil - Site Gîtes",
+  title: "Gîtes à Erce en Ariège | Location de vacances tout confort",
   description:
     "Bienvenue sur le site des gîtes à Erce en Ariège (09), au cœur du Couserans. Gîtes tout confort, nature et randonnées.",
   openGraph: {
-    title: "Accueil - Site Gîtes",
+    title: "Gîtes à Erce en Ariège | Location de vacances tout confort",
     description: "Gîtes tout confort à Erce en Ariège, au cœur du Couserans",
     type: "website",
     images: [
@@ -16,13 +16,13 @@ export const metadata: Metadata = {
         url: "/og/gites.jpg",
         width: 1200,
         height: 630,
-        alt: "Gîtes à Erce en Ariège",
+        alt: "Gîtes à Erce en Ariège | Location de vacances tout confort",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Accueil - Site Gîtes",
+    title: "Gîtes à Erce en Ariège | Location de vacances tout confort",
     description: "Gîtes tout confort à Erce en Ariège, au cœur du Couserans",
   },
 };

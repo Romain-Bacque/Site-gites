@@ -1,11 +1,13 @@
 import ForgotPassword from "@/app/components/Layout/authentication/ForgotPassword";
 
 export const metadata = {
-  title: "Mot de passe oublié",
+  title:
+    "Mot de passe oublié | Site Gîtes à Erce en Ariège - Réinitialisation sécurisée du mot de passe",
   description:
     "Réinitialisez le mot de passe de votre compte en quelques étapes simples et sécurisées.",
   openGraph: {
-    title: "Mot de passe oublié - Site Gîtes",
+    title:
+      "Mot de passe oublié - Site Gîtes à Erce en Ariège | Réinitialisation sécurisée du mot de passe",
     description:
       "Accédez à la page de réinitialisation de mot de passe de votre compte sur le Site Gîtes.",
     type: "website",
@@ -20,13 +22,14 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mot de passe oublié - Site Gîtes",
+    title:
+      "Mot de passe oublié - Site Gîtes à Erce en Ariège | Réinitialisation sécurisée du mot de passe",
     description:
       "Réinitialisez facilement et en toute sécurité le mot de passe de votre compte Site Gîtes.",
   },
 };
 
-const ForgotPasswordPage = async () => {  
+const ForgotPasswordPage = async () => {
   return <ForgotPassword />;
 };
 

@@ -5,13 +5,15 @@ import { Metadata } from "next";
 export const revalidate = 30; // ISR: revalidate every 30 seconds
 
 export const metadata: Metadata = {
-  title: "Gestion des réservations",
+  title:
+    "Gestion des réservations - Administration | Site Gîtes à Erce en Ariège",
   description:
     "Espace administrateur pour gérer l'ensemble des demandes de réservation des clients.",
   openGraph: {
-    title: "Gestion des réservations - Administration",
-    description:
-      "Tableau de bord administrateur pour suivre et traiter les demandes de réservation des clients.",
+    title:
+      "Gestion des réservations - Administration | Site Gîtes à Erce en Ariège",
+    description: 
+      "Espace administrateur pour gérer l'ensemble des demandes de réservation des clients.",
     type: "website",
     images: [
       {
@@ -24,7 +26,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gestion des réservations - Administration",
+    title:
+      "Gestion des réservations - Administration | Site Gîtes à Erce en Ariège",
     description:
       "Interface administrateur pour gérer toutes les demandes de réservation des clients.",
   },

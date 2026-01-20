@@ -132,6 +132,14 @@ const Home: React.FC<HomePageProps> = ({ shelters }) => {
       />
       <section>
         <Card className={classes.banner}>
+          <Image
+            src="/img/landscape.jpg"
+            alt="Paysage du site"
+            fill
+            priority
+            className={classes.banner__image}
+            sizes="100vw"
+          />
           <div className={classes["banner__site-branding"]}>
             <h1 className={classes["banner__site-title"]}>
               {t("home.bannerTitle")}

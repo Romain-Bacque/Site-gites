@@ -2,11 +2,11 @@ import Auth from "@/app/components/Layout/authentication/Auth";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Authentification - Site Gîtes",
+  title: "Authentification - Site Gîtes à Erce en Ariège | Connexion sécurisée",
   description:
     "Bienvenue sur le site des gîtes à Erce en Ariège (09), au cœur du Couserans. Gîtes tout confort, nature et randonnées.",
   openGraph: {
-    title: "Authentification - Site Gîtes",
+    title: "Authentification - Site Gîtes à Erce en Ariège | Connexion sécurisée",
     description: "Gîtes tout confort à Erce en Ariège, au cœur du Couserans",
     type: "website",
     images: [
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Authentification - Site Gîtes",
+    title: "Authentification - Site Gîtes à Erce en Ariège | Connexion sécurisée",
     description: "Gîtes tout confort à Erce en Ariège, au cœur du Couserans",
   },
 };
