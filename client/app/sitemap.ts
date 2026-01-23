@@ -2,7 +2,8 @@ import { MetadataRoute } from "next";
 import { getSheltersWithPicturesRequest } from "@/app/lib/api";
 import { ShelterType } from "@/app/components/Layout/Gallery/types";
 
-const SITE_URL = "https://gites-ariege-erce.fr";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://gites-ariege-erce.fr";
 const LOCALES = ["fr", "en"];
 
 type DynamicRoute = {
