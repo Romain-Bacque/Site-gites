@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import useInput from "../../../../hooks/use-input";
 import { useMyQuery, useMyMutation } from "../../../../hooks/use-query";
