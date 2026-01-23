@@ -10,7 +10,9 @@ export const revalidate = 60;
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "LodgingBusiness",
-  "@id": process.env.NEXT_PUBLIC_BASE_URL || "https://gites-ariege-erce.fr",
+  "@id":
+    (process.env.NEXT_PUBLIC_BASE_URL || "https://gites-ariege-erce.fr") +
+    "/#lodging",
   name: "Gîtes à Erce en Ariège au cœur du Couserans",
   url: process.env.NEXT_PUBLIC_BASE_URL || "https://gites-ariege-erce.fr",
   description:
@@ -29,8 +31,8 @@ const jsonLd = {
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: "42.86",
-    longitude: "1.03",
+    latitude: 42.86,
+    longitude: 1.03,
   },
   amenityFeature: [
     {
