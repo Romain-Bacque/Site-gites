@@ -94,6 +94,7 @@ const Home: React.FC<HomePageProps> = ({ shelters }) => {
                   fill // fill is a property that makes the image cover the parent div (under the hood it sets position: absolute, top: 0, left: 0, width: 100%, height: 100%)
                   className={classes.gite__picture}
                   sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
                 />
               </div>
             ) : (
