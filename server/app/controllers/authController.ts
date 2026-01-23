@@ -10,7 +10,7 @@ import { resendEmailHandler } from "../utilities/emailhandler";
 const debug = debugLib("controller:auth");
 
 const redirectFn = (isValid: boolean) => {
-  return `${process.env.CORS_ORIGIN}/auth/email-confirm?isValid=${isValid}`;
+  return `${process.env.CORS_ORIGIN}/email-confirm?isValid=${isValid}`;
 };
 
 const getCookieConfig = (): CookieOptions => ({
