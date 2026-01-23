@@ -193,6 +193,7 @@ const authController = {
       subject: "Réinitialisation du mot de passe",
       templatePath: path.join(
         __dirname,
+        
         "../utilities/emailTemplate/resetPassword.ejs"
       ),
       email: user.email as string,
