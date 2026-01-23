@@ -31,7 +31,7 @@ const EmailConfirm: React.FC = () => {
         {isValidAccount && (
           <Button
             variant="secondary"
-            onClick={() => router.push("/authentication/login")}
+            onClick={() => router.push("/login")}
           >
             {t("emailConfirmation.login")}
           </Button>
