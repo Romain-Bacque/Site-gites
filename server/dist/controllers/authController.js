@@ -120,7 +120,7 @@ const authController = {
             return res.sendStatus(409);
         const user = new models_1.User({ username, password, email });
         const accessToken = generateAccessToken({ id: user.id });
-        const link = `http${process.env.NODE_ENV === "production" ? "s" : ""}://${process.env.CORS_ORIGIN}/authentification/email-confirm?id=${user.id}&token=${accessToken}`;
+        const link = `http${process.env.NODE_ENV === "production" ? "s" : ""}://${process.env.CORS_ORIGIN}/email-confirm?id=${user.id}&token=${accessToken}`;
         await sendEmail({
             service: "gmail",
             emailFrom: process.env.EMAIL_FROM || "",

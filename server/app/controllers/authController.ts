@@ -149,7 +149,7 @@ const authController = {
     const user = new User({ username, password, email });
 
     const accessToken = generateAccessToken({ id: user.id });
-    const link = `${process.env.HOST}/authentification/email-confirm?id=${user.id}&token=${accessToken}`;
+    const link = `${process.env.HOST}/email-confirm?id=${user.id}&token=${accessToken}`;
 
     await sendEmail({
       service: "gmail",

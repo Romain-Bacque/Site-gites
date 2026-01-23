@@ -11,14 +11,14 @@ export default function robots(): MetadataRoute.Robots {
         "/fr/login",
         "/fr/forgot-password",
         "/fr/reset-password",
-        "/fr/email-confirmation",
+        "/fr/email-confirm",
 
         // en
         "/en/bookings",
         "/en/login",
         "/en/forgot-password",
         "/en/reset-password",
-        "/en/email-confirmation",
+        "/en/email-confirm",
       ],
     },
     sitemap:
