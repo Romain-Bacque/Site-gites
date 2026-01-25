@@ -193,7 +193,6 @@ const Booking: React.FC<BookingProps> = ({ shelterId }) => {
         icon: "error",
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     bookingStatus,
     resetNameHandler,

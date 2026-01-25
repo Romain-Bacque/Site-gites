@@ -68,6 +68,16 @@
     "error": "An error occurred.",
     "invalidLink": "Invalid reset link."
   },
+  "profile": {
+    "title": "Change Password",
+    "currentPasswordLabel": "Current Password",
+    "currentPasswordPlaceholder": "Enter your current password",
+    "newPasswordLabel": "New Password",
+    "newPasswordPlaceholder": "Enter your new password",
+    "passwordRequirements": "Password must contain:",
+    "success": "Password has been successfully updated.",
+    "error": "An error occurred while updating the password."
+  },
   "forgotPassword": {
     "title": "Password Reset",
     "description": "Request a password reset for your account.",
@@ -222,6 +232,7 @@
     "shelters": "Lodgings",
     "albums": "Albums",
     "requests": "Requests",
+    "profile": "Profile",
     "login": "Login",
     "logout": "Logout"
   },

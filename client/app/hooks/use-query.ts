@@ -96,13 +96,11 @@ export function useMyQueries<T extends readonly UseMyQueryType<any>[]>(
 // and TResponse to represent the type of data returned by the mutation function
 
 export function useMyMutation<TRequest = any, TResponse = any>({
-  queryKeys,
   mutationFn,
   onErrorFn,
   onSuccessFn,
   ...props
 }: {
-  queryKeys?: QueryKey;
   mutationFn: HTTPRequestType<TRequest, TResponse>;
   onErrorFn?: (error: any, errorMessage: string) => void;
   onSuccessFn?: (data: TResponse, vars: TRequest, context: any) => void;

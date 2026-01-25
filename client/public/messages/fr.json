@@ -68,6 +68,16 @@
     "error": "Une erreur est survenue.",
     "invalidLink": "Lien de réinitialisation invalide."
   },
+  "profile": {
+    "title": "Modifier le mot de passe",
+    "currentPasswordLabel": "Mot de passe actuel",
+    "currentPasswordPlaceholder": "Entrez votre mot de passe actuel",
+    "newPasswordLabel": "Nouveau mot de passe",
+    "newPasswordPlaceholder": "Entrez votre nouveau mot de passe",
+    "passwordRequirements": "Le mot de passe doit comporter :",
+    "success": "Le mot de passe a été mis à jour avec succès.",
+    "error": "Une erreur est survenue lors de la mise à jour du mot de passe."
+  },
   "forgotPassword": {
     "title": "Réinitialisation Du Mot De Passe",
     "description": "Demandez la réinitialisation de votre mot de passe pour votre compte.",
@@ -222,6 +232,7 @@
     "shelters": "Gîtes",
     "albums": "Albums",
     "requests": "Demandes",
+    "profile": "Profil",
     "login": "Connexion",
     "logout": "Déconnexion"
   },

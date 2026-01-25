@@ -59,7 +59,6 @@ const Gallery: React.FC<{
 
   const { isPending: sheltersIsPendingMutation, mutate: postPictureMutate } =
     useMyMutation({
-      queryKeys: ["sheltersWithPictures"],
       mutationFn: postPictureRequest,
       onSuccessFn: (newData) => {
         queryClient.invalidateQueries({ queryKey: ["shelters"] });
@@ -73,7 +72,6 @@ const Gallery: React.FC<{
 
   const { isPending: deletePictureIsPending, mutate: deletePictureMutate } =
     useMyMutation({
-      queryKeys: ["sheltersWithPictures"],
       mutationFn: deletePictureRequest,
       onSuccessFn: (newData) => {
         queryClient.invalidateQueries({ queryKey: ["shelters"] });
@@ -86,7 +84,6 @@ const Gallery: React.FC<{
     });
 
   const { mutate: mainPictureMutate } = useMyMutation({
-    queryKeys: ["sheltersWithPictures"],
     mutationFn: setMainPictureRequest,
     onMutate: async ({ shelterId, mainImgId }) => {
       await queryClient.cancelQueries({ queryKey: ["sheltersWithPictures"] });
