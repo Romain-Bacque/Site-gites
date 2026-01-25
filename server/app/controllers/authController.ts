@@ -234,6 +234,7 @@ const authController = {
     } else next();
   },
 
+  // Update password for authenticated users
   async updatePassword(req: Request, res: Response) {
     const { actualPassword, newPassword } = req.body;
 
