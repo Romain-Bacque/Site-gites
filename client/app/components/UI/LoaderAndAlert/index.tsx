@@ -47,10 +47,7 @@ export default function LoaderAndAlert() {
       <Alert
         message={alertStatut.message}
         alert={alertStatut.alertKind}
-        show={
-          (loading.statut === "success" || loading.statut === "error") &&
-          alertStatut.show
-        }
+        show={alertStatut.show}
         onAlertClose={() =>
           setAlertStatut((prev) => ({ ...prev, show: false }))
         }
