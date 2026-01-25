@@ -11,6 +11,8 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get("accessToken")?.value;
   const locale = request.cookies.get("locale")?.value || "fr";
 
+  console.log("token:", token);
+
   const hasLocaleInPath = /^\/[a-zA-Z]{2}(\/.|$)/.test(pathname);
 
   if (!hasLocaleInPath) {
@@ -27,6 +29,8 @@ export function proxy(request: NextRequest) {
     pathname.startsWith(`/${locale}/${path}`),
   );
 
+  console.log("isAdminRoute:", isAdminRoute);
+
   // Redirect unauthenticated users trying to access admin routes
   if (!token && isAdminRoute) {
     return NextResponse.redirect(new URL(`/${locale}`, request.url));
@@ -42,8 +46,6 @@ export function proxy(request: NextRequest) {
       role?: string;
       isAdmin?: boolean;
     } | null;
-
-    console.log("Decoded JWT payload:", payload);
 
     const isAdmin = payload?.role === "admin"; // TODO: replace "customer" with "admin" in production
 
