@@ -18,8 +18,6 @@ const getCookieConfig = (): CookieOptions => ({
   httpOnly: true, // accessible only by web server
   secure: true,
   sameSite: "none",
-  path: "/",
-  domain: process.env.COOKIE_DOMAIN || "localhost",
 });
 
 const generateAccessToken = (user: object) => {
