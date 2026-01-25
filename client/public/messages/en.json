@@ -147,7 +147,8 @@
     "loginError": "Incorrect username or password.",
     "registerError": "An error occurred during registration.",
     "registerSuccess": "Registration successful! Please check your inbox to activate your account.",
-    "captchaError": "There was an issue verifying the captcha."
+    "captchaError": "There was an issue verifying the captcha.",
+    "welcomeMessage": "Welcome {username}!"
   },
   "allBookings": {
     "title": "All Bookings",

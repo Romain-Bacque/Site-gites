@@ -43,8 +43,8 @@ const Auth: React.FC = () => {
     onErrorFn: (_, errMessage) => {
       handleHTTPState("error", errMessage || t("auth.loginError"));
     },
-    onSuccessFn: () => {
-      handleHTTPState("success");
+    onSuccessFn: (data) => {
+      handleHTTPState("success", t("auth.welcomeMessage", { username: data.username }));
       dispatch(authActions.login());
       router.replace(`/${locale}/`);
     },

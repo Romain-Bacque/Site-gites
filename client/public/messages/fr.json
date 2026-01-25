@@ -147,7 +147,8 @@
     "loginError": "Le nom d'utilisateur ou le mot de passe est incorrect.",
     "registerError": "Une erreur est survenue lors de l'inscription.",
     "registerSuccess": "Inscription réussie ! Veuillez vérifier votre boîte mail pour activer votre compte.",
-    "captchaError": "Un problème est survenu lors de la vérification du captcha."
+    "captchaError": "Un problème est survenu lors de la vérification du captcha.",
+    "welcomeMessage": "Bienvenue {username} !"
   },
   "allBookings": {
     "title": "Toutes les réservations",
