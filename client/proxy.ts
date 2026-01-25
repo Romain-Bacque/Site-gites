@@ -43,6 +43,8 @@ export function proxy(request: NextRequest) {
       isAdmin?: boolean;
     } | null;
 
+    console.log("Decoded JWT payload:", payload);
+
     const isAdmin = payload?.role === "admin"; // TODO: replace "customer" with "admin" in production
 
     if (!isAdmin) {
