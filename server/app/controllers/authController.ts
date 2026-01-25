@@ -2,6 +2,7 @@ import debugLib from "debug";
 import { Request, Response, NextFunction, CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 import path from "path";
+import bcrypt from "bcrypt";
 import { User } from "../models";
 import ExpressError from "../utilities/ExpressError";
 import axios from "axios";
