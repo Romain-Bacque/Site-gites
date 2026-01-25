@@ -16,9 +16,10 @@ const redirectFn = (isValid: boolean) => {
 
 const getCookieConfig = (): CookieOptions => ({
   expires: new Date(Date.now() + 86400000), // 86400000ms = 24h
-  httpOnly: true, // accessible only by web server
+  httpOnly: true,
   secure: true,
   sameSite: "none",
+  path: "/", // "path" means the cookie is accessible for the entire site, means all routes (e.g., /admin, /user, etc.)
 });
 
 const generateAccessToken = (user: object) => {

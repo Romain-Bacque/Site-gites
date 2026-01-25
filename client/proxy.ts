@@ -11,8 +11,6 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get("accessToken")?.value;
   const locale = request.cookies.get("locale")?.value || "fr";
 
-  console.log("token:", token);
-
   const hasLocaleInPath = /^\/[a-zA-Z]{2}(\/.|$)/.test(pathname);
 
   if (!hasLocaleInPath) {
@@ -28,8 +26,6 @@ export function proxy(request: NextRequest) {
   const isProtectedRoute = PROTECTED_ROUTES.some((path) =>
     pathname.startsWith(`/${locale}/${path}`),
   );
-
-  console.log("isAdminRoute:", isAdminRoute);
 
   // Redirect unauthenticated users trying to access admin routes
   if (!token && isAdminRoute) {
