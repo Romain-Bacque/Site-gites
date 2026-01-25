@@ -38,7 +38,7 @@ export default async function getCroppedImg(
     canvas.height // destination height
   );
 
-  return new Promise<Blob | null>((resolve, _) => {
+  return new Promise<Blob | null>((resolve) => {
     // BLOB stands for a “Binary Large Object,” a data type that stores binary data.
     // Binary Large Objects (BLOBs) can be complex files like images or videos, unlike other data strings that only store letters and numbers.
     // A BLOB will hold multimedia objects to add to a database; however, not all databases support BLOB storage.

@@ -11,7 +11,6 @@ const Input: React.FC<InputOrTextareaProps> = ({
   icon,
   className,
   isVisible = true,
-  name,
   label,
   forgotPassword,
   onInputDateClick,

@@ -177,6 +177,20 @@ const Header: React.FC = () => {
               </li>
             )}
 
+            {isAuth && (
+              <li>
+                <Link
+                  href={`/${locale}/profile`}
+                  onClick={handleCloseMenu}
+                  className={`${classes.header__link} ${isActive(
+                    `/${locale}/profile`,
+                  )}`}
+                >
+                  {t("header.profile")}
+                </Link>
+              </li>
+            )}
+
             {showLogin && !isAuth && (
               <li>
                 <Link

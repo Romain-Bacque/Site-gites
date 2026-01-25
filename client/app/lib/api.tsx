@@ -98,6 +98,21 @@ export const resetPasswordRequest = async (data: ResetPasswordRequestData) => {
   if (response.status !== 200) throw new Error();
 };
 
+// Update password (authenticated user)
+export interface UpdatePasswordRequestData {
+  actualPassword: string;
+  newPassword: string;
+}
+
+export const updatePasswordRequest = async (data: UpdatePasswordRequestData) => {
+  const response = await instance.patch(
+    "/authentification/update-password",
+    data
+  );
+
+  if (response.status !== 200) throw new Error();
+};
+
 // Logout
 export const logoutRequest = async () => {
   const response = await instance.get("/authentification/logout");

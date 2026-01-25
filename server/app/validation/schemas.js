@@ -202,6 +202,32 @@ module.exports.passwordSchema = joi
   .required();
 
 /**
+ * updatePasswordSchema monitor the update password request body, and return an error if any of requirements doesn't match with it
+ */
+module.exports.updatePasswordSchema = joi
+  .object({
+    actualPassword: joiPassword
+      .string()
+      .minOfLowercase(1)
+      .minOfUppercase(1)
+      .minOfNumeric(1)
+      .minOfSpecialCharacters(1)
+      .noWhiteSpaces()
+      .min(8)
+      .required(),
+    newPassword: joiPassword
+      .string()
+      .minOfLowercase(1)
+      .minOfUppercase(1)
+      .minOfNumeric(1)
+      .minOfSpecialCharacters(1)
+      .noWhiteSpaces()
+      .min(8)
+      .required(),
+  })
+  .required();
+
+/**
  * postBookingSchema monitor the post booking request body, and return an error if any of requirements doesn't match with it
  */
 module.exports.postBookingSchema = joi

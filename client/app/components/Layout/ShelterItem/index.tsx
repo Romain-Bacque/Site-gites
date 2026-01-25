@@ -44,7 +44,6 @@ const SheltersItems: React.FC<SheltersItemsProps> = ({
     status: updateStatus,
     isPending,
   } = useMyMutation({
-    queryKeys: ["sheltersWithPictures"],
     mutationFn: updateShelterDescriptionRequest,
     onSuccessFn: (data) => {
       const prevData = queryClient.getQueryData<

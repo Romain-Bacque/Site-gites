@@ -13,7 +13,7 @@ export const csrfProtection = csurf({
   cookie: csrfCookieConfig,
 });
 
-// Vérifie que l'utilisateur est connecté
+// Vérifie que l'utilisateur est connecté (admin uniquement)
 export const checkLogged = (
   req: Request,
   res: Response,
@@ -38,6 +38,29 @@ export const checkLogged = (
 
       if (!isAdmin) return res.sendStatus(403);
 
+      next();
+    }
+  );
+};
+
+// Vérifie que l'utilisateur est authentifié (tout utilisateur connecté)
+export const checkAuthenticated = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const token = req.cookies?.accessToken;
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(
+    token,
+    process.env.ACCESS_TOKEN_SECRET as string,
+    (err: any, decoded: any) => {
+      if (err || !decoded) return res.sendStatus(401);
+
+      // Attach user info to request for use in controller
+      (req as any).user = decoded;
       next();
     }
   );

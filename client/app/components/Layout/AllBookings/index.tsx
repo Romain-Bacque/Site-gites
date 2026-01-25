@@ -74,7 +74,6 @@ const AllBookings: React.FC<{ bookings: Booking[] }> = ({ bookings }) => {
     status: bookingStatus,
     error: bookingError,
   } = useMyMutation({
-    queryKeys: ["bookings"],
     mutationFn: bookingDecisionRequest,
     onSuccessFn: (data) => {
       queryClient.setQueryData(["bookings"], (oldData: Booking[]) => {
@@ -90,7 +89,6 @@ const AllBookings: React.FC<{ bookings: Booking[] }> = ({ bookings }) => {
   });
 
   const { mutate: deleteBookingMutate } = useMyMutation({
-    queryKeys: ["bookings"],
     mutationFn: deleteBookingRequest,
     onSuccessFn: (data) => {
       queryClient.setQueryData(["bookings"], (oldData: Booking[]) => {

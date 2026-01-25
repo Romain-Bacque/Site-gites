@@ -62,7 +62,6 @@ const Rates: React.FC<RatesProps> = ({ shelterId }) => {
     status: putRatesStatus,
     error: putRatesError,
   } = useMyMutation({
-    queryKeys: ["rates", shelterId],
     mutationFn: (data: RatesPutRequestData) => ratesPutRequest(data),
     onSuccessFn: (data) => {
       queryClient.setQueryData(["rates", shelterId], (old: any) => {

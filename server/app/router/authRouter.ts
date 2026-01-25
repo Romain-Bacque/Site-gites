@@ -7,9 +7,10 @@ import {
   passwordSchema,
   emailSchema,
   confirmEmailSchema,
+  updatePasswordSchema,
 } from "../validation/schemas";
 import catchAsync from "../utilities/catchAsync";
-import { csrfProtection } from "../middlewares";
+import { csrfProtection, checkAuthenticated } from "../middlewares";
 
 const router = express.Router();
 
@@ -39,6 +40,13 @@ router.patch(
   csrfProtection,
   validate(passwordSchema),
   catchAsync(authController.resetPassword)
+);
+router.patch(
+  "/update-password",
+  csrfProtection,
+  checkAuthenticated,
+  validate(updatePasswordSchema),
+  catchAsync(authController.updatePassword)
 );
 
 export default router;

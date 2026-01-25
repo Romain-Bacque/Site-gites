@@ -49,13 +49,6 @@ const BookingCard: React.FC<BookingCardProps> = ({
     emailTo: booking.email,
   };
 
-  const bookingStatusMsg =
-    booking.status === "pending"
-      ? "En attente"
-      : booking.status === "accepted"
-      ? "Acceptée"
-      : "Refusée";
-
   return (
     <Card className={classes["booking-card"]}>
       <div className={classes["booking-card__title"]}>
