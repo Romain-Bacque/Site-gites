@@ -2,7 +2,6 @@ import debugLib from "debug";
 import { Request, Response, NextFunction, CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 import path from "path";
-import bcrypt from "bcrypt";
 import { User } from "../models";
 import ExpressError from "../utilities/ExpressError";
 import axios from "axios";
@@ -16,10 +15,11 @@ const redirectFn = (isValid: boolean) => {
 
 const getCookieConfig = (): CookieOptions => ({
   expires: new Date(Date.now() + 86400000), // 86400000ms = 24h
-  httpOnly: true,
+  httpOnly: true, // accessible only by web server
   secure: true,
   sameSite: "none",
-  path: "/", // "path" means the cookie is accessible for the entire site, means all routes (e.g., /admin, /user, etc.)
+  path: "/",
+  domain: process.env.COOKIE_DOMAIN || "localhost",
 });
 
 const generateAccessToken = (user: object) => {
@@ -231,37 +231,6 @@ const authController = {
     if (isPasswordUpdated) {
       res.sendStatus(200);
     } else next();
-  },
-
-  async updatePassword(req: Request, res: Response) {
-    const { actualPassword, newPassword } = req.body;
-
-    // Get user info from token (set by checkAuthenticated middleware)
-    const userPayload = (req as any).user;
-
-    if (!userPayload?.username) {
-      return res.sendStatus(401);
-    }
-
-    // Find user by username from token
-    const user = await User.findOne({ username: userPayload.username });
-
-    if (!user) {
-      return res.sendStatus(401);
-    }
-
-    // Verify current password
-    const isValidPassword = await bcrypt.compare(actualPassword, user.password);
-
-    if (!isValidPassword) {
-      return res.sendStatus(401);
-    }
-
-    // Hash and update new password
-    const hashedPassword = await User.hashPassword(newPassword);
-    await User.findByIdAndUpdate(user._id, { password: hashedPassword });
-
-    res.sendStatus(200);
   },
 };
 
